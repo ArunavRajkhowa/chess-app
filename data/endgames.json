@@ -220,12 +220,12 @@
     {
       "key": "minor-bishop-vs-knight",
       "theme": "minor",
-      "title": "Bishop against knight with pawns on both wings",
-      "fen": "8/8/p3k3/1p4p1/1P4P1/P3B3/4K3/5n2 w - - 0 1",
+      "title": "Bishop against knight: the knight on the rim",
+      "fen": "8/4k3/p7/1p4p1/1P4P1/P7/n2K4/4B3 w - - 0 1",
       "goal": "win_material",
-      "max_moves": 30,
+      "max_moves": 15,
       "level": 4,
-      "tip": "Pawns on both wings favour the bishop: it attacks on both sides at once while the knight is slow. Fix the pawns on the knight's colour and pick one up."
+      "tip": "The knight on a2 has no safe square: c1 and c3 are covered by your king, and b4 is defended by the a3 pawn. Keep the cage shut, bring the king to b2 and win it."
     },
     {
       "key": "minor-opposite-bishops",
