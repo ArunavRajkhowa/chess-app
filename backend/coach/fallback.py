@@ -9,6 +9,14 @@ def _side(facts: dict, side: str) -> dict:
     return facts[side]
 
 
+def _mate_allowed(facts_after: dict, mover: str) -> int | None:
+    """N when the after-move evaluation (White's view) is a forced mate for the opponent: "-M2" after a
+    white move, "M2" after a black move. None otherwise."""
+    sign = "-M" if mover == "white" else "M"
+    ev = facts_after.get("evaluation") or ""
+    return int(ev[len(sign):]) if ev.startswith(sign) and ev[len(sign):].isdigit() else None
+
+
 def explain_move_text(*, move_san: str, mover: str, classification: str, best_san: str, best_line: list[str],
                       eval_before: str, eval_after: str, facts_before: dict, facts_after: dict, level: str) -> str:
     parts: list[str] = []
@@ -19,19 +27,23 @@ def explain_move_text(*, move_san: str, mover: str, classification: str, best_sa
              "brilliant": "a brilliant sacrifice", "great": "a great move", "inaccuracy": "an inaccuracy",
              "mistake": "a mistake", "miss": "a missed chance", "blunder": "a blunder", "forced": "the only move"}.get(classification, classification)
     parts.append(f"{move_san} is {label}.")
+    mate_in = _mate_allowed(facts_after, mover)
     if classification in ("inaccuracy", "mistake", "blunder", "miss") and best_san:
-        reasons = []
-        if after_me["hanging_pieces"]:
-            reasons.append(f"it leaves your {after_me['hanging_pieces'][0]} hanging")
         replies = facts_after.get("candidate_moves") or []  # the opponent's best answers to the move
-        if facts_after.get("in_check") and facts_after["side_to_move"] == mover:
-            reasons.append("it walks into a check")
-        if after_me["attackers_near_king"] >= 2:
-            reasons.append(f"{after_me['attackers_near_king']} enemy pieces now sit near your king on {after_me['king_square']}")
-        if not reasons and replies:
-            reasons.append(f"it allows {replies[0]['move']}")
-        if reasons:
-            parts.append("The problem: " + "; ".join(reasons) + ".")
+        if mate_in:  # a forced mate outweighs every other reason
+            parts.append(f"This allows mate in {mate_in}" + (f": {' '.join(replies[0]['line'])}." if replies else "."))
+        else:
+            reasons = []
+            if after_me["hanging_pieces"]:
+                reasons.append(f"it leaves your {after_me['hanging_pieces'][0]} hanging")
+            if facts_after.get("in_check") and facts_after["side_to_move"] == mover:
+                reasons.append("it walks into a check")
+            if after_me["attackers_near_king"] >= 2:
+                reasons.append(f"{after_me['attackers_near_king']} enemy pieces now sit near your king on {after_me['king_square']}")
+            if not reasons and replies:
+                reasons.append(f"it allows {replies[0]['move']}")
+            if reasons:
+                parts.append("The problem: " + "; ".join(reasons) + ".")
         parts.append(f"Better was {best_san} ({eval_before} before, {eval_after} after your move)." + (f" The line: {' '.join(best_line)}." if best_line else ""))
     elif classification in ("best", "great", "brilliant", "excellent"):
         cands = facts_before.get("candidate_moves") or []
@@ -39,15 +51,15 @@ def explain_move_text(*, move_san: str, mover: str, classification: str, best_sa
             parts.append(f"The engine's top line is {' '.join(cands[0]['line'])} with evaluation {cands[0]['eval']}.")
         if after_opp["hanging_pieces"]:
             parts.append(f"It attacks the {after_opp['hanging_pieces'][0]}.")
-    lesson = _lesson(classification, facts_after, mover)
+    lesson = _lesson(classification, facts_after, mover, mate_in)
     if lesson:
         parts.append(lesson)
     return " ".join(parts)
 
 
-def _lesson(classification: str, facts_after: dict, mover: str) -> str:
+def _lesson(classification: str, facts_after: dict, mover: str, mate_in: int | None) -> str:
     me = _side(facts_after, mover)
-    if classification in ("blunder", "mistake") and me["hanging_pieces"]:
+    if classification in ("blunder", "mistake") and me["hanging_pieces"] and not mate_in:
         return "Lesson: before you move, check which of your pieces the reply could take for free."
     if classification in ("blunder", "mistake"):
         return "Lesson: look at your opponent's checks and captures before committing."

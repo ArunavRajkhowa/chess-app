@@ -32,6 +32,7 @@ export function AnalysisPage() {
   const navigate = useNavigate();
   const [chess] = useState(() => new Chess());
   const [fen, setFen] = useState(START_FEN);
+  const [startFen, setStartFen] = useState(START_FEN); // a loaded FEN, or the PGN's FEN header
   const [history, setHistory] = useState<{ san: string; fen: string }[]>([]);
   const [viewPly, setViewPly] = useState(0);
   const [orientation, setOrientation] = useState<"white" | "black">("white");
@@ -39,6 +40,7 @@ export function AnalysisPage() {
   const [engineOn, setEngineOn] = useState(true);
   const [input, setInput] = useState("");
   const [showArrow, setShowArrow] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const evaluate = useEngine((s) => s.evaluate);
   const status = useEngine((s) => s.status);
   const loadEngine = useEngine((s) => s.load);
@@ -49,13 +51,19 @@ export function AnalysisPage() {
   const sync = useCallback(() => {
     const f = chess.fen();
     setFen(f);
-    const h = chess.history({ verbose: true }).map((m) => ({ san: m.san, fen: m.after }));
+    const verbose = chess.history({ verbose: true });
+    setStartFen(verbose[0]?.before ?? f);
+    const h = verbose.map((m) => ({ san: m.san, fen: m.after }));
     setHistory(h);
     setViewPly(h.length);
   }, [chess]);
 
+  const boardChess = useMemo(() => new Chess(fen), [fen]);
+  const over = boardChess.isGameOver();
+  const result = boardChess.isCheckmate() ? (boardChess.turn() === "w" ? "0-1" : "1-0") : over ? "1/2-1/2" : undefined;
+
   useEffect(() => {
-    if (!engineOn) return;
+    if (!engineOn || over) return; // a finished game has nothing to search
     let cancelled = false;
     evalFen.current = fen;
     setLines([]);
@@ -63,10 +71,9 @@ export function AnalysisPage() {
       .then((r) => { if (!cancelled && r && evalFen.current === fen) setLines(r.lines); })
       .catch(() => undefined);
     return () => { cancelled = true; };
-  }, [fen, engineOn, evaluate]);
+  }, [fen, engineOn, evaluate, over]);
 
   const live = viewPly === history.length;
-  const boardChess = useMemo(() => new Chess(fen), [fen]);
   const dests = useMemo(() => (live ? destsFor(boardChess) : new Map()), [boardChess, live]);
   const onMove = (from: Square, to: Square, promotion?: PromotionPiece) => {
     if (!live) return;
@@ -80,7 +87,7 @@ export function AnalysisPage() {
     const mv = safeMove(chess, { from: uci.slice(0, 2), to: uci.slice(2, 4), promotion: uci[4] });
     if (mv) { playSound(soundForMove(mv, chess)); sync(); }
   };
-  const goTo = (ply: number) => { setViewPly(ply); setFen(ply <= 0 ? START_FEN : history[ply - 1].fen); };
+  const goTo = (ply: number) => { setViewPly(ply); setFen(ply <= 0 ? startFen : history[ply - 1].fen); };
   const load = () => {
     const text = input.trim();
     if (!text) return;
@@ -95,8 +102,13 @@ export function AnalysisPage() {
   const review = async () => {
     const pgn = chess.pgn();
     if (!history.length) return;
-    const r = await api.importPgn(pgn, "full");
-    navigate(`/review/${r.game_id}`);
+    setError(null);
+    try {
+      const r = await api.importPgn(pgn, "full");
+      navigate(`/review/${r.game_id}`);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e));
+    }
   };
 
   useEffect(() => {
@@ -127,7 +139,7 @@ export function AnalysisPage() {
           </div>
         </div>
         <div className="gameview-board-row">
-          <EvalBar cp={top?.cp} mate={top?.mate} orientation={orientation} loading={status !== "ready"} />
+          <EvalBar cp={top?.cp} mate={top?.mate} result={result} orientation={orientation} loading={status !== "ready"} />
           <Board fen={fen} orientation={orientation} movable={{ color: live ? "both" : "none", dests }} lastMove={cur ? null : null} check={checkSquare(boardChess)} shapes={shapes} onMove={onMove} />
         </div>
         <div className="row" style={{ marginTop: 8 }}>
@@ -154,7 +166,7 @@ export function AnalysisPage() {
                 </button>
               </li>
             ))}
-            {!shownLines.length && <li className="faint">{engineOn ? "thinking…" : "engine off"}</li>}
+            {!shownLines.length && <li className="faint" data-testid="engine-status">{result ? `${boardChess.isCheckmate() ? "Checkmate" : "Draw"} · ${result}` : engineOn ? "thinking…" : "engine off"}</li>}
           </ul>
         </div>
         <div className="card" style={{ padding: 0 }}>
@@ -164,6 +176,7 @@ export function AnalysisPage() {
           <button className="btn btn-primary" onClick={review} disabled={!history.length} data-testid="analysis-review">Review this game</button>
           <button className="btn" onClick={() => navigator.clipboard?.writeText(fen)}>Copy FEN</button>
         </div>
+        {error && <span className="chip chip-danger" data-testid="analysis-error">{error}</span>}
       </aside>
     </div>
   );

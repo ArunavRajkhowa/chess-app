@@ -34,3 +34,35 @@ test("puzzles: my mistakes mode explains when there are none, rated mode still w
   await page.getByTestId("start-puzzles").click();
   await expect(page.locator(".chip-danger").or(page.getByTestId("puzzle-turn"))).toBeVisible({ timeout: 15_000 });
 });
+
+test("analysis from a FEN: back to the start, a mate ends the search, a failed review shows why", async ({ page }) => {
+  const click = async (from: string, to: string) => {
+    await page.locator(`[data-square="${from}"].sq`).click();
+    await page.locator(`[data-square="${to}"].sq`).click();
+  };
+  const fen = "8/8/8/4k3/8/8/8/4K2Q w - - 0 1";
+  await page.goto("/analysis");
+  await page.getByTestId("analysis-input").fill(fen);
+  await page.getByTestId("analysis-load").click();
+  await click("h1", "h5");
+  await click("e5", "d4");
+  await expect(page.locator(".movelist-move")).toHaveCount(2);
+  for (let i = 0; i < 2; i++) await page.keyboard.press("ArrowLeft");
+  await expect(page.getByTestId("board")).toHaveAttribute("data-fen", fen);
+  for (let i = 0; i < 2; i++) await page.keyboard.press("ArrowRight");
+
+  await page.route("**/api/review/import", (route) => route.fulfill({ status: 500, contentType: "application/json", body: '{"detail":"server down"}' }));
+  await page.getByTestId("analysis-review").click();
+  await expect(page.getByTestId("analysis-error")).toContainText("server down");
+  await page.unroute("**/api/review/import");
+  await page.getByTestId("analysis-review").click();
+  await expect(page.getByTestId("review")).toBeVisible({ timeout: 120_000 });
+  await expect(page.getByTestId("board")).toHaveAttribute("data-fen", fen);
+
+  await page.goto("/analysis");
+  await page.getByTestId("analysis-input").fill("6k1/5ppp/8/8/8/8/5PPP/R5K1 w - - 0 1");
+  await page.getByTestId("analysis-load").click();
+  await click("a1", "a8");
+  await expect(page.getByTestId("engine-status")).toHaveText("Checkmate · 1-0");
+  await expect(page.getByTestId("evalbar")).toHaveAttribute("title", "1-0");
+});

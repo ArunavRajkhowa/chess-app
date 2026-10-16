@@ -188,3 +188,15 @@ def test_summary_fallback_names_only_errors():
               "best_move_san": "Nxe5", "win_before": 60.0, "win_after": 60.0}]
     text = _rules_summary({"white": side, "black": side, "opening": None, "moves": moves}, "white")
     assert "was better" not in text and "strongest phase" not in text
+
+
+def test_a_side_with_no_moves_has_no_accuracy(client):
+    # the player resigns before their first move: their side has nothing to judge (absence is data)
+    game = client.post("/api/play/games", json={"bot_id": "pip", "player_color": "black"}).json()
+    assert len(game["moves"]) == 1
+    game = client.post(f"/api/play/games/{game['id']}/resign").json()
+    rep = _wait(client, client.post(f"/api/review/games/{game['id']}", json={"mode": "quick"}).json()["id"])["report"]
+    assert rep["black"]["accuracy"] is None and rep["black"]["acpl"] is None and rep["black"]["estimated_rating"] is None
+    assert rep["white"]["accuracy"] is not None and rep["white"]["estimated_rating"] is not None
+    ins = client.get("/api/insights/me").json()
+    assert ins["games"] == 1 and ins["accuracy"] is None and ins["results"] == {"loss": 1}

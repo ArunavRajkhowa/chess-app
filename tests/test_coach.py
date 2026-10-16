@@ -104,3 +104,36 @@ def test_fallback_names_the_opponents_reply_not_the_movers_threat():
     t = fallback.explain_move_text(move_san="Ne7", mover="white", classification="inaccuracy", best_san="Nf3", best_line=["Nf3"],
                                    eval_before="+0.30", eval_after="-0.40", facts_before=after, facts_after=after, level="beginner")
     assert "Qxa1" not in t and "Qb6" in t
+
+
+def test_fallback_names_an_allowed_mate_before_a_hanging_piece():
+    # Legal's mate: 5...Bxd1?? takes the queen and allows Bxf7+ Ke7 Nd5#; the bishop on d1 is beside the point
+    white = {"hanging_pieces": [], "attackers_near_king": 0, "developed_minors": 3, "king_square": "e1"}
+    black = {"hanging_pieces": ["bishop on d1"], "attackers_near_king": 2, "developed_minors": 1, "king_square": "e8"}
+    after = {"side_to_move": "white", "in_check": False, "phase": "opening", "white": white, "black": black, "evaluation": "M2",
+             "candidate_moves": [{"move": "Bxf7+", "uci": "c4f7", "eval": "M2", "line": ["Bxf7+", "Ke7", "Nd5#"]}],
+             "threats_against_side_to_move": []}
+    t = fallback.explain_move_text(move_san="Bxd1", mover="black", classification="blunder", best_san="dxe5", best_line=["dxe5"],
+                                   eval_before="+1.20", eval_after="M2", facts_before=after, facts_after=after, level="beginner")
+    assert t.startswith("Bxd1 is a blunder. This allows mate in 2: Bxf7+ Ke7 Nd5#.")
+    assert "hanging" not in t and "for free" not in t
+    white_moved = {**after, "side_to_move": "black", "evaluation": "-M2"}
+    assert "allows mate" not in fallback.explain_move_text(
+        move_san="Bxd1", mover="black", classification="blunder", best_san="dxe5", best_line=[], eval_before="+1.20",
+        eval_after="-M2", facts_before=white_moved, facts_after=white_moved, level="beginner")  # black's own mate is not allowed
+
+
+def test_unverified_moves_knows_the_fact_sheet_lines_and_numbered_pawn_moves():
+    from backend.routers.coach import _unverified_moves, _with_lines
+    facts = {"candidate_moves": [{"move": "e4", "line": ["e4", "e5", "Nf3", "Nc6"]}]}
+    boards = _with_lines(chess.Board(), facts)
+    text = "The line 1.e4 e5 2.Nf3 Nc6 is sound. Then 3.Nd5 or 3.e7 would be invented; the pawn on e4 is fine."
+    assert _unverified_moves(text, boards) == ["Nd5", "e7"]
+
+
+def test_summary_fallback_invents_nothing_for_an_absent_opening_or_accuracy():
+    from backend.routers.coach import _rules_summary
+    me = {"accuracy": None, "phase_accuracy": {"opening": None, "middlegame": None, "endgame": None}}
+    bot = {"accuracy": 91.0, "phase_accuracy": {}}
+    text = _rules_summary({"white": me, "black": bot, "opening": None, "moves": []}, "white")
+    assert "None" not in text and "unnamed" not in text.lower() and "unknown" not in text.lower()

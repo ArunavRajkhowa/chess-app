@@ -63,8 +63,9 @@ async def me() -> dict:
     for r in rows:
         rep = json.loads(r["report_json"])
         me_side = rep[r["player_color"]]
-        accuracies.append(me_side["accuracy"])
-        timeline.append({"at": r["created_at"], "accuracy": me_side["accuracy"], "game_id": r["game_id"]})
+        if me_side["accuracy"] is not None:  # None: the player made no move in this game
+            accuracies.append(me_side["accuracy"])
+            timeline.append({"at": r["created_at"], "accuracy": me_side["accuracy"], "game_id": r["game_id"]})
         for ph, v in me_side["phase_accuracy"].items():
             if v is not None:
                 acc_by_phase[ph].append(v)
@@ -79,7 +80,8 @@ async def me() -> dict:
             d = openings.setdefault(op, {"name": op, "eco": r["opening_eco"], "games": 0, "wins": 0, "draws": 0, "losses": 0, "accuracy": []})
             d["games"] += 1
             d[{"win": "wins", "draw": "draws", "loss": "losses"}[outcome]] += 1
-            d["accuracy"].append(me_side["accuracy"])
+            if me_side["accuracy"] is not None:
+                d["accuracy"].append(me_side["accuracy"])
         shapes[_shape(rep["eval_graph"])] += 1
         if rep["moves"]:
             phase_games_ended[rep["moves"][-1]["phase"]] += 1
@@ -90,7 +92,7 @@ async def me() -> dict:
     total_moves = sum(counts.values()) or 1
     opening_list = []
     for d in openings.values():
-        d["accuracy"] = round(sum(d["accuracy"]) / len(d["accuracy"]), 1)
+        d["accuracy"] = round(sum(d["accuracy"]) / len(d["accuracy"]), 1) if d["accuracy"] else None
         opening_list.append(d)
     opening_list.sort(key=lambda d: -d["games"])
     phase_acc = {k: round(sum(v) / len(v), 1) for k, v in acc_by_phase.items()}
@@ -105,7 +107,8 @@ async def me() -> dict:
         work_on.append({"area": "missed wins", "why": f"{counts[C.MISS]} winning chances missed.", "action": "Solve 'crushing' and mate puzzles daily to sharpen pattern recognition."})
     return {
         "games": n,
-        "accuracy": {"mean": round(sum(accuracies) / n, 1), "best": max(accuracies), "worst": min(accuracies), "timeline": list(reversed(timeline))},
+        "accuracy": {"mean": round(sum(accuracies) / len(accuracies), 1), "best": max(accuracies), "worst": min(accuracies),
+                     "timeline": list(reversed(timeline))} if accuracies else None,
         "results": dict(results), "endings": dict(endings), "phase_accuracy": phase_acc, "phase_games_ended": dict(phase_games_ended),
         "move_quality": {k: {"count": counts[k], "per_game": round(counts[k] / n, 2), "share": round(100 * counts[k] / total_moves, 1)} for k in C.ALL_CLASSES},
         "openings": opening_list[:10], "shapes": {k: {"count": v, "description": SHAPES[k]} for k, v in shapes.items()},
