@@ -127,6 +127,16 @@ function Challenge({ section, onResult, onNext, nextLabel }: { section: Extract<
     if (!mv) return;
     const uci = from + to + (promotion ?? "");
     const expected = section.solution[index];
+    if (index === 0 && section.also?.includes(uci)) {
+      // an alternative first move as good as the lesson's: correct, and show the line the lesson follows
+      playSound(soundForMove(mv, c));
+      setLast([from, to]);
+      setFen(c.fen()); setIndex(1);
+      setState({ ...state, status: "done", text: `${mv.san} is just as good as the lesson's move. ${section.explanation ?? ""}` });
+      playSound("correct");
+      onResult(state.attempts === 0);
+      return;
+    }
     const ok = section.accept_any_legal || (section.accept_any_check && c.inCheck()) || uci === expected || c.isCheckmate();
     if (ok) {
       playSound(soundForMove(mv, c));

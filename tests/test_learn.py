@@ -111,3 +111,19 @@ def test_a_lesson_without_a_title_is_dropped_alone(tmp_path, monkeypatch):
         assert [lsn.id for m in L.load_curriculum() for lsn in m.lessons] == ["x1"]
     finally:
         L.load_curriculum.cache_clear()
+
+
+def test_a_challenge_may_accept_alternative_first_moves(tmp_path, monkeypatch):
+    fen = "6k1/5ppp/8/8/8/8/5PPP/R2R2K1 w - - 0 1"  # Ra8# and Rd8# both mate
+    data = {"modules": [{"id": "x", "band": 1, "title": "t", "lessons": [{"id": "l1", "title": "a", "sections": [
+        {"type": "challenge", "fen": fen, "solution": ["a1a8"], "also": ["d1d8"]},
+        {"type": "challenge", "fen": fen, "solution": ["a1a8"], "also": ["d1d9"]},
+    ]}]}]}
+    (tmp_path / "t.json").write_text(json.dumps(data))
+    monkeypatch.setattr(L, "LESSONS_DIR", tmp_path)
+    L.load_curriculum.cache_clear()
+    try:
+        sections = L.load_curriculum()[0].lessons[0].sections
+        assert len(sections) == 1 and sections[0]["also_san"] == ["Rd8#"]  # the illegal alternative drops its section
+    finally:
+        L.load_curriculum.cache_clear()

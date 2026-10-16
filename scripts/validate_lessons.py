@@ -66,6 +66,15 @@ async def engine_checks(sections: list[dict]) -> list[str]:
                     sol_cp = -cp_from_score(sol_info[0]["score"], b2.turn) if not b2.is_game_over() else (10000 if b2.is_checkmate() else 0)
                     if best_cp - sol_cp > MAX_GAP_CP:
                         findings.append(f"{tag}: solution {board.san(sol)} is not best; engine prefers {board.san(best)} (gap {best_cp - sol_cp} cp)")
+                # an accepted alternative first move must be as good as the solution, within the same tolerance
+                best_cp = cp_from_score(infos[0]["score"], board.turn)
+                for uci in s.get("also") or []:
+                    alt = chess.Move.from_uci(uci)
+                    b3 = board.copy()
+                    b3.push(alt)
+                    alt_cp = (10000 if b3.is_checkmate() else 0) if b3.is_game_over() else -cp_from_score((await pool.analyse(b3, depth=CHALLENGE_DEPTH))[0]["score"], b3.turn)
+                    if best_cp - alt_cp > MAX_GAP_CP:
+                        findings.append(f"{tag}: alternative {board.san(alt)} is {best_cp - alt_cp} cp worse than the best move")
                 # the opponent's replies in the solution should be the engine's choice (or at least not blunders)
                 b = board.copy()
                 for i, uci in enumerate(s["solution"]):
