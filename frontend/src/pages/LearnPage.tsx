@@ -36,10 +36,14 @@ export function LearnPage() {
             <button className="band-head" onClick={() => setOpen(open === b.band ? null : b.band)} data-testid={`band-${b.band}`}>
               <span className="band-icon" aria-hidden="true">{BAND_ICON[b.band]}</span>
               <span className="band-title"><b>Band {b.band} · {b.name}</b> <span className="muted">{b.subtitle} · {b.rating}</span></span>
-              <span className="band-progress">
-                <span className="progress"><i style={{ width: `${b.lessons_total ? (100 * b.lessons_done) / b.lessons_total : 0}%` }} /></span>
-                <span className="faint num">{b.lessons_done}/{b.lessons_total}</span>
-              </span>
+              {b.lessons_total === 0 ? (
+                <span className="band-progress faint">no lessons yet</span>
+              ) : (
+                <span className="band-progress">
+                  <span className="progress"><i style={{ width: `${(100 * b.lessons_done) / b.lessons_total}%` }} /></span>
+                  <span className="faint num">{b.lessons_done}/{b.lessons_total}</span>
+                </span>
+              )}
             </button>
             {open === b.band && (
               <div className="band-body">

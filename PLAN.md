@@ -49,9 +49,14 @@ therefore take honest multipv lines at a bot-specific depth (1 to 24) and choose
 centipawn loss with a temperature from 400 cp (Pip, 250) to 0 (Stockfish, 3200), plus a random
 move probability for the weakest bots and personality nudges (aggression, solidity, trading when
 ahead, favourite openings from the book). Measured on one tactical position: Elena (2600) found
-Qxf7# three times out of three; Pip varied across twelve tries. The Elo labels are calibrated by
-depth and temperature, not yet by matches against rated play: label them as estimates in the UI
-until a self-play ladder measures them (`scripts/selfplay.py` is the start of that).
+Qxf7# three times out of three; Pip varied across twelve tries. The Elo labels are estimates
+checked by `scripts/calibrate_bots.py`: four games per bot against Stockfish limited to the bot's
+labelled `UCI_Elo` (0.1 s per reference move; the reference cannot go below 1320, so the bots under
+1320 are only shown to lose to it). Measured 2026-10-16 after the first weakening: Mei 2/4 at 1400,
+Leo 1.5/4 at 1600, Ivy 3/4 at 1800, Omar, Zara and Viktor 4/4 at 2000-2400, so the Advanced tier was
+weakened a second time (one depth less, higher temperature, four candidate lines); the rerun's
+numbers are in `data/bot_calibration.json`. Four games is a coarse ruler (4/4 happens 6% of the
+time at equal strength), so the UI still says "about".
 
 ### 2.3 Game review
 

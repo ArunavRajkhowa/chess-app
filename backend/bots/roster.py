@@ -1,8 +1,10 @@
 """The bot roster: who the player can face, how strong each one is, and how it plays. A bot's
 strength comes from search depth plus the selector's temperature (backend/bots/selector.py), not
 from the engine's own Skill Level, so every bot's lines are honest evaluations. Depths and
-temperatures were lowered after scripts/calibrate_bots.py measured the 1400-2200 bots scoring
-4/4 against Stockfish at their labelled UCI_Elo (2026-10-16, four games each, 0.1 s per move)."""
+temperatures were lowered twice after scripts/calibrate_bots.py (four games per bot against
+Stockfish at the bot's labelled UCI_Elo, 0.1 s per reference move, 2026-10-16): the first run had
+the 1400-2200 bots at 4/4; the second had Mei 2/4, Leo 1.5/4, Ivy 3/4 and Omar-Viktor 4/4. The
+measured rows are in data/bot_calibration.json."""
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -121,15 +123,15 @@ BOTS: list[Bot] = [
          personality=Personality(aggression=0.5, favourite_openings=("Sicilian", "King's Indian")),
          description="Leo calculates well in open positions. Avoid tactics you have not checked twice."),
     # Advanced -----------------------------------------------------------------------------------
-    _bot("ivy", "Ivy", 1800, TIER_ADVANCED, "Positional squeeze", "🌿", 6, 32, multipv=3,
+    _bot("ivy", "Ivy", 1800, TIER_ADVANCED, "Positional squeeze", "🌿", 6, 40, multipv=4,
          personality=Personality(solidity=0.5, trade_when_ahead=0.6, favourite_openings=("Queen's Gambit", "Catalan", "English")),
          description="Ivy improves her pieces, grabs space and converts small edges. Learn to make plans against her."),
-    _bot("omar", "Omar", 2000, TIER_ADVANCED, "Expert strength", "🏜️", 8, 22, multipv=3,
+    _bot("omar", "Omar", 2000, TIER_ADVANCED, "Expert strength", "🏜️", 7, 35, multipv=4,
          description="Omar plays like a strong club expert. Few mistakes, punishes yours."),
-    _bot("zara", "Zara", 2200, TIER_ADVANCED, "Candidate master", "⚡", 10, 14, multipv=3,
+    _bot("zara", "Zara", 2200, TIER_ADVANCED, "Candidate master", "⚡", 9, 25, multipv=4,
          personality=Personality(aggression=0.3),
          description="Zara's attacking play is precise. Defend accurately or lose quickly."),
-    _bot("viktor", "Viktor", 2400, TIER_ADVANCED, "FIDE master", "🧊", 12, 9, multipv=2,
+    _bot("viktor", "Viktor", 2400, TIER_ADVANCED, "FIDE master", "🧊", 11, 16, multipv=3,
          personality=Personality(solidity=0.6, trade_when_ahead=0.8),
          description="Viktor grinds endgames. Expect every small advantage to be converted."),
     # Master -------------------------------------------------------------------------------------
