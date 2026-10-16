@@ -197,15 +197,15 @@
               "orientation": "black",
               "highlights": [
                 {
-                  "square": "g5",
+                  "square": "c5",
                   "brush": "red"
                 },
                 {
-                  "square": "c5",
-                  "brush": "red"
+                  "square": "g5",
+                  "brush": "yellow"
                 }
               ],
-              "caption": "Black to move. Two pieces are loose: the white bishop on g5 and the black bishop on c5. Neither is attacked yet, so nothing is lost; both are targets."
+              "caption": "Black to move. The black bishop on c5 is loose: nothing defends it. The white bishop on g5 is defended once, by the knight on f3. Neither bishop is attacked yet, so nothing is lost, but the loose one is a target."
             },
             {
               "type": "challenge",
@@ -231,14 +231,14 @@
             {
               "type": "quiz",
               "fen": "r1bqk2r/pppp1ppp/2n2n2/2b1p1B1/2B1P3/3P1N2/PPP2PPP/RN1QK2R b KQkq - 2 5",
-              "question": "Black to move. Which white piece is loose?",
+              "question": "Black to move. Which black piece is loose?",
               "options": [
-                "The bishop on g5",
-                "The bishop on c4",
-                "The knight on f3"
+                "The bishop on c5",
+                "The knight on f6",
+                "The knight on c6"
               ],
               "answer": 0,
-              "explanation": "Nothing defends g5. The bishop on c4 is defended by the pawn on d3, and the knight on f3 by the queen and the g2 pawn. Black cannot win the bishop at once, but 5...h6 asks it to move."
+              "explanation": "Nothing defends c5. The knight on f6 is defended by the queen and the g7 pawn, and the knight on c6 by the b7 and d7 pawns. White's bishop on g5 is not loose either: the knight on f3 defends it."
             },
             {
               "type": "quiz",
@@ -303,7 +303,7 @@
                 "c7c5"
               ],
               "hint": "Attack the queen with a pawn; the next push is ...c4.",
-              "explanation": "1...c5 hits the queen. Wherever it goes, 2...c4 follows and the bishop on b3 is trapped: White gets only a pawn for it. After 9.Qc3 c4 10.a4 cxb3 11.axb5 White is a piece down."
+              "explanation": "1...c5 hits the queen, and ...c4 is the next push. If the queen goes to d5 it attacks the rook on a8, so Black first plays 9...Be6 with tempo and only then ...c4. On other squares ...c4 comes at once: after 9.Qc3 c4 10.a4 cxb3 11.axb5 White is a piece down."
             },
             {
               "type": "challenge",

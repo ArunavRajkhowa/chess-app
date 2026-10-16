@@ -135,9 +135,16 @@ def load_curriculum() -> list[Module]:
     for path in sorted(Path(LESSONS_DIR).glob("*.json")):
         data = json.loads(path.read_text(encoding="utf-8"))
         for m in data.get("modules", [data] if "lessons" in data else []):
-            module = Module(id=m["id"], band=int(m["band"]), title=m["title"], strand=m.get("strand", "tactics"),
-                            summary=m.get("summary", ""), source=m.get("source", ""))
+            try:
+                module = Module(id=m["id"], band=int(m["band"]), title=m["title"], strand=m.get("strand", "tactics"),
+                                summary=m.get("summary", ""), source=m.get("source", ""))
+            except (KeyError, ValueError, TypeError) as exc:
+                LOGGER.warning("dropped %s module %s: missing or bad field %s", path.name, m.get("id"), exc)
+                continue
             for lsn in m.get("lessons", []):
+                if not lsn.get("id") or not lsn.get("title"):
+                    LOGGER.warning("dropped %s lesson %s: it needs an id and a title", path.name, lsn.get("id"))
+                    continue
                 sections = []
                 for i, sec in enumerate(lsn.get("sections", [])):
                     try:

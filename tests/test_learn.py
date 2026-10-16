@@ -3,6 +3,8 @@ from __future__ import annotations
 
 import json
 
+import chess
+
 import pytest
 from fastapi.testclient import TestClient
 
@@ -78,3 +80,34 @@ def test_drill_accepts_san_and_refuses_a_position_without_a_king(client):
         assert r.status_code == 200, (move, r.text)
     r = client.post("/api/learn/drill/move", json={"fen": "4k3/8/8/8/8/8/8/R7 w - - 0 1", "move": "a1a2", "goal": "mate"})
     assert r.status_code == 400
+
+
+def test_drill_sees_a_threefold_repetition_through_its_history(client):
+    start = "4k3/1R6/8/3KP3/8/8/8/r7 b - - 0 1"  # Philidor-style defence; Black holds
+    shuffle = ["e8f8", "b7c7", "f8e8", "c7b7"]  # each cycle returns to the start position
+    history = shuffle * 2
+    board = chess.Board(start)
+    for m in history:
+        board.push_uci(m)
+    r = client.post("/api/learn/drill/move", json={"fen": board.fen(), "move": "e8f8", "goal": "draw", "start_fen": start, "history": history}).json()
+    assert r["outcome"] == {"result": "success", "reason": "draw"}
+
+
+def test_replaying_a_lesson_keeps_the_best_score(client):
+    lesson = client.get("/api/learn/curriculum").json()["bands"][0]["modules"][0]["lessons"][0]["id"]
+    client.post("/api/learn/progress", json={"lesson_id": lesson, "completed": True, "score": 75})
+    client.post("/api/learn/progress", json={"lesson_id": lesson, "completed": True, "score": 0})
+    assert client.get("/api/learn/progress").json()["progress"][lesson]["score"] == 75
+
+
+def test_a_lesson_without_a_title_is_dropped_alone(tmp_path, monkeypatch):
+    from backend.content import lessons as L
+    good = {"id": "x1", "title": "Fine", "sections": [{"type": "text", "md": "Hello."}]}
+    data = {"modules": [{"id": "m1", "band": 0, "title": "M", "lessons": [good, {"id": "x2", "sections": good["sections"]}]}]}
+    (tmp_path / "t.json").write_text(json.dumps(data))
+    monkeypatch.setattr(L, "LESSONS_DIR", tmp_path)
+    L.load_curriculum.cache_clear()
+    try:
+        assert [lsn.id for m in L.load_curriculum() for lsn in m.lessons] == ["x1"]
+    finally:
+        L.load_curriculum.cache_clear()

@@ -47,9 +47,11 @@ def test_endgame_api(client):
     ch = client.get("/api/endgames/challenge", params={"theme": "rook"}).json()
     assert 1 <= len(ch["positions"]) <= 5 and all(p["theme"] == "rook" for p in ch["positions"])
     assert client.get("/api/endgames/challenge", params={"theme": "nope"}).status_code == 404
-    r = client.post("/api/endgames/attempt", json={"key": "rook-lucena", "success": True, "moves": 7, "seconds": 40.2}).json()
-    assert r["stats"]["solved"] == 1 and r["stats"]["best_moves"] == 7
-    r = client.post("/api/endgames/attempt", json={"key": "rook-lucena", "success": True, "moves": 6, "seconds": 50}).json()
-    assert r["stats"]["best_moves"] == 6 and r["stats"]["best_seconds"] == 40.2
-    assert client.get("/api/endgames").json()["positions"][0]["best"] is None or True
-    assert client.post("/api/endgames/attempt", json={"key": "nope", "success": True, "moves": 1, "seconds": 1}).status_code == 404
+    r = client.post("/api/endgames/attempt", json={"key": "mate-two-rooks", "line": [], "seconds": 1}).json()
+    assert r["success"] is False and r["stats"]["solved"] == 0 and r["stats"]["tried"] == 1  # a claim with no moves wins nothing
+    ladder = ["a1a5", "d5d6", "c1c2", "d6d7", "a5a6", "d7e7", "c2c1", "e7d7", "c1c6", "d7e8", "a6a7", "e8d8", "a7b7", "d8e8", "c6c8"]
+    r = client.post("/api/endgames/attempt", json={"key": "mate-two-rooks", "line": ladder, "seconds": 40.2}).json()
+    assert r["success"] is True and r["stats"]["solved"] == 1 and r["stats"]["best_moves"] == 8
+    assert client.post("/api/endgames/attempt", json={"key": "mate-two-rooks", "line": ["a1a9"], "seconds": 1}).status_code == 400
+    assert client.post("/api/endgames/attempt", json={"key": "mate-two-rooks", "line": [], "seconds": -5}).status_code == 422
+    assert client.post("/api/endgames/attempt", json={"key": "nope", "line": [], "seconds": 1}).status_code == 404

@@ -40,10 +40,11 @@ export function EndgamesPage() {
     setChallenge({ list: r.positions, i: 0, solved: 0, startedAt: Date.now(), done: false });
     start(r.positions[0]);
   };
-  const onOutcome = async (o: DrillOutcome, moves: number) => {
+  const onOutcome = async (o: DrillOutcome, _moves: number, line: string[]) => {
     if (!current) return;
     const seconds = (Date.now() - startedAt.current) / 1000;
-    await fetch("/api/endgames/attempt", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ key: current.key, success: o.result === "success", moves, seconds, mode: challenge ? "challenge" : "practice" }) }).catch(() => undefined);
+    // the server replays the line and records its own verdict
+    await fetch("/api/endgames/attempt", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ key: current.key, line, seconds, mode: challenge ? "challenge" : "practice" }) }).catch(() => undefined);
     void reload();
     if (challenge) {
       const solved = challenge.solved + (o.result === "success" ? 1 : 0);

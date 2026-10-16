@@ -14,16 +14,17 @@ interface Props {
   goal: DrillGoal;
   maxMoves?: number;
   orientation?: "white" | "black";
-  onOutcome: (o: DrillOutcome, moves: number) => void;
+  /** `line` is every move of the attempt in UCI, both sides, for the server to replay. */
+  onOutcome: (o: DrillOutcome, moves: number, line: string[]) => void;
   /** Changes reset the board (use a key or a counter). */
   resetToken?: number;
 }
 
 /** A position played against the engine towards a goal. Shared by lesson drills and the endgame trainer. */
 export function DrillBoard({ fen: startFen, goal, maxMoves, orientation, onOutcome, resetToken = 0 }: Props) {
-  const [state, setState] = useState<{ token: number; fen: string; moves: number; outcome: DrillOutcome | null; busy: boolean; last: [Square, Square] | null }>({ token: resetToken, fen: startFen, moves: 0, outcome: null, busy: false, last: null });
+  const [state, setState] = useState<{ token: number; fen: string; moves: number; line: string[]; outcome: DrillOutcome | null; busy: boolean; last: [Square, Square] | null }>({ token: resetToken, fen: startFen, moves: 0, line: [], outcome: null, busy: false, last: null });
   if (state.token !== resetToken) {
-    setState({ token: resetToken, fen: startFen, moves: 0, outcome: null, busy: false, last: null });
+    setState({ token: resetToken, fen: startFen, moves: 0, line: [], outcome: null, busy: false, last: null });
   }
   const chess = useMemo(() => new Chess(state.fen), [state.fen]);
   const learner = new Chess(startFen).turn();
@@ -36,22 +37,27 @@ export function DrillBoard({ fen: startFen, goal, maxMoves, orientation, onOutco
     playSound(soundForMove(mv, c));
     setState((s) => ({ ...s, fen: c.fen(), last: [from, to], busy: true }));
     try {
-      const r = await learnApi.drillMove(state.fen, from + to + (promotion ?? ""), goal, startFen);
+      const uci = from + to + (promotion ?? "");
+      const r = await learnApi.drillMove(state.fen, uci, goal, startFen, state.line);
       const n = state.moves + 1;
+      const line = [...state.line, uci, ...(r.reply ? [r.reply.uci] : [])];
       let out = r.outcome;
-      if (!out && maxMoves && n >= maxMoves) out = { result: "fail", reason: `move limit of ${maxMoves} reached` };
-      const apply = () => setState((s) => ({ ...s, fen: r.fen, moves: n, busy: false, outcome: out, last: r.reply ? [r.reply.uci.slice(0, 2), r.reply.uci.slice(2, 4)] : s.last }));
+      if (!out && maxMoves && n >= maxMoves) {
+        // the same rule the server applies to endgame attempts: holding to the limit is the goal for draw and survive
+        out = goal === "draw" || goal === "survive" ? { result: "success", reason: `held for ${maxMoves} moves` } : { result: "fail", reason: `move limit of ${maxMoves} reached` };
+      }
+      const apply = () => setState((s) => ({ ...s, fen: r.fen, moves: n, line, busy: false, outcome: out, last: r.reply ? [r.reply.uci.slice(0, 2), r.reply.uci.slice(2, 4)] : s.last }));
       if (r.reply) {
-        setTimeout(() => { apply(); const c2 = new Chess(r.fen); playSound(c2.inCheck() ? "check" : "move"); if (out) onOutcome(out, n); }, 300);
+        setTimeout(() => { apply(); const c2 = new Chess(r.fen); playSound(c2.inCheck() ? "check" : "move"); if (out) onOutcome(out, n, line); }, 300);
       } else {
         apply();
-        if (out) onOutcome(out, n);
+        if (out) onOutcome(out, n, line);
       }
       if (out) playSound(out.result === "success" ? "win" : "lose");
     } catch (e) {
       const out = { result: "fail" as const, reason: e instanceof Error ? e.message : String(e) };
       setState((s) => ({ ...s, busy: false, outcome: out }));
-      onOutcome(out, state.moves + 1);
+      onOutcome(out, state.moves + 1, state.line);
     }
   };
 

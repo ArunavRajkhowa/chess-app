@@ -101,7 +101,7 @@ def load_games() -> list[CuratedGame]:
                 try:
                     g = _parse(game, path)
                 except ValueError as exc:
-                    LOGGER.warning("dropped game in %s: %s", path.name, exc)
+                    LOGGER.warning("dropped game in %s (%s vs %s): %s", path.name, game.headers.get("White"), game.headers.get("Black"), exc)
                     continue
                 if g.id in seen:
                     g.id = f"{g.id}-{len(seen)}"

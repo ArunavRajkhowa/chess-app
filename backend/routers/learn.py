@@ -29,12 +29,13 @@ class DrillMove(BaseModel):
     goal: str = Field(pattern="^(mate|promote|draw|survive|win_material)$")
     depth: int = Field(DRILL_DEPTH, ge=1, le=20)
     start_fen: str | None = Field(None, description="the drill's first position; needed for win_material")
+    history: list[str] = Field(default_factory=list, max_length=400, description="UCI moves from start_fen to fen; lets a repetition count")
 
 
 PIECE_VALUES = {chess.PAWN: 1, chess.KNIGHT: 3, chess.BISHOP: 3, chess.ROOK: 5, chess.QUEEN: 9}
 
 
-def _material_balance(board: chess.Board, color: chess.Color) -> int:
+def material_balance(board: chess.Board, color: chess.Color) -> int:
     return sum(v * (len(board.pieces(pt, color)) - len(board.pieces(pt, not color))) for pt, v in PIECE_VALUES.items())
 
 
@@ -86,7 +87,9 @@ async def update_progress(req: ProgressUpdate) -> dict:
     await database.execute(
         "INSERT INTO lesson_progress(lesson_id, completed_at, score, attempts, state_json) VALUES(?, CASE WHEN ? THEN datetime('now') END, ?, 1, ?) "
         "ON CONFLICT(lesson_id) DO UPDATE SET completed_at = COALESCE(CASE WHEN excluded.completed_at IS NOT NULL THEN excluded.completed_at END, lesson_progress.completed_at), "
-        "score = COALESCE(excluded.score, lesson_progress.score), attempts = lesson_progress.attempts + 1, state_json = excluded.state_json",
+        "score = CASE WHEN excluded.score IS NULL THEN lesson_progress.score "
+        "WHEN lesson_progress.score IS NULL OR excluded.score > lesson_progress.score THEN excluded.score ELSE lesson_progress.score END, "
+        "attempts = lesson_progress.attempts + 1, state_json = excluded.state_json",
         (req.lesson_id, int(req.completed), req.score, json.dumps(req.state)),
     )
     return {"ok": True}
@@ -97,8 +100,15 @@ async def drill_move(req: DrillMove) -> dict:
     """Applies the learner's move, checks the goal, and answers with the engine's reply."""
     try:
         board = chess.Board(req.fen)
+        if req.history:  # rebuild the game so far: a threefold repetition needs the earlier positions
+            replay = chess.Board(req.start_fen or "")
+            for uci in req.history:
+                replay.push(replay.parse_uci(uci))
+            if replay.fen() != board.fen():
+                raise HTTPException(400, f"history leads to {replay.fen()!r}, not fen {req.fen!r}")
+            board = replay
     except ValueError:
-        raise HTTPException(400, f"bad FEN {req.fen!r}")
+        raise HTTPException(400, f"bad FEN, start_fen or history (fen {req.fen!r})")
     if not board.is_valid():
         raise HTTPException(400, f"illegal position {req.fen!r}")
     try:
@@ -114,35 +124,36 @@ async def drill_move(req: DrillMove) -> dict:
     start_balance = None
     if req.goal == "win_material":
         try:
-            start_balance = _material_balance(chess.Board(req.start_fen or req.fen), learner)
+            start_balance = material_balance(chess.Board(req.start_fen or req.fen), learner)
         except ValueError:
             raise HTTPException(400, "bad start_fen")
     san = board.san(move)
     board.push(move)
-    outcome = _outcome(board, learner, req.goal, move, start_balance)
+    outcome = drill_outcome(board, learner, req.goal, move, start_balance)
     reply = None
     if outcome is None and not board.is_game_over(claim_draw=True):
         infos = await pool.analyse(board, depth=req.depth, slot="play")
         rm = infos[0]["pv"][0]
         reply = {"san": board.san(rm), "uci": rm.uci()}
         board.push(rm)
-        outcome = _outcome(board, learner, req.goal, None, start_balance)
+        outcome = drill_outcome(board, learner, req.goal, None, start_balance)
     return {"fen": board.fen(), "played": san, "reply": reply, "outcome": outcome}
 
 
-def _outcome(board: chess.Board, learner: chess.Color, goal: str, learner_move: chess.Move | None,
-             start_balance: int | None = None) -> dict | None:
+def drill_outcome(board: chess.Board, learner: chess.Color, goal: str, learner_move: chess.Move | None,
+                  start_balance: int | None = None) -> dict | None:
+    """The drill result after one move, or None while it goes on. Shared with the endgame trainer."""
     if board.is_checkmate():
         won = board.turn != learner
         return {"result": "success" if (won and goal in ("mate", "win_material", "survive")) else "fail", "reason": "checkmate" if won else "you were mated"}
     if board.is_stalemate():
         return {"result": "success" if goal in ("draw", "survive") else "fail", "reason": "stalemate"}
-    if board.is_insufficient_material() or board.can_claim_threefold_repetition() or board.can_claim_fifty_moves():
+    if board.is_insufficient_material() or board.is_repetition(3) or board.is_fifty_moves():
         return {"result": "success" if goal in ("draw", "survive") else "fail", "reason": "draw"}
     if goal == "promote" and learner_move is not None and learner_move.promotion:
         return {"result": "success", "reason": "promoted"}
     if goal == "win_material" and start_balance is not None and learner_move is None:
-        gained = _material_balance(board, learner) - start_balance
+        gained = material_balance(board, learner) - start_balance
         if gained >= 1:
             return {"result": "success", "reason": f"won material (+{gained})"}
         if gained <= -3:

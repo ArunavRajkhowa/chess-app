@@ -1,6 +1,7 @@
 """The puzzle library: data/puzzles/*.jsonl loaded once, indexed by theme and rating. A puzzle
 follows the lichess shape: `fen` is the position before the opponent's move, `moves[0]` is that
-move (played for the solver), the rest alternate solver / opponent, all UCI."""
+move (played for the solver), the rest alternate solver / opponent and end on the solver, all UCI.
+Every puzzle is replayed with python-chess at load; a broken one is dropped with a warning."""
 from __future__ import annotations
 
 import json
@@ -9,6 +10,8 @@ import random
 from dataclasses import dataclass, field
 from functools import lru_cache
 from pathlib import Path
+
+import chess
 
 from ..settings import REPO_ROOT
 
@@ -53,6 +56,7 @@ THEME_INFO: dict[str, tuple[str, str]] = {
     "bishopEndgame": ("Bishop endgame", "Bishops and pawns."),
     "knightEndgame": ("Knight endgame", "Knights and pawns."),
     "short": ("Short", "Two moves to solve."),
+    "myMistake": ("Your mistake", "A position from your own reviewed game: find the move you missed."),
     "long": ("Long", "A longer combination."),
     "crushing": ("Crushing", "Win a decisive amount of material."),
     "advantage": ("Advantage", "Win a clear advantage."),
@@ -119,19 +123,39 @@ class PuzzleLibrary:
         return rng.choice(pool) if pool else None
 
 
+def _checked(d: dict) -> Puzzle:
+    """Builds a puzzle after replaying its line: the opponent's move, then solver / opponent pairs
+    that end on the solver's move, every move legal."""
+    moves = d["moves"]
+    if len(moves) < 2 or len(moves) % 2:
+        raise ValueError(f"{len(moves)} moves; expected the opponent's move then pairs ending on the solver's move")
+    board = chess.Board(d["fen"])
+    for uci in moves:
+        mv = chess.Move.from_uci(uci)
+        if mv not in board.legal_moves:
+            raise ValueError(f"illegal move {uci} in {board.fen()}")
+        board.push(mv)
+    return Puzzle(
+        id=d["id"], fen=d["fen"], moves=moves, rating=int(d.get("rating", 1200)), rd=int(d.get("rd", 80)),
+        themes=list(d.get("themes", [])), source=d.get("source", {}), popularity=int(d.get("popularity", 0)),
+    )
+
+
 @lru_cache(maxsize=1)
 def load_library() -> PuzzleLibrary:
     puzzles: list[Puzzle] = []
     for path in sorted(Path(PUZZLES_DIR).glob("*.jsonl")):
         with path.open(encoding="utf-8") as fh:
-            for line in fh:
+            for n, line in enumerate(fh, start=1):
                 line = line.strip()
                 if not line:
                     continue
-                d = json.loads(line)
-                puzzles.append(Puzzle(
-                    id=d["id"], fen=d["fen"], moves=d["moves"], rating=int(d.get("rating", 1200)), rd=int(d.get("rd", 80)),
-                    themes=list(d.get("themes", [])), source=d.get("source", {}), popularity=int(d.get("popularity", 0)),
-                ))
+                pid = "?"
+                try:
+                    d = json.loads(line)
+                    pid = d.get("id", "?")
+                    puzzles.append(_checked(d))
+                except (ValueError, KeyError, TypeError) as exc:
+                    LOGGER.warning("dropped puzzle %s in %s line %d: %s", pid, path.name, n, exc)
     LOGGER.info("puzzle library: %d puzzles from %s", len(puzzles), PUZZLES_DIR)
     return PuzzleLibrary(puzzles)

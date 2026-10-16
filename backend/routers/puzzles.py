@@ -6,6 +6,7 @@ import datetime as dt
 import json
 import random
 
+import chess
 from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel, Field
 
@@ -20,9 +21,39 @@ RUSH_LENGTH = 60
 
 
 class AttemptRequest(BaseModel):
-    solved: bool
-    seconds: float | None = None
+    moves: list[str] = Field(default_factory=list, max_length=40)  # the solver's moves in UCI, as played
+    hinted: bool = False  # a hint was used: the attempt counts as missed (it can only lower the result)
+    seconds: float | None = Field(None, ge=0)
     mode: str = Field("rated", pattern="^(rated|custom|rush|daily|mistakes)$")
+
+
+def solves(fen: str, line: list[str], played: list[str], *, solver_first: bool) -> bool:
+    """Replays the solver's moves against the puzzle line with python-chess. Solved when every solver
+    move is the line's move and the line ends, or when the solver mates (any mate counts, as on lichess)."""
+    board = chess.Board(fen)
+    i = 0
+    if not solver_first:
+        board.push_uci(line[0])
+        i = 1
+    for uci in played:
+        if i >= len(line):
+            return False
+        try:
+            mv = chess.Move.from_uci(uci)
+        except ValueError:
+            return False
+        if mv not in board.legal_moves:
+            return False
+        board.push(mv)
+        if board.is_checkmate():
+            return True
+        if mv.uci() != line[i]:
+            return False
+        if i == len(line) - 1:
+            return True
+        board.push_uci(line[i + 1])
+        i += 2
+    return False
 
 
 async def _player_rating() -> Rating:
@@ -39,11 +70,8 @@ MISTAKE_MIN_CP_LOSS = 150
 MISTAKE_CLASSES = ("blunder", "miss", "mistake")
 
 
-@router.get("/mistakes")
-async def mistakes(limit: int = 40) -> dict:
-    """Puzzles made from the player's own mistakes in reviewed games: find the move you missed."""
-    import chess
-
+async def _mistake_puzzles() -> list[dict]:
+    """Puzzles made from the player's own mistakes in reviewed bot games: find the move you missed."""
     rows = await database.fetch_all(
         "SELECT r.game_id, r.report_json, g.player_color, g.bot_id, g.created_at FROM reviews r JOIN games g ON g.id = r.game_id "
         "WHERE g.source = 'bot' ORDER BY r.created_at DESC LIMIT 100"
@@ -59,7 +87,7 @@ async def mistakes(limit: int = 40) -> dict:
             board = chess.Board(m["fen_before"])
             line = []
             try:
-                for san in m["best_line_san"][:5]:
+                for san in m["best_line_san"][:1]:  # the one move you missed; later moves of the line are often not unique
                     mv = board.parse_san(san)
                     line.append(mv.uci())
                     board.push(mv)
@@ -74,7 +102,12 @@ async def mistakes(limit: int = 40) -> dict:
                 "source": {"white": "You" if r["player_color"] == "white" else r["bot_id"], "black": "You" if r["player_color"] == "black" else r["bot_id"], "game_id": r["game_id"], "ply": m["ply"], "played": m["san"]},
                 "solver_color": r["player_color"], "solved_before": pid in solved_ids,
             })
-    out.sort(key=lambda p: (p["solved_before"], -p["rating"]))
+    return out
+
+
+@router.get("/mistakes")
+async def mistakes(limit: int = 40) -> dict:
+    out = sorted(await _mistake_puzzles(), key=lambda p: (p["solved_before"], -p["rating"]))
     return {"puzzles": out[:limit], "total": len(out)}
 
 
@@ -115,27 +148,21 @@ def _streak(dates: list[str], today: dt.date) -> int:
     return n
 
 
+def _daily_puzzle(today: dt.date):
+    """The same puzzle for everyone on a given day, rated 1200-2000 when the library has one."""
+    lib = load_library()
+    candidates = [p for p in lib.all if 1200 <= p.rating <= 2000] or lib.all
+    return random.Random(today.isoformat()).choice(candidates)
+
+
 @router.get("/daily")
 async def daily() -> dict:
-    lib = load_library()
-    if not lib.all:
+    if not load_library().all:
         raise HTTPException(503, "no puzzles installed")
     today = dt.date.today()
-    rng = random.Random(today.isoformat())
-    candidates = [p for p in lib.all if 1200 <= p.rating <= 2000] or lib.all
-    p = rng.choice(candidates)
+    p = _daily_puzzle(today)
     dates = await database.get_player_value(DAILY_KEY, [])
     return {"date": today.isoformat(), "puzzle": p.public(), "solved_today": today.isoformat() in dates, "streak": _streak(dates, today)}
-
-
-@router.post("/daily/solved")
-async def daily_solved() -> dict:
-    today = dt.date.today()
-    dates = await database.get_player_value(DAILY_KEY, [])
-    if today.isoformat() not in dates:
-        dates = sorted(set(dates + [today.isoformat()]))[-400:]
-        await database.set_player_value(DAILY_KEY, dates)
-    return {"solved_today": True, "streak": _streak(dates, today)}
 
 
 @router.get("/{puzzle_id}")
@@ -148,27 +175,40 @@ async def get_puzzle(puzzle_id: str) -> dict:
 
 @router.post("/{puzzle_id}/attempt")
 async def attempt(puzzle_id: str, req: AttemptRequest) -> dict:
+    """Judges the attempt from the moves played; the browser's verdict is never trusted."""
     p = load_library().by_id.get(puzzle_id)
-    if not p and req.mode == "mistakes" and puzzle_id.startswith("mistake-"):
-        before = await _player_rating()
+    before = await _player_rating()
+    if not p and req.mode == "mistakes":
+        m = next((x for x in await _mistake_puzzles() if x["id"] == puzzle_id), None)
+        if m is None:
+            raise HTTPException(404, f"no mistake puzzle {puzzle_id!r}")
+        solved = solves(m["fen"], m["moves"], req.moves, solver_first=True) and not req.hinted
         await database.execute(
             "INSERT INTO puzzle_attempts(puzzle_id, solved, seconds, rating_before, rating_after, mode) VALUES(?,?,?,?,?,?)",
-            (puzzle_id, int(req.solved), req.seconds, before.rating, before.rating, req.mode),
+            (puzzle_id, int(solved), req.seconds, before.rating, before.rating, req.mode),
         )
-        return {"solved": req.solved, "rating_before": round(before.rating), "rating_after": round(before.rating), "delta": 0, "puzzle_rating": None}
+        return {"solved": solved, "rating_before": round(before.rating), "rating_after": round(before.rating), "delta": 0, "puzzle_rating": None}
     if not p:
         raise HTTPException(404, "no such puzzle")
-    before = await _player_rating()
+    solved = solves(p.fen, p.moves, req.moves, solver_first=False) and not req.hinted
     after = before
     if req.mode == "rated":
-        after = update(before, Rating(rating=p.rating, rd=p.rd), 1.0 if req.solved else 0.0)
+        after = update(before, Rating(rating=p.rating, rd=p.rd), 1.0 if solved else 0.0)
         await database.set_player_value(RATING_KEY, {"rating": after.rating, "rd": after.rd, "volatility": after.volatility})
     await database.execute(
         "INSERT INTO puzzle_attempts(puzzle_id, solved, seconds, rating_before, rating_after, mode) VALUES(?,?,?,?,?,?)",
-        (puzzle_id, int(req.solved), req.seconds, before.rating, after.rating, req.mode),
+        (puzzle_id, int(solved), req.seconds, before.rating, after.rating, req.mode),
     )
-    return {"solved": req.solved, "rating_before": round(before.rating), "rating_after": round(after.rating),
-            "delta": round(after.rating - before.rating), "puzzle_rating": p.rating}
+    streak = None
+    if req.mode == "daily" and p.id == _daily_puzzle(dt.date.today()).id:
+        dates = await database.get_player_value(DAILY_KEY, [])
+        today = dt.date.today()
+        if solved and today.isoformat() not in dates:
+            dates = sorted(set(dates + [today.isoformat()]))[-400:]
+            await database.set_player_value(DAILY_KEY, dates)
+        streak = _streak(dates, today)
+    return {"solved": solved, "rating_before": round(before.rating), "rating_after": round(after.rating),
+            "delta": round(after.rating - before.rating), "puzzle_rating": p.rating, "streak": streak}
 
 
 @router.get("/rush/start")
