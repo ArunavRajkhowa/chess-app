@@ -39,3 +39,24 @@ def test_search_and_continuations():
     conts = book.continuations(board)
     names = {o.name for _, o in conts}
     assert "King's Pawn Game" in names or any("King's Pawn" in n for n in names)
+
+
+def test_search_ranks_family_matches_first():
+    hits = load_book().search("sicilian")
+    assert hits[0].name == "Sicilian Defense"
+    in_family = ["sicilian" in o.family.lower() for o in hits]
+    assert in_family == sorted(in_family, reverse=True)  # no family match after a later-only match
+
+
+def test_book_moves_follow_named_lines_through_unnamed_positions():
+    book = load_book()
+    board = chess.Board()
+    for s in ["e4", "c5", "Nf3", "d6", "d4", "cxd4"]:
+        board.push_san(s)
+    conts = {board.san(mv): (op, n) for mv, op, n in book.book_moves(board)}
+    # 4.Nxd4 reaches no named position, but the Najdorf, Dragon and others pass through it
+    assert conts["Nxd4"][0] is None
+    assert conts["Nxd4"][1] > conts["Qxd4"][1] > 0
+    board.push_san("Nxd4")
+    conts = {board.san(mv): n for mv, _, n in book.book_moves(board)}
+    assert conts["Nf6"] > 1 and conts["g6"] > 0

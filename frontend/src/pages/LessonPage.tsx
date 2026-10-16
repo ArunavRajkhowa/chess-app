@@ -12,7 +12,7 @@ import { Markdown } from "../lib/markdown";
 import { play as playSound } from "../lib/sound";
 import "./Learn.css";
 
-type TaskState = { status: "idle" | "ok" | "bad" | "done"; text: string; attempts: number; hint: boolean };
+type TaskState = { status: "idle" | "ok" | "bad" | "done" | "revealed"; text: string; attempts: number; hint: boolean };
 
 export function LessonPage() {
   const { lessonId = "" } = useParams();
@@ -119,8 +119,9 @@ function Challenge({ section, onResult, onNext, nextLabel }: { section: Extract<
   const [last, setLast] = useState<[Square, Square] | null>(null);
   const chess = useMemo(() => new Chess(fen), [fen]);
   const solverColor = new Chess(section.fen).turn();
+  const over = state.status === "done" || state.status === "revealed";
   const onMove = (from: Square, to: Square, promotion?: PromotionPiece) => {
-    if (state.status === "done") return;
+    if (over) return;
     const c = new Chess(fen);
     const mv = safeMove(c, { from, to, promotion });
     if (!mv) return;
@@ -145,8 +146,21 @@ function Challenge({ section, onResult, onNext, nextLabel }: { section: Extract<
       setState({ ...state, status: "bad", attempts: state.attempts + 1, text: `${mv.san} is not it. Try again${section.hint ? " or take a hint" : ""}.` });
     }
   };
-  const dests = useMemo(() => (state.status === "done" ? new Map() : destsFor(chess)), [chess, state.status]);
-  const shapes: Shape[] = state.hint && state.status !== "done" ? [{ orig: section.solution[index].slice(0, 2), brush: "yellow" }] : [];
+  // Giving up plays the rest of the solution on the board and does not count as solved.
+  const reveal = () => {
+    setState({ ...state, status: "revealed", text: section.explanation ?? "" });
+    onResult(false);
+    const c = new Chess(fen);
+    section.solution.slice(index).forEach((uci, k) => {
+      const mv = safeMove(c, uci);
+      if (!mv) return;
+      const sound = soundForMove(mv, c);
+      const after = c.fen();
+      setTimeout(() => { playSound(sound); setFen(after); setLast([uci.slice(0, 2), uci.slice(2, 4)]); }, 350 * k);
+    });
+  };
+  const dests = useMemo(() => (over ? new Map() : destsFor(chess)), [chess, over]);
+  const shapes: Shape[] = state.hint && !over ? [{ orig: section.solution[index].slice(0, 2), brush: "yellow" }] : [];
   return (
     <div className="stack">
       <Board fen={fen} orientation={section.orientation ?? (solverColor === "w" ? "white" : "black")} movable={{ color: chess.turn(), dests }} lastMove={last} check={checkSquare(chess)} shapes={shapes} onMove={onMove} />
@@ -154,10 +168,11 @@ function Challenge({ section, onResult, onNext, nextLabel }: { section: Extract<
         <strong data-testid="challenge-prompt">{section.prompt}</strong>
         {state.status === "bad" && <div className="task-banner bad" data-testid="task-bad">{state.text}</div>}
         {state.status === "done" && <div className="task-banner ok" data-testid="task-ok">Correct! {state.text} Solution: {section.solution_san.join(" ")}</div>}
+        {state.status === "revealed" && <div className="task-banner" data-testid="task-revealed">The solution: {section.solution_san.join(" ")}. {state.text}</div>}
         <div className="row">
-          {state.status !== "done" && section.hint && <button className="btn btn-sm" onClick={() => setState({ ...state, hint: true, attempts: state.attempts + 1, text: section.hint ?? "" , status: state.status === "idle" ? "bad" : state.status })}><Lightbulb size={14} /> Hint</button>}
-          {state.status !== "done" && <button className="btn btn-sm btn-ghost" onClick={() => { setState({ ...state, status: "done", text: section.explanation ?? "" }); onResult(false); }}>Show solution</button>}
-          {state.status === "done" && <button className="btn btn-primary" onClick={onNext} data-testid="continue">{nextLabel}</button>}
+          {!over && section.hint && <button className="btn btn-sm" onClick={() => setState({ ...state, hint: true, attempts: state.attempts + 1, text: section.hint ?? "" , status: state.status === "idle" ? "bad" : state.status })}><Lightbulb size={14} /> Hint</button>}
+          {!over && <button className="btn btn-sm btn-ghost" onClick={reveal}>Show solution</button>}
+          {over && <button className="btn btn-primary" onClick={onNext} data-testid="continue">{nextLabel}</button>}
         </div>
       </div>
     </div>
@@ -169,7 +184,7 @@ function Quiz({ section, onResult, onNext, nextLabel }: { section: Extract<Secti
   const right = picked === section.answer;
   return (
     <div className="stack">
-      {section.fen && <Board fen={section.fen} orientation="white" />}
+      {section.fen && <Board fen={section.fen} orientation={new Chess(section.fen).turn() === "w" ? "white" : "black"} />}
       <div className="card stack">
         <strong data-testid="quiz-question">{section.question}</strong>
         <div className="quiz-options">

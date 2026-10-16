@@ -1,10 +1,12 @@
 """The opening book: the lichess chess-openings tables (data/openings/*.tsv, CC0). Loaded once
 into a map from position key (EPD without move counters) to the deepest named line reaching
-it, so a game's opening is the last named position it passed through."""
+it, so a game's opening is the last named position it passed through. It also counts the named
+lines that pass through each position, so the explorer can follow a line through unnamed moves."""
 from __future__ import annotations
 
 import csv
 import logging
+from collections import Counter
 from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
@@ -39,10 +41,11 @@ def _position_key(board: chess.Board) -> str:
 
 
 class OpeningBook:
-    def __init__(self, by_key: dict[str, Opening], all_openings: list[Opening]):
+    def __init__(self, by_key: dict[str, Opening], all_openings: list[Opening], lines_through: Counter[str]):
         self.by_key = by_key
         self.all = all_openings
         self.book_keys = set(by_key)
+        self.lines_through = lines_through
 
     def lookup(self, board: chess.Board) -> Opening | None:
         return self.by_key.get(_position_key(board))
@@ -70,7 +73,7 @@ class OpeningBook:
         if not q:
             return []
         hits = [o for o in self.all if q in o.name.lower() or q == o.eco.lower()]
-        hits.sort(key=lambda o: (o.ply, o.name))
+        hits.sort(key=lambda o: (q not in o.family.lower(), o.ply, o.name))
         return hits[:limit]
 
     def continuations(self, board: chess.Board) -> list[tuple[chess.Move, Opening]]:
@@ -83,6 +86,18 @@ class OpeningBook:
             if op is not None:
                 out.append((mv, op))
         out.sort(key=lambda t: t[1].name)
+        return out
+
+    def book_moves(self, board: chess.Board) -> list[tuple[chess.Move, Opening | None, int]]:
+        """Moves to a position on a named line: its name (None when the book names only deeper
+        positions) and how many named lines pass through it."""
+        out: list[tuple[chess.Move, Opening | None, int]] = []
+        for mv in board.legal_moves:
+            board.push(mv)
+            key = _position_key(board)
+            board.pop()
+            if key in self.lines_through:
+                out.append((mv, self.by_key.get(key), self.lines_through[key]))
         return out
 
 
@@ -105,6 +120,7 @@ def _parse_pgn_moves(pgn: str) -> list[chess.Move] | None:
 def load_book() -> OpeningBook:
     by_key: dict[str, Opening] = {}
     all_openings: list[Opening] = []
+    lines_through: Counter[str] = Counter()
     files = sorted(Path(OPENINGS_DIR).glob("*.tsv"))
     bad = 0
     for path in files:
@@ -115,10 +131,13 @@ def load_book() -> OpeningBook:
                     bad += 1
                     continue
                 board = chess.Board()
+                positions: set[str] = set()
                 for mv in moves:
                     board.push(mv)
+                    positions.add(_position_key(board))
+                lines_through.update(positions)
                 op = Opening(eco=row["eco"], name=row["name"], pgn=row["pgn"], ply=len(moves))
                 all_openings.append(op)
                 by_key[_position_key(board)] = op
     LOGGER.info("opening book: %d lines from %d files (%d unparsable)", len(all_openings), len(files), bad)
-    return OpeningBook(by_key, all_openings)
+    return OpeningBook(by_key, all_openings, lines_through)
