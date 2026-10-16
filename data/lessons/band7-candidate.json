@@ -1,0 +1,997 @@
+{
+ "modules": [
+  {
+   "id": "b7m1",
+   "band": 7,
+   "title": "Rook endings: the key positions at depth",
+   "strand": "endgames",
+   "summary": "Lucena, Philidor, the short side and Vancura as exact knowledge: the method for each side and the move that decides.",
+   "source": "Dvoretsky, Dvoretsky's Endgame Manual, ch. 9 (Lucena, Philidor, flank checks, Vancura); de la Villa, 100 Endgames You Must Know, ch. 9; every position checked with Stockfish 16 at depth 22-28",
+   "lessons": [
+    {
+     "id": "b7m1l1",
+     "title": "Lucena: build the bridge",
+     "objective": "Win the Lucena position: cut the king off, put the rook on the fourth rank, and block the last check with the rook.",
+     "minutes": 12,
+     "sections": [
+      {
+       "type": "text",
+       "md": "The Lucena position is the target of most winning rook-and-pawn endings. White has a pawn on the seventh rank, the king on the queening square, and the black king cut off from the pawn by at least one file. Black's rook waits to check.\n\nThe win has three steps.\n\n1. Check the defending king one more file away (1.Rd1+ Ke7). Now it cannot return to the c-file.\n2. Put the rook on the fourth rank (2.Rd4). This is the bridge.\n3. Bring the king out on the side of the defending king. Black checks from behind. The king steps down the board, and when it reaches the fifth rank, the rook blocks the next check on b4.\n\nThe fourth rank is the right rank because the king stops on the fifth. The rook interposes one rank below the king, and the checks end.\n\nDo not rush the pawn. Until the king is out, the pawn needs the king for protection."
+      },
+      {
+       "type": "position",
+       "fen": "1K1k4/1P6/8/8/8/8/r7/2R5 w - - 0 1",
+       "caption": "The Lucena position. 1.Rd1+ Ke7 2.Rd4: the rook takes the fourth rank and waits. Then the king walks out (Kc7, Kb6, Kc6, Kb5) and Rb4 blocks the last check.",
+       "arrows": [
+        {
+         "from": "c1",
+         "to": "d1",
+         "brush": "green"
+        },
+        {
+         "from": "d1",
+         "to": "d4",
+         "brush": "green"
+        },
+        {
+         "from": "b8",
+         "to": "c7",
+         "brush": "blue"
+        }
+       ],
+       "highlights": [
+        {
+         "square": "d4",
+         "brush": "green"
+        },
+        {
+         "square": "d8",
+         "brush": "red"
+        }
+       ]
+      },
+      {
+       "type": "drill",
+       "fen": "4k1K1/6P1/8/8/8/8/7r/5R2 w - - 0 1",
+       "orientation": "white",
+       "goal": "promote",
+       "max_moves": 14,
+       "prompt": "The same position on the other wing. Promote the g-pawn within 14 moves against the engine.",
+       "tip": "1.Re1+ first, then Re4. The king comes out via f7, then g6 or f6 and g5; the rook blocks the last check on g4."
+      },
+      {
+       "type": "quiz",
+       "question": "White to move. Black has just checked on b1. Which move wins?",
+       "options": [
+        "7.Rb4: block the check with the rook",
+        "7.Ka4: walk away from the checks",
+        "7.Kc4: run towards the centre",
+        "7.Ka5: step to the edge"
+       ],
+       "answer": 0,
+       "explanation": "7.Rb4 ends the checks and the pawn promotes. After 7.Ka4, 7.Kc4 or 7.Ka5 Black plays ...Rxb7 and it is a draw (Stockfish 16: 0.00 for all three). This is why the rook went to the fourth rank.",
+       "fen": "8/1P2k3/8/1K6/3R4/8/8/1r6 w - - 12 7"
+      }
+     ]
+    },
+    {
+     "id": "b7m1l2",
+     "title": "Philidor: the third-rank defence",
+     "objective": "Hold rook and pawn against rook with the rook on your third rank, and switch to checks from behind when the pawn advances.",
+     "minutes": 12,
+     "sections": [
+      {
+       "type": "text",
+       "md": "When the defending king stands in front of the pawn, the Philidor defence draws. It has two parts.\n\n1. While the pawn is on its fifth rank, keep the rook on your own third rank (for Black, the sixth rank). If the white king steps up to that rank, the rook checks it, and the king has no shelter.\n2. When White pushes the pawn to the sixth rank, the king loses its shelter in front of the pawn. Now drop the rook to the first rank and check from behind. The king cannot escape the checks and still protect the pawn.\n\nThe defence needs no calculation. Wait on the third rank, then check from behind. Your king stays on the queening square or next to it.\n\nIn the position below, Stockfish 16 gives 0.00 for each of White's eight best moves. The drill asks you to prove it at the board."
+      },
+      {
+       "type": "position",
+       "fen": "4k3/1R6/r7/3KP3/8/8/8/8 w - - 0 1",
+       "caption": "The Philidor position, White to move. The rook on a6 guards the sixth rank: Kd6 or Ke6 runs into a check. After e5-e6 the rook goes to a1 and checks from behind.",
+       "arrows": [
+        {
+         "from": "a6",
+         "to": "f6",
+         "brush": "green"
+        },
+        {
+         "from": "e5",
+         "to": "e6",
+         "brush": "red"
+        }
+       ],
+       "highlights": [
+        {
+         "square": "d6",
+         "brush": "yellow"
+        },
+        {
+         "square": "e6",
+         "brush": "yellow"
+        },
+        {
+         "square": "f6",
+         "brush": "yellow"
+        }
+       ]
+      },
+      {
+       "type": "drill",
+       "fen": "5k2/2R5/8/4KP2/8/8/8/1r6 b - - 0 1",
+       "orientation": "black",
+       "goal": "draw",
+       "max_moves": 40,
+       "prompt": "Hold the draw as Black. Make a draw by repetition, or win the pawn.",
+       "tip": "Rook to the sixth rank (Rb6). When f5-f6 comes, rook to the first rank and check from behind. Keep the king on f8, g8 or f7."
+      },
+      {
+       "type": "quiz",
+       "question": "In the Philidor defence, when must the defending rook leave its third rank?",
+       "options": [
+        "When the pawn advances to the sixth rank",
+        "When the attacking king reaches its fifth rank",
+        "Never: the rook stays on the third rank until the pawn falls",
+        "When the attacking rook reaches the seventh rank"
+       ],
+       "answer": 0,
+       "explanation": "While the pawn is on the fifth rank, the rook keeps the white king off the sixth. When the pawn reaches the sixth, the king can no longer hide in front of it, so checks from behind work: the rook drops to the first rank at once."
+      }
+     ]
+    },
+    {
+     "id": "b7m1l3",
+     "title": "The short side and the long side",
+     "objective": "When the king must leave the pawn's file, send it to the short side and keep the rook on the long side for flank checks.",
+     "minutes": 13,
+     "sections": [
+      {
+       "type": "text",
+       "md": "The pawn divides the board into two parts. The short side has fewer files between the pawn and the edge. The long side has more. With a c-pawn, the short side is the a- and b-files; the long side runs from d to h.\n\nWhen the defending king is pushed away from the pawn, send it to the short side. The rook then works on the long side, far from the pawn. From there it checks the attacking king from the flank. The king cannot come close to the rook without leaving its pawn.\n\nIf the defending king goes to the long side instead, it stands between its own rook and the pawn. The attacking king then walks to the short side, where the black rook has no room to check, and shelters the pawn.\n\nRule of thumb from the endgame manuals: flank checks need the rook at least three files away from the pawn. A rook on the g-file against a c-pawn is four files away."
+      },
+      {
+       "type": "position",
+       "fen": "8/2k4R/8/2PK4/8/8/8/6r1 b - - 0 1",
+       "caption": "Black to move after Rh7+. The c-pawn leaves two files on the short side (a, b) and five on the long side (d to h). The black rook on g1 already stands on the long side.",
+       "arrows": [
+        {
+         "from": "c7",
+         "to": "b8",
+         "brush": "green"
+        },
+        {
+         "from": "c7",
+         "to": "d8",
+         "brush": "red"
+        }
+       ],
+       "highlights": [
+        {
+         "square": "b8",
+         "brush": "green"
+        },
+        {
+         "square": "d8",
+         "brush": "red"
+        },
+        {
+         "square": "g1",
+         "brush": "blue"
+        }
+       ]
+      },
+      {
+       "type": "quiz",
+       "question": "Black to move. Two of these king moves hold the draw. Which one loses?",
+       "options": [
+        "1...Kb8",
+        "1...Kc8",
+        "1...Kd8"
+       ],
+       "answer": 2,
+       "explanation": "1...Kd8? goes to the long side. 2.Kc6! and the white king shelters the pawn: 2...Rc1 3.Rh8+ Ke7 4.Rc8 Rc2 5.Kb7, then c5-c6. Stockfish 16 at depth 28: about +5 for White. After 1...Kb8 (short side) or 1...Kc8 (in front of the pawn) the rook keeps its checks from the long side: 0.00.",
+       "fen": "8/2k4R/8/2PK4/8/8/8/6r1 b - - 0 1"
+      },
+      {
+       "type": "drill",
+       "fen": "8/2k4R/8/2PK4/8/8/8/6r1 b - - 0 1",
+       "orientation": "black",
+       "goal": "draw",
+       "max_moves": 40,
+       "prompt": "Hold the draw as Black from the same position. Make a draw by repetition, or win the pawn.",
+       "tip": "King to b8 or c8. Keep the rook far away on the long side and check the white king from the flank whenever it comes up beside the pawn."
+      },
+      {
+       "type": "quiz",
+       "question": "White has a pawn on the f-file. The black king is driven off f8. Where do the black king and rook belong?",
+       "options": [
+        "King to g7 or h7; rook on the a-file",
+        "King to e7; rook on the h-file",
+        "King to e7; rook on the a-file",
+        "King to g7; rook on the h-file"
+       ],
+       "answer": 0,
+       "explanation": "For an f-pawn the short side is the g- and h-files and the long side runs from a to e. King to the short side, rook to the far end of the long side: the a-rook is five files from the pawn and checks the king from the flank."
+      }
+     ]
+    },
+    {
+     "id": "b7m1l4",
+     "title": "Vancura: the rook pawn on the sixth",
+     "objective": "Draw against a rook pawn on the sixth with the white rook in front of it: attack the pawn from the side and keep the king on g7 or h7.",
+     "minutes": 12,
+     "sections": [
+      {
+       "type": "text",
+       "md": "Rook ending, a-pawn on the sixth, the white rook in front of it on a8. The white rook blocks its own pawn. Vancura's defence uses that.\n\n1. The black rook attacks the pawn from the side, along the sixth rank (Rf6). The white rook is tied to the a-file.\n2. The black king waits on g7 or h7. From there it guards g8 and h8, so when the pawn reaches a7 the white rook has no check on the eighth rank and no Rh8.\n3. If the white king walks towards the pawn, the rook checks it and returns to the sixth rank.\n4. If the pawn goes to a7, the rook goes behind it (Ra6 or lower on the a-file).\n\nThe king square is the detail that decides. On g7 or h7 the king is safe. On f7 the rook move Rh8 wins: if ...Rxa7, then Rh7+ skewers king and rook. On g6, a6-a7 threatens Rg8+ and a8=Q."
+      },
+      {
+       "type": "position",
+       "fen": "R7/6k1/P4r2/8/2K5/8/8/8 b - - 0 1",
+       "caption": "Vancura's position, Black to move. The rook on f6 attacks a6 from the side; the king on g7 guards g8 and h8.",
+       "arrows": [
+        {
+         "from": "f6",
+         "to": "a6",
+         "brush": "red"
+        },
+        {
+         "from": "g7",
+         "to": "g8",
+         "brush": "green"
+        },
+        {
+         "from": "g7",
+         "to": "h8",
+         "brush": "green"
+        }
+       ],
+       "highlights": [
+        {
+         "square": "g7",
+         "brush": "green"
+        },
+        {
+         "square": "h7",
+         "brush": "green"
+        }
+       ]
+      },
+      {
+       "type": "quiz",
+       "question": "Black to move. Two of these moves hold the draw. Which one loses?",
+       "options": [
+        "1...Kh7",
+        "1...Rf4+",
+        "1...Kg6"
+       ],
+       "answer": 2,
+       "explanation": "1...Kg6? 2.a7! and White threatens Rg8+ followed by a8=Q. Stockfish 16 finds a forced mate for White after 2.a7. With the king on g7 or h7 the rook cannot check on the eighth rank, and 1...Kh7 or 1...Rf4+ keeps the balance (0.0).",
+       "fen": "R7/6k1/P4r2/8/2K5/8/8/8 b - - 0 1"
+      },
+      {
+       "type": "drill",
+       "fen": "R7/6k1/P4r2/8/2K5/8/8/8 b - - 0 1",
+       "orientation": "black",
+       "goal": "draw",
+       "max_moves": 40,
+       "prompt": "Hold the draw as Black. Make a draw by repetition, or win the pawn.",
+       "tip": "Rook on the sixth rank attacking a6, king on g7 or h7. When the white king comes near the pawn, check it from the side and return to the sixth rank."
+      },
+      {
+       "type": "challenge",
+       "fen": "R7/P4k2/8/8/2K5/8/8/r7 w - - 0 1",
+       "prompt": "White to move. The black king stands on f7, one square too far from g7. Win.",
+       "solution": [
+        "a8h8"
+       ],
+       "hint": "With the king on f7, h8 is free for the rook, and the seventh rank is open for a skewer.",
+       "explanation": "1.Rh8! threatens a8=Q. 1...Rxa7 2.Rh7+ skewers the king and the rook on the seventh rank. Stockfish 16: about +5 after 1.Rh8, 0.00 after any king move. With the black king on g7 the same move fails, because g7 attacks h8."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b7m2",
+   "band": 7,
+   "title": "Bishop, queen and rook: exact positions",
+   "strand": "endgames",
+   "summary": "The wrong bishop and the corner, the queen against a pawn on the seventh, and the queen against the rook: positions where one move decides.",
+   "source": "Dvoretsky, Dvoretsky's Endgame Manual, ch. 4 (bishop against pawns), 8 and 12-13 (queen against pawns and against rook); de la Villa, 100 Endgames You Must Know, ch. 1 and 3; every position checked with the Syzygy tablebases (4 pieces) and Stockfish 16",
+   "lessons": [
+    {
+     "id": "b7m2l1",
+     "title": "The wrong bishop and the corner",
+     "objective": "With a rook pawn and the wrong bishop, keep the defending king out of the corner, or, as the defender, find the one route into it.",
+     "minutes": 11,
+     "sections": [
+      {
+       "type": "text",
+       "md": "A rook pawn and a bishop that does not control the queening square: the wrong bishop. If the defending king reaches the corner in front of the pawn, the game is a draw. The king cannot be driven out, and the pawn cannot pass it.\n\nSo the whole fight is about the corner.\n\n1. The attacker uses the bishop to take away the squares on the way to the corner. With an h-pawn and a light-squared bishop, the bishop can take g8 (and f7, h7). The pawn, once on h6, takes g7.\n2. The defender counts the route: which squares lead to h8, g8 or g7, and which of them the bishop or the pawn can cover in time.\n\nIn these positions there is usually one right move. The tablebase confirms both challenges below: every other move changes the result."
+      },
+      {
+       "type": "position",
+       "fen": "7k/8/6KP/8/8/8/2B5/8 b - - 0 1",
+       "caption": "The fortress. The bishop can never control h8, a dark square. The black king goes back and forth between h8 and g8; if the bishop takes g8 away while the king is on h8, it is stalemate.",
+       "arrows": [
+        {
+         "from": "c2",
+         "to": "h7",
+         "brush": "blue"
+        }
+       ],
+       "highlights": [
+        {
+         "square": "h8",
+         "brush": "red"
+        },
+        {
+         "square": "g8",
+         "brush": "green"
+        }
+       ]
+      },
+      {
+       "type": "challenge",
+       "fen": "4k3/8/8/7P/8/4K3/8/5B2 w - - 0 1",
+       "prompt": "White to move. Only one move wins: the tablebase says every other move draws.",
+       "solution": [
+        "f1c4"
+       ],
+       "hint": "The black king wants g8 or g7. Which of those can the bishop take away right now?",
+       "explanation": "1.Bc4! takes f7 and g8. After 1...Kf8 2.h6 the king cannot use g7 (the pawn) or g8 (the bishop). After 1...Ke7 2.h6 Kf6 3.Bd3 Kf7 4.Bh7 the bishop shuts the king out. Any other first move lets the king reach the corner in time."
+      },
+      {
+       "type": "challenge",
+       "fen": "8/4k3/8/7P/2B5/8/7K/8 b - - 0 1",
+       "prompt": "Black to move. Only one move draws: find the route to the corner.",
+       "solution": [
+        "e7f6"
+       ],
+       "hint": "f8 looks closest to h8, but which squares next to it can White cover?",
+       "explanation": "1...Kf6! heads for g7, a dark square the bishop can never control. 1...Kf8? 2.h6 and the king is shut out: g8 belongs to the bishop on c4, g7 to the pawn. 1...Kf6 2.h6 Kg6 or 2.Bg8 Kg7: the king reaches the corner."
+      },
+      {
+       "type": "quiz",
+       "question": "White has a bishop and an a-pawn. Which bishop wins if the black king stands in the corner in front of the pawn?",
+       "options": [
+        "A light-squared bishop, because a8 is a light square",
+        "A dark-squared bishop, because a1 is a dark square",
+        "Neither: the king in the corner always draws",
+        "Either bishop: the pawn is enough"
+       ],
+       "answer": 0,
+       "explanation": "The queening square of an a-pawn for White is a8, a light square. A light-squared bishop can drive the king out of a8; a dark-squared bishop never can, and the king in the corner draws."
+      }
+     ]
+    },
+    {
+     "id": "b7m2l2",
+     "title": "Queen against a pawn on the seventh",
+     "objective": "Know when the queen beats a pawn on the seventh rank, and bring the king into the winning zone against a bishop pawn.",
+     "minutes": 12,
+     "sections": [
+      {
+       "type": "text",
+       "md": "Queen against a pawn on the seventh rank, the defending king next to its pawn.\n\nAgainst a centre pawn or a knight pawn, the queen wins however far away the white king is, as long as the queen can stop the pawn at once. The method: check and pin until the defending king must stand in front of its pawn. The pawn is blocked for one move. Use that tempo to bring your king one step closer. Repeat.\n\nAgainst a bishop pawn or a rook pawn the method fails, because of stalemate. With a c-pawn the defending king goes to the corner (...Ka1): if the queen takes the pawn, it is stalemate. With an a-pawn, the king in front of the pawn has no moves at all.\n\nSo against the bishop pawn and the rook pawn the queen wins only when its own king is already close: inside the winning zone. There, the king arrives in time to set up a mate or to take the pawn without stalemate. Often only one king move gets there in time."
+      },
+      {
+       "type": "position",
+       "fen": "8/8/8/8/5K2/8/2pQ4/k7 w - - 0 1",
+       "caption": "The stalemate trick. Black has played ...Ka1 and left the c-pawn to the queen. 1.Qxc2 is stalemate: a2, b1 and b2 are all covered.",
+       "arrows": [
+        {
+         "from": "d2",
+         "to": "c2",
+         "brush": "red"
+        }
+       ],
+       "highlights": [
+        {
+         "square": "a1",
+         "brush": "red"
+        }
+       ]
+      },
+      {
+       "type": "quiz",
+       "question": "Black has a pawn on the seventh rank, the black king beside it, and the white king is far away. Against which pawn does the queen still win?",
+       "options": [
+        "A d-pawn",
+        "A c-pawn",
+        "An a-pawn",
+        "An f-pawn"
+       ],
+       "answer": 0,
+       "explanation": "Centre and knight pawns lose to the queen whatever the distance: the defending king must step in front of the pawn, and White gains a tempo each time. Against bishop pawns (c, f) and rook pawns (a, h) the defender has stalemate, and only a close white king wins."
+      },
+      {
+       "type": "challenge",
+       "fen": "8/1Q6/4K3/8/8/8/2p5/2k5 w - - 0 1",
+       "prompt": "White to move. The tablebase says only one move wins. Find it.",
+       "solution": [
+        "e6d5"
+       ],
+       "hint": "The queen cannot win alone. Which king move is one tempo faster towards c3 and d3?",
+       "explanation": "1.Kd5! The king heads for c4 and d3, and the queen gains time with checks and pins until it arrives (for example 1...Kd2 2.Qb2 Kd3 3.Qd4+ Ke2 4.Qc3 and the pawn falls). 1.Ke5 or 1.Kd6 is one tempo too slow, and the stalemate defence holds."
+      }
+     ]
+    },
+    {
+     "id": "b7m2l3",
+     "title": "Queen against rook",
+     "objective": "Win with queen against rook: drive the king to the edge and catch the rook the moment it leaves its king.",
+     "minutes": 12,
+     "sections": [
+      {
+       "type": "text",
+       "md": "Queen against rook is a win, but it is slow work. The defender keeps the rook next to the king, where the king protects it, and gives checks whenever he can.\n\nThe method:\n\n1. Drive the defending king to the edge with king and queen together. The queen alone cannot do it.\n2. Bring your king close. The rook then has fewer safe squares.\n3. Use zugzwang. When the rook must move away from its king, look for the fork: a queen check that also attacks the rook.\n\nTwo patterns finish the game: the fork (check plus attack on the loose rook) and the skewer (a check on the line between king and rook). The defender's hopes are stalemate and a rook sacrifice that forces it, so check every move for stalemate."
+      },
+      {
+       "type": "position",
+       "fen": "8/8/7k/r7/8/1Q4K1/8/8 w - - 0 1",
+       "caption": "The rook on a5 is far from its king. 1.Qb6+ checks along the sixth rank and attacks the rook on the diagonal: the fork.",
+       "arrows": [
+        {
+         "from": "b3",
+         "to": "b6",
+         "brush": "green"
+        },
+        {
+         "from": "b6",
+         "to": "h6",
+         "brush": "red"
+        },
+        {
+         "from": "b6",
+         "to": "a5",
+         "brush": "red"
+        }
+       ],
+       "highlights": [
+        {
+         "square": "a5",
+         "brush": "red"
+        },
+        {
+         "square": "h6",
+         "brush": "red"
+        }
+       ]
+      },
+      {
+       "type": "quiz",
+       "question": "In queen against rook, where is the rook safest?",
+       "options": [
+        "Next to its own king",
+        "Far away, on the opposite edge",
+        "On the same line as both kings",
+        "On the long diagonal"
+       ],
+       "answer": 0,
+       "explanation": "Next to its king the rook is protected, and no fork wins it. Far from the king it is loose: a queen check that also attacks it wins it at once."
+      },
+      {
+       "type": "drill",
+       "fen": "1k6/1r6/2K5/8/8/8/8/4Q3 w - - 0 1",
+       "orientation": "white",
+       "goal": "win_material",
+       "max_moves": 20,
+       "prompt": "Win the rook (or mate) within 20 moves. The rook stands next to its king; make it leave.",
+       "tip": "Qe8+ pushes the king into the corner. Then improve the queen with tempo; sooner or later the rook must leave b7. When it does, look for a check that also hits it."
+      },
+      {
+       "type": "challenge",
+       "fen": "8/8/8/8/r7/5K1Q/8/3k4 w - - 0 1",
+       "prompt": "White to move. The rook on a4 has strayed from its king. Win it.",
+       "solution": [
+        "h3d7"
+       ],
+       "hint": "Find a check on a line through the king that also touches a4.",
+       "explanation": "1.Qd7+ checks on the d-file and attacks a4 on the diagonal d7-a4. 1...Rd4 2.Qxd4+ or any king move and 2.Qxa4. Stockfish 16 finds mate in 8 after 1.Qd7+; the next best move is worth less than three pawns."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b7m3",
+   "band": 7,
+   "title": "Calculation: candidates, comparison, the end of the line",
+   "strand": "calculation",
+   "summary": "Aagaard's method on master games: list every candidate first, calculate forcing lines to a position you can judge, and compare lines that look alike.",
+   "source": "Aagaard, Grandmaster Preparation: Calculation (ch. 1 candidate moves, ch. 4 comparison); Kotov, Think Like a Grandmaster (the tree of analysis); Rotlewi-Rubinstein, Lodz 1907; Averbakh-Kotov, Zurich 1953; Kasparov-Karpov, World Championship 1986 game 16; engine checks with Stockfish 16 at depth 22",
+   "lessons": [
+    {
+     "id": "b7m3l1",
+     "title": "Candidate moves: include the impossible move",
+     "objective": "List every forcing candidate, including the move that leaves your queen en prise, before you calculate any of them.",
+     "minutes": 14,
+     "sections": [
+      {
+       "type": "text",
+       "md": "Aagaard's first rule of calculation: find the candidates before you calculate. Most calculation errors are not miscalculations. They are the move you never looked at.\n\nA working routine:\n\n1. List every check, capture and threat for you, then for the opponent.\n2. Add the moves your instinct rejects: a queen left en prise, a rook offered for nothing, a quiet move in the middle of an attack.\n3. Only now calculate, one line at a time, to a position you can evaluate.\n\nRubinstein's win against Rotlewi (Lodz 1907) is the model. White attacks the black queen; the natural reply moves it. Rubinstein's list contained the capture 22...Rxc3, which leaves the queen where it stands, and then 23...Rd2, which offers the second rook. Stockfish 16 at depth 22 rates both as the best moves on the board by a wide margin."
+      },
+      {
+       "type": "game",
+       "pgn": "[Event \"Lodz\"]\n[Site \"Lodz POL\"]\n[Date \"1907.12.26\"]\n[Round \"?\"]\n[White \"Georg Rotlewi\"]\n[Black \"Akiba Rubinstein\"]\n[Result \"0-1\"]\n[ECO \"D40\"]\n\n1. d4 d5 2. Nf3 e6 3. e3 c5 4. c4 Nc6 5. Nc3 Nf6 6. dxc5 Bxc5 7. a3 a6 8. b4\nBd6 9. Bb2 O-O 10. Qd2 Qe7 11. Bd3 dxc4 12. Bxc4 b5 13. Bd3 Rd8 14. Qe2 Bb7\n15. O-O Ne5 16. Nxe5 Bxe5 17. f4 Bc7 18. e4 Rac8 19. e5 Bb6+ 20. Kh1 Ng4 21.\nBe4 Qh4 22. g3 Rxc3 23. gxh4 Rd2 24. Qxd2 Bxe4+ 25. Qg2 Rh3 0-1",
+       "title": "Rotlewi vs Rubinstein, Lodz 1907",
+       "mode": "replay",
+       "notes": {
+        "27": "14.Qe2: the white queen moves again (10.Qd2, 14.Qe2). Black is fully developed.",
+        "30": "15...Ne5: Black trades knights and clears the long diagonal for the bishop on b7.",
+        "38": "19...Bb6+: the second bishop takes the diagonal to g1 with check.",
+        "42": "21...Qh4 threatens 22...Qxh2 mate: the knight on g4 supports the queen.",
+        "43": "22.g3 stops the mate and attacks the queen.",
+        "44": "22...Rxc3!! The queen stays en prise. The knight on c3 was one of the two defenders of e4.",
+        "46": "23...Rd2!! attacks the last defender of e4, the queen on e2. Stockfish 16 finds mate in 9.",
+        "48": "24...Bxe4+: the long diagonal opens with check.",
+        "50": "25...Rh3: mate on h2 cannot be stopped. White resigned."
+       }
+      },
+      {
+       "type": "challenge",
+       "fen": "2rr2k1/1b3ppp/pb2p3/1p2P3/1P2BPnq/P1N3P1/1B2Q2P/R4R1K b - - 0 22",
+       "prompt": "Black to move. 22.g3 attacks the queen on h4. List your candidates first, then play the strongest move.",
+       "solution": [
+        "c8c3"
+       ],
+       "hint": "The queen does not have to move. Count the defenders of e4.",
+       "explanation": "22...Rxc3!! removes the knight that guards e4. 23.gxh4 Rd2!! and the queen can no longer hold e4. After the engine's 23.Bxb7 Rxg3 the attack goes on. Stockfish 16 at depth 22: about six pawns for Black after 22...Rxc3, about three after the safe 22...Qe7."
+      },
+      {
+       "type": "challenge",
+       "fen": "3r2k1/1b3ppp/pb2p3/1p2P3/1P2BPnP/P1r5/1B2Q2P/R4R1K b - - 0 23",
+       "prompt": "Black to move, a queen down after 23.gxh4. Find the win.",
+       "solution": [
+        "d8d2"
+       ],
+       "hint": "The white queen on e2 guards e4. Give it a second job.",
+       "explanation": "23...Rd2!! deflects the queen: 24.Qxd2 Bxe4+ 25.Qg2 Rh3 and mate on h2. 24.Rf2 Bxe4+ is no better. Stockfish 16 finds mate in 9. The natural 23...Bxe4+? 24.Qxe4 leaves White about three pawns better."
+      }
+     ]
+    },
+    {
+     "id": "b7m3l2",
+     "title": "Calculate to a clear end: Kotov's queen sacrifice",
+     "objective": "Calculate a forcing sacrifice until the opponent has no forcing replies left, and judge the position you reach.",
+     "minutes": 13,
+     "sections": [
+      {
+       "type": "text",
+       "md": "Kotov described the tree of analysis: name the candidates, calculate each branch once, and stop at a position you can evaluate. Aagaard adds the stop rule: a forcing line is finished only when the opponent has no checks, captures or threats left.\n\nAverbakh-Kotov (Zurich 1953) is the test. The centre is closed and the white king on h2 looks safe. But Black's queen on d7 eyes h3, the pawn on f4 takes g3 from the white king, and the rook on f6 can swing to h6.\n\n30...Qxh3+ 31.Kxh3 Rh6+ 32.Kg4 Nf6+ 33.Kf5 drags the king to the fifth rank. The line does not end in mate. It ends in a position where the king cannot go back, Black's pieces surround it, and White has no counter-threat. That is enough to evaluate.\n\nAt depth 22, Stockfish 16 rates 30...Qxh3+ at about +2.5 for Black, against +1.1 for the quiet 30...b5. At lower depth it rates the sacrifice as a draw: the win is deep, and Kotov found it at the board."
+      },
+      {
+       "type": "game",
+       "pgn": "[Event \"Candidates Tournament, Zurich\"]\n[Site \"Zurich SUI\"]\n[Date \"1953.??.??\"]\n[Round \"14\"]\n[White \"Yuri Averbakh\"]\n[Black \"Alexander Kotov\"]\n[Result \"0-1\"]\n[ECO \"A55\"]\n\n1. d4 Nf6 2. c4 d6 3. Nf3 Nbd7 4. Nc3 e5 5. e4 Be7 6. Be2 O-O 7. O-O c6 8. Qc2\nRe8 9. Rd1 Bf8 10. Rb1 a5 11. d5 Nc5 12. Be3 Qc7 13. h3 Bd7 14. Rbc1 g6 15.\nNd2 Rab8 16. Nb3 Nxb3 17. Qxb3 c5 18. Kh2 Kh8 19. Qc2 Ng8 20. Bg4 Nh6 21. Bxd7\nQxd7 22. Qd2 Ng8 23. g4 f5 24. f3 Be7 25. Rg1 Rf8 26. Rcf1 Rf7 27. gxf5 gxf5\n28. Rg2 f4 29. Bf2 Rf6 30. Ne2 Qxh3+ 31. Kxh3 Rh6+ 32. Kg4 Nf6+ 33. Kf5 Nd7\n34. Rg5 Rf8+ 35. Kg4 Nf6+ 36. Kf5 Ng8+ 37. Kg4 Nf6+ 38. Kf5 Nxd5+ 39. Kg4 Nf6+\n40. Kf5 Ng8+ 41. Kg4 Nf6+ 42. Kf5 Ng8+ 43. Kg4 Bxg5 44. Kxg5 Rf7 45. Bh4 Rg6+\n46. Kh5 Rfg7 47. Bg5 Rxg5+ 48. Kh4 Nf6 49. Ng3 Rxg3 50. Qxd6 R3g6 51. Qb8+ Rg8\n0-1",
+       "title": "Averbakh vs Kotov, Candidates Tournament, Zurich 1953",
+       "mode": "replay",
+       "notes": {
+        "45": "23.g4 commits the white kingside pawns. Black answers 23...f5 and opens lines.",
+        "56": "28...f4: the pawn takes g3 and e3 from White, and the rook comes to f6.",
+        "60": "30...Qxh3+!! Stockfish 16 at depth 22: about +2.5 for Black, more than a pawn ahead of any other move.",
+        "65": "33.Kf5: the king has been pulled to the fifth rank.",
+        "76": "38...Nxd5+ takes a pawn with a discovered check from the rook on f8.",
+        "86": "43...Bxg5: after the knight checks, the bishop takes the rook on g5 and the rooks close the net.",
+        "102": "51...Rg8: White has run out of checks. Averbakh resigned."
+       }
+      },
+      {
+       "type": "challenge",
+       "fen": "1r5k/1p1nb2p/3p3r/p1pPpKR1/2P1Pp2/5P2/PP1QNB2/5R2 b - - 6 34",
+       "prompt": "Black to move, a queen down after 30...Qxh3+ 31.Kxh3 Rh6+ 32.Kg4 Nf6+ 33.Kf5 Nd7 34.Rg5. Keep the king in the net.",
+       "solution": [
+        "b8f8"
+       ],
+       "hint": "The white king on f5 has few squares. Which rook check uses the open f-file?",
+       "explanation": "34...Rf8+! 35.Kg4 Nf6+ 36.Kf5 and the knight checks again: the king cannot escape the net. Stockfish 16 at depth 22: about +4 for Black after 34...Rf8+, 0.00 after 34...Bxg5. Kotov repeated the knight checks and won with 43...Bxg5."
+      },
+      {
+       "type": "quiz",
+       "question": "When is a forcing line finished, in Aagaard's sense?",
+       "options": [
+        "When the opponent has no checks, captures or threats left, and you can evaluate the position",
+        "When you have found a mate",
+        "After five moves for each side",
+        "When you have won back the material you gave"
+       ],
+       "answer": 0,
+       "explanation": "Stop when the forcing moves run out and judge the position. Kotov's line after 30...Qxh3+ ends with the king on f5 and no white counterplay: that is a position you can evaluate, even without a mate in sight."
+      }
+     ]
+    },
+    {
+     "id": "b7m3l3",
+     "title": "Comparison: four checks, one winner",
+     "objective": "When several candidates look alike, calculate each to the point where they differ and compare the positions you reach.",
+     "minutes": 14,
+     "sections": [
+      {
+       "type": "text",
+       "md": "Aagaard's comparison method: when two or more candidates look alike, calculate each to the point where they differ, then compare those positions. Do not stop at \"both are checks\".\n\nKasparov-Karpov, game 16 of the 1986 World Championship. Both sides attacked for twenty moves. Black's passed pawn on d3 is two steps from queening. White has several checks, and most of them lose: when the checks run out, the d-pawn promotes.\n\nThe routine:\n\n1. Name every candidate. On move 37 White has four checks.\n2. For each, find Black's best reply and the moment the line differs from the others.\n3. Compare the end positions. Include Black's threat ...d2 in every evaluation."
+      },
+      {
+       "type": "game",
+       "pgn": "[Event \"World Championship 1986 (game 16), Leningrad\"]\n[Site \"Leningrad URS\"]\n[Date \"1986.09.??\"]\n[Round \"16\"]\n[White \"Garry Kasparov\"]\n[Black \"Anatoly Karpov\"]\n[Result \"1-0\"]\n[ECO \"C92\"]\n\n1. e4 e5 2. Nf3 Nc6 3. Bb5 a6 4. Ba4 Nf6 5. O-O Be7 6. Re1 b5 7. Bb3 d6 8. c3\nO-O 9. h3 Bb7 10. d4 Re8 11. Nbd2 Bf8 12. a4 h6 13. Bc2 exd4 14. cxd4 Nb4 15.\nBb1 c5 16. d5 Nd7 17. Ra3 c4 18. Nd4 Qf6 19. N2f3 Nc5 20. axb5 axb5 21. Nxb5\nRxa3 22. Nxa3 Ba6 23. Re3 Rb8 24. e5 dxe5 25. Nxe5 Nbd3 26. Ng4 Qb6 27. Rg3 g6\n28. Bxh6 Qxb2 29. Qf3 Nd7 30. Bxf8 Kxf8 31. Kh2 Rb3 32. Bxd3 cxd3 33. Qf4 Qxa3\n34. Nh6 Qe7 35. Rxg6 Qe5 36. Rg8+ Ke7 37. d6+ Ke6 38. Re8+ Kd5 39. Rxe5+ Nxe5\n40. d7 Rb8 41. Nxf7 1-0",
+       "title": "Kasparov vs Karpov, World Championship 1986, game 16",
+       "mode": "replay",
+       "notes": {
+        "33": "17.Ra3: the rook lift. The rook will reach the kingside via e3 and g3.",
+        "50": "25...Nbd3: the knight lands on d3. Black's counterplay is real.",
+        "55": "28.Bxh6: the bishop sacrifice. Stockfish 16 rates it equal with 28.Bxd3.",
+        "61": "31.Kh2: a quiet king move in the middle of the attack.",
+        "64": "32...cxd3: the passed d-pawn appears.",
+        "69": "35.Rxg6! Stockfish 16: about +5.5. The pawn push 35.d6 loses (about -2.7).",
+        "73": "37.d6+! The only winning check of four.",
+        "81": "41.Nxf7: Karpov resigned."
+       }
+      },
+      {
+       "type": "challenge",
+       "fen": "5k2/3nqp2/b5pN/3P4/5Q2/1r1p2RP/5PPK/8 w - - 2 35",
+       "prompt": "White to move. Black's queen has come back to e7, and the pawn on d3 is dangerous. Compare 35.d6 and 35.Rxg6, then play the better move.",
+       "solution": [
+        "g3g6"
+       ],
+       "hint": "Which move creates a threat Black must answer at once?",
+       "explanation": "35.Rxg6! The f7-pawn is pinned by the queen on f4, so the rook cannot be taken, and 36.Rg8 is mate if Black ignores it. Stockfish 16 at depth 22: about +5.5 after 35.Rxg6, about -2.7 after 35.d6, when ...Qf6 and ...d2 come first."
+      },
+      {
+       "type": "quiz",
+       "question": "White to move. Four checks: 37.d6+, 37.Nf5+, 37.Qxe5+ and 37.Re8+. Which one wins?",
+       "options": [
+        "37.d6+",
+        "37.Nf5+",
+        "37.Qxe5+",
+        "37.Re8+"
+       ],
+       "answer": 0,
+       "explanation": "37.d6+! Ke6 38.Re8+ Kd5 39.Rxe5+ Nxe5 40.d7 and the pawn decides. Stockfish 16 at depth 22: about +6 after 37.d6+, and about -4.5 or worse after each of the other three checks, because the d3-pawn promotes when the checks run out.",
+       "fen": "6R1/3nkp2/b6N/3Pq3/5Q2/1r1p3P/5PPK/8 w - - 3 37"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b7m4",
+   "band": 7,
+   "title": "Defence and counterattack in master games",
+   "strand": "strategy",
+   "summary": "When the opponent's pieces are committed to one wing, hit back in the centre or on the other wing, and calculate the counter-blow as precisely as an attack.",
+   "source": "Bronstein, Zurich International Chess Tournament 1953 (Geller-Euwe, Keres-Smyslov); Dvoretsky and Yusupov school, Boost Your Chess 3 (ch. 3 counterplay, ch. 7 counter-attack, ch. 14 defence); engine checks with Stockfish 16 at depth 22",
+   "lessons": [
+    {
+     "id": "b7m4l1",
+     "title": "Counterattack where the attacker is not",
+     "objective": "Answer a kingside attack with a counter-blow on the second rank, and calculate it to the end.",
+     "minutes": 14,
+     "sections": [
+      {
+       "type": "text",
+       "md": "A strong attack commits pieces to one wing. The defender's chance lies where those pieces are not.\n\nGeller-Euwe (Zurich 1953). Geller lifted a rook to h4, took on h7 with the queen and played Bh6. White's queen, rook, bishop and knight are all on the kingside.\n\nEuwe gave a rook (22...Rh8 23.Qxh8) to bring the other rook to c2. Now ...Rxg2+ and the queen's entry give Black full counterplay, while the white queen sits on h8, far from her king. Stockfish 16 rates the position equal; Geller's 24.Rc1? lost at once.\n\nThree questions for the defender:\n\n1. Where are the attacker's pieces? Where are they not?\n2. Which of my pieces can reach the empty side in one move?\n3. Is my counter-blow faster than his attack? Count the moves, as an attacker would."
+      },
+      {
+       "type": "game",
+       "pgn": "[Event \"Candidates Tournament, Zurich\"]\n[Site \"Zurich SUI\"]\n[Date \"1953.??.??\"]\n[Round \"2\"]\n[White \"Efim Geller\"]\n[Black \"Max Euwe\"]\n[Result \"0-1\"]\n[ECO \"E28\"]\n\n1. d4 Nf6 2. c4 e6 3. Nc3 Bb4 4. e3 c5 5. a3 Bxc3+ 6. bxc3 b6 7. Bd3 Bb7 8. f3\nNc6 9. Ne2 O-O 10. O-O Na5 11. e4 Ne8 12. Ng3 cxd4 13. cxd4 Rc8 14. f4 Nxc4\n15. f5 f6 16. Rf4 b5 17. Rh4 Qb6 18. e5 Nxe5 19. fxe6 Nxd3 20. Qxd3 Qxe6 21.\nQxh7+ Kf7 22. Bh6 Rh8 23. Qxh8 Rc2 24. Rc1 Rxg2+ 25. Kf1 Qb3 26. Ke1 Qf3 0-1",
+       "title": "Geller vs Euwe, Candidates Tournament, Zurich 1953",
+       "mode": "replay",
+       "notes": {
+        "28": "14...Nxc4: Euwe takes a pawn and accepts a kingside attack.",
+        "33": "17.Rh4: the rook lift. White's pieces gather against h7.",
+        "41": "21.Qxh7+ Kf7: the king walks forward; the attack looks crushing.",
+        "44": "22...Rh8: Euwe gives a rook. Stockfish 16 prefers 22...Rc3, but the idea is sound: after 23.Qxh8 the balance holds.",
+        "46": "23...Rc2!! The only move. Stockfish 16: 0.1 for Black; every other move loses four pawns or more.",
+        "47": "24.Rc1? loses: Stockfish 16 gives about -11 for White. 24.d5 kept the balance.",
+        "50": "25...Qb3! threatens ...Qd3+ and ...Qf3+ against the bare king.",
+        "52": "26...Qf3: Stockfish 16 finds mate in at most seven moves. Geller resigned."
+       }
+      },
+      {
+       "type": "challenge",
+       "fen": "2r1n2Q/pb1p1kp1/4qp1B/1p6/3P3R/P5N1/6PP/R5K1 b - - 0 23",
+       "prompt": "Black to move. White has just taken the rook on h8 and is a rook up for a pawn. Find the counterattack.",
+       "solution": [
+        "c8c2"
+       ],
+       "hint": "White's pieces are on the kingside. What does the second rank look like?",
+       "explanation": "23...Rc2!! takes the second rank: ...Rxg2+ and the queen's entry follow. Stockfish 16 at depth 22 rates it about equal (0.1 for Black); 23...gxh6 or 23...b4 lose about four pawns. In the game 24.Rc1? Rxg2+ 25.Kf1 Qb3 won for Black."
+      },
+      {
+       "type": "challenge",
+       "fen": "4n2Q/pb1p1kp1/4qp1B/1p6/3P3R/P5N1/6rP/2R2K2 b - - 1 25",
+       "prompt": "Black to move after 24.Rc1 Rxg2+ 25.Kf1. Finish the counterattack.",
+       "solution": [
+        "e6b3"
+       ],
+       "hint": "Find a queen move that threatens two different checks next move.",
+       "explanation": "25...Qb3! threatens ...Qd3+ and ...Qf3+. After 26.Ke1 Qf3 Geller resigned. Stockfish 16 at depth 22 rates 25...Qb3 as decisive; the next best move, 25...Qa2, is worth less than two pawns."
+      }
+     ]
+    },
+    {
+     "id": "b7m4l2",
+     "title": "Strike in the centre",
+     "objective": "Meet a flank attack with a central counter-blow that creates threats faster than the attack.",
+     "minutes": 13,
+     "sections": [
+      {
+       "type": "text",
+       "md": "Old rule, still true: a flank attack is best met by a counter-blow in the centre. The centre is where the attacker's pieces came from. When they leave, it opens.\n\nKeres-Smyslov (Zurich 1953). Keres lifted both rooks to the h-file. 20.Rxh7 is coming, and Black's king has few defenders.\n\nSmyslov did not defend h7. He took on c4 and pushed the c-pawn to c3. The pawn hits the bishop on b2, and soon the d4-pawn falls to the queen. Each move creates a threat, so White never has time to finish the attack.\n\nTo find such a counter-blow:\n\n1. Look at the squares the attacker's pieces left behind.\n2. Find the pawn break that opens them.\n3. Calculate it as a race: count the moves to his mate and to your threats."
+      },
+      {
+       "type": "game",
+       "pgn": "[Event \"Candidates Tournament, Zurich\"]\n[Site \"Zurich SUI\"]\n[Date \"1953.??.??\"]\n[Round \"24\"]\n[White \"Paul Keres\"]\n[Black \"Vasily Smyslov\"]\n[Result \"0-1\"]\n[ECO \"E14\"]\n\n1. c4 Nf6 2. Nc3 e6 3. Nf3 c5 4. e3 Be7 5. b3 O-O 6. Bb2 b6 7. d4 cxd4 8. exd4\nd5 9. Bd3 Nc6 10. O-O Bb7 11. Rc1 Rc8 12. Re1 Nb4 13. Bf1 Ne4 14. a3 Nxc3 15.\nRxc3 Nc6 16. Ne5 Nxe5 17. Rxe5 Bf6 18. Rh5 g6 19. Rch3 dxc4 20. Rxh7 c3 21.\nQc1 Qxd4 22. Qh6 Rfd8 23. Bc1 Bg7 24. Qg5 Qf6 25. Qg4 c2 26. Be2 Rd4 27. f4\nRd1+ 28. Bxd1 Qd4+ 0-1",
+       "title": "Keres vs Smyslov, Candidates Tournament, Zurich 1953",
+       "mode": "replay",
+       "notes": {
+        "35": "18.Rh5: the first rook goes to the h-file.",
+        "37": "19.Rch3: both rooks aim at h7.",
+        "38": "19...dxc4! Stockfish 16: about +1.1 for Black; the defensive 19...Bg7 gives about -1.3.",
+        "40": "20...c3! The pawn attacks the bishop on b2 and opens the way for ...Qxd4.",
+        "42": "21...Qxd4: the queen enters through the centre.",
+        "50": "25...c2: the passed pawn is one step from queening.",
+        "56": "28...Qd4+: after 29.Kh1 cxd1=Q+ 30.Qxd1 Qxd1 is mate, and the other replies lose too (Stockfish 16: mate in at most seven). Keres resigned."
+       }
+      },
+      {
+       "type": "challenge",
+       "fen": "2rq1rk1/pb3p1p/1p2pbp1/3p3R/2PP4/PP5R/1B3PPP/3Q1BK1 b - - 1 19",
+       "prompt": "Black to move. Both white rooks aim at h7. Find the counter-blow.",
+       "solution": [
+        "d5c4"
+       ],
+       "hint": "Do not defend h7. Which pawn move opens the centre and gains time?",
+       "explanation": "19...dxc4! opens the long diagonal and prepares ...c3. Stockfish 16 at depth 22: about +1.1 for Black. The defensive tries 19...Bg7 and 19...h6 give White the advantage (about -1.3 and -1.6)."
+      },
+      {
+       "type": "challenge",
+       "fen": "2rq1rk1/pb3p1R/1p2pbp1/8/2pP4/PP5R/1B3PPP/3Q1BK1 b - - 0 20",
+       "prompt": "Black to move after 20.Rxh7. Continue the counterattack.",
+       "solution": [
+        "c4c3"
+       ],
+       "hint": "Push the pawn with tempo. What happens to d4 while White deals with it?",
+       "explanation": "20...c3! hits the bishop on b2; after 21.Qc1 (21.Ba1 Qxd4) Qxd4 the black queen and the c-pawn create threats faster than the rooks. Stockfish 16 at depth 22: about +3.7 for Black, against about -1.5 after 20...Bxg2."
+      }
+     ]
+    },
+    {
+     "id": "b7m4l3",
+     "title": "Defend with counter-threats: Lasker at 65",
+     "objective": "In a passive position, put every piece on a square where it defends and threatens at once, and give material back when that turns defence into attack.",
+     "minutes": 14,
+     "sections": [
+      {
+       "type": "text",
+       "md": "Lasker-style defence is not waiting. It is finding, for every piece, a square where it guards something and attacks something.\n\nEuwe-Lasker (Zurich 1934). Lasker, 65, accepts a cramped position. His knight travels d5, b4, c2, his rooks go to the d-file and the second rank, his queen to g5. Each piece defends and attacks at the same time.\n\nWhen Euwe attacks with h4-h5 and 35.Ne4, Lasker answers with counter-threats:\n\n1. 35...Qxe5 takes a pawn and attacks the knight on e4. Its only defender, the rook on e1, is attacked by the knight on c2.\n2. After 36.Nf6+ he gives the queen: 36...Qxf6 37.Rxf6 Nxf6. Material is level (two rooks and two knights against queen, rook and bishop), and every black piece is active.\n\nStockfish 16 at depth 22 rates both moves as clearly best: about +1.4 for Black, against about -0.9 and -4.7 for the alternatives."
+      },
+      {
+       "type": "game",
+       "pgn": "[White \"Max Euwe\"]\n[Black \"Emanuel Lasker\"]\n[Event \"Zurich\"]\n[Date \"1934\"]\n[Result \"0-1\"]\n[ECO \"D64\"]\n[Site \"Zurich\"]\n[Round \"-\"]\n[Themes \"defence,calculation,initiative\"]\n[Level \"4\"]\n[PlyCount \"100\"]\n\n1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Nbd7 5. e3 c6 6. Nf3 Be7 7. Qc2 O-O 8. a3\nRe8 9. Rc1 dxc4 10. Bxc4 Nd5 11. Bxe7 Qxe7 12. Ne4 N5f6 13. Ng3 c5 14. O-O cxd4\n15. Nxd4 Nb6 16. Ba2 Rb8 17. e4 Rd8 18. Rfd1 Bd7 19. e5 Ne8 20. Bb1 g6 21. Qe4\nBa4 22. b3 Bd7 23. a4 Nd5 24. Bd3 Rbc8 25. Bc4 Bc6 26. Nxc6 bxc6 27. Rd3 Nb4\n28. Rf3 Rc7 29. h4 Rcd7 30. h5 Qg5 31. Re1 Rd4 32. hxg6 hxg6 33. Qe2 Rd2 34.\nQf1 Nc2 35. Ne4 Qxe5 36. Nf6+ Qxf6 37. Rxf6 Nxf6 38. Rc1 Ne4 39. Be2 Nd4 40.\nBf3 Nxf2 41. Qc4 Nd3 42. Rf1 Ne5 43. Qb4 Nexf3+ 44. gxf3 Ne2+ 45. Kh2 Nf4+ 46.\nKh1 R2d4 47. Qe7 Kg7 48. Qc7 R8d5 49. Re1 Rg5 50. Qxc6 Rd8 0-1",
+       "title": "Euwe vs Lasker, Zurich 1934",
+       "mode": "replay",
+       "notes": {
+        "38": "19...Ne8: White has space; Black's position is cramped but has no weak pawns.",
+        "46": "23...Nd5: the knight finds its first good square.",
+        "54": "27...Nb4: the knight heads for c2 and d3.",
+        "60": "30...Qg5: the queen defends the kingside and attacks e5.",
+        "66": "33...Rd2: the rook reaches the second rank.",
+        "68": "34...Nc2: the knight attacks the rook on e1.",
+        "70": "35...Qxe5! Stockfish 16: about +1.4 for Black.",
+        "72": "36...Qxf6! The only good move: everything else loses about five pawns.",
+        "80": "40...Nxf2: the knights start to hunt the white king.",
+        "100": "50...Rd8: Euwe resigned."
+       }
+      },
+      {
+       "type": "challenge",
+       "fen": "3rn1k1/p4p2/2p1p1p1/4P1q1/P1B1N3/1P3R2/2nr1PP1/4RQK1 b - - 5 35",
+       "prompt": "Black to move. 35.Ne4 attacks the queen on g5. Find the move that defends and attacks at once.",
+       "solution": [
+        "g5e5"
+       ],
+       "hint": "Which white pawn is loose? Which white piece defends the knight on e4, and is it already attacked?",
+       "explanation": "35...Qxe5! takes the pawn and attacks the knight on e4, whose only defender, the rook on e1, is attacked by the knight on c2. Stockfish 16 at depth 22: about +1.4 for Black; the next best move gives about -0.9."
+      },
+      {
+       "type": "challenge",
+       "fen": "3rn1k1/p4p2/2p1pNp1/4q3/P1B5/1P3R2/2nr1PP1/4RQK1 b - - 1 36",
+       "prompt": "Black to move after 36.Nf6+. The knight checks and attacks e8. Find the only good move.",
+       "solution": [
+        "e5f6"
+       ],
+       "hint": "Count what you get if you give the queen for the knight and then take back on f6.",
+       "explanation": "36...Qxf6! 37.Rxf6 Nxf6: queen for rook and knight, level material, and the knight on c2 still hits e1. Stockfish 16 at depth 22: about +1.4 for Black; every other move loses about five pawns."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b7m5",
+   "band": 7,
+   "title": "Model games: prophylaxis and the exchange sacrifice",
+   "strand": "model games",
+   "summary": "Petrosian's exchange sacrifices and Karpov's prophylaxis: give material for squares, and stop the opponent's plan before you pursue your own.",
+   "source": "Dvoretsky and Yusupov school, Boost Your Chess 3 (ch. 12 prophylactic thinking); Nimzowitsch, My System (prophylaxis, blockade); games Reshevsky-Petrosian, Zurich 1953; Petrosian-Spassky, World Championship 1966 game 10; Karpov-Spassky, Candidates 1974 game 9; Karpov-Unzicker, Nice Olympiad 1974; engine checks with Stockfish 16",
+   "lessons": [
+    {
+     "id": "b7m5l1",
+     "title": "The exchange for a blockade: Petrosian",
+     "objective": "Give the exchange to stop the opponent's centre pawns and win a permanent square for a knight.",
+     "minutes": 13,
+     "sections": [
+      {
+       "type": "text",
+       "md": "A rook is worth more than a minor piece when lines are open. When the position is blocked, a well-placed knight can match a rook.\n\nPetrosian used this more than anyone. Reshevsky-Petrosian (Zurich 1953): White has two bishops and the centre pawns d4 and e5. White's plan is d4-d5 and e5-e6, opening lines for the bishops.\n\nPetrosian played 25...Re6, offering the rook for the light-squared bishop. After 26.a4 Ne7 27.Bxe6 fxe6, the pawn on e6 stops the e-pawn, the knight goes to d5, and no white piece can drive it away. White's rooks find no way in.\n\nStockfish 16 at depth 22 rates 25...Re6 as Black's best move. The game was drawn. That was the point: the sacrifice turned a worse position into a holdable one.\n\nAsk before you give the exchange: which enemy pawns will stop, which square will be mine for good, and which of his rooks will have no file?"
+      },
+      {
+       "type": "game",
+       "pgn": "[Event \"Candidates Tournament, Zurich\"]\n[Site \"Zurich SUI\"]\n[Date \"1953.??.??\"]\n[Round \"2\"]\n[White \"Samuel Reshevsky\"]\n[Black \"Tigran Petrosian\"]\n[Result \"1/2-1/2\"]\n[ECO \"E58\"]\n\n1. d4 Nf6 2. c4 e6 3. Nc3 Bb4 4. e3 O-O 5. Bd3 d5 6. Nf3 c5 7. O-O Nc6 8. a3\nBxc3 9. bxc3 b6 10. cxd5 exd5 11. Bb2 c4 12. Bc2 Bg4 13. Qe1 Ne4 14. Nd2 Nxd2\n15. Qxd2 Bh5 16. f3 Bg6 17. e4 Qd7 18. Rae1 dxe4 19. fxe4 Rfe8 20. Qf4 b5 21.\nBd1 Re7 22. Bg4 Qe8 23. e5 a5 24. Re3 Rd8 25. Rfe1 Re6 26. a4 Ne7 27. Bxe6\nfxe6 28. Qf1 Nd5 29. Rf3 Bd3 30. Rxd3 cxd3 31. Qxd3 b4 32. cxb4 axb4 33. a5\nRa8 34. Ra1 Qc6 35. Bc1 Qc7 36. a6 Qb6 37. Bd2 b3 38. Qc4 h6 39. h3 b2 40. Rb1\nKh8 41. Be1 1/2-1/2",
+       "title": "Reshevsky vs Petrosian, Candidates Tournament, Zurich 1953",
+       "mode": "replay",
+       "notes": {
+        "33": "17.e4: White's centre starts to move.",
+        "45": "23.e5: d5 and e6 are the next threats.",
+        "50": "25...Re6: Petrosian offers the exchange to stop the pawns.",
+        "53": "27.Bxe6 fxe6: White takes the rook; the e6-pawn blocks the e-file.",
+        "56": "28...Nd5: the knight reaches its square. No white minor piece can challenge it.",
+        "59": "30.Rxd3: Reshevsky gives the exchange back to free his position.",
+        "81": "41.Be1: draw agreed."
+       }
+      },
+      {
+       "type": "position",
+       "fen": "3rq1k1/4rppp/2n3b1/pp2P3/2pP1QB1/P1P1R3/1B4PP/4R1K1 b - - 3 25",
+       "caption": "Black to move, move 25. White's d4 and e5 pawns and the two bishops threaten d4-d5 and e5-e6. Petrosian's answer: 25...Re6.",
+       "arrows": [
+        {
+         "from": "e7",
+         "to": "e6",
+         "brush": "green"
+        },
+        {
+         "from": "c6",
+         "to": "e7",
+         "brush": "blue"
+        },
+        {
+         "from": "e7",
+         "to": "d5",
+         "brush": "blue"
+        }
+       ],
+       "highlights": [
+        {
+         "square": "d5",
+         "brush": "green"
+        },
+        {
+         "square": "e6",
+         "brush": "green"
+        }
+       ],
+       "orientation": "black"
+      },
+      {
+       "type": "quiz",
+       "question": "Petrosian gave the exchange with 25...Re6 (26.a4 Ne7 27.Bxe6 fxe6). What did he get for it?",
+       "options": [
+        "A pawn on e6 and a knight on d5 that blockade White's centre for good",
+        "A direct attack on the white king",
+        "Two pawns and an extra tempo",
+        "A passed a-pawn"
+       ],
+       "answer": 0,
+       "explanation": "The e6-pawn stops e5 from moving, and the knight on d5 cannot be attacked by a pawn or exchanged by a minor piece. White's rooks have no way into Black's position. The game ended in a draw.",
+       "fen": "3rq1k1/4rppp/2n3b1/pp2P3/2pP1QB1/P1P1R3/1B4PP/4R1K1 b - - 3 25",
+       "orientation": "black"
+      }
+     ]
+    },
+    {
+     "id": "b7m5l2",
+     "title": "Two exchange sacrifices: Petrosian-Spassky 1966",
+     "objective": "Give the exchange for light squares and a passive enemy, then finish when every black piece is tied down.",
+     "minutes": 13,
+     "sections": [
+      {
+       "type": "text",
+       "md": "Game 10 of the 1966 World Championship. Petrosian, the champion, gives the exchange twice and wins with a queen sacrifice.\n\nThe first sacrifice, 21.Ne3, lets Black take the rook on f1 with the bishop. In return the knight comes to e3, where it controls f5, g4 and d5, and Black loses his light-squared bishop, the defender of those squares. Stockfish 16 at depth 22 agrees: about +0.3 for White after 21.Ne3, about -0.6 after the next best move.\n\nThe second, 24.Rxf4, removes the knight from f4. After 25.Be6+ the black rooks and queen are tied to f7 and the d6-pawn, and the white knights come to e4 and d6.\n\nThe final 30.Qh8+ is a short calculation. The positional work before it is the lesson: the light squares, the passive black rooks and the knights."
+      },
+      {
+       "type": "game",
+       "pgn": "[Event \"World Championship 1966 (game 10), Moscow\"]\n[Site \"Moscow URS\"]\n[Date \"1966.??.??\"]\n[Round \"10\"]\n[White \"Tigran Petrosian\"]\n[Black \"Boris Spassky\"]\n[Result \"1-0\"]\n[ECO \"E66\"]\n\n1. Nf3 Nf6 2. g3 g6 3. c4 Bg7 4. Bg2 O-O 5. O-O Nc6 6. Nc3 d6 7. d4 a6 8. d5\nNa5 9. Nd2 c5 10. Qc2 e5 11. b3 Ng4 12. e4 f5 13. exf5 gxf5 14. Nd1 b5 15. f3\ne4 16. Bb2 exf3 17. Bxf3 Bxb2 18. Qxb2 Ne5 19. Be2 f4 20. gxf4 Bh3 21. Ne3\nBxf1 22. Rxf1 Ng6 23. Bg4 Nxf4 24. Rxf4 Rxf4 25. Be6+ Rf7 26. Ne4 Qh4 27. Nxd6\nQg5+ 28. Kh1 Ra7 29. Bxf7+ Rxf7 30. Qh8+ 1-0",
+       "title": "Petrosian vs Spassky, World Championship 1966, game 10",
+       "mode": "replay",
+       "notes": {
+        "27": "14.Nd1: the knight reroutes; the dark-squared bishops will be traded.",
+        "34": "17...Bxb2: the dark-squared bishops are traded; Black's king loses a defender.",
+        "40": "20...Bh3 attacks the rook on f1.",
+        "41": "21.Ne3! The exchange is given. Stockfish 16: the best move, about +0.3.",
+        "47": "24.Rxf4: the second exchange sacrifice removes the knight on f4.",
+        "49": "25.Be6+ Rf7: the bishop pins the rook on f7 against the king.",
+        "53": "27.Nxd6: the knight takes the d6-pawn and hits f7.",
+        "59": "30.Qh8+!! Spassky resigned."
+       }
+      },
+      {
+       "type": "challenge",
+       "fen": "r2q1rk1/7p/p2p4/nppPn3/2P2P2/1P5b/PQ1NB2P/R2N1RK1 w - - 1 21",
+       "prompt": "White to move. 20...Bh3 attacks the rook on f1. Find Petrosian's move.",
+       "solution": [
+        "d1e3"
+       ],
+       "hint": "The rook does not have to move. Which square would a knight use to rule f5, g4 and d5?",
+       "explanation": "21.Ne3! 21...Bxf1 22.Rxf1: White has given the exchange, but the light-squared bishop is gone and the knight on e3 controls f5 and g4. Stockfish 16 at depth 22: about +0.3 for White after 21.Ne3, about -0.6 after the best alternative."
+      },
+      {
+       "type": "challenge",
+       "fen": "6k1/5r1p/p2N4/nppP2q1/2P5/1P2N3/PQ5P/7K w - - 0 30",
+       "prompt": "White to move. Every black piece is tied down. Finish the game.",
+       "solution": [
+        "b2h8"
+       ],
+       "hint": "The queen on g5 and the rook on f7 stand a knight's jump apart.",
+       "explanation": "30.Qh8+!! Kxh8 31.Nxf7+ forks king and queen, and 32.Nxg5 leaves White a piece up. Stockfish 16 at depth 22: about +6 after 30.Qh8+, about +1 after the next best move."
+      }
+     ]
+    },
+    {
+     "id": "b7m5l3",
+     "title": "Prophylaxis: Karpov's quiet moves",
+     "objective": "Before you make your plan, ask what the opponent wants, and choose the move that improves your worst piece while it takes his idea away.",
+     "minutes": 14,
+     "sections": [
+      {
+       "type": "text",
+       "md": "Dvoretsky's prophylactic question: what does my opponent want to do, and what would he play if it were his move? Karpov asked it every move.\n\nTwo of his quiet moves from 1974:\n\n1. Karpov-Spassky, Candidates game 9: 24.Nb1. The knight on c3 does nothing and blocks the c-pawn. From b1 it goes to d2 and f3, where it hits e5; the c-pawn is free to play c3 and push the black knight from b4. Stockfish 16 at depth 22 rates 24.Nb1 as the best move.\n2. Karpov-Unzicker, Nice Olympiad: 24.Ba7. The a-file is the only open file. The bishop stands in front of Black's rook, so White doubles rooks behind it and Black can never contest the file. Stockfish 16 at depth 22 also rates it as the best move (about +0.8).\n\nNeither move attacks anything. Each improves a piece and takes away the opponent's only active plan."
+      },
+      {
+       "type": "game",
+       "pgn": "[Event \"Candidates semi-final (game 9), Leningrad\"]\n[Site \"Leningrad URS\"]\n[Date \"1974.??.??\"]\n[Round \"9\"]\n[White \"Anatoly Karpov\"]\n[Black \"Boris Spassky\"]\n[Result \"1-0\"]\n[ECO \"B83\"]\n\n1. e4 c5 2. Nf3 e6 3. d4 cxd4 4. Nxd4 Nf6 5. Nc3 d6 6. Be2 Be7 7. O-O O-O 8.\nf4 Nc6 9. Be3 Bd7 10. Nb3 a5 11. a4 Nb4 12. Bf3 Bc6 13. Nd4 g6 14. Rf2 e5 15.\nNxc6 bxc6 16. fxe5 dxe5 17. Qf1 Qc8 18. h3 Nd7 19. Bg4 h5 20. Bxd7 Qxd7 21.\nQc4 Bh4 22. Rd2 Qe7 23. Rf1 Rfd8 24. Nb1 Qb7 25. Kh2 Kg7 26. c3 Na6 27. Re2\nRf8 28. Nd2 Bd8 29. Nf3 f6 30. Rd2 Be7 31. Qe6 Rad8 32. Rxd8 Bxd8 33. Rd1 Nb8\n34. Bc5 Rh8 35. Rxd8 1-0",
+       "title": "Karpov vs Spassky, Candidates semi-final 1974, game 9",
+       "mode": "replay",
+       "notes": {
+        "27": "14.Rf2: a quiet rook move that prepares Rd2 and Qf1.",
+        "32": "16...dxe5: Black's pawns on c6 and e5 are fixed targets.",
+        "41": "21.Qc4: the queen hits c6 and the light squares.",
+        "47": "24.Nb1! The knight goes back to come forward: d2, f3, and pressure on e5.",
+        "51": "26.c3 drives the knight from b4.",
+        "61": "31.Qe6: every black piece is passive.",
+        "69": "35.Rxd8: after 35...Rxd8 36.Be7 Black loses more material (Stockfish 16: about +5.4). Spassky resigned."
+       }
+      },
+      {
+       "type": "quiz",
+       "question": "Karpov's 24.Nb1 retreats a knight to the back rank. What is the idea?",
+       "options": [
+        "The knight on c3 does nothing; via d2 it reaches f3 and attacks e5, and the c-pawn can play c3",
+        "White defends against a mating attack on the first rank",
+        "White prepares to castle queenside",
+        "White offers a draw by repetition"
+       ],
+       "answer": 0,
+       "explanation": "24.Nb1 improves the worst white piece and frees the c-pawn. In the game 26.c3 pushed the black knight from b4, 28.Nd2 and 29.Nf3 followed, and 31.Qe6 tied Black down.",
+       "fen": "r2r2k1/4qp2/2p3p1/p3p2p/PnQ1P2b/2N1B2P/1PPR2P1/5RK1 w - - 6 24"
+      },
+      {
+       "type": "quiz",
+       "question": "Karpov-Unzicker, move 24. Karpov played 24.Ba7. Why put the bishop on a7, in front of Black's rook on a8?",
+       "options": [
+        "To block the a-file so White can double rooks behind the bishop and Black can never contest the file",
+        "To win the rook on a8 next move",
+        "To attack the black king along the diagonal",
+        "To defend the pawn on b4"
+       ],
+       "answer": 0,
+       "explanation": "The a-file is the only open file. With the bishop on a7, Black's rook cannot challenge it, and White's rooks take the file for good. Stockfish 16 at depth 22 rates 24.Ba7 as the best move too (about +0.8). Unzicker resigned after 44.Nh5 (Stockfish 16: about +5.5 for White).",
+       "fen": "r1rq1bk1/1n1b1p1p/3p1np1/1p1Pp3/1Pp1P3/2P1BNNP/R2Q1PP1/1B2R1K1 w - - 2 24"
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}
