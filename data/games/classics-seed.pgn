@@ -1,0 +1,14 @@
+[Event "Paris Opera"]
+[Site "Paris FRA"]
+[Date "1858.11.02"]
+[White "Paul Morphy"]
+[Black "Duke Karl of Brunswick and Count Isouard"]
+[Result "1-0"]
+[ECO "C41"]
+[Opening "Philidor Defence"]
+[Themes "development,attack,sacrifice,classic,immortal"]
+[Level "2"]
+[Why "The clearest lesson in chess: develop every piece with a threat, open lines against an uncastled king, and sacrifice material to finish before the opponent's pieces arrive."]
+
+{Morphy plays the whole game with tempo: each move either develops a piece or makes a threat the opponent must answer.}
+1. e4 e5 2. Nf3 d6 3. d4 Bg4 {A premature pin. Black's bishop will be forced to give itself up for the knight.} 4. dxe5 Bxf3 {Forced: 4...dxe5 5.Qxd8+ Kxd8 6.Nxe5 wins a pawn.} 5. Qxf3 dxe5 6. Bc4 {Key: two pieces already aim at f7. Black must defend and loses time doing it.} Nf6 7. Qb3 {Key: a double attack on b7 and f7. Black cannot hold both.} Qe7 {Defends f7 and offers the b7 pawn; after 8.Qxb7 Qb4+ Black would trade queens and reach a drawable endgame, so Morphy keeps developing instead.} 8. Nc3 {! Morphy declines the pawn: development before material.} c6 9. Bg5 b5 {Trying to chase the bishop; it only opens more lines.} 10. Nxb5 {! Key: a knight sacrifice to rip open the queenside while the black king is still in the centre.} cxb5 11. Bxb5+ Nbd7 12. O-O-O {Key: castling with check-like effect: the rook arrives on the open d-file against the pinned knight.} Rd8 13. Rxd7 {! A second sacrifice. Every black piece is tied up.} Rxd7 14. Rd1 {The last white piece joins the attack. Black has no useful move.} Qe6 15. Bxd7+ Nxd7 16. Qb8+ {!! Key: the queen sacrifice that forces mate: the knight is deflected from d7 and the rook mates on d8.} Nxb8 17. Rd8# 1-0

@@ -67,24 +67,26 @@ def _termination(board: chess.Board) -> tuple[str, str] | None:
 async def _state(row: dict) -> GameState:
     moves = row["moves"]
     board = _board_from_moves(moves)
-    bot = get_bot(row["bot_id"])
+    bot = get_bot(row["bot_id"]) if row.get("bot_id") else None
     opening, _ = load_book().classify_game([chess.Move.from_uci(m["uci"]) for m in moves])
     return GameState(
         id=row["id"],
         fen=board.fen(),
-        pgn=row.get("pgn") or _pgn(moves, row, bot.name),
+        pgn=row.get("pgn") or _pgn(moves, row, bot.name if bot else "Opponent"),
         moves=[MoveRecord(**m) for m in moves],
         status=row["status"],
         result=row.get("result"),
         termination=row.get("termination"),
         player_color=row["player_color"],
-        bot=bot_public(bot),
+        bot=bot_public(bot) if bot else {"id": "import", "name": row.get("black_name") or "Import", "avatar": "📄",
+                                         "white_name": row.get("white_name"), "black_name": row.get("black_name")},
         coach_mode=row.get("time_control") == "coach",
         opening={"eco": opening.eco, "name": opening.name} if opening else None,
         last_move=[moves[-1]["uci"][:2], moves[-1]["uci"][2:4]] if moves else None,
         in_check=board.is_check(),
         turn="w" if board.turn == chess.WHITE else "b",
         legal_moves=[m.uci() for m in board.legal_moves] if row["status"] == "active" else [],
+        threats=threat_moves(board) if row["status"] == "active" else [],
     )
 
 
@@ -159,8 +161,8 @@ async def games_index() -> dict:
     rows = await store.list_games()
     for r in rows:
         bot = BOTS_BY_ID.get(r["bot_id"])
-        r["bot_name"] = bot.name if bot else r["bot_id"]
-        r["bot_avatar"] = bot.avatar if bot else ""
+        r["bot_name"] = bot.name if bot else (f'{r.get("white_name")} vs {r.get("black_name")}' if r.get("source") == "import" else r["bot_id"])
+        r["bot_avatar"] = bot.avatar if bot else "📄"
     return {"games": rows}
 
 
@@ -262,28 +264,34 @@ async def hint(game_id: str) -> HintResponse:
     )
 
 
-def threat_sans(board: chess.Board) -> list[str]:
-    """What the opponent would do if it were their move: captures of undefended or higher-value
-    pieces and checkmates. Cheap, rules-only, no engine."""
+def threat_moves(board: chess.Board) -> list[dict]:
+    """What the opponent would do if it were their move: mates, then captures of undefended or
+    higher-value pieces. Cheap, rules-only, no engine. Mates first, then by material."""
     b = board.copy()
     if b.is_check():
         return []
     b.push(chess.Move.null())
-    out: list[str] = []
+    out: list[tuple[int, dict]] = []
     for mv in b.legal_moves:
+        san = b.san(mv)
+        b.push(mv)
+        mate = b.is_checkmate()
+        b.pop()
+        if mate:
+            out.append((100, {"san": san, "uci": mv.uci(), "kind": "mate", "gain": 100}))
+            continue
         if b.is_capture(mv):
             victim = b.piece_at(mv.to_square)
             attacker = b.piece_at(mv.from_square)
             if victim is None or attacker is None:
                 continue
             defended = b.is_attacked_by(not b.turn, mv.to_square)
-            if not defended or PIECE_VALUES[victim.piece_type] > PIECE_VALUES[attacker.piece_type]:
-                out.append(b.san(mv))
-        else:
-            san = b.san(mv)
-            b.push(mv)
-            mate = b.is_checkmate()
-            b.pop()
-            if mate:
-                out.append(san)
-    return out[:5]
+            gain = PIECE_VALUES[victim.piece_type] - (0 if not defended else PIECE_VALUES[attacker.piece_type])
+            if gain > 0:
+                out.append((gain, {"san": san, "uci": mv.uci(), "kind": "capture", "gain": gain}))
+    out.sort(key=lambda t: -t[0])
+    return [d for _, d in out[:4]]
+
+
+def threat_sans(board: chess.Board) -> list[str]:
+    return [t["san"] for t in threat_moves(board)]

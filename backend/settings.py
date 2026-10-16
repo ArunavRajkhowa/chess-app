@@ -32,6 +32,7 @@ class Settings(BaseSettings):
     ANTHROPIC_API_KEY: str = ""
     ANTHROPIC_MODEL: str = "claude-fable-5-1"
     COACH_MAX_TOKENS: int = 2048
+    COACH_EFFORT: str = "medium"
 
     # Storage. SQLite file for games, reviews, puzzle attempts and lesson progress.
     DB_PATH: str = str(REPO_ROOT / "data" / "chess.sqlite3")

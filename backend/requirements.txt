@@ -1,0 +1,6 @@
+fastapi>=0.115
+uvicorn[standard]>=0.30
+pydantic-settings>=2.3
+python-dotenv>=1.0
+chess>=1.11
+anthropic>=1.0

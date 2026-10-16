@@ -27,7 +27,10 @@ CREATE TABLE IF NOT EXISTS games (
     pgn TEXT NOT NULL DEFAULT '',
     moves_json TEXT NOT NULL DEFAULT '[]',
     opening_eco TEXT,
-    opening_name TEXT
+    opening_name TEXT,
+    white_name TEXT,
+    black_name TEXT,
+    source TEXT NOT NULL DEFAULT 'bot'
 );
 CREATE TABLE IF NOT EXISTS reviews (
     game_id TEXT PRIMARY KEY REFERENCES games(id),
@@ -67,6 +70,14 @@ CREATE TABLE IF NOT EXISTS coach_cost (
 """
 
 
+# (table, column, declaration) for columns added after the first release.
+_ADDED_COLUMNS = (
+    ("games", "white_name", "TEXT"),
+    ("games", "black_name", "TEXT"),
+    ("games", "source", "TEXT NOT NULL DEFAULT 'bot'"),
+)
+
+
 class Database:
     def __init__(self) -> None:
         self.path = Path(settings.DB_PATH)
@@ -74,12 +85,23 @@ class Database:
         self._lock = asyncio.Lock()
 
     async def start(self) -> None:
+        self.path = Path(settings.DB_PATH)  # read at start so tests can point at a temp file
         self.path.parent.mkdir(parents=True, exist_ok=True)
         self._conn = sqlite3.connect(self.path, check_same_thread=False)
         self._conn.row_factory = sqlite3.Row
         self._conn.execute("PRAGMA journal_mode=WAL")
         self._conn.executescript(_SCHEMA)
+        self._migrate()
         LOGGER.info("sqlite store open at %s", self.path)
+
+    def _migrate(self) -> None:
+        """Additive migrations only: a column missing from an older file is added with its default."""
+        for table, column, decl in _ADDED_COLUMNS:
+            have = {r[1] for r in self.conn.execute(f"PRAGMA table_info({table})")}
+            if column not in have:
+                self.conn.execute(f"ALTER TABLE {table} ADD COLUMN {column} {decl}")
+                LOGGER.warning("migrated %s: added column %s", table, column)
+        self.conn.commit()
 
     async def stop(self) -> None:
         if self._conn is not None:
