@@ -62,8 +62,8 @@ async def import_pgn(req: ImportPgnRequest) -> dict:
         recs.append({"ply": board.ply(), "san": san, "uci": mv.uci(), "fen": board.fen(), "by": "player", "source": "import", "eval_cp": None})
     game_id = uuid.uuid4().hex[:12]
     result = game.headers.get("Result") if game.headers.get("Result") in ("1-0", "0-1", "1/2-1/2") else None
-    white = game.headers.get("White", "White")
-    black = game.headers.get("Black", "Black")
+    white = game.headers.get("White") if game.headers.get("White", "?") != "?" else "White"
+    black = game.headers.get("Black") if game.headers.get("Black", "?") != "?" else "Black"
     await database.execute(
         "INSERT INTO games(id, player_color, bot_id, time_control, status, result, termination, pgn, moves_json, "
         "opening_eco, opening_name, white_name, black_name, source) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
