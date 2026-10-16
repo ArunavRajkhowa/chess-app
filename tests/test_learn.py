@@ -40,7 +40,7 @@ def test_real_content_loads_and_progress_works(client):
     cur = client.get("/api/learn/curriculum").json()
     assert len(cur["bands"]) == 9
     b0 = cur["bands"][0]
-    assert b0["lessons_total"] >= 3 and b0["modules"][0]["lessons"][0]["id"] == "b0m3l1"
+    assert b0["lessons_total"] >= 3 and b0["modules"][0]["lessons"][0]["id"] == "b0m1l1"
     lesson = client.get("/api/learn/lessons/b0m3l2").json()
     assert lesson["next"] == "b0m3l3" and lesson["prev"] == "b0m3l1"
     assert any(s["type"] == "challenge" and s["solution_san"] == ["Qxf7#"] for s in lesson["sections"])

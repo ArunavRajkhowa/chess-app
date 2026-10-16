@@ -1,0 +1,745 @@
+{
+  "modules": [
+    {
+      "id": "b0m1",
+      "band": 0,
+      "title": "The board and the pieces",
+      "strand": "rules",
+      "summary": "Name every square, move each of the six pieces, castle, promote, take en passant, and read a move in notation.",
+      "source": "Steps Method step 1, lessons 1-2 (the board, the moves of the pieces); lichess Learn: Chess pieces and Board setup stages; ChessKid Pawn level ('Meet the pieces'); FIDE Laws of Chess, articles 2-3",
+      "lessons": [
+        {
+          "id": "b0m1l1",
+          "title": "The board",
+          "objective": "Name any square by its file and rank, and tell a file from a rank from a diagonal.",
+          "minutes": 5,
+          "sections": [
+            {
+              "type": "text",
+              "md": "The board has 64 squares. Place it so the corner square on your right is light: **white on right**.\n\nThe eight columns are **files**, named a to h from White's left. The eight rows are **ranks**, numbered 1 to 8 from White's side. Every square has one name: its file letter, then its rank number. The centre square on the e-file and the 4th rank is **e4**.\n\nA **diagonal** runs at an angle, corner to corner. All the squares on one diagonal are the same colour. The longest one, from a1 to h8, is dark.\n\nYou will use square names in every lesson, so say them out loud as you go. The white king starts on e1, the black king on e8."
+            },
+            {
+              "type": "position",
+              "fen": "6k1/8/8/8/8/8/8/1K6 w - - 0 1",
+              "orientation": "white",
+              "highlights": [
+                { "square": "e4", "brush": "yellow" }
+              ],
+              "arrows": [
+                { "from": "e1", "to": "e8", "brush": "green" },
+                { "from": "a4", "to": "h4", "brush": "blue" },
+                { "from": "a1", "to": "h8", "brush": "red" }
+              ],
+              "caption": "The yellow square is e4: file e, rank 4. The green arrow runs up the e-file, the blue arrow along the 4th rank, and the red arrow along the long dark diagonal from a1 to h8."
+            },
+            {
+              "type": "quiz",
+              "fen": "6k1/8/2R5/8/8/8/8/1K6 w - - 0 1",
+              "question": "Which square is the white rook on?",
+              "options": ["c6", "f3", "c3", "f6"],
+              "answer": 0,
+              "explanation": "Count the files from the left: a, b, c. Count the ranks from the bottom: 1 up to 6. The rook stands on c6."
+            },
+            {
+              "type": "quiz",
+              "fen": "6k1/8/8/8/8/8/8/1K6 w - - 0 1",
+              "question": "Which of these squares is dark?",
+              "options": ["a1", "h1", "e4"],
+              "answer": 0,
+              "explanation": "White on right: h1 is light, so a1 at the other end of the rank is dark. e4 is light. A diagonal keeps one colour, so the long diagonal from a1 to h8 is dark all the way."
+            },
+            {
+              "type": "quiz",
+              "fen": "6k1/8/8/8/8/8/8/1K6 w - - 0 1",
+              "question": "Which square is on the same file as e4 and on the same rank as a7?",
+              "options": ["e7", "a4", "d7"],
+              "answer": 0,
+              "explanation": "The same file as e4 is the e-file. The same rank as a7 is the 7th rank. File and rank meet on e7."
+            }
+          ]
+        },
+        {
+          "id": "b0m1l2",
+          "title": "The rook",
+          "objective": "Move the rook along files and ranks and capture with it.",
+          "minutes": 5,
+          "sections": [
+            {
+              "type": "text",
+              "md": "The rook moves in straight lines: any number of squares along a file or along a rank. It never moves on a diagonal.\n\nA rook cannot jump. It stops in front of the first piece in its path. If that piece is your own, the rook must stop one square short. If it belongs to the opponent, the rook may land on it and take it off the board. That is a **capture**.\n\nFrom the middle of an empty board a rook reaches 14 squares. From a corner it also reaches 14. The rook is worth about five pawns, which makes it the second most powerful piece after the queen.\n\nEach side starts with two rooks, in the corners: a1 and h1 for White, a8 and h8 for Black."
+            },
+            {
+              "type": "position",
+              "fen": "7k/8/8/8/3R4/8/8/7K w - - 0 1",
+              "orientation": "white",
+              "arrows": [
+                { "from": "d4", "to": "d8", "brush": "green" },
+                { "from": "d4", "to": "d1", "brush": "green" },
+                { "from": "d4", "to": "a4", "brush": "green" },
+                { "from": "d4", "to": "h4", "brush": "green" }
+              ],
+              "caption": "From d4 the rook reaches every square on the d-file and on the 4th rank: 14 squares in all."
+            },
+            {
+              "type": "challenge",
+              "fen": "8/4k1p1/n6p/8/8/8/6PP/R6K w - - 0 1",
+              "prompt": "White to play. Capture the black knight with the rook.",
+              "solution": ["a1a6"],
+              "hint": "The rook and the knight stand on the same file.",
+              "explanation": "Rxa6. The a-file is empty between a1 and a6, so the rook slides up the file and takes the knight."
+            },
+            {
+              "type": "quiz",
+              "fen": "k7/8/8/8/p7/8/5PPP/R5K1 w - - 0 1",
+              "question": "Can the rook on a1 give check to the king on a8 right now?",
+              "options": [
+                "Yes: Ra8 is check",
+                "No: the pawn on a4 is in the way. The rook can take the pawn but cannot jump over it",
+                "Yes: rooks may jump over pawns"
+              ],
+              "answer": 1,
+              "explanation": "A rook stops at the first piece in its path. Rxa4 is possible, but a8 is out of reach until the pawn is gone."
+            },
+            {
+              "type": "challenge",
+              "fen": "8/p3kpp1/8/8/8/1b5R/5PP1/6K1 w - - 0 1",
+              "prompt": "White to play. Capture the black bishop with the rook.",
+              "solution": ["h3b3"],
+              "hint": "Look along the rank, not the file.",
+              "explanation": "Rxb3. The 3rd rank is clear from h3 to b3, so the rook slides across and takes the bishop."
+            }
+          ]
+        },
+        {
+          "id": "b0m1l3",
+          "title": "The bishop",
+          "objective": "Move the bishop along diagonals and know that it stays on one colour for the whole game.",
+          "minutes": 5,
+          "sections": [
+            {
+              "type": "text",
+              "md": "The bishop moves any number of squares along a diagonal. It never moves along a file or a rank. Like the rook it cannot jump: it stops at the first piece in its way, and takes that piece if it is an enemy.\n\nBecause it moves only on diagonals, a bishop stays on the colour it started on. Each side has one **light-squared bishop** and one **dark-squared bishop**. White's start on c1 (dark) and f1 (light). A bishop can never attack a square of the other colour. That is why two bishops together are much stronger than one.\n\nFrom the centre of an empty board a bishop reaches 13 squares, from a corner only 7. The bishop is worth about three pawns."
+            },
+            {
+              "type": "position",
+              "fen": "k7/8/8/8/3B4/8/8/7K w - - 0 1",
+              "orientation": "white",
+              "arrows": [
+                { "from": "d4", "to": "a1", "brush": "green" },
+                { "from": "d4", "to": "h8", "brush": "green" },
+                { "from": "d4", "to": "a7", "brush": "green" },
+                { "from": "d4", "to": "g1", "brush": "green" }
+              ],
+              "caption": "From d4 the bishop reaches 13 squares along two diagonals. Every one of them is dark. It can never go to e4 or d5."
+            },
+            {
+              "type": "challenge",
+              "fen": "4k3/pp3ppp/8/6r1/8/8/PP3PPP/2B3K1 w - - 0 1",
+              "prompt": "White to play. Capture the black rook with the bishop.",
+              "solution": ["c1g5"],
+              "hint": "Follow the diagonal from c1 through d2, e3 and f4.",
+              "explanation": "Bxg5. The diagonal from c1 to g5 is open, so the bishop takes the rook. Nothing defends g5: the bishop wins a rook for nothing."
+            },
+            {
+              "type": "quiz",
+              "fen": "4k3/8/8/8/8/8/8/4KB2 w - - 0 1",
+              "question": "The bishop on f1 stands on a light square. Which of these squares can it never reach?",
+              "options": ["a6", "c4", "e3"],
+              "answer": 2,
+              "explanation": "e3 is a dark square. A bishop keeps its colour for the whole game, so the f1-bishop can reach a6 and c4 (both light) but never e3."
+            },
+            {
+              "type": "challenge",
+              "fen": "7k/pn4pp/8/8/4B3/8/5PPP/6K1 w - - 0 1",
+              "prompt": "White to play. Capture the black knight with the bishop.",
+              "solution": ["e4b7"],
+              "hint": "Two diagonals leave e4 toward Black's side. One leads to the knight, the other to a pawn the king defends.",
+              "explanation": "Bxb7 wins the knight for nothing. Bxh7 would lose the bishop: the king on h8 takes it back."
+            },
+            {
+              "type": "quiz",
+              "fen": "4k3/5pp1/7q/8/8/8/3P1PPP/2B3K1 w - - 0 1",
+              "question": "The black queen on h6 is on the same diagonal as the bishop on c1. Can the bishop take it?",
+              "options": [
+                "Yes: Bxh6",
+                "No: White's own pawn on d2 blocks the diagonal",
+                "No: a bishop cannot capture a queen"
+              ],
+              "answer": 1,
+              "explanation": "A bishop cannot jump over any piece, not even its own. The d2-pawn stops it on the c1-h6 diagonal. Move the pawn first and the diagonal opens."
+            }
+          ]
+        },
+        {
+          "id": "b0m1l4",
+          "title": "The queen",
+          "objective": "Move the queen as a rook and a bishop in one piece.",
+          "minutes": 5,
+          "sections": [
+            {
+              "type": "text",
+              "md": "The queen combines the rook and the bishop. It moves any number of squares along a file, a rank or a diagonal: eight directions in all. It cannot jump.\n\nFrom d4 on an empty board a queen reaches 27 squares. No other piece comes close, so the queen is worth about nine pawns. Losing it for nothing usually loses the game.\n\nThe queen starts next to the king: White's on d1, Black's on d8. Each queen stands on a square of her own colour: the white queen on light d1, the black queen on dark d8.\n\nBecause the queen is so strong, beginners want to bring it out at once. Resist that. A queen on an open board gets chased by pawns and knights that cost far less."
+            },
+            {
+              "type": "position",
+              "fen": "6k1/8/8/8/3Q4/8/8/1K6 w - - 0 1",
+              "orientation": "white",
+              "arrows": [
+                { "from": "d4", "to": "d8", "brush": "green" },
+                { "from": "d4", "to": "d1", "brush": "green" },
+                { "from": "d4", "to": "a4", "brush": "green" },
+                { "from": "d4", "to": "h4", "brush": "green" },
+                { "from": "d4", "to": "a1", "brush": "blue" },
+                { "from": "d4", "to": "h8", "brush": "blue" },
+                { "from": "d4", "to": "a7", "brush": "blue" },
+                { "from": "d4", "to": "g1", "brush": "blue" }
+              ],
+              "caption": "Green arrows: the rook moves. Blue arrows: the bishop moves. Together they give the queen 27 squares from d4."
+            },
+            {
+              "type": "challenge",
+              "fen": "8/5pk1/7p/7r/8/8/5PPP/3Q2K1 w - - 0 1",
+              "prompt": "White to play. Capture the black rook with the queen.",
+              "solution": ["d1h5"],
+              "hint": "Here the queen moves like a bishop. Follow the diagonal from d1.",
+              "explanation": "Qxh5. The diagonal d1-e2-f3-g4-h5 is open. The rook on h5 has no defender, so the queen takes it for free."
+            },
+            {
+              "type": "challenge",
+              "fen": "6k1/3r1ppp/8/6n1/8/8/5PPP/3Q2K1 w - - 0 1",
+              "prompt": "White to play. Two black pieces are near the queen. Capture the one the queen can reach.",
+              "solution": ["d1d7"],
+              "hint": "Now the queen moves like a rook. Which black piece stands on the d-file?",
+              "explanation": "Qxd7. The d-file is open from d1 to d7. The knight on g5 is not on any line from d1, so the queen cannot touch it."
+            },
+            {
+              "type": "quiz",
+              "fen": "2b3k1/5pn1/7p/2P5/r7/8/2Q2PPP/6K1 w - - 0 1",
+              "question": "Which black piece can the queen on c2 capture right now?",
+              "options": ["The rook on a4", "The bishop on c8", "The knight on g7"],
+              "answer": 0,
+              "explanation": "The diagonal c2-b3-a4 is open, so Qxa4 is possible. The c-file is blocked by White's own pawn on c5, so the bishop is out of reach. The knight on g7 is not on any file, rank or diagonal through c2."
+            }
+          ]
+        },
+        {
+          "id": "b0m1l5",
+          "title": "The king and castling",
+          "objective": "Move the king one square at a time, never onto an attacked square, and castle to bring it to safety.",
+          "minutes": 8,
+          "sections": [
+            {
+              "type": "text",
+              "md": "The king moves one square in any direction: along a file, a rank or a diagonal. It captures the same way. It is the only piece that is never captured, because the game ends before that happens: if your king is attacked and cannot escape, you have lost.\n\nSo the king has one extra rule. It may never move to a square an enemy piece attacks. That includes taking a piece that another enemy piece defends.\n\nOnce per game the king has a special move, **castling**. The king moves two squares toward a rook, and that rook jumps to the square the king crossed. Kingside: king e1 to g1, rook h1 to f1. Queenside: king e1 to c1, rook a1 to d1. You may castle only if the king and that rook have not moved, the squares between them are empty, and the king is not in check, does not cross an attacked square and does not land on one."
+            },
+            {
+              "type": "position",
+              "fen": "1k3r2/8/8/8/4K3/8/8/8 w - - 0 1",
+              "orientation": "white",
+              "highlights": [
+                { "square": "d3", "brush": "green" },
+                { "square": "d4", "brush": "green" },
+                { "square": "d5", "brush": "green" },
+                { "square": "e3", "brush": "green" },
+                { "square": "e5", "brush": "green" },
+                { "square": "f3", "brush": "red" },
+                { "square": "f4", "brush": "red" },
+                { "square": "f5", "brush": "red" }
+              ],
+              "caption": "The king on e4 may step to the five green squares. The three red squares on the f-file are attacked by the rook on f8, so the king may not go there."
+            },
+            {
+              "type": "challenge",
+              "fen": "8/7p/8/1k6/3pK3/8/6PP/8 w - - 0 1",
+              "prompt": "White to play. Capture the black pawn with the king.",
+              "solution": ["e4d4"],
+              "hint": "The pawn on d4 is next to the king, and nothing defends it.",
+              "explanation": "Kxd4. The pawn stands one square away and no black piece guards d4. Take it now: next move the black king would step to c5 or c4 and defend it."
+            },
+            {
+              "type": "quiz",
+              "fen": "8/7p/8/1kp5/3pK3/8/6PP/8 w - - 0 1",
+              "question": "Now Black also has a pawn on c5. Can the white king take the pawn on d4?",
+              "options": [
+                "Yes: Kxd4",
+                "No: the pawn on c5 defends d4, so the king would step into attack",
+                "No: a king can never capture"
+              ],
+              "answer": 1,
+              "explanation": "Black pawns capture diagonally toward White's side, so the c5-pawn attacks b4 and d4. A king may not move to an attacked square. Kxd4 is illegal."
+            },
+            {
+              "type": "position",
+              "fen": "r1bqkb1r/1ppp1ppp/p1n2n2/4p3/B3P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 2 5",
+              "orientation": "white",
+              "arrows": [
+                { "from": "e1", "to": "g1", "brush": "green" },
+                { "from": "h1", "to": "f1", "brush": "blue" }
+              ],
+              "caption": "Castling kingside: the king goes two squares from e1 to g1 and the rook jumps from h1 to f1. The squares f1 and g1 are empty, neither piece has moved, and the king is not in check, so White may castle."
+            },
+            {
+              "type": "challenge",
+              "fen": "r1bqkb1r/1ppp1ppp/p1n2n2/4p3/B3P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 2 5",
+              "prompt": "White to play. Castle kingside.",
+              "solution": ["e1g1"],
+              "hint": "Move the king two squares to the right. The rook follows by itself.",
+              "explanation": "O-O. The king now sits behind its pawns on g1 and the rook on f1 is ready to come to the centre. This is the Ruy Lopez after 1.e4 e5 2.Nf3 Nc6 3.Bb5 a6 4.Ba4 Nf6, and castling is the normal fifth move."
+            },
+            {
+              "type": "quiz",
+              "fen": "rn1qkbnr/ppp1pppp/3p4/8/2b5/4PN2/PPPP1PPP/RNBQK2R w KQkq - 0 1",
+              "question": "White's king and h1-rook have not moved, and f1 and g1 are empty. Can White castle kingside now?",
+              "options": [
+                "Yes",
+                "No: the bishop on c4 attacks f1, and the king may not cross an attacked square",
+                "No: you cannot castle before move 10"
+              ],
+              "answer": 1,
+              "explanation": "The black bishop on c4 looks down the diagonal c4-d3-e2-f1. The king would have to pass through f1, and that is not allowed. Block or chase the bishop first, then castle."
+            }
+          ]
+        },
+        {
+          "id": "b0m1l6",
+          "title": "The knight",
+          "objective": "Move the knight in an L-shape and use its jump.",
+          "minutes": 5,
+          "sections": [
+            {
+              "type": "text",
+              "md": "The knight moves in an L: two squares along a file or a rank, then one square to the side. Another way to see it: the knight jumps to the nearest square that is not on its own file, rank or diagonal.\n\nThe knight is the only piece that jumps. Pieces in between, yours or the opponent's, do not block it. It captures the piece on the square where it lands.\n\nEvery knight move changes the colour of its square: from a dark square it always lands on a light one. From the centre it reaches eight squares, from a corner only two. Chess players say a knight on the rim is dim.\n\nThe knight is worth about three pawns, the same as a bishop. Each side starts with two: b1 and g1 for White, b8 and g8 for Black."
+            },
+            {
+              "type": "position",
+              "fen": "k7/8/8/8/3N4/8/8/7K w - - 0 1",
+              "orientation": "white",
+              "arrows": [
+                { "from": "d4", "to": "b3", "brush": "green" },
+                { "from": "d4", "to": "b5", "brush": "green" },
+                { "from": "d4", "to": "c2", "brush": "green" },
+                { "from": "d4", "to": "c6", "brush": "green" },
+                { "from": "d4", "to": "e2", "brush": "green" },
+                { "from": "d4", "to": "e6", "brush": "green" },
+                { "from": "d4", "to": "f3", "brush": "green" },
+                { "from": "d4", "to": "f5", "brush": "green" }
+              ],
+              "caption": "From d4 the knight reaches eight squares: b3, b5, c2, c6, e2, e6, f3 and f5. The knight stands on a dark square and every target is light."
+            },
+            {
+              "type": "challenge",
+              "fen": "6k1/ppp2ppp/8/3r4/3P4/2NP4/PPP2PPP/6K1 w - - 0 1",
+              "prompt": "White to play. Capture the black rook with the knight.",
+              "solution": ["c3d5"],
+              "hint": "Two squares up the file, one to the side. The pawn on d4 does not get in the way.",
+              "explanation": "Nxd5. The knight jumps from c3 over its own pawns to d5 and takes the rook. No other white piece could reach it."
+            },
+            {
+              "type": "challenge",
+              "fen": "6k1/ppp2ppp/8/8/8/6Pb/3PPP1P/4K1N1 w - - 0 1",
+              "prompt": "White to play. Capture the black bishop with the knight.",
+              "solution": ["g1h3"],
+              "hint": "From g1 the knight can go to e2, f3 or h3.",
+              "explanation": "Nxh3. The knight is the only white piece that can reach h3: it jumps past the pawn on h2 to get there."
+            },
+            {
+              "type": "quiz",
+              "fen": "1k6/8/4rb2/8/4Np2/8/8/6K1 w - - 0 1",
+              "question": "Which black piece can the knight on e4 capture?",
+              "options": ["The bishop on f6", "The rook on e6", "The pawn on f4"],
+              "answer": 0,
+              "explanation": "e4 to f6 is one file across and two ranks up: a knight move. e6 and f4 are next to the knight, and a knight never moves to a neighbouring square."
+            },
+            {
+              "type": "quiz",
+              "fen": "k7/8/8/8/3N4/8/8/7K w - - 0 1",
+              "question": "The knight on d4 stands on a dark square. On which colour does it land after its move?",
+              "options": ["Always a light square", "Always a dark square", "Either colour"],
+              "answer": 0,
+              "explanation": "Two squares one way and one square the other always changes the colour. This is a quick check for any knight move: if the colour did not change, the move is wrong."
+            }
+          ]
+        },
+        {
+          "id": "b0m1l7",
+          "title": "The pawn",
+          "objective": "Move pawns forward, capture diagonally, promote on the last rank and take en passant.",
+          "minutes": 8,
+          "sections": [
+            {
+              "type": "text",
+              "md": "A pawn moves one square straight forward, never backward and never sideways. On its first move it may go two squares instead, if both squares are empty. A pawn cannot move at all if the square in front of it is occupied.\n\nA pawn captures differently from the way it moves: one square diagonally forward. It can never capture the piece directly in front of it.\n\nWhen a pawn reaches the last rank it must **promote**: it becomes a queen, rook, bishop or knight of the same colour at once. Nearly always choose a queen. You may end up with two or more queens.\n\nOne special rule. If an enemy pawn moves two squares and lands beside your pawn, you may capture it on that very move as if it had moved only one square. This is **en passant**. Wait a move and the right is gone."
+            },
+            {
+              "type": "position",
+              "fen": "6k1/8/8/8/8/8/4P3/6K1 w - - 0 1",
+              "orientation": "white",
+              "arrows": [
+                { "from": "e2", "to": "e3", "brush": "green" },
+                { "from": "e2", "to": "e4", "brush": "green" },
+                { "from": "e2", "to": "d3", "brush": "red" },
+                { "from": "e2", "to": "f3", "brush": "red" }
+              ],
+              "caption": "Green: the e2-pawn may move to e3, or to e4 because it has not moved yet. Red: it captures on d3 or f3, and only when an enemy piece stands there."
+            },
+            {
+              "type": "challenge",
+              "fen": "6k1/5ppp/8/3bp3/4P3/8/5PPP/2B3K1 w - - 0 1",
+              "prompt": "White to play. Capture the black bishop with the pawn.",
+              "solution": ["e4d5"],
+              "hint": "A pawn captures diagonally. The pawn on e5 in front cannot be taken.",
+              "explanation": "exd5. The pawn on e4 takes the bishop on d5 diagonally. The black pawn on e5 stops the e4-pawn from moving forward, but it is in no danger itself: pawns never capture straight ahead."
+            },
+            {
+              "type": "challenge",
+              "fen": "k7/4P3/8/8/8/8/1K6/8 w - - 0 1",
+              "prompt": "White to play. Push the pawn to the last rank and promote it to a queen.",
+              "solution": ["e7e8q"],
+              "hint": "One more step. When the pawn arrives, pick the queen.",
+              "explanation": "e8=Q+. The pawn becomes a queen the moment it reaches e8, and the new queen already gives check along the 8th rank."
+            },
+            {
+              "type": "drill",
+              "fen": "4k3/8/4PK2/8/8/8/8/8 w - - 0 1",
+              "orientation": "white",
+              "goal": "promote",
+              "max_moves": 8,
+              "prompt": "Promote the pawn within 8 moves. The black king will try to stand in its way.",
+              "tip": "Push the pawn only when your king guards the square in front of it. If the black king blocks e8, walk your king to d7 or f7 first. Pushing to e7 with the black king on e8 and your king on e6 is stalemate."
+            },
+            {
+              "type": "position",
+              "fen": "rnbqkbnr/ppp1ppp1/7p/3pP3/8/8/PPPP1PPP/RNBQKBNR w KQkq d6 0 3",
+              "orientation": "white",
+              "highlights": [
+                { "square": "d5", "brush": "red" }
+              ],
+              "arrows": [
+                { "from": "d7", "to": "d5", "brush": "blue" },
+                { "from": "e5", "to": "d6", "brush": "green" }
+              ],
+              "caption": "Black has just played the pawn from d7 to d5, two squares, and it landed beside White's e5-pawn. White may answer exd6 at once: the pawn goes to d6 and the d5-pawn is removed, as if it had moved only one square."
+            },
+            {
+              "type": "challenge",
+              "fen": "7k/8/8/1K1pP3/8/8/8/8 w - d6 0 1",
+              "prompt": "Black has just played d7-d5. White to play: capture the pawn en passant.",
+              "solution": ["e5d6"],
+              "hint": "Move your pawn to d6, the square the black pawn skipped.",
+              "explanation": "exd6. The black pawn is taken although it never stood on d6. Now nothing can stop the pawn from reaching d8. Had White played anything else, the right to take en passant would have been gone for good."
+            }
+          ]
+        },
+        {
+          "id": "b0m1l8",
+          "title": "Setting up and reading moves",
+          "objective": "Set up the start position from memory and read a move written in chess notation.",
+          "minutes": 6,
+          "sections": [
+            {
+              "type": "text",
+              "md": "Set up the board with white on right. Rooks go in the corners, knights next to them, then bishops. The queen takes the square of her own colour: White's queen on light d1, Black's on dark d8. The king fills the last square, e1 and e8. Pawns stand in front, on the 2nd and 7th ranks. White always moves first.\n\nMoves are written in **algebraic notation**: a letter for the piece, then the square it goes to. K is king, Q queen, R rook, B bishop and N knight. Pawn moves have no letter: e4 means a pawn moves to e4. A capture gets an x, and a pawn capture names the pawn's file first: Bxe5, exd5. Check is +, checkmate is #. Castling is O-O on the kingside and O-O-O on the queenside. A promotion is written e8=Q.\n\nEvery lesson, puzzle and game review in this app speaks this language."
+            },
+            {
+              "type": "position",
+              "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+              "orientation": "white",
+              "highlights": [
+                { "square": "d1", "brush": "yellow" },
+                { "square": "d8", "brush": "yellow" }
+              ],
+              "caption": "The start position. Rooks in the corners, knights beside them, bishops next, then the queen on her own colour (d1 is light, d8 is dark) and the king beside her."
+            },
+            {
+              "type": "quiz",
+              "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+              "question": "Which piece stands on g1 at the start of the game?",
+              "options": ["A knight", "A bishop", "A rook"],
+              "answer": 0,
+              "explanation": "From the corner inward: rook on h1, knight on g1, bishop on f1. Knights always stand next to the rooks."
+            },
+            {
+              "type": "challenge",
+              "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+              "prompt": "White to play. Play the move 1.e4.",
+              "solution": ["e2e4"],
+              "hint": "No letter means a pawn move. Find the pawn on the e-file.",
+              "explanation": "1.e4: the e-pawn moves two squares to e4. It is the most popular first move in chess. It opens lines for the queen and the f1-bishop and takes space in the centre."
+            },
+            {
+              "type": "challenge",
+              "fen": "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2",
+              "prompt": "Black answered 1...e5. White to play: play 2.Nf3.",
+              "solution": ["g1f3"],
+              "hint": "N is the knight. Which knight can reach f3?",
+              "explanation": "2.Nf3 brings the knight out and attacks the pawn on e5. The knight on b1 cannot reach f3, so the notation does not need to say which knight."
+            },
+            {
+              "type": "quiz",
+              "question": "What does the move Bxe5 mean?",
+              "options": [
+                "A bishop captures a piece on e5",
+                "A bishop moves to e5 without capturing",
+                "A pawn from the b-file captures on e5"
+              ],
+              "answer": 0,
+              "explanation": "B is the bishop, x marks a capture, e5 is the square. A pawn capture is written with the pawn's file in lower case, for example dxe5."
+            },
+            {
+              "type": "quiz",
+              "fen": "rnbqkbnr/ppp1pppp/8/3p4/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2",
+              "question": "White's e4-pawn takes the pawn on d5. How is the move written?",
+              "options": ["exd5", "Pxd5", "e4d5"],
+              "answer": 0,
+              "explanation": "A pawn capture is written with the file the pawn came from, then x, then the square: exd5. Pawns have no letter, and the starting square is not written out."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "b0m2",
+      "band": 0,
+      "title": "Attack, capture, defend",
+      "strand": "tactics",
+      "summary": "See what you attack and what attacks you: take what is free, keep what is yours, and count the pieces to know who is ahead.",
+      "source": "Steps Method step 1 (attack and capture; defending; the value of the pieces); lichess Learn: Capture, Protection, Combat and Piece value stages; Heisman, Novice Nook: 'Is it safe?'",
+      "lessons": [
+        {
+          "id": "b0m2l1",
+          "title": "Attack and capture",
+          "objective": "Find the enemy pieces you attack and take the one that nobody defends.",
+          "minutes": 6,
+          "sections": [
+            {
+              "type": "text",
+              "md": "A piece **attacks** a square when it could capture there on its next move. A piece that no friendly piece guards is **undefended**. Players say it is **hanging**.\n\nTaking a hanging piece wins material for nothing. Missing one hands your opponent a gift. Most games at this level are decided by exactly this.\n\nSo make it a habit. On every move, look at each of your pieces and ask: which enemy pieces does it attack? Then, for each one: is it defended? If you attack it and nothing defends it, take it.\n\nA defended piece can still be captured, but then your opponent takes back. Whether that trade is good depends on what the pieces are worth. We count that in lesson 4."
+            },
+            {
+              "type": "position",
+              "fen": "6k1/5p1p/2r3b1/4N3/8/8/5PPP/6K1 w - - 0 1",
+              "orientation": "white",
+              "arrows": [
+                { "from": "e5", "to": "c6", "brush": "green" },
+                { "from": "e5", "to": "g6", "brush": "red" }
+              ],
+              "highlights": [
+                { "square": "f7", "brush": "red" },
+                { "square": "h7", "brush": "red" }
+              ],
+              "caption": "The knight attacks the rook on c6 and the bishop on g6. The bishop is defended by the pawns on f7 and h7, so Nxg6 would be answered by a recapture. The rook has no defender: it is hanging."
+            },
+            {
+              "type": "challenge",
+              "fen": "6k1/5p1p/2r3b1/4N3/8/8/5PPP/6K1 w - - 0 1",
+              "prompt": "White to play. Capture the undefended black piece.",
+              "solution": ["e5c6"],
+              "hint": "Two black pieces are attacked. Which one has no pawn guarding it?",
+              "explanation": "Nxc6 wins a whole rook. Nxg6 would be met by hxg6 or fxg6, and White would have given a knight for a bishop."
+            },
+            {
+              "type": "challenge",
+              "fen": "3rk3/4pppp/2p5/7n/8/8/5PPP/3Q2K1 w - - 0 1",
+              "prompt": "White to play. The queen attacks two black pieces. Capture the free one.",
+              "solution": ["d1h5"],
+              "hint": "The rook on d8 has a defender standing right next to it.",
+              "explanation": "Qxh5 wins the knight for nothing. Qxd8+ looks bigger, but the king takes the queen back: nine points lost for five."
+            },
+            {
+              "type": "challenge",
+              "fen": "6k1/6pp/4n3/8/8/2n5/5PPP/1b2R1K1 w - - 0 1",
+              "prompt": "White to play. The rook can capture two pieces. Take the one that is not defended.",
+              "solution": ["e1e6"],
+              "hint": "Check what the black knight on c3 guards.",
+              "explanation": "Rxe6 wins a knight. The bishop on b1 is guarded by the knight on c3, so Rxb1 would be answered by Nxb1 and White would lose a rook for a bishop."
+            },
+            {
+              "type": "quiz",
+              "fen": "3rk3/pp6/2n5/8/6b1/8/5PPP/3Q2K1 w - - 0 1",
+              "question": "Which black piece is hanging?",
+              "options": ["The knight on c6", "The rook on d8", "The bishop on g4"],
+              "answer": 2,
+              "explanation": "The knight is defended by the b7-pawn and the rook by the king. Nothing guards the bishop on g4, and the white queen attacks it along the d1-g4 diagonal: Qxg4 wins it."
+            }
+          ]
+        },
+        {
+          "id": "b0m2l2",
+          "title": "Defending",
+          "objective": "When a piece of yours is attacked, save it: move it, protect it, block the attack or capture the attacker.",
+          "minutes": 7,
+          "sections": [
+            {
+              "type": "text",
+              "md": "Before you look for your own ideas, ask: did my opponent's last move attack something of mine? If it did, you have four ways to answer.\n\n1. **Move** the attacked piece to a safe square.\n2. **Protect** it, so that a capture can be answered by a recapture. This only works when your piece is worth no more than the attacker.\n3. **Block** the line between the attacker and your piece. This is possible against a rook, bishop or queen, never against a knight or a pawn.\n4. **Capture** the attacker.\n\nCapturing the attacker is best when it is free. Moving is the usual answer when a cheap piece attacks an expensive one. Whatever you choose, check the new square: a piece that runs from one attack into another has not been saved."
+            },
+            {
+              "type": "position",
+              "fen": "6k1/5ppp/8/4n3/3P4/3B4/5PPP/6K1 w - - 0 1",
+              "orientation": "white",
+              "arrows": [
+                { "from": "e5", "to": "d3", "brush": "red" },
+                { "from": "d4", "to": "e5", "brush": "green" },
+                { "from": "d3", "to": "e2", "brush": "blue" }
+              ],
+              "caption": "The knight on e5 attacks the bishop on d3. White can capture the knight with the d4-pawn (green) or move the bishop, for example to e2 (blue). Blocking is impossible: a knight jumps."
+            },
+            {
+              "type": "challenge",
+              "fen": "6k1/5ppp/8/4n3/3P4/3B4/5PPP/6K1 w - - 0 1",
+              "prompt": "White to play. Your bishop is attacked. Capture the attacker.",
+              "solution": ["d4e5"],
+              "hint": "Which white pawn attacks e5?",
+              "explanation": "dxe5 removes the attacker and wins a knight. Moving the bishop would also save it, but it would leave the knight on the board for free."
+            },
+            {
+              "type": "challenge",
+              "fen": "6k1/5ppp/3p4/1p6/N2p4/8/1K3PPP/8 w - - 0 1",
+              "prompt": "White to play. The pawn on b5 attacks your knight. Move it to the only safe square.",
+              "solution": ["a4b6"],
+              "hint": "The knight has four squares. Three of them are attacked by black pawns or taken by your own king.",
+              "explanation": "Nb6. c3 is attacked by the d4-pawn, c5 by the d6-pawn, and b2 is occupied by the white king. Only b6 is safe."
+            },
+            {
+              "type": "challenge",
+              "fen": "6k1/p4ppp/2n1p3/4P3/8/8/P4PPP/5BK1 w - - 0 1",
+              "prompt": "White to play. The knight attacks your pawn on e5, and the pawn cannot move. Protect it.",
+              "solution": ["f2f4"],
+              "hint": "Which white pawn can step up to guard e5?",
+              "explanation": "f4 defends the pawn. Now Nxe5 can be answered by fxe5, so the knight will not take. The e5-pawn cannot run away because the black pawn on e6 blocks it."
+            },
+            {
+              "type": "quiz",
+              "fen": "6k1/5ppp/3p4/8/2n5/8/3Q1PPP/6K1 w - - 0 1",
+              "question": "The knight on c4 attacks the white queen. Which defence works here?",
+              "options": [
+                "Move the queen to a safe square",
+                "Block the attack with a pawn",
+                "Capture the knight"
+              ],
+              "answer": 0,
+              "explanation": "A knight's attack cannot be blocked, and no white piece can take the knight on c4. A queen is worth far more than a knight, so protecting it would not help either. The queen must move."
+            }
+          ]
+        },
+        {
+          "id": "b0m2l3",
+          "title": "Is it safe?",
+          "objective": "Before every capture and every move, check whether the piece will be defended.",
+          "minutes": 6,
+          "sections": [
+            {
+              "type": "text",
+              "md": "Attack and defence happen at the same time. Two questions keep you out of trouble.\n\n1. **Is the piece I want to take defended?** If it is, your opponent recaptures and you have made a trade, not a gain. A trade is only good when you take more than you give.\n2. **Is the square I am moving to attacked?** If it is, and nothing of yours defends it, the piece will simply be taken.\n\nDan Heisman boils both down to one habit: before every move, ask **Is it safe?** It is the single question that separates players who hang pieces from players who do not.\n\nSometimes one move answers both questions: a piece that is attacked jumps away and captures a free enemy piece on the way."
+            },
+            {
+              "type": "position",
+              "fen": "6k1/5ppp/8/1n6/8/3B4/5PPP/6K1 w - - 0 1",
+              "orientation": "white",
+              "arrows": [
+                { "from": "d3", "to": "h7", "brush": "red" },
+                { "from": "d3", "to": "b5", "brush": "green" }
+              ],
+              "highlights": [
+                { "square": "g8", "brush": "red" }
+              ],
+              "caption": "The bishop on d3 attacks the pawn on h7 and the knight on b5. The pawn is defended by the king; the knight is not. Only one of the two captures is safe."
+            },
+            {
+              "type": "challenge",
+              "fen": "6k1/5ppp/8/1n6/8/3B4/5PPP/6K1 w - - 0 1",
+              "prompt": "White to play. Make the safe capture.",
+              "solution": ["d3b5"],
+              "hint": "Who takes back after Bxh7?",
+              "explanation": "Bxb5 wins a knight for nothing. Bxh7+ is check, but the king simply takes the bishop: a bishop lost for a pawn."
+            },
+            {
+              "type": "challenge",
+              "fen": "6k1/5ppp/8/1b2p3/3N4/8/5PPP/6K1 w - - 0 1",
+              "prompt": "White to play. The pawn on e5 attacks your knight. Save the knight and win material with one move.",
+              "solution": ["d4b5"],
+              "hint": "Look at the squares the knight can jump to. One of them has a black piece on it.",
+              "explanation": "Nxb5. The knight escapes the pawn and captures the undefended bishop at the same time. Any other knight move would only run away."
+            },
+            {
+              "type": "quiz",
+              "fen": "6k1/5ppp/2n5/4p3/8/5N2/P5PP/6K1 w - - 0 1",
+              "question": "White is thinking about Nxe5. Is it safe?",
+              "options": [
+                "Yes: the pawn is free",
+                "No: the knight on c6 defends e5, so White would give a knight for a pawn",
+                "No: knights cannot capture pawns"
+              ],
+              "answer": 1,
+              "explanation": "After Nxe5 Nxe5 White has lost three points and gained one. A defended pawn is only worth taking when you have more attackers than it has defenders."
+            },
+            {
+              "type": "challenge",
+              "fen": "1r4k1/1p3ppp/8/4n3/8/1B6/5PPP/4R1K1 w - - 0 1",
+              "prompt": "White to play. The bishop can take on f7 with check and the rook can take the knight. Choose the safe capture.",
+              "solution": ["e1e5"],
+              "hint": "A check is not a gain if the king can simply take the piece.",
+              "explanation": "Rxe5 wins a knight: the e-file is open and nothing defends e5. Bxf7+ would be answered by Kxf7, and White would have given a bishop for a pawn."
+            }
+          ]
+        },
+        {
+          "id": "b0m2l4",
+          "title": "What the pieces are worth",
+          "objective": "Know the point values of the pieces and use them to tell who is ahead and which capture is biggest.",
+          "minutes": 6,
+          "sections": [
+            {
+              "type": "text",
+              "md": "Chess players measure material in pawns.\n\n- Pawn: **1**\n- Knight: **3**\n- Bishop: **3**\n- Rook: **5**\n- Queen: **9**\n\nThe king has no number, because it can never be traded. These values are a guide, not a law, but at this level they decide almost every exchange. A rook for a bishop gains 2 points. A queen for a rook loses 4.\n\nTo see who is ahead, add up each side's pieces and compare the totals. One pawn up is a small edge. A piece up, three points, is usually enough to win with care.\n\nWhen you can capture more than one piece, take the most valuable one that is not defended. When only a defended piece can be taken, compare what you give with what you get."
+            },
+            {
+              "type": "quiz",
+              "fen": "4r1k1/6pp/3b4/8/8/8/6PP/3Q2K1 w - - 0 1",
+              "question": "Count the material. Who is ahead?",
+              "options": ["White, by 1 point", "Black, by 1 point", "The material is equal"],
+              "answer": 0,
+              "explanation": "White: queen 9 plus two pawns, 11 points. Black: rook 5, bishop 3 and two pawns, 10 points. White is a single point ahead, a very small edge."
+            },
+            {
+              "type": "challenge",
+              "fen": "6k1/2r1bppp/8/3N4/8/8/5PPP/6K1 w - - 0 1",
+              "prompt": "White to play. The knight attacks two undefended black pieces. Capture the more valuable one.",
+              "solution": ["d5c7"],
+              "hint": "Rook or bishop?",
+              "explanation": "Nxc7 wins a rook, five points. Nxe7+ is check, but it wins only a bishop, three points. Material first: a check is not a prize in itself."
+            },
+            {
+              "type": "challenge",
+              "fen": "6k1/5ppp/2q1b3/3P4/8/8/5PPP/R5K1 w - - 0 1",
+              "prompt": "White to play. The d5-pawn can capture in two directions. Take the bigger piece.",
+              "solution": ["d5c6"],
+              "hint": "Queen 9, bishop 3.",
+              "explanation": "dxc6 wins the queen. dxe6 would win only the bishop, and the f7-pawn would take the pawn back at once."
+            },
+            {
+              "type": "quiz",
+              "fen": "6k1/p4rpp/8/8/2B5/8/5PPP/6K1 w - - 0 1",
+              "question": "White plays Bxf7+ and Black answers Kxf7. Who gained from the trade?",
+              "options": [
+                "White: a rook (5) for a bishop (3)",
+                "Black: a bishop is worth more than a rook",
+                "Nobody: it is an even trade"
+              ],
+              "answer": 0,
+              "explanation": "White gives three points and takes five. Winning a rook for a bishop or a knight is called winning the exchange, and it is worth two points."
+            },
+            {
+              "type": "quiz",
+              "fen": "r3r1k1/6pp/1b6/8/8/8/3Q1PPP/R5K1 w - - 0 1",
+              "question": "Count again. Who is ahead, and by how much?",
+              "options": ["White, by 2 points", "Black, by 2 points", "The material is equal", "Black, by 1 point"],
+              "answer": 0,
+              "explanation": "White: queen 9, rook 5 and three pawns, 17 points. Black: two rooks 10, bishop 3 and two pawns, 15 points. White is two points ahead."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
