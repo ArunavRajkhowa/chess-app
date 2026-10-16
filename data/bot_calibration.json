@@ -68,31 +68,31 @@
     "label_elo": 1800,
     "reference_elo": 1800,
     "games": 4,
-    "score": 3.0,
-    "estimated_elo": 1991
+    "score": 2.5,
+    "estimated_elo": 1889
   },
   {
     "bot": "omar",
     "label_elo": 2000,
     "reference_elo": 2000,
     "games": 4,
-    "score": 4.0,
-    "estimated_elo": 2676
+    "score": 2.5,
+    "estimated_elo": 2089
   },
   {
     "bot": "zara",
     "label_elo": 2200,
     "reference_elo": 2200,
     "games": 4,
-    "score": 4.0,
-    "estimated_elo": 2876
+    "score": 3.5,
+    "estimated_elo": 2538
   },
   {
     "bot": "viktor",
     "label_elo": 2400,
     "reference_elo": 2400,
     "games": 4,
-    "score": 4.0,
-    "estimated_elo": 3076
+    "score": 3.5,
+    "estimated_elo": 2738
   }
 ]

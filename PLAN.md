@@ -54,9 +54,9 @@ checked by `scripts/calibrate_bots.py`: four games per bot against Stockfish lim
 labelled `UCI_Elo` (0.1 s per reference move; the reference cannot go below 1320, so the bots under
 1320 are only shown to lose to it). Measured 2026-10-16 after the first weakening: Mei 2/4 at 1400,
 Leo 1.5/4 at 1600, Ivy 3/4 at 1800, Omar, Zara and Viktor 4/4 at 2000-2400, so the Advanced tier was
-weakened a second time (one depth less, higher temperature, four candidate lines); the rerun's
-numbers are in `data/bot_calibration.json`. Four games is a coarse ruler (4/4 happens 6% of the
-time at equal strength), so the UI still says "about".
+weakened a second time (one depth less, higher temperature, four candidate lines). The rerun had
+Ivy 2.5/4, Omar 2.5/4, Zara 3.5/4 and Viktor 3.5/4 (`data/bot_calibration.json`). Four games is a
+coarse ruler (4/4 happens 6% of the time at equal strength), so the UI still says "about".
 
 ### 2.3 Game review
 
