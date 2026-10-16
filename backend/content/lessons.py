@@ -91,6 +91,8 @@ def _validate_section(sec: dict) -> dict:
                 raise ValueError(f"solution move {uci} illegal in {b.fen()}")
             b.push(mv)
         sec["solution_san"] = _sans(board, sol)
+        if sec.get("accept_any_check") and not any(board.gives_check(m) for m in board.legal_moves):
+            raise ValueError("accept_any_check challenge with no checking move")
     elif t == "quiz":
         opts = sec.get("options") or []
         if len(opts) < 2 or not (0 <= int(sec.get("answer", -1)) < len(opts)):
