@@ -83,6 +83,7 @@ export function VisionPage() {
             highlights={[...(mode === "name" && running ? [{ square: target, brush: "yellow" as const }] : []), ...(flash ? [flash] : [])]}
           />
         </div>
+        <p className="vision-bottom" data-testid="vision-bottom">{orientation === "white" ? "White" : "Black"} at the bottom</p>
       </div>
       <aside className="card vision-side">
         {running ? (

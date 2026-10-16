@@ -1,8 +1,7 @@
-"""Opening explorer API over the lichess chess-openings book: what this position is called, the
-named continuations from it, search by name, and the ECO families for browsing."""
+"""Opening explorer API over the lichess chess-openings book: the deepest named position a line
+of moves reached, the moves that stay on a named line from there, search by name, and the ECO
+families for browsing."""
 from __future__ import annotations
-
-from collections import defaultdict
 
 import chess
 from fastapi import APIRouter, HTTPException, Query
@@ -13,36 +12,31 @@ router = APIRouter(prefix="/api/openings", tags=["openings"])
 
 
 @router.get("/explore")
-async def explore(fen: str = Query(chess.STARTING_FEN)) -> dict:
-    try:
-        board = chess.Board(fen)
-    except ValueError:
-        raise HTTPException(400, f"bad FEN {fen!r}")
+async def explore(moves: str = "") -> dict:
+    """The position after `moves` (UCI from the start, space-separated), the deepest named
+    position the moves reached, and the moves that stay on a named line from here."""
     book = load_book()
-    here = book.lookup(board)
+    board = chess.Board()
+    here = None
+    for tok in moves.split():
+        try:
+            mv = chess.Move.from_uci(tok)
+        except ValueError:
+            raise HTTPException(400, f"bad move {tok!r} at ply {board.ply() + 1}: expected UCI")
+        if mv not in board.legal_moves:
+            raise HTTPException(400, f"illegal move {tok!r} at ply {board.ply() + 1} in {board.fen()}")
+        board.push(mv)
+        here = book.lookup(board) or here
     conts = []
-    for mv, op in book.continuations(board):
-        conts.append({"san": board.san(mv), "uci": mv.uci(), "eco": op.eco, "name": op.name, "ply": op.ply})
-    # how many deeper named lines pass through each continuation: a proxy for how main the line is
-    counts: dict[str, int] = defaultdict(int)
-    for o in book.all:
-        counts[o.pgn] = 0
-    prefix = here.pgn if here else ""
-    for c in conts:
-        line_prefix = (prefix + " " if prefix else "") 
-        n = sum(1 for o in book.all if o.pgn.startswith(line_prefix) and o.ply > (here.ply if here else 0) and _first_move_after(o.pgn, here.ply if here else 0) == c["san"])
-        c["lines_below"] = n
-    conts.sort(key=lambda c: (-c["lines_below"], c["name"]))
+    for mv, op, lines in book.book_moves(board):
+        conts.append({"san": board.san(mv), "uci": mv.uci(), "eco": op.eco if op else None, "name": op.name if op else None, "lines_below": lines})
+    # how many named lines pass through each move's position: a proxy for how main the line is
+    conts.sort(key=lambda c: (-c["lines_below"], c["name"] or ""))
     return {
         "fen": board.fen(),
         "opening": {"eco": here.eco, "name": here.name, "pgn": here.pgn, "ply": here.ply} if here else None,
         "continuations": conts,
     }
-
-
-def _first_move_after(pgn: str, ply: int) -> str | None:
-    moves = [t for t in pgn.split() if not t[0].isdigit()]
-    return moves[ply] if len(moves) > ply else None
 
 
 @router.get("/search")
