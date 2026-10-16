@@ -58,3 +58,9 @@ def test_pool_analyse_and_play(event_loop):
             await pool.stop()
 
     event_loop.run_until_complete(run())
+
+
+def test_a_delivered_mate_scores_for_the_winner():
+    mated = chess.engine.PovScore(chess.engine.Mate(0), chess.BLACK)  # black to move, black is mated
+    assert sc.cp_from_score(mated, chess.WHITE) == sc.MATE_CP
+    assert sc.cp_from_score(mated, chess.BLACK) == -sc.MATE_CP

@@ -54,7 +54,10 @@ async def import_pgn(req: ImportPgnRequest) -> dict:
     moves = list(game.mainline_moves())
     if not moves:
         raise HTTPException(400, "the PGN has no moves")
-    board = chess.Board()
+    board = game.board()  # the FEN header's position when the game starts from one
+    if type(board) is not chess.Board or not board.is_valid():
+        raise HTTPException(400, f"only standard chess from a legal position can be reviewed (Variant {game.headers.get('Variant', 'standard')!r}, FEN {board.fen()!r})")
+    start_fen = board.fen() if "FEN" in game.headers else None
     recs = []
     for mv in moves:
         san = board.san(mv)
@@ -66,11 +69,11 @@ async def import_pgn(req: ImportPgnRequest) -> dict:
     black = game.headers.get("Black") if game.headers.get("Black", "?") != "?" else "Black"
     await database.execute(
         "INSERT INTO games(id, player_color, bot_id, time_control, status, result, termination, pgn, moves_json, "
-        "opening_eco, opening_name, white_name, black_name, source) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+        "opening_eco, opening_name, white_name, black_name, source, start_fen) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
         (game_id, "white", None, "import", "finished", result, "imported", str(game), __import__("json").dumps(recs),
-         game.headers.get("ECO"), game.headers.get("Opening"), white, black, "import"),
+         game.headers.get("ECO"), game.headers.get("Opening"), white, black, "import", start_fen),
     )
-    job = jobs.start_review(game_id, moves, depth=DEPTHS[req.mode], result=result)
+    job = jobs.start_review(game_id, moves, depth=DEPTHS[req.mode], result=result, start_fen=start_fen)
     return {"game_id": game_id, "job": job.public(), "white": white, "black": black}
 
 

@@ -7,12 +7,12 @@ import time
 import uuid
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 
-from .engine.pool import pool
+from .engine.pool import IllegalPosition, pool
 from .logging_setup import configure_logging
 from .openings.book import load_book
 from .settings import REPO_ROOT, settings
@@ -59,6 +59,10 @@ def create_app() -> FastAPI:
             )
         return response
 
+    @app.exception_handler(IllegalPosition)
+    async def illegal_position(request: Request, exc: IllegalPosition) -> JSONResponse:
+        return JSONResponse(status_code=400, content={"detail": str(exc)})
+
     from .routers import register_routers
 
     register_routers(app)
@@ -72,11 +76,15 @@ def create_app() -> FastAPI:
 
         @app.get("/{path:path}", include_in_schema=False)
         async def spa(path: str):
-            """Every non-API path serves index.html so client-side routes survive a refresh."""
-            candidate = _FRONTEND_DIST / path
-            if path and candidate.is_file():
+            """Every non-API path serves index.html so client-side routes survive a refresh. A file is
+            served only from inside frontend/dist; an unknown /api path is a 404, not the page."""
+            if path.startswith("api/"):
+                raise HTTPException(404, f"no API route /{path}")
+            root = _FRONTEND_DIST.resolve()
+            candidate = (root / path).resolve()
+            if path and candidate.is_relative_to(root) and candidate.is_file():
                 return FileResponse(candidate)
-            return FileResponse(_FRONTEND_DIST / "index.html")
+            return FileResponse(root / "index.html")
 
     return app
 

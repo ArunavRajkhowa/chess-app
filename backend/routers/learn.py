@@ -97,9 +97,17 @@ async def drill_move(req: DrillMove) -> dict:
     """Applies the learner's move, checks the goal, and answers with the engine's reply."""
     try:
         board = chess.Board(req.fen)
-        move = chess.Move.from_uci(req.move) if len(req.move) in (4, 5) else board.parse_san(req.move)
     except ValueError:
-        raise HTTPException(400, "bad fen or move")
+        raise HTTPException(400, f"bad FEN {req.fen!r}")
+    if not board.is_valid():
+        raise HTTPException(400, f"illegal position {req.fen!r}")
+    try:
+        move = chess.Move.from_uci(req.move)
+    except ValueError:
+        try:
+            move = board.parse_san(req.move)
+        except ValueError:
+            raise HTTPException(400, f"cannot read move {req.move!r} as UCI or SAN")
     if move not in board.legal_moves:
         raise HTTPException(400, f"illegal move {req.move}")
     learner = board.turn

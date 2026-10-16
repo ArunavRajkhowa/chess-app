@@ -74,11 +74,12 @@ async def me() -> dict:
         outcome = "draw" if r["result"] == "1/2-1/2" else ("win" if won else "loss")
         results[outcome] += 1
         endings[f"{outcome}:{r['termination'] or 'unknown'}"] += 1
-        op = r["opening_name"] or "Unknown"
-        d = openings.setdefault(op, {"name": op, "eco": r["opening_eco"], "games": 0, "wins": 0, "draws": 0, "losses": 0, "accuracy": []})
-        d["games"] += 1
-        d[{"win": "wins", "draw": "draws", "loss": "losses"}[outcome]] += 1
-        d["accuracy"].append(me_side["accuracy"])
+        op = r["opening_name"]
+        if op:  # a game the book cannot name (one started from a position) has no row: absence is data
+            d = openings.setdefault(op, {"name": op, "eco": r["opening_eco"], "games": 0, "wins": 0, "draws": 0, "losses": 0, "accuracy": []})
+            d["games"] += 1
+            d[{"win": "wins", "draw": "draws", "loss": "losses"}[outcome]] += 1
+            d["accuracy"].append(me_side["accuracy"])
         shapes[_shape(rep["eval_graph"])] += 1
         if rep["moves"]:
             phase_games_ended[rep["moves"][-1]["phase"]] += 1

@@ -71,28 +71,40 @@ class GameReport:
         return asdict(self)
 
 
+def _exchange_gain(board: chess.Board, square: chess.Square) -> int:
+    """Static exchange on `square` for the side to move: the material it wins by capturing there with
+    its cheapest legal capturer, both sides recapturing only while it pays (0 if capturing loses)."""
+    captures = [m for m in board.legal_moves if m.to_square == square]
+    if not captures:
+        return 0
+    cheapest = min(captures, key=lambda m: PIECE_VALUES[board.piece_at(m.from_square).piece_type] or 100)  # king last
+    target = PIECE_VALUES[board.piece_at(square).piece_type]
+    after = board.copy(stack=False)
+    after.push(cheapest)
+    return max(0, target - _exchange_gain(after, square))
+
+
 def _sacrificed_pawns(board: chess.Board, move: chess.Move) -> int:
-    """Material the mover offers with this move: the moved piece's value if it lands on a square the
-    opponent can take without losing more (static exchange), minus any capture it makes."""
+    """Material the mover leaves en prise after this move, minus what the move captures: the best
+    static exchange the opponent has against any of the mover's pieces. Morphy's 13.Rxd7 (Opera
+    game) = 2, Fischer's 17...Be6 against Byrne (1956) = 6, a quiet developing move = 0."""
     mover = board.piece_at(move.from_square)
     if mover is None or mover.piece_type == chess.KING:
         return 0
-    gained = PIECE_VALUES[board.piece_at(move.to_square).piece_type] if board.is_capture(move) and board.piece_at(move.to_square) else (1 if board.is_en_passant(move) else 0)
-    b = board.copy()
-    b.push(move)
-    attackers = b.attackers(b.turn, move.to_square)
-    if not attackers:
-        return 0
-    cheapest = min(PIECE_VALUES[b.piece_at(sq).piece_type] for sq in attackers)
-    defenders = b.attackers(not b.turn, move.to_square)
-    landed = PIECE_VALUES[mover.piece_type if move.promotion is None else move.promotion]
-    if defenders and cheapest >= landed:
-        return 0
-    loss = landed - (cheapest if defenders else 0)
-    return max(0, loss - gained)
+    captured = board.piece_at(move.to_square)
+    gained = PIECE_VALUES[captured.piece_type] if captured else (1 if board.is_en_passant(move) else 0)
+    after = board.copy(stack=False)
+    after.push(move)
+    targets = {m.to_square for m in after.legal_moves if after.color_at(m.to_square) == mover.color}
+    return max(0, max((_exchange_gain(after, sq) for sq in targets), default=0) - gained)
 
 
-def _note_for(cls: str, rm_best_san: str, cp_loss: int, mover_mate_missed: bool) -> str:
+def _note_for(cls: str, rm_best_san: str, cp_loss: int, mover_mate_missed: bool, allows_mate: int | None,
+              gives_mate: bool, mate_involved: bool) -> str:
+    if gives_mate:
+        return "Checkmate."
+    if allows_mate and cls in (C.INACCURACY, C.MISTAKE, C.MISS, C.BLUNDER):
+        return f"This allows mate in {allows_mate}. {rm_best_san} was the move."
     if cls == C.BRILLIANT:
         return "A sound sacrifice: the engine agrees and the material comes back with interest."
     if cls == C.GREAT:
@@ -114,7 +126,9 @@ def _note_for(cls: str, rm_best_san: str, cp_loss: int, mover_mate_missed: bool)
     if cls == C.MISTAKE:
         return f"This gives something away. {rm_best_san} was much better."
     if cls == C.BLUNDER:
-        return ("This throws away a mate." if mover_mate_missed else f"A serious error. {rm_best_san} was the move.") + f" ({cp_loss / 100:.1f} pawns lost)"
+        if mover_mate_missed:
+            return f"This throws away a mate. {rm_best_san} was the move."
+        return f"A serious error. {rm_best_san} was the move." + ("" if mate_involved else f" ({cp_loss / 100:.1f} pawns lost)")
     return ""
 
 
@@ -183,11 +197,12 @@ async def review_moves(
         in_book = (i + 1) <= book_exit_ply and (i + 1) <= C.BOOK_MAX_PLY
         forced = board.legal_moves.count() == 1
         sacrificed = _sacrificed_pawns(board, mv)
+        mate_missed = before_cp >= MATE_CP - 50 and after_cp < MATE_CP - 50
         cls = C.classify_move(
             win_before=win_before, win_after=win_after, second_best_win=second_win, is_best=is_best,
             is_book=in_book, is_forced=forced, cp_loss=cp_loss, sacrificed_pawns=sacrificed,
             opponent_prev_class=prev_class[not mover], best_win_was_available=win_before,
-            in_check_before=board.is_check(), is_promotion=mv.promotion is not None,
+            in_check_before=board.is_check(), is_promotion=mv.promotion is not None, mate_missed=mate_missed,
         )
         prev_class[mover] = cls
         acc = C.move_accuracy(win_before, win_after)
@@ -197,15 +212,18 @@ async def review_moves(
             line_san.append(b2.san(lm))
             b2.push(lm)
         after_score_text = describe_score(infos[i + 1][0]["score"], chess.WHITE) if infos[i + 1] else ("#" if boards[i + 1].is_checkmate() else "½")
-        mate_missed = before_cp >= MATE_CP - 50 and after_cp < MATE_CP - 50
+        after_pov = infos[i + 1][0]["score"].pov(mover) if infos[i + 1] else None
+        allows_mate = -after_pov.mate() if after_pov is not None and (after_pov.mate() or 0) < 0 else None
+        mate_involved = max(abs(before_cp), abs(after_cp)) >= MATE_CP - 1000
         reviewed.append(ReviewedMove(
-            ply=i + 1, move_number=i // 2 + 1, color="white" if mover == chess.WHITE else "black",
+            ply=i + 1, move_number=board.fullmove_number, color="white" if mover == chess.WHITE else "black",
             san=board.san(mv), uci=mv.uci(), fen_before=board.fen(), fen_after=boards[i + 1].fen(),
             classification=cls, accuracy=round(acc, 1), win_before=round(win_before, 1), win_after=round(win_after, 1),
             cp_loss=cp_loss, eval_after_cp=side_cp(i + 1, chess.WHITE) or 0, eval_after_text=after_score_text,
             best_move_san=board.san(best_move), best_move_uci=best_move.uci(), best_line_san=line_san,
             best_eval_text=describe_score(infos[i][0]["score"], chess.WHITE) if infos[i] else "",
-            phase=phases[i], note=_note_for(cls, board.san(best_move), cp_loss, mate_missed),
+            phase=phases[i], note=_note_for(cls, board.san(best_move), cp_loss, mate_missed, allows_mate,
+                                            boards[i + 1].is_checkmate(), mate_involved),
         ))
 
     key: list[int] = []
@@ -215,13 +233,13 @@ async def review_moves(
             rm.is_key_moment = True
             key.append(rm.ply)
 
+    weights = C.volatility_weights(white_graph)
+
     def summary(color: str) -> SideSummary:
         mine = [m for m in reviewed if m.color == color]
         if not mine:
             return SideSummary(accuracy=100.0, acpl=0.0, estimated_rating=0, counts={c: 0 for c in C.ALL_CLASSES}, phase_accuracy={})
-        accs = [m.accuracy for m in mine]
-        graph = white_graph if color == "white" else [100 - w for w in white_graph]
-        acc = C.game_accuracy(graph, accs)
+        acc = C.game_accuracy([m.accuracy for m in mine], [weights[m.ply - 1] for m in mine])
         acpl = sum(min(m.cp_loss, 1000) for m in mine) / len(mine)
         counts = {c: sum(1 for m in mine if m.classification == c) for c in C.ALL_CLASSES}
         phase_acc: dict[str, float | None] = {}

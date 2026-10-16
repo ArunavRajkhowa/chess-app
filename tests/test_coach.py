@@ -89,3 +89,18 @@ def test_coach_endpoints_fall_back_to_rules(client):
     assert "Nf6 is a blunder" in text and "Better was" in text
     r = client.post("/api/coach/summary", json={"game_id": imp["game_id"]})
     assert "accuracy" in r.text
+
+
+def test_a_position_without_a_king_is_refused_and_the_engine_survives(client):
+    assert client.get("/api/coach/facts", params={"fen": "8/8/8/8/8/8/8/KR6 w - - 0 1"}).status_code == 400
+    assert client.get("/api/coach/facts", params={"fen": chess.STARTING_FEN}).status_code == 200
+
+
+def test_fallback_names_the_opponents_reply_not_the_movers_threat():
+    side = {"hanging_pieces": [], "attackers_near_king": 0, "developed_minors": 2, "king_square": "g1"}
+    after = {"side_to_move": "black", "in_check": False, "white": side, "black": {**side, "king_square": "g8"},
+             "candidate_moves": [{"move": "Qb6", "uci": "d8b6", "eval": "-1.20", "line": ["Qb6"]}],
+             "threats_against_side_to_move": [{"san": "Qxa1"}]}  # white's own threat after white's move
+    t = fallback.explain_move_text(move_san="Ne7", mover="white", classification="inaccuracy", best_san="Nf3", best_line=["Nf3"],
+                                   eval_before="+0.30", eval_after="-0.40", facts_before=after, facts_after=after, level="beginner")
+    assert "Qxa1" not in t and "Qb6" in t
