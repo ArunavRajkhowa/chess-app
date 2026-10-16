@@ -261,7 +261,7 @@
       "key": "queen-vs-rook",
       "theme": "queen",
       "title": "Queen against rook",
-      "fen": "8/8/8/8/1k6/8/2r5/K2Q4 w - - 0 1",
+      "fen": "r7/1k6/4K3/8/8/8/8/2Q5 w - - 0 1",
       "goal": "win_material",
       "max_moves": 40,
       "level": 5,
