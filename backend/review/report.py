@@ -48,9 +48,9 @@ class ReviewedMove:
 
 @dataclass
 class SideSummary:
-    accuracy: float
-    acpl: float
-    estimated_rating: int
+    accuracy: float | None  # None: the side made no move, so there is nothing to judge
+    acpl: float | None
+    estimated_rating: int | None
     counts: dict[str, int]
     phase_accuracy: dict[str, float | None]
 
@@ -238,7 +238,7 @@ async def review_moves(
     def summary(color: str) -> SideSummary:
         mine = [m for m in reviewed if m.color == color]
         if not mine:
-            return SideSummary(accuracy=100.0, acpl=0.0, estimated_rating=0, counts={c: 0 for c in C.ALL_CLASSES}, phase_accuracy={})
+            return SideSummary(accuracy=None, acpl=None, estimated_rating=None, counts={c: 0 for c in C.ALL_CLASSES}, phase_accuracy={})
         acc = C.game_accuracy([m.accuracy for m in mine], [weights[m.ply - 1] for m in mine])
         acpl = sum(min(m.cp_loss, 1000) for m in mine) / len(mine)
         counts = {c: sum(1 for m in mine if m.classification == c) for c in C.ALL_CLASSES}

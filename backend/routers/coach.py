@@ -57,17 +57,34 @@ def _sse(obj: dict) -> str:
     return f"data: {json.dumps(obj)}\n\n"
 
 
+# A bare square ("the pawn on e4") reads like a pawn move, so a two-character token counts as a
+# move only after a move number ("12.e5").
+_NUMBERED_PAWN_MOVE = re.compile(r"\d+\.(?:\.\.)?\s?([a-h][1-8])\b")
+
+
+def _with_lines(board: chess.Board, facts: dict) -> list[chess.Board]:
+    """The position and every position along the fact sheet's engine lines, so a move the model
+    quotes from a line counts as verified."""
+    boards = [board]
+    for c in facts.get("candidate_moves", []):
+        b = board.copy()
+        for san in c["line"]:
+            try:
+                b.push_san(san)
+            except ValueError:
+                break
+            boards.append(b.copy())
+    return boards
+
+
 def _unverified_moves(text: str, boards: list[chess.Board]) -> list[str]:
-    """SAN tokens in the text that are legal in none of the given positions."""
+    """Move tokens in the text that are legal in none of the given positions."""
     legal: set[str] = set()
     for b in boards:
         for mv in b.legal_moves:
             legal.add(b.san(mv).rstrip("+#"))
-    out = []
-    for tok in set(_SAN_TOKEN.findall(text)):
-        if tok.rstrip("+#") not in legal and re.search(r"[a-h][1-8]", tok) and len(tok) >= 3:
-            out.append(tok)
-    return sorted(out)
+    tokens = {t for t in _SAN_TOKEN.findall(text) if len(t) >= 3} | set(_NUMBERED_PAWN_MOVE.findall(text))
+    return sorted(t for t in tokens if t.rstrip("+#") not in legal and re.search(r"[a-h][1-8]", t))
 
 
 async def _respond(system: str, user: str, purpose: str, rules_text: str, boards: list[chess.Board]) -> AsyncIterator[str]:
@@ -132,7 +149,7 @@ async def explain(req: ExplainRequest):
         best_line=rm["best_line_san"], eval_before=rm["best_eval_text"], eval_after=rm["eval_after_text"],
         facts_before=facts_before, facts_after=facts_after, level=req.level,
     )
-    return _stream(_respond(prompt("coach_system"), user, "explain", rules, [before, after]))
+    return _stream(_respond(prompt("coach_system"), user, "explain", rules, _with_lines(before, facts_before) + _with_lines(after, facts_after)))
 
 
 @router.post("/chat")
@@ -150,7 +167,7 @@ async def chat(req: ChatRequest):
         user += f"\n\nEarlier in this conversation:\n{history}"
     user += f"\n\nQuestion: {req.question}"
     rules = fallback.chat_text(f, req.question, req.level)
-    return _stream(_respond(prompt("coach_system"), user, "chat", rules, [board]))
+    return _stream(_respond(prompt("coach_system"), user, "chat", rules, _with_lines(board, f)))
 
 
 @router.post("/hint")
@@ -164,7 +181,7 @@ async def hint(req: HintRequest):
     f = await position_facts(board, pool)
     user = prompt("hint").format(player_level=req.level, hint_level=req.hint_level, facts=json.dumps(f))
     rules = fallback.hint_text(f, req.hint_level)
-    return _stream(_respond(prompt("coach_system"), user, "hint", rules, [board]))
+    return _stream(_respond(prompt("coach_system"), user, "hint", rules, _with_lines(board, f)))
 
 
 @router.post("/summary")
@@ -193,10 +210,12 @@ async def summary(req: SummaryRequest):
 def _rules_summary(report: dict, player_color: str) -> str:
     me = report[player_color]
     opp = report["black" if player_color == "white" else "white"]
-    opening = report["opening"]["name"] if report.get("opening") else "an unnamed opening"
     errors = [m for m in report["moves"] if m["color"] == player_color and m["classification"] in (MISTAKE, MISS, BLUNDER)]
     worst = sorted(errors, key=lambda m: m["win_before"] - m["win_after"], reverse=True)[:2]
-    parts = [f"You played {opening} with {me['accuracy']}% accuracy against {opp['accuracy']}%."]
+    head = f"You played the {report['opening']['name']}" if report.get("opening") else "You played this game"
+    if me["accuracy"] is not None:  # a side with no moves has no accuracy: say nothing rather than a number
+        head += f" with {me['accuracy']}% accuracy" + (f" against {opp['accuracy']}%" if opp["accuracy"] is not None else "")
+    parts = [head + "."]
     for m in worst:
         parts.append(f"Move {m['move_number']} {m['san']} was a {m['classification']}; {m['best_move_san']} was better.")
     phases = {k: v for k, v in me["phase_accuracy"].items() if v is not None}

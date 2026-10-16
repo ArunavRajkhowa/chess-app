@@ -80,7 +80,7 @@ async def _run(job: ReviewJob, moves: list[chess.Move], depth: int, result: str 
             (job.game_id, json.dumps(job.report)),
         )
         job.status = STATUS_DONE
-        LOGGER.info("review done game=%s plies=%d depth=%d white=%.1f black=%.1f", job.game_id, len(moves), depth,
+        LOGGER.info("review done game=%s plies=%d depth=%d white=%s black=%s", job.game_id, len(moves), depth,
                     report.white.accuracy, report.black.accuracy)
     except Exception as exc:  # boundary: the job must report, not vanish
         job.status = STATUS_FAILED

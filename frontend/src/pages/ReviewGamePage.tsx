@@ -12,7 +12,7 @@ import { api, type GameReport, type ReviewedMove } from "../lib/api";
 import { checkSquare, destsFor, safeMove, soundForMove } from "../lib/chess/game";
 import type { PromotionPiece, Square } from "../lib/chess/types";
 import { winPercent } from "../lib/engine/uci";
-import { gameAccuracy } from "../lib/review/accuracy";
+import { gameAccuracy, volatilityWeights } from "../lib/review/accuracy";
 import { classifyDrop } from "../lib/review/classify";
 import { play as playSound } from "../lib/sound";
 import { useEngine } from "../store/engine";
@@ -20,6 +20,14 @@ import { streamCoach } from "../lib/coach";
 import "../components/review/Review.css";
 
 const START = new Chess().fen();
+
+/** The eval bar's input from a review score text, White's view: "+0.35", "M2", "-M3", "#" (mate on the board) or "½". */
+function barScore(text: string, whiteWon: boolean): { cp?: number; mate?: number; result?: "1-0" | "0-1" | "1/2-1/2" } {
+  if (text === "#") return { result: whiteWon ? "1-0" : "0-1" };
+  if (text === "½") return { result: "1/2-1/2" };
+  const m = /^(-?)M(\d+)$/.exec(text);
+  return m ? { mate: (m[1] ? -1 : 1) * Number(m[2]) } : { cp: Math.round(Number(text) * 100) };
+}
 
 export function ReviewGamePage() {
   const { gameId = "" } = useParams();
@@ -30,7 +38,7 @@ export function ReviewGamePage() {
   const [ply, setPly] = useState(0);
   const [orientation, setOrientation] = useState<"white" | "black">("white");
   const [showBest, setShowBest] = useState(false);
-  const [retry, setRetry] = useState<{ ply: number; status: "waiting" | "correct" | "wrong"; text: string } | null>(null);
+  const [retry, setRetry] = useState<{ ply: number; status: "waiting" | "correct" | "wrong"; text: string; fen: string } | null>(null);
   const [explanation, setExplanation] = useState<string | null>(null);
   const [explaining, setExplaining] = useState(false);
   const [narrative, setNarrative] = useState<string | null>(null);
@@ -83,7 +91,8 @@ export function ReviewGamePage() {
 
   const moves = report?.moves ?? [];
   const current: ReviewedMove | null = ply > 0 ? moves[ply - 1] ?? null : null;
-  const fen = retry?.status === "waiting" || retry?.status === "wrong" ? moves[retry.ply - 1].fen_before : ply === 0 ? START : moves[ply - 1]?.fen_after ?? START;
+  const start = moves[0]?.fen_before ?? START; // a game from a FEN starts there
+  const fen = retry ? retry.fen : ply === 0 ? start : moves[ply - 1]?.fen_after ?? start;
   const chess = useMemo(() => new Chess(fen), [fen]);
   const keyMoments = report?.key_moments ?? [];
   const nextKey = keyMoments.find((k) => k > ply) ?? null;
@@ -110,12 +119,12 @@ export function ReviewGamePage() {
     if (!mv) return;
     playSound(soundForMove(mv, c));
     const uci = from + to + (promotion ?? "");
-    if (uci === current.best_move_uci) {
-      const accs = moves.filter((m) => m.color === current.color).map((m) => (m.ply === current.ply ? 100 : m.accuracy));
-      const graph = current.color === "white" ? report!.eval_graph : report!.eval_graph.map((w) => 100 - w);
-      const would = gameAccuracy(graph, accs);
+    if (uci === current.best_move_uci || c.isCheckmate()) {
+      const weights = volatilityWeights(report!.eval_graph);
+      const mine = moves.filter((m) => m.color === current.color);
+      const would = gameAccuracy(mine.map((m) => (m.ply === current.ply ? 100 : m.accuracy)), mine.map((m) => weights[m.ply - 1]));
       playSound("correct");
-      setRetry({ ply: current.ply, status: "correct", text: `Correct! ${mv.san} was the best move. Your accuracy would have been ${would}%.` });
+      setRetry({ ply: current.ply, status: "correct", fen: c.fen(), text: `Correct! ${mv.san} ${c.isCheckmate() ? "is checkmate" : "was the best move"}. Your accuracy would have been ${would}%.` });
       return;
     }
     const r = await evaluate(c.fen(), { movetimeMs: 600 });
@@ -123,7 +132,7 @@ export function ReviewGamePage() {
     const wa = line ? (current.color === "white" ? winPercent(line) : 100 - winPercent(line)) : current.win_after;
     const cls = classifyDrop(current.win_before, wa, false);
     playSound("wrong");
-    setRetry({ ply: current.ply, status: "wrong", text: `${mv.san} is ${cls === "best" ? "fine" : cls === "excellent" || cls === "good" ? "reasonable, but not the best" : "not it: still " + cls}. Try again, or press Show best.` });
+    setRetry({ ply: current.ply, status: "wrong", fen: current.fen_before, text: `${mv.san} is ${cls === "best" ? "fine" : cls === "excellent" || cls === "good" ? "reasonable, but not the best" : "not it: still " + cls}. Try again, or press Show best.` });
   };
 
   const explain = async () => {
@@ -176,11 +185,11 @@ export function ReviewGamePage() {
   const markers = current && !retry && current.classification !== "book" && current.classification !== "good" && current.classification !== "excellent"
     ? [{ square: current.uci.slice(2, 4), text: CLASS_GLYPH[current.classification], className: `cls-${current.classification}` }]
     : [];
-  const evalCp = ply === 0 ? 20 : current?.eval_after_cp ?? 0;
-  const isMate = Math.abs(evalCp) >= 9000;
+  const bar = current ? barScore(current.eval_after_text, current.eval_after_cp > 0) : barScore(moves[0].best_eval_text, false);
+  const pct = (a: number | null) => (a === null ? "–" : `${a}%`);
   const resultLine = report.result ? `${report.result} · ` : "";
-  const opening = report.opening ? `${report.opening.eco} ${report.opening.name}` : "Unknown opening";
-  const summary = `${resultLine}${opening}. White ${report.white.accuracy}% · Black ${report.black.accuracy}%. ${keyMoments.length} key moments.`;
+  const opening = report.opening ? `${report.opening.eco} ${report.opening.name}` : null; // absence is data: no invented name
+  const summary = `${resultLine}${opening ? `${opening}. ` : ""}White ${pct(report.white.accuracy)} · Black ${pct(report.black.accuracy)}. ${keyMoments.length} key moments.`;
   const canRetry = !!current && ["inaccuracy", "mistake", "blunder", "miss"].includes(current.classification) && (!names.playerColor || current.color === names.playerColor);
 
   return (
@@ -191,7 +200,7 @@ export function ReviewGamePage() {
           <span className="faint">{report.result ?? "*"}</span>
         </div>
         <div className="gameview-board-row">
-          <EvalBar cp={isMate ? undefined : evalCp} mate={isMate ? (evalCp > 0 ? 1 : -1) : undefined} orientation={orientation} />
+          <EvalBar {...bar} orientation={orientation} />
           <Board
             fen={fen}
             orientation={orientation}
@@ -214,11 +223,11 @@ export function ReviewGamePage() {
       <aside className="review-side">
         <div className="card">
           <div className="review-summary">
-            <div><div className="review-acc white num" data-testid="acc-white">{report.white.accuracy}</div><div className="review-rating">{names.white} · est. {report.white.estimated_rating}</div></div>
+            <div><div className="review-acc white num" data-testid="acc-white">{report.white.accuracy ?? "–"}</div><div className="review-rating">{names.white} · est. {report.white.estimated_rating ?? "–"}</div></div>
             <div className="faint">accuracy</div>
-            <div><div className="review-acc black num" data-testid="acc-black">{report.black.accuracy}</div><div className="review-rating">{names.black} · est. {report.black.estimated_rating}</div></div>
+            <div><div className="review-acc black num" data-testid="acc-black">{report.black.accuracy ?? "–"}</div><div className="review-rating">{names.black} · est. {report.black.estimated_rating ?? "–"}</div></div>
           </div>
-          <div className="faint" style={{ textAlign: "center", marginTop: 6 }}>{opening} · depth {report.depth}</div>
+          <div className="faint" style={{ textAlign: "center", marginTop: 6 }}>{opening ? `${opening} · ` : ""}depth {report.depth}</div>
           <div className="row" style={{ justifyContent: "center", marginTop: 10 }}>
             <button className="btn btn-sm" onClick={tellStory} disabled={narrating} data-testid="summary-btn">{narrating ? "Writing…" : "Coach summary"}</button>
             <button className="btn btn-sm" onClick={practiceFromHere} data-testid="practice-btn">Practice from here</button>
@@ -232,7 +241,7 @@ export function ReviewGamePage() {
             explanation={explanation}
             explaining={explaining}
             onExplain={explain}
-            onRetry={() => current && setRetry({ ply: current.ply, status: "waiting", text: "" })}
+            onRetry={() => current && setRetry({ ply: current.ply, status: "waiting", text: "", fen: current.fen_before })}
             onShowBest={() => setShowBest((s) => !s)}
             onNext={() => nextKey !== null && setPly(nextKey)}
             canRetry={canRetry}

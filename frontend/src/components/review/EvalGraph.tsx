@@ -32,7 +32,7 @@ export function EvalGraph({ graph, moves, currentPly, onSelect }: Props) {
       <path d={path} className="evalgraph-line" />
       <line x1={x(currentPly)} x2={x(currentPly)} y1={0} y2={h} className="evalgraph-cursor" />
       {moves.filter((m) => m.is_key_moment && MARK[m.classification]).map((m) => (
-        <g key={m.ply} transform={`translate(${x(m.ply)}, ${y(graph[m.ply] ?? 50)})`}>
+        <g key={m.ply} transform={`translate(${Math.min(w - 7, x(m.ply))}, ${Math.max(7, Math.min(h - 7, y(graph[m.ply] ?? 50)))})`}>
           <circle r={7} className={`evalgraph-mark cls-${m.classification}`} />
           <text y={3} className="evalgraph-mark-text">{MARK[m.classification]}</text>
         </g>

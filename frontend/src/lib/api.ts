@@ -89,9 +89,10 @@ export interface ReviewedMove {
 }
 
 export interface SideSummary {
-  accuracy: number;
-  acpl: number;
-  estimated_rating: number;
+  /** null when the side made no move: nothing to judge. */
+  accuracy: number | null;
+  acpl: number | null;
+  estimated_rating: number | null;
   counts: Record<Classification, number>;
   phase_accuracy: Record<string, number | null>;
 }
