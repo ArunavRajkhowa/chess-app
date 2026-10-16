@@ -73,4 +73,7 @@ python -m scripts.validate_lessons data/lessons/*.json --engine   # must pass be
 Piece set by Colin M.L. Burnett (CC BY-SA 3.0). Opening names from lichess
 [chess-openings](https://github.com/lichess-org/chess-openings) (CC0). Engine: Stockfish (GPLv3),
 WASM build by Nathan Rugg. Accuracy and win-chance formulas after lichess; move classification
-boundaries after chess.com's published expected-points model.
+boundaries after chess.com's published expected-points model. Master-game scores from the
+pgnmentor.com player files and The Week in Chess (via the `rozim/ChessData` mirror), the 1997
+Deep Blue games from python-chess's test data, and the AlphaZero games DeepMind released in 2018;
+the themes and notes on them are this project's own.

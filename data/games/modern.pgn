@@ -1,0 +1,1089 @@
+[Event "Rosenwald Memorial, New York"]
+[Site "New York USA"]
+[Date "1956.10.17"]
+[Round "8"]
+[White "Donald Byrne"]
+[Black "Robert J. Fischer"]
+[Result "0-1"]
+[ECO "D97"]
+[Themes "attack,initiative,queen-sacrifice,sacrifice"]
+[Level "4"]
+[Why "The 'Game of the Century'. A 13-year-old Fischer gives up his queen for a swarm of minor pieces and rooks that cooperate better than White's lone queen. It is the clearest demonstration that material is only one currency: activity, tempo and coordination are the others. Also a model of a 'windmill' of discovered checks."]
+
+1. Nf3 Nf6 2. c4 g6 3. Nc3 Bg7 4. d4 O-O 5. Bf4 d5 6. Qb3 dxc4 7. Qxc4 c6 8. e4 Nbd7 9. Rd1 Nb6 10. Qc5 Bg4 11. Bg5 Na4 { Key: a deflection: if 12.Qxa4 Nxe4 and the g5-bishop hangs with threats on c3. } 12. Qa3 Nxc3 13. bxc3 Nxe4 { Key: Fischer keeps grabbing material while every White piece is overloaded. } 14. Bxe7 Qb6 15. Bc4 Nxc3 16. Bc5 Rfe8+ 17. Kf1 Be6 { Key: the queen sacrifice; 18.Bxb6 Bxc4+ 19.Kg1 Ne2+ 20.Kf1 Nxd4+ 21.Kg1 Ne2+ 22.Kf1 Nc3+ - the windmill wins the queen's worth of material back. } 18. Bxb6 Bxc4+ 19. Kg1 Ne2+ 20. Kf1 Nxd4+ 21. Kg1 Ne2+ 22. Kf1 Nc3+ 23. Kg1 axb6 24. Qb4 Ra4 25. Qxb6 Nxd1 { Key: Black has rook, two bishops and a knight for the queen; from here White is simply lost. } 26. h3 Rxa2 27. Kh2 Nxf2 28. Re1 Rxe1 29. Qd8+ Bf8 30. Nxe1 Bd5 31. Nf3 Ne4 32. Qb8 b5 33. h4 h5 34. Ne5 Kg7 35. Kg1 Bc5+ 36. Kf1 Ng3+ 37. Ke1 Bb4+ 38. Kd1 Bb3+ 39. Kc1 Ne2+ 40. Kb1 Nc3+ 41. Kc1 Rc2# { Key: the king is hunted from g1 to c1 and mated by rook and minor pieces. } 0-1
+
+[Event "US Championship 1963/64, New York"]
+[Site "New York USA"]
+[Date "1963.12.18"]
+[Round "3"]
+[White "Robert Byrne"]
+[Black "Robert J. Fischer"]
+[Result "0-1"]
+[ECO "D71"]
+[Themes "attack,initiative,sacrifice"]
+[Level "4"]
+[Why "Fischer's attack against a solid Grunfeld structure ends with a quiet move that the commentators analysing in the press room thought was winning for White. It teaches that an attack on a castled king can be prepared by positional means (...Nd3, ...Ba6 hitting the light squares) and finished with a sacrifice."]
+
+1. d4 Nf6 2. c4 g6 3. g3 c6 4. Bg2 d5 5. cxd5 cxd5 6. Nc3 Bg7 7. e3 O-O 8. Nge2 Nc6 9. O-O b6 10. b3 Ba6 11. Ba3 Re8 12. Qd2 e5 13. dxe5 Nxe5 14. Rfd1 Nd3 { Key: the knight invades; White's king position (g2-bishop, e3 pawn) is about to crack. } 15. Qc2 Nxf2 { Key: two knight blows remove the defenders of the light squares. } 16. Kxf2 Ng4+ 17. Kg1 Nxe3 18. Qd2 Nxg2 { Key: the second sacrifice opens the long diagonal for the a6-bishop and the queen. } 19. Kxg2 d4 20. Nxd4 { Key: the quiet move: ...Qh3+ cannot be stopped (22.Qf2 Qh3+ 23.Kg1 Re1+!! 24.Rxe1 Bxd4 and mate). } 20... Bb7+ 21. Kf1 Qd7 0-1
+
+[Event "Candidates semi-final (game 10), Bled"]
+[Site "Bled YUG"]
+[Date "1965.??.??"]
+[Round "10"]
+[White "Mikhail Tal"]
+[Black "Bent Larsen"]
+[Result "1-0"]
+[ECO "B82"]
+[Opening "Sicilian Defense: Scheveningen Variation, Tal Variation"]
+[Themes "attack,initiative,sacrifice,pawn-storm,opposite-castling"]
+[Level "4"]
+[Why "The decisive game of the Tal-Larsen match and the standard example of a knight sacrifice on d5 in the Sicilian: Tal gives a piece for two central pawns and an open king, then follows with a second sacrifice. Study how both sides race pawn storms after castling on opposite wings and how Tal keeps the initiative without immediate mate."]
+
+1. e4 c5 2. Nf3 Nc6 3. d4 cxd4 4. Nxd4 e6 5. Nc3 d6 6. Be3 Nf6 7. f4 Be7 8. Qf3 O-O 9. O-O-O { Key: opposite-side castling; White starts the g-pawn storm at once. } 9... Qc7 10. Ndb5 Qb8 11. g4 a6 12. Nd4 Nxd4 13. Bxd4 b5 14. g5 { Key: Larsen's counter-storm arrives one tempo too late. } 14... Nd7 15. Bd3 b4 16. Nd5 { Key: the thematic piece sacrifice: the e-file opens, the king on g8 feels the d3-bishop and the h4/h5 ideas. } 16... exd5 17. exd5 f5 18. Rde1 Rf7 19. h4 Bb7 20. Bxf5 { Key: a second sacrifice; every Black piece is now overloaded. } 20... Rxf5 21. Rxe7 Ne5 22. Qe4 Qf8 23. fxe5 { Key: Tal regains material with a crushing position. } 23... Rf4 24. Qe3 Rf3 25. Qe2 Qxe7 26. Qxf3 dxe5 27. Re1 Rd8 28. Rxe5 Qd6 29. Qf4 Rf8 30. Qe4 b3 31. axb3 Rf1+ 32. Kd2 Qb4+ 33. c3 Qd6 34. Bc5 Qxc5 35. Re8+ Rf8 36. Qe6+ Kh8 37. Qf7 { Key: mate on g7/h7 is unstoppable. } 1-0
+
+[Event "Varna Olympiad"]
+[Site "Varna BUL"]
+[Date "1962.??.??"]
+[Round "9"]
+[White "Mikhail Tal"]
+[Black "Hans-Joachim Hecht"]
+[Result "1-0"]
+[ECO "E13"]
+[Opening "Queen's Indian Defense: Kasparov Variation"]
+[Themes "attack,initiative,queen-sacrifice,sacrifice,rook-endgame"]
+[Level "4"]
+[Why "A queen sacrifice that does not mate: Tal gives the queen for two minor pieces and a lasting initiative, then wins a long endgame. It teaches that the value of a sacrifice is measured by the resulting activity, not by immediate tactics, and shows the technique needed after the fireworks."]
+
+1. d4 Nf6 2. c4 e6 3. Nf3 b6 4. Nc3 Bb4 5. Bg5 Bb7 6. e3 h6 7. Bh4 Bxc3+ 8. bxc3 d6 9. Nd2 e5 10. f3 Qe7 11. e4 Nbd7 12. Bd3 Nf8 13. c5 { Key: Tal gives a pawn to open the position with Black's king still in the centre. } 13... dxc5 14. dxe5 Qxe5 15. Qa4+ c6 16. O-O Ng6 17. Nc4 { Key: the queen is given up for a pawn storm against the king. } 17... Qe6 18. e5 b5 19. exf6 bxa4 20. fxg7 Rg8 21. Bf5 { Key: material is now roughly level (two rooks and two minor pieces each), but every White piece attacks and Black's king is in the open. } 21... Nxh4 22. Bxe6 Ba6 23. Nd6+ Ke7 24. Bc4 Rxg7 25. g3 Kxd6 26. Bxa6 Nf5 27. Rab1 f6 28. Rfd1+ Ke7 29. Re1+ Kd6 30. Kf2 c4 31. g4 Ne7 32. Rb7 Rag8 33. Bxc4 Nd5 34. Bxd5 cxd5 35. Rb4 Rc8 36. Rxa4 { Key: the game reaches a rook ending where White's g-pawn decides. } 36... Rxc3 37. Ra6+ Kc5 38. Rxf6 h5 39. h3 hxg4 40. hxg4 Rh7 41. g5 Rh5 42. Rf5 Rc2+ 43. Kg3 Kc4 44. Ree5 d4 45. g6 { Key: the passed g-pawn costs Black the rook. } 45... Rh1 46. Rc5+ Kd3 47. Rxc2 Kxc2 48. Kf4 Rg1 49. Rg5 1-0
+
+[Event "World Championship 1960 (game 6), Moscow"]
+[Site "Moscow URS"]
+[Date "1960.03.26"]
+[Round "6"]
+[White "Mikhail Botvinnik"]
+[Black "Mikhail Tal"]
+[Result "0-1"]
+[ECO "E69"]
+[Themes "attack,initiative,sacrifice,world-championship"]
+[Level "4"]
+[Why "The most famous move of the 1960 match: 21...Nf4!! is not fully sound by engine standards but is impossible to refute at the board. The game is the classic lesson in practical chess: when a sacrifice creates lasting problems for the opponent, the burden of proof moves to the defender."]
+
+1. c4 Nf6 2. Nf3 g6 3. g3 Bg7 4. Bg2 O-O 5. d4 d6 6. Nc3 Nbd7 7. O-O e5 8. e4 c6 9. h3 Qb6 { Key: Tal takes a King's Indian structure with a strong knight on c5. } 10. d5 cxd5 11. cxd5 Nc5 12. Ne1 Bd7 13. Nd3 Nxd3 14. Qxd3 Rfc8 15. Rb1 Nh5 16. Be3 Qb4 17. Qe2 Rc4 { Key: the rooks occupy the half-open c-file; 19...f5 follows to open the kingside. } 18. Rfc1 Rac8 19. Kh2 f5 20. exf5 Bxf5 21. Ra1 Nf4 { Key: the knight sacrifice: Black gets two pawns and open lines against the h2/g2 king for the piece. } 22. gxf4 exf4 23. Bd2 { Key: Tal converts the attack into material: the e2-pawn costs White heavy material. } 23... Qxb2 24. Rab1 f3 25. Rxb2 fxe2 26. Rb3 { Key: Black emerges with the better ending and wins it by move 46. } 26... Rd4 27. Be1 Be5+ 28. Kg1 Bf4 29. Nxe2 Rxc1 30. Nxd4 Rxe1+ 31. Bf1 Be4 32. Ne2 Be5 33. f4 Bf6 34. Rxb7 Bxd5 35. Rc7 Bxa2 36. Rxa7 Bc4 37. Ra8+ Kf7 38. Ra7+ Ke6 39. Ra3 d5 40. Kf2 Bh4+ 41. Kg2 Kd6 42. Ng3 Bxg3 43. Bxc4 dxc4 44. Kxg3 Kd5 45. Ra7 c3 46. Rc7 Kd4 0-1
+
+[Event "Candidates quarter-final (game 2), Bled"]
+[Site "Bled YUG"]
+[Date "1965.??.??"]
+[Round "2"]
+[White "Mikhail Tal"]
+[Black "Lajos Portisch"]
+[Result "1-0"]
+[ECO "B10"]
+[Opening "Caro-Kann Defense: Two Knights Attack"]
+[Themes "attack,initiative,sacrifice"]
+[Level "4"]
+[Why "Tal punishes a slow development scheme in the Caro-Kann with a rook sacrifice on e6 that keeps the Black king in the centre. The game is short and every move after the sacrifice carries a threat: a model for 'how to attack an uncastled king'."]
+
+1. e4 c6 2. Nc3 d5 3. Nf3 dxe4 4. Nxe4 Bg4 5. h3 Bxf3 6. Qxf3 Nd7 7. d4 Ngf6 8. Bd3 Nxe4 9. Qxe4 e6 10. O-O Be7 11. c3 Nf6 12. Qh4 { Key: Black has not castled and grabs material with the queen; White has every piece in play. } 12... Nd5 13. Qg4 Bf6 14. Re1 Qb6 15. c4 Nb4 16. Rxe6+ { Key: the rook sacrifice; White threatens Bd6+ and Re1. } 16... fxe6 17. Qxe6+ Kf8 18. Bf4 Rd8 19. c5 { Key: Tal regains the queen and keeps a passed a-pawn with the initiative. } 19... Nxd3 20. cxb6 Nxf4 21. Qg4 Nd5 22. bxa7 Ke7 23. b4 { Key: the king is driven across the board and Black loses material. } 23... Ra8 24. Re1+ Kd6 25. b5 Rxa7 26. Re6+ Kc7 27. Rxf6 1-0
+
+[Event "RSFSR Championship, Sochi"]
+[Site "Sochi URS"]
+[Date "1958.??.??"]
+[Round "?"]
+[White "Lev Polugaevsky"]
+[Black "Rashid Nezhmetdinov"]
+[Result "0-1"]
+[ECO "A53"]
+[Opening "Old Indian Defense: Ukrainian Variation"]
+[Themes "attack,initiative,queen-sacrifice,sacrifice"]
+[Level "4"]
+[Why "Nezhmetdinov's immortal: a queen sacrifice (24...Rxf4!!) that drags the White king from g1 to a5, where it is mated. It demonstrates that a king hunt needs all the pieces: the quiet 26...Bg7! and the pawn checks ...c5+, ...d5+ are as important as the sacrifice."]
+
+1. d4 Nf6 2. c4 d6 3. Nc3 e5 4. e4 exd4 5. Qxd4 Nc6 6. Qd2 g6 7. b3 Bg7 8. Bb2 O-O 9. Bd3 Ng4 { Key: Black builds a kingside attack from move 9. } 10. Nge2 Qh4 11. Ng3 Nge5 12. O-O f5 13. f3 Bh6 14. Qd1 f4 15. Nge2 g5 { Key: the pawn storm cracks the king's cover. } 16. Nd5 g4 17. g3 fxg3 18. hxg3 Qh3 19. f4 Be6 20. Bc2 Rf7 21. Kf2 { Key: the queen is given for a rook and a mating net around the centralised king. } 21... Qh2+ 22. Ke3 Bxd5 23. cxd5 Nb4 24. Rh1 Rxf4 25. Rxh2 { Key: the quiet move: the bishop controls the long diagonal and ...c5+ is coming. } 25... Rf3+ 26. Kd4 Bg7 27. a4 { Key: mate follows on the next move. } 27... c5+ 28. dxc6 bxc6 29. Bd3 Nexd3+ 30. Kc4 d5+ 31. exd5 cxd5+ 32. Kb5 Rb8+ 33. Ka5 Nc6+ 0-1
+
+[Event "USSR Championship, Leningrad"]
+[Site "Leningrad URS"]
+[Date "1960.??.??"]
+[Round "?"]
+[White "Boris Spassky"]
+[Black "David Bronstein"]
+[Result "1-0"]
+[ECO "C36"]
+[Opening "King's Gambit Accepted: Modern Defense"]
+[Themes "attack,initiative,sacrifice"]
+[Level "4"]
+[Why "The King's Gambit game used in the film 'From Russia with Love'. Spassky lets Black promote a pawn to a second queen because his own attack on f7 arrives first. The lesson is about counting tempi: material that cannot join the fight is worthless."]
+
+1. e4 e5 2. f4 exf4 3. Nf3 d5 4. exd5 Bd6 5. Nc3 Ne7 6. d4 O-O 7. Bd3 Nd7 8. O-O h6 9. Ne4 { Key: Spassky sacrifices pawns to gain tempi against the d6-bishop and open lines. } 9... Nxd5 10. c4 Ne3 11. Bxe3 fxe3 12. c5 Be7 13. Bc2 Re8 14. Qd3 { Key: the knight ignores the promoting pawn. } 14... e2 15. Nd6 Nf8 { Key: Black has a queen more for a moment, but every White piece attacks the king. } 16. Nxf7 exf1=Q+ 17. Rxf1 Bf5 18. Qxf5 { Key: the material comes back with interest. } 18... Qd7 19. Qf4 Bf6 20. N3e5 Qe7 21. Bb3 { Key: mate (23...Kh8 24.Rxf8+) or ruinous loss. } 21... Bxe5 22. Nxe5+ Kh7 23. Qe4+ 1-0
+
+[Event "USSR vs Rest of the World (board 1, round 2), Belgrade"]
+[Site "Belgrade YUG"]
+[Date "1970.03.31"]
+[Round "2"]
+[White "Bent Larsen"]
+[Black "Boris Spassky"]
+[Result "0-1"]
+[ECO "A01"]
+[Opening "Nimzo-Larsen Attack: Modern Variation"]
+[Themes "attack,initiative,sacrifice"]
+[Level "4"]
+[Why "Seventeen moves that every club player should know. Larsen's flank opening leaves his king in the centre; Spassky opens the h-file and sacrifices a rook so that a pawn can promote with check. The game is a pure lesson in the value of time."]
+
+1. b3 e5 2. Bb2 Nc6 3. c4 Nf6 4. Nf3 e4 { Key: Black gains tempi and keeps the centre. } 5. Nd4 Bc5 6. Nxc6 dxc6 7. e3 Bf5 8. Qc2 Qe7 9. Be2 O-O-O { Key: Larsen's king is still on e1; Black's pieces point at it. } 10. f4 Ng4 11. g3 { Key: the h-pawn opens the file whatever White does. } 11... h5 12. h3 h4 13. hxg4 hxg3 14. Rg1 { Key: the rook sacrifice deflects the rook from f1. } 14... Rh1 15. Rxh1 g2 16. Rf1 { Key: 18.Bxf1 Bxg4+ 19.Kc1 Qe1+ and mate. } 16... Qh4+ 17. Kd1 gxf1=Q+ 0-1
+
+[Event "World Championship 1969 (game 19), Moscow"]
+[Site "Moscow URS"]
+[Date "1969.??.??"]
+[Round "19"]
+[White "Boris Spassky"]
+[Black "Tigran Petrosian"]
+[Result "1-0"]
+[ECO "B94"]
+[Opening "Sicilian Defense: Najdorf Variation"]
+[Themes "attack,initiative,sacrifice,pawn-storm,opposite-castling,world-championship"]
+[Level "4"]
+[Why "A textbook opposite-side castling attack: Spassky throws the g- and f-pawns forward, sacrifices a pawn and then a piece, and mates the reigning champion in 24 moves. Compare it with Tal-Larsen 1965: same plan, different execution."]
+
+1. e4 c5 2. Nf3 d6 3. d4 cxd4 4. Nxd4 Nf6 5. Nc3 a6 6. Bg5 Nbd7 7. Bc4 Qa5 8. Qd2 h6 9. Bxf6 { Key: kings on opposite wings; the race begins. } 9... Nxf6 10. O-O-O e6 11. Rhe1 Be7 12. f4 O-O 13. Bb3 Re8 14. Kb1 Bf8 15. g4 { Key: a pawn is given to open the g-file. } 15... Nxg4 16. Qg2 Nf6 17. Rg1 Bd7 18. f5 { Key: every pawn move opens a line toward the king. } 18... Kh8 19. Rdf1 Qd8 20. fxe6 fxe6 21. e5 dxe5 22. Ne4 { Key: the knight sacrifice on e4 brings the queen to g6 with decisive threats. } 22... Nh5 23. Qg6 exd4 { Key: mate on h7 cannot be stopped (24...hxg5 25.Qxh5+ Kg8 26.Qf7+ Kh7 27.Rf3). } 24. Ng5 1-0
+
+[Event "Hoogovens, Wijk aan Zee"]
+[Site "Wijk aan Zee NED"]
+[Date "1999.01.20"]
+[Round "4"]
+[White "Garry Kasparov"]
+[Black "Veselin Topalov"]
+[Result "1-0"]
+[ECO "B07"]
+[Opening "Pirc Defense"]
+[Themes "attack,initiative,sacrifice,calculation"]
+[Level "4"]
+[Why "'Kasparov's Immortal'. A rook sacrifice on d4 followed by a second on e7 sends the Black king on a walk from b8 to d1 across the whole board. Study it for the calculation technique: Kasparov saw the quiet 36.Bf1! and 37.Rd7! many moves in advance."]
+
+1. e4 d6 2. d4 Nf6 3. Nc3 g6 4. Be3 Bg7 5. Qd2 c6 6. f3 b5 7. Nge2 Nbd7 8. Bh6 Bxh6 9. Qxh6 Bb7 10. a3 e5 11. O-O-O { Key: both sides castle long; the fight is for the centre. } 11... Qe7 12. Kb1 a6 13. Nc1 O-O-O 14. Nb3 exd4 15. Rxd4 c5 16. Rd1 Nb6 17. g3 Kb8 18. Na5 Ba8 19. Bh3 { Key: Topalov seems to have everything under control. } 19... d5 20. Qf4+ Ka7 21. Rhe1 d4 22. Nd5 Nbxd5 23. exd5 Qd6 24. Rxd4 { Key: the king hunt begins. } 24... cxd4 25. Re7+ Kb6 26. Qxd4+ Kxa5 27. b4+ Ka4 28. Qc3 { Key: the king has reached the first rank. } 28... Qxd5 29. Ra7 Bb7 30. Rxb7 Qc4 31. Qxf6 Kxa3 32. Qxa6+ Kxb4 33. c3+ Kxc3 34. Qa1+ Kd2 35. Qb2+ Kd1 36. Bf1 { Key: two quiet moves end the combination: White wins the h8-rook and the game. } 36... Rd2 37. Rd7 Rxd7 38. Bxc4 bxc4 39. Qxh8 Rd3 40. Qa8 c3 41. Qa4+ Ke1 42. f4 f5 43. Kc1 Rd2 44. Qa7 1-0
+
+[Event "Linares"]
+[Site "Linares ESP"]
+[Date "1998.03.04"]
+[Round "10"]
+[White "Veselin Topalov"]
+[Black "Alexei Shirov"]
+[Result "0-1"]
+[ECO "D85"]
+[Opening "Grünfeld Defense: Exchange Variation"]
+[Themes "attack,initiative,sacrifice,opposite-bishops"]
+[Level "4"]
+[Why "Famous for 47...Bh3!!, a bishop sacrifice in an opposite-coloured bishop ending that clears the path for the Black king. The idea - give a piece so the king can escort two passed pawns - is unforgettable, and the game also shows how to build an ending from a sharp Grunfeld middlegame."]
+
+1. d4 Nf6 2. c4 g6 3. Nc3 d5 4. cxd5 Nxd5 5. e4 Nxc3 6. bxc3 Bg7 7. Bb5+ c6 8. Ba4 O-O 9. Ne2 Nd7 10. O-O e5 11. f3 Qe7 12. Be3 Rd8 13. Qc2 Nb6 14. Bb3 Be6 15. Rad1 Nc4 16. Bc1 b5 { Key: Shirov activates every piece and keeps the c4-knight. } 17. f4 exd4 18. Nxd4 Bg4 19. Rde1 Qc5 20. Kh1 a5 21. h3 Bd7 22. a4 bxa4 23. Ba2 Be8 24. e5 { Key: Black picks up pawns while the White attack fizzles. } 24... Nb6 25. f5 Nd5 26. Bd2 Nb4 27. Qxa4 Nxa2 28. Qxa2 Bxe5 29. fxg6 hxg6 30. Bg5 Rd5 31. Re3 Qd6 32. Qe2 Bd7 33. c4 { Key: simplification into a favourable ending. } 33... Bxd4 34. cxd5 Bxe3 35. Qxe3 Re8 36. Qc3 Qxd5 37. Bh6 Re5 38. Rf3 Qc5 39. Qa1 Bf5 40. Re3 f6 41. Rxe5 { Key: opposite-coloured bishops with Black's a- and d-pawns passed. } 41... Qxe5 42. Qa2+ Qd5 43. Qxd5+ cxd5 44. Bd2 a4 45. Bc3 Kf7 46. h4 Ke6 47. Kg1 { Key: the bishop is given so the king can walk through f5-e4-d3. } 47... Bh3 48. gxh3 Kf5 49. Kf2 Ke4 50. Bxf6 { Key: the a-pawn promotes. } 50... d4 51. Be7 Kd3 52. Bc5 Kc4 53. Be7 Kb3 0-1
+
+[Event "Biel"]
+[Site "Biel SUI"]
+[Date "1995.??.??"]
+[Round "7"]
+[White "Alexei Shirov"]
+[Black "Jan Timman"]
+[Result "1-0"]
+[ECO "C51"]
+[Opening "Italian Game: Evans Gambit, Anderssen Variation, Cordel Line"]
+[Themes "attack,initiative,sacrifice"]
+[Level "4"]
+[Why "A modern Evans Gambit in Shirov's style: White wins the g7-pawn with the queen, then sacrifices the a- and e-pawns to rip open the queenside where Timman's king sits. The game shows that an attack on a castled king is about open files, not about which wing the king chose."]
+
+1. e4 e5 2. Nf3 Nc6 3. Bc4 Bc5 4. b4 { Key: the Evans Gambit with the modern queen raid. } 4... Bxb4 5. c3 Be7 6. d4 Na5 7. Be2 exd4 8. Qxd4 d6 9. Qxg7 Bf6 10. Qg3 Qe7 11. O-O Bd7 12. Nd4 { Key: White brings the rook to the b-file at once. } 12... O-O-O 13. Nd2 Nc6 14. Qe3 h5 15. Rb1 Nh6 16. Qd3 b6 17. a4 { Key: the a-pawn is given to open the a-file; now 20.e5! follows. } 17... Kb8 18. a5 Nxa5 19. Qa6 Ka8 20. e5 { Key: every White piece arrives with tempo. } 20... Qxe5 21. Bf3+ d5 22. Nc4 Bc8 23. Qxa5 Qxd4 24. Qa2 Qxc3 25. Be3 Bb7 { Key: the queen is lost (28...Qd3 29.Bf4+). } 26. Bxb6 cxb6 27. Nxb6+ Kb8 28. Nxd5 1-0
+
+[Event "Candidates quarter-final, rapid tiebreak (game 9), Brussels"]
+[Site "Brussels BEL"]
+[Date "1991.??.??"]
+[Round "9"]
+[White "Vassily Ivanchuk"]
+[Black "Artur Yusupov"]
+[Result "0-1"]
+[ECO "E67"]
+[Themes "attack,initiative,sacrifice"]
+[Level "4"]
+[Why "Voted the best game of the Informant period and played at rapid time control in a must-win tiebreak. Yusupov sacrifices knight, bishop, rook and queen in turn; the key moment is the quiet 27...Re6!!, a rook lift that proves the attack. A model for 'the attack is worth more than the material'."]
+
+1. c4 e5 2. g3 d6 3. Bg2 g6 4. d4 Nd7 5. Nc3 Bg7 6. Nf3 Ngf6 7. O-O O-O 8. Qc2 Re8 9. Rd1 c6 10. b3 Qe7 11. Ba3 { Key: Black gives a pawn to cramp White's kingside. } 11... e4 12. Ng5 e3 13. f4 Nf8 14. b4 Bf5 15. Qb3 h6 16. Nf3 { Key: both sides attack; Black's is faster. } 16... Ng4 17. b5 g5 18. bxc6 bxc6 19. Ne5 gxf4 20. Nxc6 Qg5 21. Bxd6 Ng6 22. Nd5 Qh5 23. h4 { Key: the rook lift; ...Rg6 or ...Rf6 next. } 23... Nxh4 24. gxh4 Qxh4 25. Nde7+ Kh8 26. Nxf5 Qh2+ 27. Kf1 Re6 28. Qb7 { Key: White has an extra rook and bishop... but the Black queen and knight mate. } 28... Rg6 29. Qxa8+ Kh7 30. Qg8+ Kxg8 31. Nce7+ Kh7 32. Nxg6 fxg6 33. Nxg7 Nf2 34. Bxf4 { Key: ...Qf2# / ...Qe1# cannot both be stopped. } 34... Qxf4 35. Ne6 Qh2 36. Rdb1 Nh3 37. Rb7+ Kg8 38. Rb8+ Qxb8 39. Bxh3 Qg3 0-1
+
+[Event "Interpolis, Tilburg"]
+[Site "Tilburg NED"]
+[Date "1991.??.??"]
+[Round "4"]
+[White "Nigel Short"]
+[Black "Jan Timman"]
+[Result "1-0"]
+[ECO "B04"]
+[Opening "Alekhine Defense: Modern Variation, Alburt Variation"]
+[Themes "attack,initiative,defence,positional"]
+[Level "4"]
+[Why "The king walk 31.Kh2!, 32.Kg3!, 33.Kf4!, 34.Kg5! is one of the most famous ideas in chess: with the Black pieces tied down, White's own king marches up the board to help mate. Study the preceding play too: Short first dominated the d-file and traded Black's good pieces."]
+
+1. e4 Nf6 2. e5 Nd5 3. d4 d6 4. Nf3 g6 5. Bc4 Nb6 6. Bb3 Bg7 7. Qe2 Nc6 8. O-O O-O 9. h3 a5 10. a4 dxe5 11. dxe5 Nd4 12. Nxd4 Qxd4 13. Re1 e6 14. Nd2 Nd5 15. Nf3 { Key: White keeps the e5-pawn and space; Black's pieces have no good squares. } 15... Qc5 16. Qe4 Qb4 17. Bc4 Nb6 18. b3 Nxc4 19. bxc4 Re8 20. Rd1 Qc5 21. Qh4 { Key: the rook invades on the eighth rank. } 21... b6 22. Be3 Qc6 23. Bh6 Bh8 24. Rd8 Bb7 25. Rad1 Bg7 26. R8d7 { Key: Black is completely passive. } 26... Rf8 27. Bxg7 Kxg7 28. R1d4 Rae8 29. Qf6+ Kg8 30. h4 h5 31. Kh2 { Key: the king walks to h6 and mate on g7 follows; Black has no counterplay. } 31... Rc8 32. Kg3 Rce8 33. Kf4 Bc8 34. Kg5 1-0
+
+[Event "Danzhou Masters"]
+[Site "Danzhou CHN"]
+[Date "2015.07.03"]
+[Round "2"]
+[White "Wei Yi"]
+[Black "Lazaro Bruzon Batista"]
+[Result "1-0"]
+[ECO "B40"]
+[Opening "Sicilian Defense: French Variation"]
+[Themes "attack,initiative,sacrifice"]
+[Level "4"]
+[Why "A 16-year-old's modern immortal: a rook sacrifice on f7 and a bishop sacrifice on e4 drag the king to e4, then quiet moves (26.Qf7!, 29.Qb3!, 31.Qd3!) weave the net. Every attacking idea in this game is a reusable pattern."]
+
+1. e4 c5 2. Nf3 e6 3. Nc3 a6 4. Be2 Nc6 5. d4 cxd4 6. Nxd4 Qc7 7. O-O Nf6 8. Be3 Be7 9. f4 d6 10. Kh1 O-O 11. Qe1 Nxd4 12. Bxd4 b5 13. Qg3 Bb7 14. a3 Rad8 15. Rae1 Rd7 16. Bd3 Qd8 17. Qh3 { Key: the pawn storm opens f7 and h7. } 17... g6 18. f5 e5 19. Be3 Re8 20. fxg6 hxg6 21. Nd5 Nxd5 22. Rxf7 { Key: two sacrifices pull the king into the centre. } 22... Kxf7 23. Qh7+ Ke6 24. exd5+ Kxd5 25. Be4+ Kxe4 26. Qf7 { Key: the quiet move: the king on e4 is caught in a net (threat 27.Bd2+ / 27.Rf1). } 26... Bf6 27. Bd2+ { Key: every move is a quiet tightening of the net. } 27... Kd4 28. Be3+ Ke4 29. Qb3 Kf5 30. Rf1+ Kg4 31. Qd3 Bxg2+ 32. Kxg2 Qa8+ 33. Kg1 Bg5 { Key: mate with 37.Qf1 or 37.Qg2 next. } 34. Qe2+ Kh4 35. Bf2+ Kh3 36. Be1 1-0
+
+[Event "Tata Steel, Wijk aan Zee"]
+[Site "Wijk aan Zee NED"]
+[Date "2013.01.15"]
+[Round "4"]
+[White "Levon Aronian"]
+[Black "Viswanathan Anand"]
+[Result "0-1"]
+[ECO "D47"]
+[Opening "Semi-Slav Defense: Chigorin Defense"]
+[Themes "attack,initiative,sacrifice"]
+[Level "4"]
+[Why "A 23-move brilliancy in the Meran that echoes Rotlewi-Rubinstein 1907: Anand ignores a knight capture on h7, develops with tempo and lets White's extra material stand uselessly on the edge. Compare the two games side by side to see the pattern 'ignore the threat, attack the king'."]
+
+1. d4 d5 2. c4 c6 3. Nf3 Nf6 4. Nc3 e6 5. e3 Nbd7 6. Bd3 dxc4 7. Bxc4 b5 8. Bd3 Bd6 9. O-O O-O 10. Qc2 Bb7 11. a3 { Key: Anand lets the knight take h7 and opens the c-file. } 11... Rc8 12. Ng5 c5 13. Nxh7 { Key: every Black move develops with a threat; the knight on h7 is out of play. } 13... Ng4 14. f4 cxd4 15. exd4 Bc5 16. Be2 { Key: a second piece is offered; the dark squares around the king collapse. } 16... Nde5 17. Bxg4 Bxd4+ 18. Kh1 Nxg4 19. Nxf8 { Key: mate on h2 or decisive loss of material. } 19... f5 20. Ng6 Qf6 21. h3 Qxg6 22. Qe2 Qh5 23. Qd3 Be3 0-1
+
+[Event "Linares"]
+[Site "Linares ESP"]
+[Date "1994.??.??"]
+[Round "4"]
+[White "Anatoly Karpov"]
+[Black "Veselin Topalov"]
+[Result "1-0"]
+[ECO "A33"]
+[Opening "English Opening: Symmetrical Variation, Anti-Benoni Variation, Spielmann Defense"]
+[Themes "attack,initiative,sacrifice,pawn-storm"]
+[Level "4"]
+[Why "Karpov, the great positional player, wins the tournament of his life (Linares 1994, 11/13) with a combination of a knight sacrifice and two rook sacrifices. The game teaches that quiet positions hide tactics when one side has more active pieces and the h-file opens."]
+
+1. d4 Nf6 2. c4 c5 3. Nf3 cxd4 4. Nxd4 e6 5. g3 Nc6 6. Bg2 Bc5 7. Nb3 Be7 8. Nc3 O-O 9. O-O d6 10. Bf4 { Key: Karpov accepts doubled f-pawns for control of e5 and the half-open e-file. } 10... Nh5 11. e3 Nxf4 12. exf4 Bd7 13. Qd2 Qb8 14. Rfe1 g6 15. h4 { Key: the h-pawn opens the h-file and weakens g6. } 15... a6 16. h5 b5 17. hxg6 hxg6 18. Nc5 { Key: knight and two rooks are given; the Black king has no cover and White's pieces pour in. } 18... dxc5 19. Qxd7 Rc8 20. Rxe6 Ra7 21. Rxg6+ fxg6 22. Qe6+ Kg7 23. Bxc6 Rd8 24. cxb5 Bf6 25. Ne4 Bd4 26. bxa6 Qb6 27. Rd1 Qxa6 28. Rxd4 { Key: the queen collects everything. } 28... Rxd4 29. Qf6+ Kg8 30. Qxg6+ Kf8 31. Qe8+ Kg7 32. Qe5+ Kg8 33. Nf6+ Kf7 34. Be8+ Kf8 35. Qxc5+ Qd6 36. Qxa7 Qxf6 37. Bh5 Rd2 38. b3 Rb2 39. Kg2 { Key: Black cannot stop the material loss and the mating threats. } 1-0
+
+[Event "Niksic"]
+[Site "Niksic YUG"]
+[Date "1983.??.??"]
+[Round "4"]
+[White "Garry Kasparov"]
+[Black "Lajos Portisch"]
+[Result "1-0"]
+[ECO "E12"]
+[Opening "Queen's Indian Defense: Kasparov-Petrosian Variation, Petrosian Attack"]
+[Themes "attack,initiative,sacrifice,pawn-structure"]
+[Level "4"]
+[Why "The modern version of Lasker's double bishop sacrifice. Kasparov first uses his hanging pawns c4/d4 with the break 17.d5!, then gives both bishops on h7 and g7. It is the model for converting central pawn energy into a king attack."]
+
+1. d4 Nf6 2. c4 e6 3. Nf3 b6 4. Nc3 Bb7 5. a3 d5 6. cxd5 Nxd5 7. e3 Nxc3 8. bxc3 Be7 9. Bb5+ c6 10. Bd3 c5 11. O-O Nc6 12. Bb2 Rc8 13. Qe2 O-O 14. Rad1 Qc7 15. c4 { Key: White has hanging pawns on c4/d4 with open lines; the moment to break is now. } 15... cxd4 16. exd4 Na5 17. d5 { Key: the central break opens the diagonals b1-h7 and a1-h8. } 17... exd5 18. cxd5 Bxd5 19. Bxh7+ { Key: the double bishop sacrifice; the knight comes to g4/f5 ideas via e5. } 19... Kxh7 20. Rxd5 Kg8 21. Bxg7 Kxg7 22. Ne5 Rfd8 23. Qg4+ { Key: the rook lift finishes the attack. } 23... Kf8 24. Qf5 f6 25. Nd7+ Rxd7 26. Rxd7 Qc5 27. Qh7 Rc7 28. Qh8+ Kf7 29. Rd3 Nc4 30. Rfd1 Ne5 31. Qh7+ { Key: mate next move. } 31... Ke6 32. Qg8+ Kf5 33. g4+ Kf4 34. Rd4+ Kf3 35. Qb3+ 1-0
+
+[Event "Credit Suisse Masters, Horgen"]
+[Site "Horgen SUI"]
+[Date "1994.??.??"]
+[Round "9"]
+[White "Garry Kasparov"]
+[Black "Alexei Shirov"]
+[Result "1-0"]
+[ECO "B33"]
+[Opening "Sicilian Defense: Lasker-Pelikan Variation, Sveshnikov Variation, Chelyabinsk Variation"]
+[Themes "attack,initiative,exchange-sacrifice,sacrifice,positional"]
+[Level "4"]
+[Why "17.Rxb7!! is a positional exchange sacrifice: Kasparov gives a rook for Black's light-squared bishop so that his knight on d5 and bishop on d3 rule the light squares forever. No immediate tactics - the compensation is a bind that lasts twenty moves."]
+
+1. e4 c5 2. Nf3 e6 3. d4 cxd4 4. Nxd4 Nf6 5. Nc3 Nc6 6. Ndb5 d6 7. Bf4 e5 8. Bg5 a6 9. Na3 b5 10. Nd5 { Key: the rook goes hunting for the bishop. } 10... Be7 11. Bxf6 Bxf6 12. c3 Bb7 13. Nc2 Nb8 14. a4 bxa4 15. Rxa4 Nd7 16. Rb4 Nc5 17. Rxb7 { Key: the exchange is given; the knight on d5 is unchallengeable and c4/f5 are White's. } 17... Nxb7 18. b4 Bg5 19. Na3 { Key: every White piece sits on a light square the bishop can no longer contest. } 19... O-O 20. Nc4 a5 21. Bd3 axb4 22. cxb4 Qb8 23. h4 Bh6 24. Ncb6 Ra2 25. O-O { Key: White wins the exchange back with a dominating position. } 25... Rd2 26. Qf3 Qa7 27. Nd7 Nd8 28. Nxf8 Kxf8 29. b5 Qa3 30. Qf5 Ke8 31. Bc4 Rc2 32. Qxh7 Rxc4 33. Qg8+ Kd7 34. Nb6+ Ke7 35. Nxc4 Qc5 36. Ra1 Qd4 37. Ra3 Bc1 38. Ne3 1-0
+
+[Event "World Championship 1990 (game 20), Lyon"]
+[Site "Lyon FRA"]
+[Date "1990.12.15"]
+[Round "20"]
+[White "Garry Kasparov"]
+[Black "Anatoly Karpov"]
+[Result "1-0"]
+[ECO "C92"]
+[Opening "Ruy Lopez: Closed, Flohr System"]
+[Themes "attack,initiative,sacrifice,world-championship"]
+[Level "4"]
+[Why "Kasparov's favourite of his own games against Karpov: a rook lift (17.Ra3-e3, 24.Rg3), a knight sacrifice on h6 and a queen sacrifice finish a model attack in the Zaitsev Ruy Lopez while Karpov's counterplay on the queenside arrives a move late."]
+
+1. e4 e5 2. Nf3 Nc6 3. Bb5 a6 4. Ba4 Nf6 5. O-O Be7 6. Re1 b5 7. Bb3 d6 8. c3 O-O 9. h3 Bb7 10. d4 Re8 11. Nbd2 Bf8 12. a4 h6 13. Bc2 exd4 14. cxd4 Nb4 15. Bb1 c5 16. d5 { Key: the rook lift and the knight reroute to g4 prepare the attack. } 16... Nd7 17. Ra3 f5 18. Rae3 Nf6 19. Nh2 Kh8 20. b3 { Key: Black wins a pawn; White brings every piece to the kingside. } 20... bxa4 21. bxa4 c4 22. Bb2 fxe4 23. Nxe4 Nfxd5 24. Rg3 Re6 25. Ng4 Qe8 26. Nxh6 { Key: the knight sacrifice; the quiet king move keeps the g-file open. } 26... c3 27. Nf5 cxb2 28. Qg4 Bc8 29. Qh4+ Rh6 30. Nxh6 gxh6 31. Kh2 Qe5 { Key: the queen sacrifice ends in a won ending. } 32. Ng5 Qf6 33. Re8 Bf5 34. Qxh6+ Qxh6 35. Nf7+ Kh7 36. Bxf5+ Qg6 37. Bxg6+ Kg7 38. Rxa8 Be7 39. Rb8 a5 40. Be4+ Kxf7 41. Bxd5+ 1-0
+
+[Event "World Championship 1986 (game 16), Leningrad"]
+[Site "Leningrad URS"]
+[Date "1986.09.??"]
+[Round "16"]
+[White "Garry Kasparov"]
+[Black "Anatoly Karpov"]
+[Result "1-0"]
+[ECO "C92"]
+[Opening "Ruy Lopez: Closed, Flohr System"]
+[Themes "attack,initiative,sacrifice,world-championship"]
+[Level "4"]
+[Why "Kasparov called this the best game of the 1986 match. The passed d-pawn, pushed to d6/d7 at the end, and the sacrifice 28.Bxh6! show how a central pawn and a kingside attack combine; Karpov's counterplay with ...c4 and ...Nd3 is only one tempo short."]
+
+1. e4 e5 2. Nf3 Nc6 3. Bb5 a6 4. Ba4 Nf6 5. O-O Be7 6. Re1 b5 7. Bb3 d6 8. c3 O-O 9. h3 Bb7 10. d4 Re8 11. Nbd2 Bf8 12. a4 h6 13. Bc2 exd4 14. cxd4 Nb4 15. Bb1 c5 16. d5 { Key: a sharp Zaitsev; White's rook goes to e3/g3 via a3. } 16... Nd7 17. Ra3 c4 18. Nd4 Qf6 19. N2f3 Nc5 20. axb5 { Key: White gives the e-pawn to open lines; Black's knights invade. } 20... axb5 21. Nxb5 Rxa3 22. Nxa3 Ba6 23. Re3 Rb8 24. e5 dxe5 25. Nxe5 Nbd3 26. Ng4 { Key: the bishop sacrifice; the quiet king move defuses ...Qxf2 ideas. } 26... Qb6 27. Rg3 g6 28. Bxh6 Qxb2 29. Qf3 Nd7 30. Bxf8 Kxf8 31. Kh2 Rb3 32. Bxd3 cxd3 33. Qf4 { Key: the d-pawn and the pieces finish the king. } 33... Qxa3 34. Nh6 Qe7 35. Rxg6 Qe5 36. Rg8+ Ke7 37. d6+ Ke6 38. Re8+ Kd5 39. Rxe5+ Nxe5 40. d7 Rb8 41. Nxf7 1-0
+
+[Event "PCA World Championship 1995 (game 10), New York"]
+[Site "New York USA"]
+[Date "1995.??.??"]
+[Round "10"]
+[White "Garry Kasparov"]
+[Black "Viswanathan Anand"]
+[Result "1-0"]
+[ECO "C80"]
+[Opening "Ruy Lopez: Open, Karpov Gambit"]
+[Themes "attack,initiative,sacrifice,endgame,world-championship"]
+[Level "4"]
+[Why "One day after losing game 9, Kasparov unleashes a prepared rook sacrifice in the Open Ruy Lopez (14.Bc2! and 15.Nb3!!) and wins back the material with interest. The game is a lesson in preparation and in trading an attack for a technically won ending."]
+
+1. e4 e5 2. Nf3 Nc6 3. Bb5 a6 4. Ba4 Nf6 5. O-O Nxe4 6. d4 b5 7. Bb3 d5 8. dxe5 Be6 9. Nbd2 Nc5 10. c3 d4 11. Ng5 { Key: the a1-rook is given; Black's queen is out of play. } 11... dxc3 12. Nxe6 fxe6 13. bxc3 Qd3 14. Bc2 Qxc3 15. Nb3 Nxb3 16. Bxb3 Nd4 17. Qg4 Qxa1 18. Bxe6 { Key: White regains the rook and more; Black's king is stuck in the centre. } 18... Rd8 19. Bh6 Qc3 20. Bxg7 Qd3 21. Bxh8 Qg6 22. Bf6 { Key: a rook and bishop ending with an extra pawn and the better pieces. } 22... Be7 23. Bxe7 Qxg4 24. Bxg4 Kxe7 25. Rc1 c6 26. f4 a5 27. Kf2 a4 28. Ke3 b4 29. Bd1 a3 30. g4 Rd5 31. Rc4 { Key: the kingside pawns decide. } 31... c5 32. Ke4 Rd8 33. Rxc5 Ne6 34. Rd5 Rc8 35. f5 Rc4+ 36. Ke3 Nc5 37. g5 Rc1 38. Rd6 1-0
+
+[Event "World Championship 2016, rapid tiebreak (game 4), New York"]
+[Site "New York USA"]
+[Date "2016.11.30"]
+[Round "4"]
+[White "Magnus Carlsen"]
+[Black "Sergey Karjakin"]
+[Result "1-0"]
+[ECO "B54"]
+[Opening "Sicilian Defense: Prins Variation"]
+[Themes "attack,initiative,queen-sacrifice,sacrifice,world-championship"]
+[Level "4"]
+[Why "The move that retained the title: 50.Qh6+!! with two mates (51.Rxf7# or 51.Rh8#). A short, clean example of a queen sacrifice that works because both rooks are already on open files, and a reminder that the final blow is prepared by piece placement."]
+
+1. e4 c5 2. Nf3 d6 3. d4 cxd4 4. Nxd4 Nf6 5. f3 e5 6. Nb3 Be7 7. c4 a5 8. Be3 a4 9. Nc1 O-O 10. Nc3 Qa5 11. Qd2 Na6 12. Be2 Nc5 13. O-O Bd7 14. Rb1 Rfc8 15. b4 axb3 16. axb3 Qd8 17. Nd3 Ne6 18. Nb4 Bc6 19. Rfd1 h5 20. Bf1 h4 21. Qf2 Nd7 22. g3 Ra3 23. Bh3 Rca8 24. Nc2 R3a6 25. Nb4 Ra5 26. Nc2 b6 27. Rd2 Qc7 28. Rbd1 Bf8 29. gxh4 { Key: Karjakin gives a piece for pawns; Carlsen keeps the extra knight. } 29... Nf4 30. Bxf4 exf4 31. Bxd7 Qxd7 32. Nb4 Ra3 33. Nxc6 Qxc6 34. Nb5 Rxb3 35. Nd4 Qxc4 36. Nxb3 Qxb3 37. Qe2 { Key: White's rooks take the open files. } 37... Be7 38. Kg2 Qe6 39. h5 Ra3 40. Rd3 Ra2 41. R3d2 Ra3 42. Rd3 Ra7 43. Rd5 Rc7 44. Qd2 { Key: Black's counterattack arrives, but it is one move too slow. } 44... Qf6 45. Rf5 Qh4 46. Rc1 Ra7 47. Qxf4 Ra2+ 48. Kh1 Qf2 49. Rc8+ { Key: 50...gxh6 51.Rxf7# and 50...Kxh6 51.Rh8#. } 49... Kh7 50. Qh6+ 1-0
+
+[Event "Candidates Tournament, Zurich"]
+[Site "Zurich SUI"]
+[Date "1953.??.??"]
+[Round "2"]
+[White "Efim Geller"]
+[Black "Max Euwe"]
+[Result "0-1"]
+[ECO "E28"]
+[Opening "Nimzo-Indian Defense: Sämisch Variation, O'Kelly Variation"]
+[Themes "defence,sacrifice,attack"]
+[Level "5"]
+[Why "Bronstein's tournament book made this game famous: Geller's attack on h7 looks decisive, but Euwe answers with 22...Rh8!! and 23...Rc2!!, giving a rook to open the second rank for his own queen. The lesson: when the opponent's pieces are committed to one wing, counterattack where they are not."]
+
+1. d4 Nf6 2. c4 e6 3. Nc3 Bb4 4. e3 c5 5. a3 Bxc3+ 6. bxc3 b6 7. Bd3 Bb7 8. f3 Nc6 9. Ne2 O-O 10. O-O Na5 11. e4 { Key: Euwe takes a pawn and accepts a kingside attack. } 11... Ne8 12. Ng3 cxd4 13. cxd4 Rc8 14. f4 Nxc4 15. f5 { Key: Geller's rook lift and queen invasion look crushing. } 15... f6 16. Rf4 b5 17. Rh4 Qb6 18. e5 Nxe5 19. fxe6 Nxd3 20. Qxd3 Qxe6 21. Qxh7+ Kf7 22. Bh6 { Key: the counterattack: Black threatens ...Rxg2+ and ...Qe3+/...Qb3 with mate ideas on g2/f2. } 22... Rh8 23. Qxh8 Rc2 24. Rc1 { Key: White is a rook up and defenceless against ...Qe2#/...Qf2#. } 24... Rxg2+ 25. Kf1 Qb3 26. Ke1 Qf3 0-1
+
+[Event "Candidates Tournament, Zurich"]
+[Site "Zurich SUI"]
+[Date "1953.??.??"]
+[Round "24"]
+[White "Paul Keres"]
+[Black "Vasily Smyslov"]
+[Result "0-1"]
+[ECO "E14"]
+[Themes "defence,attack,calculation"]
+[Level "5"]
+[Why "Keres lifts both rooks to the h-file for a direct attack on h7; Smyslov ignores it, strikes in the centre with 19...dxc4! and 20...c3!, and the attack runs out of pieces. A classic example of the rule 'answer a flank attack with a central counter'."]
+
+1. c4 Nf6 2. Nc3 e6 3. Nf3 c5 4. e3 Be7 5. b3 O-O 6. Bb2 b6 7. d4 cxd4 8. exd4 d5 9. Bd3 Nc6 10. O-O Bb7 11. Rc1 Rc8 12. Re1 { Key: Smyslov trades pieces; Keres keeps the rooks for an attack. } 12... Nb4 13. Bf1 Ne4 14. a3 Nxc3 15. Rxc3 Nc6 16. Ne5 Nxe5 17. Rxe5 Bf6 18. Rh5 { Key: both rooks aim at h7; the threat is Rxh7. } 18... g6 19. Rch3 dxc4 { Key: Black's central counterattack: the c-pawn and the queen on d4 create threats faster than the rooks can mate. } 20. Rxh7 c3 21. Qc1 Qxd4 22. Qh6 { Key: the passed c-pawn and the queen fork end it. } 22... Rfd8 23. Bc1 Bg7 24. Qg5 Qf6 25. Qg4 c2 26. Be2 Rd4 27. f4 Rd1+ 28. Bxd1 Qd4+ 0-1
+
+[Event "Candidates Tournament, Zurich"]
+[Site "Zurich SUI"]
+[Date "1953.??.??"]
+[Round "14"]
+[White "Yuri Averbakh"]
+[Black "Alexander Kotov"]
+[Result "0-1"]
+[ECO "A55"]
+[Opening "Old Indian Defense: Normal Variation"]
+[Themes "defence,queen-sacrifice,sacrifice,attack,calculation"]
+[Level "5"]
+[Why "30...Qxh3+!! pulls the White king to the fifth rank in a closed position where White had no attack of his own. Kotov then repeats moves to reach the time control before finishing. The game shows the attacking value of a pawn storm (...f5, ...f4) in the Old Indian and the technique of perpetual-check repetition to gain thinking time."]
+
+1. d4 Nf6 2. c4 d6 3. Nf3 Nbd7 4. Nc3 e5 5. e4 Be7 6. Be2 O-O 7. O-O c6 8. Qc2 Re8 9. Rd1 Bf8 10. Rb1 a5 11. d5 Nc5 12. Be3 Qc7 13. h3 Bd7 14. Rbc1 g6 15. Nd2 Rab8 16. Nb3 Nxb3 17. Qxb3 c5 18. Kh2 Kh8 19. Qc2 Ng8 20. Bg4 Nh6 21. Bxd7 Qxd7 22. Qd2 Ng8 23. g4 { Key: Black's pawn chain and the f-file aim at h3/g4. } 23... f5 24. f3 Be7 25. Rg1 Rf8 26. Rcf1 Rf7 27. gxf5 gxf5 28. Rg2 f4 29. Bf2 Rf6 30. Ne2 { Key: the queen sacrifice; the king is dragged to f5 with mate threats (...Rf8+, ...Nf6#). } 30... Qxh3+ 31. Kxh3 Rh6+ 32. Kg4 Nf6+ 33. Kf5 Nd7 34. Rg5 { Key: Kotov repeats checks to pass move 40, then finds the win. } 34... Rf8+ 35. Kg4 Nf6+ 36. Kf5 Ng8+ 37. Kg4 Nf6+ 38. Kf5 Nxd5+ 39. Kg4 Nf6+ 40. Kf5 Ng8+ 41. Kg4 Nf6+ 42. Kf5 Ng8+ 43. Kg4 Bxg5 { Key: the rooks and knight close the net. } 44. Kxg5 Rf7 45. Bh4 Rg6+ 46. Kh5 Rfg7 47. Bg5 { Key: White runs out of checks and mate follows. } 47... Rxg5+ 48. Kh4 Nf6 49. Ng3 Rxg3 50. Qxd6 R3g6 51. Qb8+ Rg8 0-1
+
+[Event "World Championship 1985 (game 24), Moscow"]
+[Site "Moscow URS"]
+[Date "1985.11.09"]
+[Round "24"]
+[White "Anatoly Karpov"]
+[Black "Garry Kasparov"]
+[Result "0-1"]
+[ECO "B85"]
+[Opening "Sicilian Defense: Scheveningen Variation, Classical Variation"]
+[Themes "defence,attack,world-championship"]
+[Level "5"]
+[Why "Karpov had to win the last game to keep his title and launched a kingside attack; Kasparov absorbed it, hit back with 25...f5! and 31...g5!, and won the crown. The game is the model of meeting a wing attack with central and kingside counterplay while every Black piece stays coordinated."]
+
+1. e4 c5 2. Nf3 d6 3. d4 cxd4 4. Nxd4 Nf6 5. Nc3 a6 6. Be2 e6 7. O-O Be7 8. f4 O-O 9. Kh1 Qc7 10. a4 Nc6 11. Be3 Re8 12. Bf3 Rb8 13. Qd2 Bd7 14. Nb3 b6 15. g4 { Key: Karpov's pawn storm; Kasparov keeps his pieces flexible. } 15... Bc8 16. g5 Nd7 17. Qf2 Bf8 18. Bg2 Bb7 19. Rad1 g6 20. Bc1 Rbc8 21. Rd3 { Key: the central counterpunch; the e4-pawn and the long diagonal become targets. } 21... Nb4 22. Rh3 Bg7 23. Be3 Re7 24. Kg1 Rce8 25. Rd1 f5 26. gxf6 { Key: Black's knights win material while White's attack has nothing left. } 26... Nxf6 27. Rg3 Rf7 28. Bxb6 Qb8 29. Be3 Nh5 30. Rg4 Nf6 31. Rh4 g5 32. fxg5 Ng4 33. Qd2 Nxe3 34. Qxe3 Nxc2 35. Qb6 { Key: a fork wins the queen. } 35... Ba8 36. Rxd6 Rb7 37. Qxa6 Rxb3 38. Rxe6 Rxb2 39. Qc4 Kh8 40. e5 Qa7+ 41. Kh1 Bxg2+ 42. Kxg2 Nd4+ 0-1
+
+[Event "World Championship 1966 (game 10), Moscow"]
+[Site "Moscow URS"]
+[Date "1966.??.??"]
+[Round "10"]
+[White "Tigran Petrosian"]
+[Black "Boris Spassky"]
+[Result "1-0"]
+[ECO "E66"]
+[Themes "positional,queen-sacrifice,exchange-sacrifice,sacrifice,world-championship"]
+[Level "5"]
+[Why "Petrosian gives one exchange for control of the light squares (21.Ne3!), then a second (24.Rxf4!) for a bind so complete that a queen sacrifice ends the game. The game is the reference point for 'the exchange sacrifice as a positional tool' and for Petrosian's blend of defence and attack."]
+
+1. Nf3 Nf6 2. g3 g6 3. c4 Bg7 4. Bg2 O-O 5. O-O Nc6 6. Nc3 d6 7. d4 a6 8. d5 Na5 9. Nd2 c5 10. Qc2 e5 { Key: White trades the dark-squared bishops to weaken Black's king. } 11. b3 Ng4 12. e4 f5 13. exf5 gxf5 14. Nd1 b5 15. f3 e4 16. Bb2 exf3 17. Bxf3 Bxb2 18. Qxb2 Ne5 19. Be2 { Key: the exchange is given; the knight on e3 and the light squares (f5, e4, g4) are worth more than a rook. } 19... f4 20. gxf4 Bh3 21. Ne3 Bxf1 22. Rxf1 Ng6 23. Bg4 { Key: a second exchange sacrifice; the Black queen and rooks are tied to f7 and d6. } 23... Nxf4 24. Rxf4 Rxf4 25. Be6+ Rf7 26. Ne4 Qh4 { Key: 30...Kxh8 31.Nxf7+ and 32.Nxg5 leaves White a piece up. } 27. Nxd6 Qg5+ 28. Kh1 Ra7 29. Bxf7+ Rxf7 30. Qh8+ 1-0
+
+[Event "Candidates Tournament, Zurich"]
+[Site "Zurich SUI"]
+[Date "1953.??.??"]
+[Round "2"]
+[White "Samuel Reshevsky"]
+[Black "Tigran Petrosian"]
+[Result "1/2-1/2"]
+[ECO "E58"]
+[Opening "Nimzo-Indian Defense: Normal Variation, Bernstein Defense, Exchange Line"]
+[Themes "positional,exchange-sacrifice,sacrifice,prophylaxis,blockade"]
+[Level "5"]
+[Why "25...Re6!! is the most famous positional exchange sacrifice in chess literature: Petrosian gives a rook for a bishop to stop White's central pawns and to put a knight on d5 forever. The game ends in a draw, which is exactly the point - defence by sacrifice."]
+
+1. d4 Nf6 2. c4 e6 3. Nc3 Bb4 4. e3 O-O 5. Bd3 d5 6. Nf3 c5 7. O-O Nc6 8. a3 Bxc3 9. bxc3 b6 10. cxd5 exd5 11. Bb2 { Key: Black fixes the queenside pawns and trades knights; White keeps the two bishops and a mobile centre. } 11... c4 12. Bc2 Bg4 13. Qe1 Ne4 14. Nd2 Nxd2 15. Qxd2 Bh5 16. f3 Bg6 17. e4 { Key: White's centre starts rolling; d5 and e6 are the threats. } 17... Qd7 18. Rae1 dxe4 19. fxe4 Rfe8 20. Qf4 b5 21. Bd1 Re7 22. Bg4 Qe8 23. e5 a5 24. Re3 Rd8 25. Rfe1 Re6 { Key: the exchange sacrifice: the e6-pawn and the knight coming to d5 blockade everything. } 26. a4 Ne7 27. Bxe6 fxe6 28. Qf1 { Key: Reshevsky returns the exchange to free his position. } 28... Nd5 29. Rf3 Bd3 30. Rxd3 cxd3 31. Qxd3 b4 { Key: a balanced ending; the sacrifice has done its job. } 32. cxb4 axb4 33. a5 Ra8 34. Ra1 Qc6 35. Bc1 Qc7 36. a6 Qb6 37. Bd2 b3 38. Qc4 h6 39. h3 b2 40. Rb1 Kh8 41. Be1 1/2-1/2
+
+[Event "World Championship 1963 (game 5), Moscow"]
+[Site "Moscow URS"]
+[Date "1963.??.??"]
+[Round "5"]
+[White "Tigran Petrosian"]
+[Black "Mikhail Botvinnik"]
+[Result "1-0"]
+[ECO "D94"]
+[Opening "Grünfeld Defense: Three Knights Variation, Burille Variation"]
+[Themes "positional,prophylaxis,knight-vs-bishop,endgame,world-championship"]
+[Level "5"]
+[Why "Petrosian's first win in the 1963 match: an early queen trade, a centralised king (12.Ke2), a queenside bind with a4-b5, and a king walk to g8 (!) in the final phase. The game shows how a tiny edge is kept and grown over 48 moves without a single tactic."]
+
+1. c4 g6 2. d4 Nf6 3. Nc3 d5 4. Nf3 Bg7 5. e3 O-O 6. Be2 dxc4 7. Bxc4 c5 8. d5 { Key: queens off; the king goes to the centre as a working piece. } 8... e6 9. dxe6 Qxd1+ 10. Kxd1 Bxe6 11. Bxe6 fxe6 12. Ke2 Nc6 13. Rd1 Rad8 14. Rxd8 Rxd8 15. Ng5 { Key: the knight on e4 is better than the g7-bishop; e6 is a lasting weakness. } 15... Re8 16. Nge4 Nxe4 17. Nxe4 b6 18. Rb1 Nb4 19. Bd2 Nd5 20. a4 { Key: White fixes the c-pawn and gains space; Black's pieces are passive. } 20... Rc8 21. b3 Bf8 22. Rc1 Be7 23. b4 c4 24. b5 Kf7 25. Bc3 { Key: knight and king versus a bishop that has no targets. } 25... Ba3 26. Rc2 Nxc3+ 27. Rxc3 Bb4 28. Rc2 Ke7 29. Nd2 c3 30. Ne4 Ba5 31. Kd3 Rd8+ 32. Kc4 Rd1 33. Nxc3 { Key: the king walk: White's king joins the attack on the e6/f7 complex. } 33... Rh1 34. Ne4 Rxh2 35. Kd4 Kd7 36. g3 Bb4 37. Ke5 Rh5+ 38. Kf6 Be7+ 39. Kg7 e5 40. Rc6 Rh1 41. Kf7 Ra1 42. Re6 Bd8 43. Rd6+ Kc8 44. Ke8 { Key: Black is tied up and loses material. } 44... Bc7 45. Rc6 Rd1 46. Ng5 Rd8+ 47. Kf7 Rd7+ 48. Kg8 1-0
+
+[Event "Nice Olympiad (final A)"]
+[Site "Nice FRA"]
+[Date "1974.??.??"]
+[Round "3"]
+[White "Anatoly Karpov"]
+[Black "Wolfgang Unzicker"]
+[Result "1-0"]
+[ECO "C98"]
+[Opening "Ruy Lopez: Closed, Chigorin Defense"]
+[Themes "positional,prophylaxis,zugzwang"]
+[Level "5"]
+[Why "The classic Karpov squeeze. He closes the centre, fixes the queenside with a4/b4, then plays 24.Ba7!! to keep the a-file for his rooks. Unzicker is slowly deprived of every useful move and resigns facing mate. Study it for the idea that a bind can be built without tactics, piece by piece."]
+
+1. e4 e5 2. Nf3 Nc6 3. Bb5 a6 4. Ba4 Nf6 5. O-O Be7 6. Re1 b5 7. Bb3 d6 8. c3 O-O 9. h3 Na5 10. Bc2 c5 11. d4 Qc7 12. Nbd2 Nc6 13. d5 { Key: the centre is closed and the queenside pawn structure fixed; the a-file is the only open line. } 13... Nd8 14. a4 Rb8 15. axb5 axb5 16. b4 Nb7 17. Nf1 { Key: the bishop blocks the a-file so White can double rooks behind it; Black can never contest the file. } 17... Bd7 18. Be3 Ra8 19. Qd2 Rfc8 20. Bd3 g6 21. Ng3 Bf8 22. Ra2 c4 23. Bb1 Qd8 24. Ba7 Ne8 25. Bc2 Nc7 26. Rea1 Qe7 27. Bb1 { Key: White seals the kingside and trades Black's only active bishop. } 27... Be8 28. Ne2 Nd8 29. Nh2 Bg7 30. f4 f6 31. f5 g5 32. Bc2 Bf7 33. Ng3 Nb7 34. Bd1 h6 35. Bh5 Qe8 36. Qd1 { Key: Black can only shuffle the king: zugzwang in all but name. } 36... Nd8 37. Ra3 Kf8 38. R1a2 Kg8 39. Ng4 Kf8 40. Ne3 Kg8 41. Bxf7+ { Key: mate on g7 is unstoppable. } 41... Nxf7 42. Qh5 Nd8 43. Qg6 Kh8 44. Nh5 1-0
+
+[Event "Candidates semi-final (game 9), Leningrad"]
+[Site "Leningrad URS"]
+[Date "1974.??.??"]
+[Round "9"]
+[White "Anatoly Karpov"]
+[Black "Boris Spassky"]
+[Result "1-0"]
+[ECO "B83"]
+[Opening "Sicilian Defense: Scheveningen Variation, Modern Variation"]
+[Themes "positional,prophylaxis"]
+[Level "5"]
+[Why "Karpov's most quoted positional game: after 24.Nb1!! the knight retreats to the corner to re-emerge on d2-f3/c4 against the weak e5 and c6 pawns. The game teaches regrouping, the value of a weak pawn complex (c6/e5) and how to exploit it without hurry."]
+
+1. e4 c5 2. Nf3 e6 3. d4 cxd4 4. Nxd4 Nf6 5. Nc3 d6 6. Be2 Be7 7. O-O O-O 8. f4 Nc6 9. Be3 Bd7 10. Nb3 { Key: Black gets a knight on b4 but weak pawns on c6 and e5. } 10... a5 11. a4 Nb4 12. Bf3 Bc6 13. Nd4 g6 14. Rf2 e5 15. Nxc6 bxc6 16. fxe5 dxe5 17. Qf1 { Key: the queen hits c6 and the light squares; Black's bishop is tied to defence. } 17... Qc8 18. h3 Nd7 19. Bg4 h5 20. Bxd7 Qxd7 21. Qc4 Bh4 22. Rd2 { Key: the famous retreat: the knight is rerouted via d2 to f3 and c4. } 22... Qe7 23. Rf1 Rfd8 24. Nb1 Qb7 25. Kh2 { Key: total domination; every Black piece is passive. } 25... Kg7 26. c3 Na6 27. Re2 Rf8 28. Nd2 Bd8 29. Nf3 f6 30. Rd2 Be7 31. Qe6 Rad8 { Key: Black loses a piece. } 32. Rxd8 Bxd8 33. Rd1 Nb8 34. Bc5 Rh8 35. Rxd8 1-0
+
+[Event "World Championship 1985 (game 16), Moscow"]
+[Site "Moscow URS"]
+[Date "1985.10.15"]
+[Round "16"]
+[White "Anatoly Karpov"]
+[Black "Garry Kasparov"]
+[Result "0-1"]
+[ECO "B44"]
+[Opening "Sicilian Defense: Taimanov Variation, Gary Gambit"]
+[Themes "positional,sacrifice,initiative,world-championship"]
+[Level "5"]
+[Why "The 'octopus' game: Kasparov sacrifices a pawn (8...d5!) and plants a knight on d3 that paralyses Karpov's whole queenside. Nothing is captured for twenty moves; the lesson is that an outpost can be worth more than a pawn, and that restricted pieces lose games."]
+
+1. e4 c5 2. Nf3 e6 3. d4 cxd4 4. Nxd4 Nc6 5. Nb5 d6 6. c4 Nf6 7. N1c3 a6 8. Na3 d5 { Key: the gambit: Black gives a pawn for development and the d3 square. } 9. cxd5 exd5 10. exd5 Nb4 11. Be2 { Key: the octopus arrives; White's knights on a3 and c3 and the b1-bishop are stuck. } 11... Bc5 12. O-O O-O 13. Bf3 Bf5 14. Bg5 Re8 15. Qd2 b5 16. Rad1 Nd3 17. Nab1 { Key: Black expands on both wings while White cannot untangle. } 17... h6 18. Bh4 b4 19. Na4 Bd6 20. Bg3 Rc8 21. b3 g5 22. Bxd6 Qxd6 23. g3 Nd7 24. Bg2 Qf6 25. a3 { Key: the knight finally cashes in. } 25... a5 26. axb4 axb4 27. Qa2 Bg6 28. d6 g4 29. Qd2 Kg7 30. f3 Qxd6 31. fxg4 Qd4+ 32. Kh1 Nf6 33. Rf4 Ne4 34. Qxd3 Nf2+ 35. Rxf2 Bxd3 36. Rfd2 Qe3 37. Rxd3 Rc1 38. Nb2 Qf2 39. Nd2 Rxd1+ 40. Nxd1 Re1+ 0-1
+
+[Event "Candidates Tournament, Zurich"]
+[Site "Zurich SUI"]
+[Date "1953.??.??"]
+[Round "12"]
+[White "David Bronstein"]
+[Black "Paul Keres"]
+[Result "1-0"]
+[ECO "B25"]
+[Opening "Sicilian Defense: Closed"]
+[Themes "positional,rook-endgame,endgame"]
+[Level "5"]
+[Why "Bronstein's own best game from the tournament he immortalised in his book. In a Closed Sicilian he breaks in the centre with 9.e5!, wins the exchange with 20.Nf6+, returns to a rook ending and converts it with precise technique over 58 moves. A complete game: opening idea, middlegame combination, endgame."]
+
+1. e4 c5 2. Nc3 g6 3. g3 Bg7 4. d3 Nc6 5. Bg2 { Key: the central break gives White the initiative and the better structure. } 5... Rb8 6. f4 d6 7. Nf3 e6 8. O-O Nge7 9. e5 dxe5 10. fxe5 Nxe5 11. Bf4 Nxf3+ 12. Qxf3 Ra8 13. Be3 O-O 14. Bxc5 Bd4+ { Key: the knight sacrifice wins the exchange. } 15. Bxd4 Qxd4+ 16. Kh1 Rb8 17. Ne4 f5 18. Qf4 Bd7 19. c3 Qb6 20. Nf6+ Rxf6 21. Qxb8+ Bc8 22. d4 Rf8 23. Rf2 Nc6 24. Qf4 Bd7 25. Re1 { Key: a second central break and a trade into a rook ending an exchange up. } 25... Nd8 26. d5 Nf7 27. dxe6 Bxe6 28. b3 Bd7 29. Qd4 Bc6 30. Qxb6 axb6 31. Bxc6 bxc6 32. Re6 Rc8 33. Rfe2 Kf8 34. h4 b5 35. a4 bxa4 36. bxa4 Ra8 37. Rxc6 Rxa4 38. Rc7 Ra6 39. Rb2 h6 40. c4 { Key: the king centralises and the c-pawn advances. } 40... f4 41. c5 f3 42. Kg1 Ra8 43. Rcb7 Ra1+ 44. Rb1 Ra6 45. Rd7 Ra8 46. Re1 Ra2 47. Re3 Ra1+ 48. Kf2 Ra2+ 49. Kxf3 Rc2 50. Rc7 h5 51. Ke4 Nh6 52. Ra3 Re2+ 53. Kf4 Re8 54. Rh7 Kg8 55. Rxh6 { Key: the c-pawn promotes. } 55... Kg7 56. c6 Kxh6 57. Rc3 g5+ 58. hxg5+ 1-0
+
+[Event "World Championship 1981 (game 9), Merano"]
+[Site "Merano ITA"]
+[Date "1981.10.??"]
+[Round "9"]
+[White "Viktor Korchnoi"]
+[Black "Anatoly Karpov"]
+[Result "0-1"]
+[ECO "D58"]
+[Opening "Queen's Gambit Declined: Tartakower Defense"]
+[Themes "pawn-structure,world-championship"]
+[Level "5"]
+[Why "The model game for playing WITH hanging pawns: Karpov accepts c5/d5, trades White's good bishop, and advances 24...d4!! exactly when every piece supports it. The game shows that hanging pawns are a weapon when the opponent's pieces are badly placed, and a weakness only when they are blockaded."]
+
+1. c4 e6 2. Nc3 d5 3. d4 Be7 4. Nf3 Nf6 5. Bg5 h6 6. Bh4 O-O 7. e3 b6 8. Rc1 Bb7 9. Be2 Nbd7 10. cxd5 { Key: hanging pawns on c5/d5 for Black. } 10... exd5 11. O-O c5 12. dxc5 bxc5 13. Qc2 { Key: Black trades the bishop that could pressure the pawns. } 13... Rc8 14. Rfd1 Qb6 15. Qb1 Rfd8 16. Rc2 Qe6 17. Bg3 Nh5 18. Rcd2 Nxg3 19. hxg3 Nf6 20. Qc2 { Key: the break: 25.exd4 cxd4 would give Black a monster passed pawn, so White's position cracks open instead. } 20... g6 21. Qa4 a6 22. Bd3 Kg7 23. Bb1 Qb6 24. a3 d4 25. Ne2 { Key: the second pawn advances with tempo; Black wins a pawn and the initiative. } 25... dxe3 26. fxe3 c4 27. Ned4 Qc7 28. Nh4 Qe5 29. Kh1 Kg8 30. Ndf3 Qxg3 31. Rxd8+ Bxd8 32. Qb4 Be4 33. Bxe4 Nxe4 34. Rd4 Nf2+ 35. Kg1 Nd3 36. Qb7 Rb8 37. Qd7 Bc7 38. Kh1 Rxb2 39. Rxd3 cxd3 40. Qxd3 Qd6 41. Qe4 Qd1+ 42. Ng1 Qd6 43. Nhf3 Rb5 0-1
+
+[Event "World Championship 1972 (game 6), Reykjavik"]
+[Site "Reykjavik ISL"]
+[Date "1972.07.23"]
+[Round "6"]
+[White "Robert J. Fischer"]
+[Black "Boris Spassky"]
+[Result "1-0"]
+[ECO "D59"]
+[Opening "Queen's Gambit Declined: Tartakower Defense"]
+[Themes "pawn-structure,attack,world-championship"]
+[Level "5"]
+[Why "Fischer's first 1.c4 in the match and a game Spassky applauded. White provokes hanging pawns (14.Bb5! 15.dxc5), fixes them with 20.e4!, and converts the resulting weak e6/d4 pawns into a kingside attack down the f-file. It is the standard lesson on turning a structural edge into an attack."]
+
+1. c4 e6 2. Nf3 d5 3. d4 Nf6 4. Nc3 Be7 5. Bg5 O-O 6. e3 h6 7. Bh4 { Key: the bishop provokes ...a6 and pins the d7 square. } 7... b6 8. cxd5 Nxd5 9. Bxe7 Qxe7 10. Nxd5 exd5 11. Rc1 Be6 12. Qa4 c5 13. Qa3 Rc8 14. Bb5 a6 15. dxc5 { Key: the hanging pawns are forced forward and become fixed targets; e6 is weak. } 15... bxc5 16. O-O Ra7 17. Be2 Nd7 18. Nd4 Qf8 19. Nxe6 fxe6 20. e4 d4 21. f4 { Key: the f-file opens; all White pieces aim at f7/f6. } 21... Qe7 22. e5 Rb8 23. Bc4 Kh8 24. Qh3 Nf8 25. b3 a5 26. f5 exf5 27. Rxf5 Nh7 28. Rcf1 Qd8 29. Qg3 { Key: Black is reduced to passivity. } 29... Re7 30. h4 Rbb7 31. e6 Rbc7 32. Qe5 Qe8 33. a4 Qd8 34. R1f2 Qe8 35. R2f3 Qd8 36. Bd3 Qe8 37. Qe4 Nf6 38. Rxf6 { Key: mate or ruinous loss follows. } 38... gxf6 39. Rxf6 Kg8 40. Bc4 Kh8 41. Qf4 1-0
+
+[Event "USSR Championship, Leningrad"]
+[Site "Leningrad URS"]
+[Date "1971.??.??"]
+[Round "?"]
+[White "Vasily Smyslov"]
+[Black "Anatoly Karpov"]
+[Result "1-0"]
+[ECO "D42"]
+[Opening "Queen's Gambit Declined: Semi-Tarrasch Defense, Pillsbury Variation"]
+[Themes "pawn-structure,attack,iqp"]
+[Level "5"]
+[Why "The isolated d-pawn as an attacking weapon: Smyslov aims bishop and queen at h7, lures Black's pieces to the queenside, and pushes 21.d5!! - the pawn runs to d7 and the attack decides in eight moves. A compact model of IQP play from the side that owns the pawn."]
+
+1. c4 c5 2. Nf3 Nf6 3. Nc3 d5 4. cxd5 Nxd5 5. e3 e6 6. d4 { Key: White accepts an isolated d-pawn for open lines and the e5 square. } 6... cxd4 7. exd4 Be7 8. Bd3 O-O 9. O-O Nc6 10. Re1 { Key: the queen-bishop battery on b1-h7 forces 13...g6 and weakens the dark squares. } 10... Nf6 11. a3 b6 12. Bc2 Bb7 13. Qd3 Rc8 14. Bg5 { Key: every White piece points at the kingside and the d-file. } 14... g6 15. Rad1 Nd5 16. Bh6 Re8 17. Ba4 a6 18. Nxd5 Qxd5 19. Qe3 Bf6 20. Bb3 Qh5 21. d5 { Key: the isolated pawn becomes a passed pawn on the seventh with mating threats. } 21... Nd8 22. d6 Rc5 23. d7 Re7 24. Qf4 Bg7 25. Qb8 Qxh6 26. Qxd8+ Bf8 27. Re3 Bc6 28. Qxf8+ Qxf8 29. d8=Q 1-0
+
+[Event "World Championship 1984/85 (game 9), Moscow"]
+[Site "Moscow URS"]
+[Date "1984.??.??"]
+[Round "9"]
+[White "Anatoly Karpov"]
+[Black "Garry Kasparov"]
+[Result "1-0"]
+[ECO "D34"]
+[Opening "Queen's Gambit Declined: Tarrasch Defense, Pseudo-Tarrasch"]
+[Themes "pawn-structure,defence,iqp,endgame,world-championship"]
+[Level "5"]
+[Why "The game that ended Kasparov's Tarrasch Defence. Karpov blockades the isolated d5-pawn, trades into a knight-versus-bad-bishop ending and wins it in 70 moves. It is the textbook example of two linked themes: restrain the IQP, then exploit the bishop that is tied to it."]
+
+1. d4 d5 2. c4 e6 3. Nf3 c5 4. cxd5 exd5 5. g3 Nf6 6. Bg2 Be7 7. O-O O-O 8. Nc3 Nc6 9. Bg5 { Key: White's knight blockades d5 from e3; the dark-squared bishops are traded. } 9... cxd4 10. Nxd4 h6 11. Be3 Re8 12. Qb3 Na5 13. Qc2 Bg4 14. Nf5 Rc8 15. Bd4 Bc5 16. Bxc5 Rxc5 17. Ne3 Be6 18. Rad1 Qc8 19. Qa4 Rd8 20. Rd3 a6 21. Rfd1 Nc4 22. Nxc4 { Key: queens come off; the d5-pawn remains a target. } 22... Rxc4 23. Qa5 Rc5 24. Qb6 Rd7 25. Rd4 Qc7 26. Qxc7 Rdxc7 27. h3 h5 28. a3 g6 29. e3 Kg7 30. Kh2 Rc4 31. Bf3 b5 32. Kg2 R7c5 33. Rxc4 { Key: all rooks are traded: knight (c3) against a bishop hemmed in by its own d5-pawn. } 33... Rxc4 34. Rd4 Kf8 35. Be2 Rxd4 36. exd4 Ke7 37. Na2 { Key: the minor-piece ending; White's king and knight attack the pawns the bishop cannot defend. } 37... Bc8 38. Nb4 Kd6 39. f3 Ng8 40. h4 Nh6 41. Kf2 Nf5 42. Nc2 f6 43. Bd3 g5 44. Bxf5 Bxf5 45. Ne3 Bb1 46. b4 gxh4 47. Ng2 hxg3+ 48. Kxg3 Ke6 49. Nf4+ Kf5 50. Nxh5 Ke6 51. Nf4+ Kd6 52. Kg4 { Key: the king invades and the pawns fall. } 52... Bc2 53. Kh5 Bd1 54. Kg6 Ke7 55. Nxd5+ Ke6 56. Nc7+ Kd7 57. Nxa6 Bxf3 58. Kxf6 Kd6 59. Kf5 Kd5 60. Kf4 Bh1 61. Ke3 Kc4 62. Nc5 Bc6 63. Nd3 Bg2 64. Ne5+ Kc3 65. Ng6 Kc4 66. Ne7 Bb7 67. Nf5 Bg2 68. Nd6+ Kb3 69. Nxb5 Ka4 70. Nd6 1-0
+
+[Event "Candidates final (game 7), Buenos Aires"]
+[Site "Buenos Aires ARG"]
+[Date "1971.10.19"]
+[Round "7"]
+[White "Robert J. Fischer"]
+[Black "Tigran Petrosian"]
+[Result "1-0"]
+[ECO "B42"]
+[Opening "Sicilian Defense: Kan Variation, Modern Variation"]
+[Themes "pawn-structure,iqp"]
+[Level "5"]
+[Why "Fischer's model of exploiting an isolated d-pawn: an early queen trade, then the celebrated 22.Nxd7+!, giving up a wonderful knight for a bad bishop because the resulting rook invasion on c7 and the seventh rank is decisive. The lesson: an exchange is good when what remains is better, not when the piece given is worse."]
+
+1. e4 c5 2. Nf3 e6 3. d4 cxd4 4. Nxd4 a6 5. Bd3 Nc6 6. Nxc6 bxc6 7. O-O { Key: Black is left with an isolated d5-pawn and a passive bishop on c8. } 7... d5 8. c4 Nf6 9. cxd5 cxd5 10. exd5 exd5 11. Nc3 Be7 12. Qa4+ { Key: queens off; White's pieces blockade and attack d5. } 12... Qd7 13. Re1 Qxa4 14. Nxa4 Be6 15. Be3 O-O 16. Bc5 Rfe8 17. Bxe7 Rxe7 18. b4 { Key: the famous exchange: the knight goes, but the c-file and seventh rank belong to White. } 18... Kf8 19. Nc5 Bc8 20. f3 Rea7 21. Re5 Bd7 22. Nxd7+ Rxd7 23. Rc1 Rd6 { Key: both rooks on the seventh. } 24. Rc7 Nd7 25. Re2 g6 26. Kf2 h5 27. f4 h4 28. Kf3 f5 29. Ke3 d4+ 30. Kd2 Nb6 31. Ree7 Nd5 { Key: mate threats (Rh7, Bb5) and material loss. } 32. Rf7+ Ke8 33. Rb7 Nxb4 34. Bc4 1-0
+
+[Event "USSR Championship, Moscow"]
+[Site "Moscow URS"]
+[Date "1969.??.??"]
+[Round "?"]
+[White "Lev Polugaevsky"]
+[Black "Mikhail Tal"]
+[Result "1-0"]
+[ECO "D41"]
+[Opening "Queen's Gambit Declined: Semi-Tarrasch Defense, Exchange Variation"]
+[Themes "pawn-structure,sacrifice"]
+[Level "5"]
+[Why "Polugaevsky's deep preparation in the Semi-Tarrasch: the central pawns advance with 16.d5! and 17.e5!, then the Greek gift 19.Bxh7+ follows. The game is a model for converting a mobile centre into a direct attack and for the power of concrete home analysis."]
+
+1. c4 Nf6 2. Nc3 e6 3. Nf3 d5 4. d4 c5 5. cxd5 { Key: White has the classical pawn duo d4/e4 and all pieces behind it. } 5... Nxd5 6. e4 Nxc3 7. bxc3 cxd4 8. cxd4 Bb4+ 9. Bd2 Bxd2+ 10. Qxd2 O-O 11. Bc4 Nc6 12. O-O b6 13. Rad1 Bb7 14. Rfe1 Na5 { Key: the breakthrough: the e5-pawn drives the knight from f6 and the diagonal b1-h7 opens. } 15. Bd3 Rc8 16. d5 exd5 17. e5 Nc4 18. Qf4 Nb2 19. Bxh7+ { Key: the Greek gift with the h-pawn joining the attack. } 19... Kxh7 20. Ng5+ Kg6 21. h4 Rc4 22. h5+ Kh6 23. Nxf7+ Kh7 24. Qf5+ Kg8 25. e6 Qf6 { Key: White emerges a piece up for pawns in a won ending. } 26. Qxf6 gxf6 27. Rd2 Rc6 28. Rxb2 Re8 29. Nh6+ Kh7 30. Nf5 Rexe6 31. Rxe6 Rxe6 32. Rc2 Rc6 33. Re2 Bc8 34. Re7+ Kh8 35. Nh4 f5 36. Ng6+ Kg8 37. Rxa7 1-0
+
+[Event "World Championship 1969 (game 5), Moscow"]
+[Site "Moscow URS"]
+[Date "1969.??.??"]
+[Round "5"]
+[White "Boris Spassky"]
+[Black "Tigran Petrosian"]
+[Result "1-0"]
+[ECO "D41"]
+[Opening "Queen's Gambit Declined: Semi-Tarrasch Defense, Exchange Variation"]
+[Themes "pawn-structure,world-championship"]
+[Level "5"]
+[Why "Same structure as Polugaevsky-Tal, different execution: Spassky breaks with 15.d5!, and after 21.d6! the passed pawn marches to d7 and wins a rook. A compact model of the central majority turning into a passed pawn."]
+
+1. c4 Nf6 2. Nc3 e6 3. Nf3 d5 4. d4 c5 5. cxd5 Nxd5 6. e4 Nxc3 7. bxc3 cxd4 8. cxd4 Bb4+ 9. Bd2 Bxd2+ 10. Qxd2 O-O 11. Bc4 Nc6 12. O-O { Key: the break comes before Black has finished regrouping. } 12... b6 13. Rad1 Bb7 14. Rfe1 Rc8 15. d5 exd5 16. Bxd5 Na5 17. Qf4 { Key: the pawn becomes passed; 21...Rcd8 22.d7 ties Black's rooks. } 17... Qc7 18. Qf5 Bxd5 19. exd5 Qc2 20. Qf4 Qxa2 21. d6 Rcd8 22. d7 Qc4 { Key: every White piece supports the pawn; Black's are tied to d8. } 23. Qf5 h6 24. Rc1 Qa6 25. Rc7 b5 26. Nd4 Qb6 27. Rc8 Nb7 28. Nc6 Nd6 { Key: the pawn promotes or Black loses a rook. } 29. Nxd8 Nxf5 30. Nc6 1-0
+
+[Event "Interzonal, Portoroz"]
+[Site "Portoroz YUG"]
+[Date "1958.??.??"]
+[Round "11"]
+[White "Tigran Petrosian"]
+[Black "Hector Rossetto"]
+[Result "1-0"]
+[ECO "D35"]
+[Opening "Queen's Gambit Declined: Three Knights Variation"]
+[Themes "pawn-structure,attack,minority-attack"]
+[Level "5"]
+[Why "A clean minority attack: 13.b4, 15.a4, 17.b5 and 19.bxc6 leave Black with a backward c6-pawn; Petrosian's knight settles on c5/e5, the rooks take the a- and c-files, and the pawn finally falls on move 38. Use it as the reference game for the b4-b5 plan in the Exchange QGD."]
+
+1. d4 Nf6 2. Nf3 d5 3. c4 e6 4. Nc3 Be7 5. cxd5 { Key: the Carlsbad structure: White's queenside majority will advance. } 5... exd5 6. Bf4 c6 7. Qc2 Na6 8. a3 O-O 9. e3 Nc7 10. Bd3 Ne6 11. Be5 g6 12. O-O Ng7 13. b4 { Key: the minority attack creates the target on c6. } 13... a6 14. Bxf6 Bxf6 15. a4 Bf5 16. Bxf5 Nxf5 17. b5 axb5 18. axb5 Qd6 19. bxc6 bxc6 20. Na4 { Key: the knight on e5 dominates; Black's bishop is gone. } 20... Rfb8 21. Nc5 Qe7 22. Nd3 Qb7 23. Nfe5 Bxe5 24. Nxe5 Rxa1 25. Rxa1 Ne7 26. g3 { Key: the c6-pawn falls and the king is exposed. } 26... Qb2 27. Qd1 h5 28. Rc1 Rb6 29. h3 Kg7 30. Kg2 Qa3 31. Ra1 Qb2 32. g4 hxg4 33. hxg4 Rb7 34. Rc1 Qb5 35. Qf3 f6 36. g5 Nf5 37. gxf6+ Kxf6 38. Rxc6+ Ke7 39. Qf4 1-0
+
+[Event "Lucerne Olympiad"]
+[Site "Lucerne SUI"]
+[Date "1982.??.??"]
+[Round "5"]
+[White "Lev Polugaevsky"]
+[Black "Lubomir Ftacnik"]
+[Result "0-1"]
+[ECO "A30"]
+[Opening "English Opening: Symmetrical Variation, Hedgehog Defense"]
+[Themes "pawn-structure,attack,defence"]
+[Level "5"]
+[Why "The hedgehog's counterpunch in one game: Black sits on a6/b6/d6/e6, waits, and then strikes with 17...h5!, 19...d5! and 20...h4!. Ftacnik's attack ends with a queen sacrifice. The game teaches when the coiled hedgehog uncoils - exactly when White overextends with e4/f4."]
+
+1. Nf3 Nf6 2. c4 c5 3. Nc3 e6 4. g3 b6 5. Bg2 Bb7 6. O-O Be7 7. d4 { Key: the hedgehog is complete: pawns on a6, b6, d6, e6 and pieces on the second rank. } 7... cxd4 8. Qxd4 d6 9. Rd1 a6 10. b3 Nbd7 11. e4 Qb8 12. Bb2 O-O 13. Nd2 Rd8 14. a4 Qc7 15. Qe3 Rac8 16. Qe2 Ne5 { Key: the two classic levers: ...h5 to loosen g4/f4 and ...d5 to open the centre. } 17. h3 h5 18. f4 Ng6 19. Nf3 d5 20. cxd5 { Key: the pieces flood toward the White king. } 20... h4 21. Nxh4 Nxh4 22. gxh4 Qxf4 23. dxe6 fxe6 24. e5 Bc5+ 25. Kh1 Nh5 26. Qxh5 { Key: a discovered check from the c5-bishop wins the queen. } 26... Qg3 27. Nd5 Rxd5 28. Rf1 Qxg2+ 29. Kxg2 Rd2+ 0-1
+
+[Event "Nice Olympiad (final A)"]
+[Site "Nice FRA"]
+[Date "1974.??.??"]
+[Round "7"]
+[White "Anatoly Karpov"]
+[Black "Lubomir Kavalek"]
+[Result "1-0"]
+[ECO "B36"]
+[Opening "Sicilian Defense: Accelerated Dragon, Maróczy Bind"]
+[Themes "pawn-structure,endgame"]
+[Level "5"]
+[Why "The Maroczy bind (pawns c4/e4) against the Accelerated Dragon, shown from opening to endgame. Karpov trades queens early and still wins, because the space advantage and the d5 outpost do not depend on the queens. Study the plan Nd5, h4-h5, f4, g4 and the protected passed d-pawn."]
+
+1. c4 c5 2. Nf3 g6 3. d4 cxd4 4. Nxd4 Nc6 5. e4 { Key: the bind: Black cannot play ...d5 or ...b5. } 5... Nf6 6. Nc3 d6 7. Be2 Nxd4 8. Qxd4 Bg7 9. Bg5 O-O 10. Qd2 Be6 11. Rc1 Qa5 12. b3 Rfc8 13. f3 a6 14. Na4 { Key: queens off, but the knight on d5 forces Black to give up the bishop pair; White gets a protected passed d-pawn. } 14... Qxd2+ 15. Kxd2 Rc6 16. Nc3 Rac8 17. Nd5 Kf8 18. Be3 Nd7 19. h4 Bxd5 20. exd5 R6c7 21. h5 { Key: White attacks on both wings in the endgame. } 21... Kg8 22. f4 Nc5 23. Bg4 Ne4+ 24. Kd3 f5 25. Bf3 b5 26. g4 bxc4+ 27. Rxc4 Rxc4 28. bxc4 Nc5+ 29. Bxc5 Rxc5 30. h6 Bf8 31. Kc3 { Key: the h-pawn ties Black down. } 31... fxg4 32. Bxg4 Kf7 33. Be6+ Kf6 34. Bg8 Rc7 35. Bxh7 e6 36. Bg8 exd5 37. h7 Bg7 38. Bxd5 Bh8 39. Kd3 Kf5 40. Ke3 Re7+ 41. Kf3 a5 42. a4 Rc7 43. Be4+ Kf6 44. Rh6 Rg7 45. Kg4 1-0
+
+[Event "Siegen Olympiad"]
+[Site "Siegen FRG"]
+[Date "1970.??.??"]
+[Round "15"]
+[White "Robert J. Fischer"]
+[Black "Wolfgang Unzicker"]
+[Result "1-0"]
+[ECO "C69"]
+[Opening "Ruy Lopez: Exchange Variation, Gligoric Variation"]
+[Themes "pawn-structure,knight-vs-bishop"]
+[Level "5"]
+[Why "Fischer revived the Exchange Ruy Lopez and this game explains why: White's healthy kingside majority (e4/f4 vs e5/f6) and the doubled c-pawns give a lasting endgame edge. He gains space with f4-f5 and g4, trades into a knight-versus-bishop ending and wins a pawn. Pair it with Fischer-Spassky 1992 games for the same structure."]
+
+1. e4 e5 2. Nf3 Nc6 3. Bb5 a6 4. Bxc6 dxc6 5. O-O { Key: the kingside majority advances and fixes Black's pawns. } 5... f6 6. d4 exd4 7. Nxd4 Ne7 8. Be3 Ng6 9. Nd2 Bd6 10. Nc4 O-O 11. Qd3 Ne5 12. Nxe5 Bxe5 13. f4 Bd6 14. f5 Qe7 { Key: the e-file and e5 square are White's. } 15. Bf4 Bxf4 16. Rxf4 Bd7 17. Re1 Qc5 18. c3 Rae8 19. g4 Qd6 20. Qg3 Re7 21. Nf3 c5 22. e5 fxe5 23. Rfe4 Bc6 24. Rxe5 Rfe8 25. Rxe7 Rxe7 26. Ne5 { Key: into a knight-versus-bishop ending with the better pawns. } 26... h6 27. h4 Bd7 28. Qf4 Qf6 29. Re2 Bc8 30. Qc4+ Kh7 31. Ng6 Rxe2 32. Qxe2 Bd7 33. Qe7 Qxe7 34. Nxe7 g5 { Key: White is a pawn up with the better minor piece. } 35. hxg5 hxg5 36. Nd5 Bc6 37. Nxc7 Bf3 38. Ne8 Kh6 39. Nf6 Kg7 40. Kf2 Bd1 41. Nd7 c4 42. Kg3 1-0
+
+[Event "Candidates quarter-final (game 4), Vancouver"]
+[Site "Vancouver CAN"]
+[Date "1971.05.??"]
+[Round "4"]
+[White "Robert J. Fischer"]
+[Black "Mark Taimanov"]
+[Result "1-0"]
+[ECO "B47"]
+[Opening "Sicilian Defense: Taimanov Variation, Bastrikov Variation"]
+[Themes "endgame,knight-vs-bishop,zugzwang"]
+[Level "5"]
+[Why "The textbook 'good bishop versus bad knight' ending (note: the bishop is Fischer's, the knight Taimanov's). With pawns on both wings the bishop dominates the knight, the White king walks to a6, and a final bishop sacrifice creates unstoppable passed pawns. One of the most instructive endings ever played."]
+
+1. e4 c5 2. Nf3 Nc6 3. d4 cxd4 4. Nxd4 Qc7 5. Nc3 e6 6. g3 a6 7. Bg2 Nf6 8. O-O Nxd4 9. Qxd4 Bc5 10. Bf4 d6 11. Qd2 h6 12. Rad1 e5 13. Be3 { Key: the opening leaves Black with a knight against a bishop and pawns on both wings. } 13... Bg4 14. Bxc5 dxc5 15. f3 Be6 16. f4 Rd8 17. Nd5 Bxd5 18. exd5 e4 19. Rfe1 Rxd5 20. Rxe4+ Kd8 21. Qe2 { Key: queens off; the bishop on c4 fixes f7 and the queenside. } 21... Rxd1+ 22. Qxd1+ Qd7 23. Qxd7+ Kxd7 24. Re5 b6 25. Bf1 a5 26. Bc4 Rf8 27. Kg2 Kd6 28. Kf3 Nd7 29. Re3 Nb8 30. Rd3+ Kc7 31. c3 Nc6 32. Re3 Kd6 33. a4 Ne7 34. h3 Nc6 35. h4 h5 36. Rd3+ Kc7 37. Rd5 f5 38. Rd2 Rf6 39. Re2 Kd7 40. Re3 g6 41. Bb5 Rd6 42. Ke2 Kd8 43. Rd3 Kc7 44. Rxd6 { Key: the rook trade leaves pure bishop vs knight; the bishop zig-zags to gain tempi. } 44... Kxd6 45. Kd3 Ne7 46. Be8 Kd5 47. Bf7+ Kd6 48. Kc4 Kc6 49. Be8+ { Key: zugzwang: Black's king and knight have no good moves while the White king reaches a6. } 49... Kb7 50. Kb5 Nc8 51. Bc6+ Kc7 52. Bd5 Ne7 53. Bf7 Kb7 54. Bb3 Ka7 55. Bd1 Kb7 56. Bf3+ Kc7 57. Ka6 Nc8 58. Bd5 Ne7 59. Bc4 Nc6 60. Bf7 Ne7 61. Be8 { Key: the bishop sacrifice creates two connected passed pawns. } 61... Kd8 62. Bxg6 Nxg6 63. Kxb6 Kd7 64. Kxc5 Ne7 65. b4 axb4 66. cxb4 Nc8 67. a5 Nd6 68. b5 Ne4+ 69. Kb6 Kc8 70. Kc6 Kb8 71. b6 1-0
+
+[Event "London Chess Classic"]
+[Site "London ENG"]
+[Date "2015.12.11"]
+[Round "7"]
+[White "Magnus Carlsen"]
+[Black "Hikaru Nakamura"]
+[Result "1-0"]
+[ECO "D11"]
+[Opening "Slav Defense: Quiet Variation, Pin Defense"]
+[Themes "endgame,knight-vs-bishop"]
+[Level "5"]
+[Why "A modern 'good bishop versus knight' grind. Carlsen trades queens on move 20, keeps the bishop pair against Black's doubled g-pawns, and in a 78-move ending his king and bishop slowly outplay the knight. Study the patience: nothing is forced until move 66."]
+
+1. d4 d5 2. c4 c6 3. Nf3 Nf6 4. e3 Bg4 5. h3 Bh5 6. cxd5 cxd5 7. Nc3 e6 8. g4 { Key: Black's doubled g-pawns are a long-term target. } 8... Bg6 9. Ne5 Nfd7 10. Nxg6 hxg6 11. Bg2 Nc6 12. e4 dxe4 13. Nxe4 Bb4+ 14. Nc3 Nb6 15. O-O O-O 16. d5 { Key: queens off; White keeps the two bishops and more space. } 16... exd5 17. Nxd5 Bc5 18. Nc3 Bd4 19. Qf3 Qf6 20. Qxf6 Bxf6 21. Bf4 Rad8 22. Rad1 Bxc3 23. bxc3 Na4 24. c4 Nc3 25. Rd2 Rxd2 26. Bxd2 Ne2+ 27. Kh2 Rd8 28. Be3 Nc3 29. a3 Rd3 30. Rc1 Nd1 31. Be4 Rd7 32. Bc5 Nb2 33. Rc2 Na4 34. Be3 Nb6 35. c5 Nd5 36. Rd2 Nf6 37. Rxd7 { Key: rooks traded; bishop vs knight with Black's king cut off. } 37... Nxd7 38. Kg3 Kf8 39. f4 Nf6 40. Bf3 Ke7 41. f5 gxf5 42. gxf5 Kd7 43. Kf4 Ne8 44. Kg5 Ke7 45. Bf4 a6 46. h4 Kf8 47. Bg3 Nf6 48. Bd6+ Ke8 49. Kf4 Nd7 50. Bg2 Kd8 51. Kg5 Ke8 52. h5 { Key: the king and h-pawn tie down the knight. } 52... Nf6 53. h6 Nh7+ 54. Kh5 Nf6+ 55. Kg5 Nh7+ 56. Kh4 gxh6 57. Kh5 Nf6+ 58. Kxh6 Ng4+ 59. Kg7 Nd4 60. Be4 Nf2 61. Bb1 Ng4 62. Bf4 f6 63. Be4 Nf2 64. Bb1 Ng4 65. Be4 Nf2 66. Bxb7 { Key: two passed pawns beat the knights. } 66... Nd3 67. Kxf6 Nxf4 68. Ke5 Nfe2 69. f6 a5 70. a4 Kf7 71. Bd5+ Kf8 72. Ke4 Nc2 73. c6 Nc3+ 74. Ke5 Nxa4 75. Bb3 Nb6 76. Bxc2 a4 77. c7 Kf7 78. Bxa4 1-0
+
+[Event "World Championship 2013 (game 5), Chennai"]
+[Site "Chennai IND"]
+[Date "2013.11.15"]
+[Round "5"]
+[White "Magnus Carlsen"]
+[Black "Viswanathan Anand"]
+[Result "1-0"]
+[ECO "D31"]
+[Opening "Semi-Slav Defense: Marshall Gambit, Forgotten Variation"]
+[Themes "endgame,rook-endgame,world-championship"]
+[Level "5"]
+[Why "Carlsen's first win of the 2013 match: queens off by move 15, a rook-and-bishop ending that engines call equal, and a single inaccuracy by Anand (45...Rc1+?) turns it into a won rook ending. The lesson is the Carlsen method - keep the game going, make the opponent decide at every move."]
+
+1. c4 e6 2. d4 d5 3. Nc3 c6 4. e4 dxe4 5. Nxe4 Bb4+ 6. Nc3 c5 7. a3 Ba5 8. Nf3 Nf6 9. Be3 Nc6 10. Qd3 cxd4 11. Nxd4 Ng4 12. O-O-O Nxe3 13. fxe3 Bc7 14. Nxc6 bxc6 15. Qxd8+ { Key: a sequence of exchanges into a rook-and-bishop ending with Black's c-pawn slightly weak. } 15... Bxd8 16. Be2 Ke7 17. Bf3 Bd7 18. Ne4 Bb6 19. c5 f5 20. cxb6 fxe4 21. b7 Rab8 22. Bxe4 Rxb7 23. Rhf1 Rb5 24. Rf4 { Key: Anand's kingside pawn moves give Carlsen the f-file and targets. } 24... g5 25. Rf3 h5 26. Rdf1 Be8 27. Bc2 Rc5 28. Rf6 h4 29. e4 a5 30. Kd2 Rb5 31. b3 Bh5 32. Kc3 Rc5+ 33. Kb2 Rd8 34. R1f2 Rd4 35. Rh6 Bd1 36. Bb1 Rb5 37. Kc3 c5 38. Rb2 { Key: into a rook ending a pawn up. } 38... e5 39. Rg6 a4 40. Rxg5 Rxb3+ 41. Rxb3 Bxb3 42. Rxe5+ Kd6 43. Rh5 Rd1 44. e5+ Kd5 45. Bh7 Rc1+ 46. Kb2 Rg1 47. Bg8+ Kc6 48. Rh6+ Kd7 49. Bxb3 axb3 50. Kxb3 Rxg2 51. Rxh4 { Key: the a- and h-pawns are too far apart for the Black rook and king. } 51... Ke6 52. a4 Kxe5 53. a5 Kd6 54. Rh7 Kd5 55. a6 c4+ 56. Kc3 Ra2 57. a7 Kc5 58. h4 1-0
+
+[Event "World Championship 2013 (game 6), Chennai"]
+[Site "Chennai IND"]
+[Date "2013.11.16"]
+[Round "6"]
+[White "Viswanathan Anand"]
+[Black "Magnus Carlsen"]
+[Result "0-1"]
+[ECO "C65"]
+[Opening "Ruy Lopez: Berlin Defense, Anti-Berlin Variation"]
+[Themes "endgame,rook-endgame,world-championship"]
+[Level "5"]
+[Why "The second consecutive endgame win that decided the 2013 match. From a dull Berlin, Carlsen creates a rook ending where his king walks to e3 and his pawns on c4/f4/h4 outweigh Anand's queenside. The decisive error is 60.Ra4? (60.b4! draws); study the technique with connected passed pawns and the active king."]
+
+1. e4 e5 2. Nf3 Nc6 3. Bb5 Nf6 4. d3 Bc5 5. c3 O-O 6. O-O Re8 7. Re1 a6 8. Ba4 b5 9. Bb3 d6 10. Bg5 Be6 11. Nbd2 h6 12. Bh4 Bxb3 13. axb3 Nb8 14. h3 Nbd7 15. Nh2 Qe7 16. Ndf1 Bb6 17. Ne3 Qe6 18. b4 a5 19. bxa5 Bxa5 20. Nhg4 Bb6 21. Bxf6 Nxf6 22. Nxf6+ Qxf6 23. Qg4 Bxe3 24. fxe3 { Key: Carlsen gains queenside space and fixes b3/c3 as targets. } 24... Qe7 25. Rf1 c5 26. Kh2 c4 27. d4 Rxa1 28. Rxa1 Qb7 29. Rd1 Qc6 30. Qf5 exd4 31. Rxd4 Re5 32. Qf3 Qc7 33. Kh1 Qe7 34. Qg4 Kh7 35. Qf4 g6 36. Kh2 Kg7 37. Qf3 Re6 38. Qg3 { Key: Black wins a pawn and enters a rook ending with an active king. } 38... Rxe4 39. Qxd6 Rxe3 40. Qxe7 Rxe7 41. Rd5 Rb7 42. Rd6 f6 43. h4 Kf7 44. h5 gxh5 45. Rd5 Kg6 46. Kg3 { Key: the king marches into White's camp. } 46... Rb6 47. Rc5 f5 48. Kh4 Re6 49. Rxb5 Re4+ 50. Kh3 Kg5 51. Rb8 h4 52. Rg8+ Kh5 53. Rf8 Rf4 54. Rc8 Rg4 55. Rf8 Rg3+ 56. Kh2 Kg5 57. Rg8+ Kf4 58. Rc8 Ke3 59. Rxc4 { Key: the f-pawn promotes. } 59... f4 60. Ra4 h3 61. gxh3 Rg6 62. c4 f3 63. Ra3+ Ke2 64. b4 f2 65. Ra2+ Kf3 66. Ra3+ Kf4 67. Ra8 Rg1 0-1
+
+[Event "World Championship 2016 (game 10), New York"]
+[Site "New York USA"]
+[Date "2016.11.24"]
+[Round "10"]
+[White "Magnus Carlsen"]
+[Black "Sergey Karjakin"]
+[Result "1-0"]
+[ECO "C65"]
+[Opening "Ruy Lopez: Berlin Defense, Anti-Berlin Variation"]
+[Themes "endgame,world-championship"]
+[Level "5"]
+[Why "Down 1-0 with three games left, Carlsen wins a 75-move ending with a knight and rooks against the same material. Black's weak e6/d5 pawns are blockaded, the king is kept out, and the breakthrough 57.b5! comes only after fifty moves of improvement. The model for grinding when a draw is not enough."]
+
+1. e4 e5 2. Nf3 Nc6 3. Bb5 Nf6 4. d3 Bc5 5. c3 O-O 6. Bg5 h6 7. Bh4 Be7 8. O-O d6 9. Nbd2 Nh5 10. Bxe7 Qxe7 11. Nc4 Nf4 12. Ne3 Qf6 13. g3 Nh3+ 14. Kh1 Ne7 15. Bc4 c6 16. Bb3 Ng6 17. Qe2 a5 18. a4 Be6 19. Bxe6 { Key: queens off; Black's e6/d5 pawns and dark squares are long-term targets. } 19... fxe6 20. Nd2 d5 21. Qh5 Ng5 22. h4 Nf3 23. Nxf3 Qxf3+ 24. Qxf3 Rxf3 25. Kg2 Rf7 26. Rfe1 h5 27. Nf1 Kf8 28. Nd2 Ke7 29. Re2 Kd6 30. Nf3 Raf8 31. Ng5 Re7 32. Rae1 Rfe8 33. Nf3 Nh8 34. d4 exd4 35. Nxd4 g6 36. Re3 { Key: White fixes the kingside and gains queenside space. } 36... Nf7 37. e5+ Kd7 38. Rf3 Nh6 39. Rf6 Rg7 40. b4 axb4 41. cxb4 Ng8 42. Rf3 Nh6 43. a5 { Key: the knight on c5 and the b-file bind the Black king to the queenside. } 43... Nf5 44. Nb3 Kc7 45. Nc5 Kb8 46. Rb1 Ka7 47. Rd3 Rc7 48. Ra3 Nd4 49. Rd1 Nf5 50. Kh3 Nh6 51. f3 Rf7 52. Rd4 Nf5 53. Rd2 Rh7 54. Rb3 Ree7 55. Rdd3 Rh8 56. Rb1 { Key: the breakthrough wins a pawn and simplifies. } 56... Rhh7 57. b5 cxb5 58. Rxb5 d4 59. Rb6 Rc7 60. Nxe6 Rc3 61. Nf4 Rhc7 62. Nd5 Rxd3 63. Nxc7 Kb8 64. Nb5 Kc8 65. Rxg6 Rxf3 66. Kg2 Rb3 67. Nd6+ Nxd6 68. Rxd6 Re3 69. e6 Kc7 70. Rxd4 { Key: a trivially won rook ending. } 70... Rxe6 71. Rd5 Rh6 72. Kf3 Kb8 73. Kf4 Ka7 74. Kg5 Rh8 75. Kf6 1-0
+
+[Event "Gashimov Memorial, Shamkir"]
+[Site "Shamkir AZE"]
+[Date "2018.04.26"]
+[Round "7"]
+[White "Magnus Carlsen"]
+[Black "Veselin Topalov"]
+[Result "1-0"]
+[ECO "A28"]
+[Opening "English Opening: King's English Variation, Four Knights Variation, Quiet Line"]
+[Themes "endgame"]
+[Level "5"]
+[Why "A modern queen-versus-rook ending from a top event. Carlsen wins a pawn with 26.Rxe5!, trades into queen against rook and bishop, picks up the remaining pawns and then wins the pure Q+P vs R+P ending, whose technique (king approach, zugzwang, Philidor position) every strong player must know."]
+
+1. c4 Nf6 2. Nc3 e5 3. Nf3 Nc6 4. e3 Bb4 5. Qc2 Bxc3 6. bxc3 d6 7. e4 O-O 8. g3 Ne8 9. Nh4 Ne7 10. d3 f5 11. exf5 Nxf5 12. Nxf5 Bxf5 13. Bg2 c6 14. h3 Nc7 15. O-O Ne6 16. Be3 Nc5 17. Rad1 Qd7 18. Kh2 Bg6 19. Rd2 Rae8 20. Qd1 b6 21. Re1 h6 22. Bxc5 { Key: a tactical sequence leaves queen vs rook and bishop. } 22... dxc5 23. Re3 Re6 24. Kg1 Rd6 25. h4 Rd8 26. Rxe5 Bxd3 27. Be4 Bxc4 28. Rxd6 Qxd6 29. Re8+ Rxe8 30. Qxd6 Rxe4 31. Qxc6 Re1+ 32. Kh2 Bxa2 33. g4 { Key: the queen collects the queenside pawns. } 33... Kh7 34. f4 h5 35. f5 hxg4 36. h5 Bf7 37. Qb7 Kg8 38. Qxa7 Bxh5 39. Qxb6 c4 40. Qd8+ Be8 41. Kg3 Kh7 42. Qc7 Kg8 43. Qxc4+ { Key: the c-pawn costs Black the bishop. } 43... Bf7 44. Qd4 Re8 45. c4 Rf8 46. c5 Be8 47. Qd5+ Kh7 48. Qe6 Bb5 49. c6 Bxc6 50. Qg6+ Kg8 51. Qxc6 Rf6 52. Qe8+ { Key: queen and king versus rook: Black resigned (the rook is lost or mate follows). } 52... Kh7 53. Kxg4 Rh6 54. Kf4 Rf6 55. Ke5 Rh6 56. Qe6 1-0
+
+[Event "Candidates semi-final (game 6), London"]
+[Site "London ENG"]
+[Date "1983.12.??"]
+[Round "6"]
+[White "Viktor Korchnoi"]
+[Black "Garry Kasparov"]
+[Result "0-1"]
+[ECO "D30"]
+[Opening "Queen's Gambit Declined: Tarrasch Defense, Pseudo-Tarrasch"]
+[Themes "endgame,rook-endgame"]
+[Level "5"]
+[Why "A long endgame that passes through a rook ending with mutual passed pawns and ends in a pure queen-versus-rook position which Kasparov wins in ten moves (68...g1=Q to 78...Kg5). Use the final phase to teach the winning method: centralise the queen, use checks to drive the king toward the rook, and avoid stalemate tricks."]
+
+1. d4 d5 2. c4 e6 3. Nf3 c5 4. cxd5 exd5 5. g3 Nc6 6. Bg2 Nf6 7. O-O Be7 8. Be3 c4 9. Ne5 O-O 10. b3 cxb3 11. Qxb3 Qb6 12. Rc1 Qxb3 13. axb3 Nb4 14. Na3 a6 15. Bd2 Rb8 16. Bxb4 Bxb4 17. Nd3 Bd6 18. Nc2 Bg4 19. Kf1 Bf5 20. Nc5 Rfc8 21. Ne3 Be6 22. b4 Kf8 23. Rc2 Ke7 24. Ke1 h5 25. Rb2 Rc7 26. Nd3 Ra8 27. b5 { Key: simplifications into a double-rook ending with Black's passed a- and b-pawns. } 27... a5 28. b6 Rc6 29. Rb5 a4 30. Nxd5+ Nxd5 31. Bxd5 Bxd5 32. Rxd5 Rxb6 33. Rxh5 Rb3 34. Kd2 b5 35. h4 Rc8 36. g4 a3 37. f4 Rcc3 38. Rd5 Ke6 39. Rh5 b4 40. Ra5 Rxd3+ 41. exd3 Bxf4+ 42. Ke2 Rc3 43. g5 Bc1 44. h5 { Key: White gives a rook for the b-pawn; both sides have passed pawns. } 44... b3 45. R5xa3 Bxa3 46. Rxa3 b2 47. Ra6+ Kf5 48. Rb6 Rc2+ 49. Ke3 Kxg5 50. d5 Kxh5 51. Kd4 g5 52. Rb8 g4 53. d6 Rc6 54. Ke5 Rc5+ 55. Kf6 g3 56. Rxb2 { Key: the g-pawn promotes: queen vs rook. } 56... Rd5 57. Kxf7 Rxd6 58. Rd2 Kg4 59. d4 Kf5 60. Ke7 Rd5 61. Rd3 Kf4 62. Ke6 Rg5 63. d5 Rg6+ 64. Ke7 g2 65. Rd1 Ke5 66. d6 Re6+ 67. Kd7 Rxd6+ 68. Rxd6 g1=Q 69. Re6+ { Key: the rook is lost after 79.Rh8 Qd6+ or 79.Rh1 Qd6+ 80.Kg8 Kg6. } 69... Kf5 70. Rd6 Qa7+ 71. Kd8 Ke5 72. Rg6 Qa5+ 73. Kd7 Qa4+ 74. Ke7 Qh4+ 75. Kf8 Qd8+ 76. Kf7 Kf5 77. Rh6 Qd7+ 78. Kf8 Kg5 0-1
+
+[Event "World Championship 2018 (game 6), London"]
+[Site "London ENG"]
+[Date "2018.11.16"]
+[Round "6"]
+[White "Magnus Carlsen"]
+[Black "Fabiano Caruana"]
+[Result "1/2-1/2"]
+[ECO "C42"]
+[Opening "Petrov's Defense: Karklins-Martinovsky Variation"]
+[Themes "endgame,defence,knight-vs-bishop,fortress,world-championship"]
+[Level "5"]
+[Why "The longest game of the 2018 match and a famous fortress: Caruana, a knight up (bishop and knight versus bishop, one pawn each), could not break through. Engines found a forced mate starting with 68...Bh4!! (the move Caruana did not play), but the practical lesson is Carlsen's defence: king in the corner, bishop controlling the pawn's queening square, no weaknesses to attack."]
+
+1. e4 e5 2. Nf3 Nf6 3. Nxe5 d6 4. Nd3 { Key: queens are traded by move 8 in a rare Petroff line. } 4... Nxe4 5. Qe2 Qe7 6. Nf4 Nc6 7. Nd5 Nd4 8. Nxe7 Nxe2 9. Nd5 Nd4 10. Na3 Ne6 11. f3 N4c5 12. d4 Nd7 13. c3 c6 14. Nf4 Nb6 15. Bd3 d5 16. Nc2 Bd6 17. Nxe6 Bxe6 18. Kf2 h5 19. h4 Nc8 20. Ne3 Ne7 21. g3 c5 22. Bc2 O-O 23. Rd1 Rfd8 24. Ng2 cxd4 25. cxd4 Rac8 26. Bb3 Nc6 27. Bf4 Na5 28. Rdc1 Bb4 29. Bd1 Nc4 30. b3 Na3 31. Rxc8 Rxc8 32. Rc1 Nb5 33. Rxc8+ Bxc8 34. Ne3 Nc3 35. Bc2 Ba3 36. Bb8 a6 37. f4 Bd7 38. f5 Bc6 39. Bd1 Bb2 40. Bxh5 { Key: a sequence of captures leaves Black a knight up but with few pawns. } 40... Ne4+ 41. Kg2 Bxd4 42. Bf4 Bc5 43. Bf3 Nd2 44. Bxd5 Bxe3 45. Bxc6 Bxf4 46. Bxb7 Bd6 47. Bxa6 Ne4 48. g4 Ba3 49. Bc4 Kf8 50. g5 Nc3 51. b4 Bxb4 52. Kf3 { Key: White's king heads for h7/g6 where it cannot be dislodged. } 52... Na4 53. Bb5 Nc5 54. a4 f6 55. Kg4 Ne4 56. Kh5 Be1 57. Bd3 Nd6 58. a5 Bxa5 59. gxf6 gxf6 60. Kg6 Bd8 61. Kh7 Nf7 62. Bc4 Ne5 63. Bd5 Ba5 64. h5 Bd2 65. Ba2 Nf3 66. Bd5 Nd4 67. Kg6 { Key: the engines' 68...Bh4!! (then ...Ne5+ and ...Kg3 ideas) wins by force, but the win is dozens of moves deep. } 67... Bg5 68. Bc4 Nf3 69. Kh7 Ne5 70. Bb3 Ng4 71. Bc4 Ne3 72. Bd3 Ng4 73. Bc4 Nh6 74. Kg6 { Key: bishop and knight cannot win against the bishop with the king in the corner. } 74... Ke7 75. Bb3 Kd6 76. Bc2 Ke5 77. Bd3 Kf4 78. Bc2 Ng4 79. Bb3 Ne3 80. h6 Bxh6 1/2-1/2
+
+[Event "World Championship 1972 (game 13), Reykjavik"]
+[Site "Reykjavik ISL"]
+[Date "1972.08.10"]
+[Round "13"]
+[White "Boris Spassky"]
+[Black "Robert J. Fischer"]
+[Result "0-1"]
+[ECO "B04"]
+[Opening "Alekhine Defense: Modern Variation, Alburt Variation"]
+[Themes "endgame,defence,world-championship"]
+[Level "5"]
+[Why "Botvinnik called it the best game of the match. Fischer's queenside pawns, headed by a pawn that reaches a2 on move 39, tie Spassky down for thirty moves; in the final phase Black's five pawns beat rook and bishop. A unique lesson in the dynamic value of passed pawns."]
+
+1. e4 Nf6 2. e5 Nd5 3. d4 d6 4. Nf3 g6 5. Bc4 Nb6 6. Bb3 Bg7 7. Nbd2 O-O 8. h3 a5 { Key: Fischer wins a pawn and gets a passed a-pawn. } 9. a4 dxe5 10. dxe5 Na6 11. O-O Nc5 12. Qe2 Qe8 13. Ne4 Nbxa4 14. Bxa4 Nxa4 15. Re1 Nb6 16. Bd2 a4 17. Bg5 h6 18. Bh4 Bf5 19. g4 Be6 20. Nd4 Bc4 21. Qd2 Qd7 22. Rad1 Rfe8 23. f4 Bd5 24. Nc5 Qc8 25. Qc3 e6 26. Kh2 Nd7 27. Nd3 c5 28. Nb5 Qc6 29. Nd6 { Key: a queen trade into an ending where the a-pawn and Black's extra pawns matter more than White's activity. } 29... Qxd6 30. exd6 Bxc3 31. bxc3 f6 32. g5 hxg5 33. fxg5 f5 34. Bg3 Kf7 35. Ne5+ Nxe5 36. Bxe5 b5 37. Rf1 Rh8 38. Bf6 a3 { Key: the pawn reaches a2; White's rook is tied to a1/a4 forever. } 39. Rf4 a2 40. c4 Bxc4 41. d7 Bd5 42. Kg3 Ra3+ 43. c3 Rha8 44. Rh4 e5 45. Rh7+ Ke6 46. Re7+ Kd6 47. Rxe5 Rxc3+ 48. Kf2 Rc2+ 49. Ke1 Kxd7 50. Rexd5+ Kc6 51. Rd6+ Kb7 52. Rd7+ Ka6 53. R7d2 { Key: Black gives back the h-pawn to deflect the rook; now the c-, f- and a-pawns run. } 53... Rxd2 54. Kxd2 b4 55. h4 Kb5 56. h5 c4 57. Ra1 gxh5 58. g6 h4 59. g7 h3 60. Be7 Rg8 61. Bf8 h2 62. Kc2 Kc6 63. Rd1 b3+ 64. Kc3 h1=Q 65. Rxh1 Kd5 66. Kb2 f4 67. Rd1+ Ke4 68. Rc1 Kd3 69. Rd1+ { Key: the f-pawn promotes. } 69... Ke2 70. Rc1 f3 71. Bc5 Rxg7 72. Rxc4 Rd7 73. Re4+ Kf1 74. Bd4 f2 0-1
+
+[Event "World Championship 1972 (game 10), Reykjavik"]
+[Site "Reykjavik ISL"]
+[Date "1972.08.03"]
+[Round "10"]
+[White "Robert J. Fischer"]
+[Black "Boris Spassky"]
+[Result "1-0"]
+[ECO "C95"]
+[Opening "Ruy Lopez: Closed, Breyer Defense, Zaitsev Hybrid"]
+[Themes "endgame,world-championship"]
+[Level "5"]
+[Why "Fischer's best attacking game of the match ends not in mate but in a won ending: the combination 30.Bxf7+! trades everything into two rooks against rook and bishop, with the better pawns. A model for 'cashing in' an attack when the endgame is clearly winning."]
+
+1. e4 e5 2. Nf3 Nc6 3. Bb5 a6 4. Ba4 Nf6 5. O-O Be7 6. Re1 b5 7. Bb3 d6 8. c3 O-O 9. h3 Nb8 10. d4 Nbd7 11. Nbd2 Bb7 12. Bc2 Re8 13. b4 Bf8 14. a4 Nb6 15. a5 Nbd7 16. Bb2 Qb8 17. Rb1 { Key: the queenside opens while Black's king is short of defenders. } 17... c5 18. bxc5 dxc5 19. dxe5 Nxe5 20. Nxe5 Qxe5 21. c4 Qf4 22. Bxf6 Qxf6 23. cxb5 Red8 24. Qc1 { Key: the pin on f7 and the knight on e5 build the combination. } 24... Qc3 25. Nf3 Qxa5 26. Bb3 axb5 27. Qf4 Rd7 28. Ne5 Qc7 29. Rbd1 Re7 30. Bxf7+ { Key: two rooks against rook and bishop, with Black's pawns weak. } 30... Rxf7 31. Qxf7+ Qxf7 32. Nxf7 Bxe4 33. Rxe4 Kxf7 34. Rd7+ Kf6 35. Rb7 Ra1+ 36. Kh2 Bd6+ 37. g3 b4 38. Kg2 h5 39. Rb6 Rd1 40. Kf3 Kf7 41. Ke2 { Key: White's king and rooks coordinate; Black's pieces are passive. } 41... Rd5 42. f4 g6 43. g4 hxg4 44. hxg4 g5 45. f5 Be5 46. Rb5 Kf6 47. Rexb4 Bd4 48. Rb6+ Ke5 49. Kf3 Rd8 50. Rb8 Rd7 51. R4b7 Rd6 52. Rb6 Rd7 53. Rg6 Kd5 54. Rxg5 Be5 55. f6 Kd4 56. Rb1 1-0
+
+[Event "World Championship 2000 (game 2), London"]
+[Site "London ENG"]
+[Date "2000.10.10"]
+[Round "2"]
+[White "Vladimir Kramnik"]
+[Black "Garry Kasparov"]
+[Result "1-0"]
+[ECO "D85"]
+[Opening "Grünfeld Defense: Exchange Variation, Modern Exchange Variation"]
+[Themes "endgame,world-championship"]
+[Level "5"]
+[Why "Kramnik's only win with White in the 2000 match: a prepared Grunfeld line leads to an ending where White has a distant passed a-pawn and the safer king. The game teaches that a small, permanent plus (passed pawn, better bishop) outweighs activity, and shows Kramnik's style of beating Kasparov without a fight on his terms."]
+
+1. d4 Nf6 2. c4 g6 3. Nc3 d5 4. cxd5 Nxd5 5. e4 Nxc3 6. bxc3 Bg7 7. Nf3 c5 8. Be3 Qa5 9. Qd2 Bg4 10. Rb1 { Key: home preparation: White gets a stable edge, not an attack. } 10... a6 11. Rxb7 Bxf3 12. gxf3 Nc6 13. Bc4 O-O 14. O-O cxd4 15. cxd4 Bxd4 16. Bd5 Bc3 17. Qc1 Nd4 18. Bxd4 Bxd4 19. Rxe7 Ra7 20. Rxa7 Bxa7 21. f4 Qd8 22. Qc3 { Key: queens off; White has a passed a-pawn and Black's king is weaker. } 22... Bb8 23. Qf3 Qh4 24. e5 g5 25. Re1 Qxf4 26. Qxf4 gxf4 27. e6 fxe6 28. Rxe6 Kg7 29. Rxa6 Rf5 30. Be4 { Key: the a-pawn costs Black a piece. } 30... Re5 31. f3 Re7 32. a4 Ra7 33. Rb6 Be5 34. Rb4 Rd7 35. Kg2 Rd2+ 36. Kh3 h5 37. Rb5 Kf6 38. a5 Ra2 39. Rb6+ Ke7 40. Bd5 1-0
+
+[Event "World Championship 2000 (game 3), London"]
+[Site "London ENG"]
+[Date "2000.10.12"]
+[Round "3"]
+[White "Garry Kasparov"]
+[Black "Vladimir Kramnik"]
+[Result "1/2-1/2"]
+[ECO "C67"]
+[Opening "Ruy Lopez: Berlin Defense, Berlin Wall"]
+[Themes "endgame,defence,world-championship"]
+[Level "5"]
+[Why "The Berlin Wall in action: Kramnik's choice of 3...Nf6 and the queenless endgame neutralised Kasparov's 1.e4 for the whole match. Study how Black's king walks to b7, how the doubled c-pawns are used (...c5, ...Bc6), and how Kramnik holds a pawn-down rook ending with active pieces."]
+
+1. e4 e5 2. Nf3 Nc6 3. Bb5 Nf6 4. O-O { Key: the Berlin endgame: White has the kingside majority, Black the bishop pair and no weaknesses. } 4... Nxe4 5. d4 Nd6 6. Bxc6 dxc6 7. dxe5 Nf5 8. Qxd8+ Kxd8 9. Nc3 { Key: the king finds a safe home on b7 and the c6-bishop controls the long diagonal. } 9... Bd7 10. b3 h6 11. Bb2 Kc8 12. Rad1 b6 13. Ne2 c5 14. c4 Bc6 15. Nf4 Kb7 16. Nd5 Ne7 17. Rfe1 Rg8 { Key: Kramnik trades White's active pieces. } 18. Nf4 g5 19. Nh5 Rg6 20. Nf6 Bg7 21. Rd3 Bxf3 22. Rxf3 Bxf6 23. exf6 Nc6 24. Rd3 Rf8 25. Re4 Kc8 26. f4 { Key: activity compensates for the missing pawn. } 26... gxf4 27. Rxf4 Re8 28. Bc3 Re2 29. Rf2 Re4 30. Rh3 a5 31. Rh5 a4 32. bxa4 Rxc4 33. Bd2 Rxa4 34. Rxh6 Rg8 35. Rh7 Rxa2 36. Rxf7 Ne5 37. Rg7 Rf8 38. h3 c4 39. Re7 Nd3 40. f7 Nxf2 41. Re8+ Kd7 42. Rxf8 Ke7 43. Rc8 Kxf7 44. Rxc7+ Ke6 45. Be3 Nd1 46. Bxb6 c3 47. h4 Ra6 48. Bd4 Ra4 49. Bxc3 Nxc3 50. Rxc3 Rxh4 51. Rf3 Rh5 52. Kf2 Rg5 53. Rf8 Ke5 1/2-1/2
+
+[Event "World Championship 2004 (game 14), Brissago"]
+[Site "Brissago SUI"]
+[Date "2004.10.18"]
+[Round "14"]
+[White "Vladimir Kramnik"]
+[Black "Peter Leko"]
+[Result "1-0"]
+[ECO "B12"]
+[Opening "Caro-Kann Defense: Advance Variation, Tal Variation"]
+[Themes "endgame,pawn-storm,world-championship"]
+[Level "5"]
+[Why "Kramnik needed a win in the last game to keep his title and got it in a queenless position by pushing b4-b5-b6 and marching his king to f6. The game shows that an endgame can be played for a win with pawn storms and king activity, not just with technique."]
+
+1. e4 c6 2. d4 d5 3. e5 Bf5 4. h4 { Key: a sharp Caro-Kann Advance where White keeps space. } 4... h6 5. g4 Bd7 6. Nd2 c5 7. dxc5 e6 8. Nb3 Bxc5 9. Nxc5 Qa5+ 10. c3 Qxc5 11. Nf3 Ne7 12. Bd3 Nbc6 13. Be3 Qa5 14. Qd2 Ng6 15. Bd4 { Key: queens off, but White's space and the open g-file give play. } 15... Nxd4 16. cxd4 Qxd2+ 17. Kxd2 Nf4 18. Rac1 h5 19. Rhg1 Bc6 20. gxh5 Nxh5 21. b4 { Key: the queenside pawns and the knight tear open Black's position. } 21... a6 22. a4 Kd8 23. Ng5 Be8 24. b5 Nf4 25. b6 Nxd3 26. Kxd3 Rc8 27. Rxc8+ Kxc8 28. Rc1+ Bc6 29. Nxf7 Rxh4 { Key: the king on f6 and the rook on c7 create a mating net. } 30. Nd6+ Kd8 31. Rg1 Rh3+ 32. Ke2 Ra3 33. Rxg7 Rxa4 34. f4 Ra2+ 35. Kf3 Ra3+ 36. Kg4 Rd3 37. f5 Rxd4+ 38. Kg5 exf5 39. Kf6 Rg4 40. Rc7 Rh4 41. Nf7+ 1-0
+
+[Event "World Championship 2008 (game 6), Bonn"]
+[Site "Bonn GER"]
+[Date "2008.10.21"]
+[Round "6"]
+[White "Viswanathan Anand"]
+[Black "Vladimir Kramnik"]
+[Result "1-0"]
+[ECO "E34"]
+[Opening "Nimzo-Indian Defense: Classical Variation, Noa Variation"]
+[Themes "endgame,world-championship"]
+[Level "5"]
+[Why "Anand's third win of the 2008 match, achieved in an ending: after an early queen trade he builds a kingside pawn mass (f3/e3/g4 → f5/e5/f6) and promotes a pawn on g8. The game is a good example of using a pawn majority and a bishop to create threats on both wings."]
+
+1. d4 Nf6 2. c4 e6 3. Nc3 Bb4 4. Qc2 d5 5. cxd5 Qxd5 6. Nf3 Qf5 7. Qb3 Nc6 8. Bd2 O-O 9. h3 { Key: Anand gains kingside space before the queens leave the board. } 9... b6 10. g4 Qa5 11. Rc1 Bb7 12. a3 Bxc3 13. Bxc3 Qd5 14. Qxd5 Nxd5 15. Bd2 Nf6 16. Rg1 Rac8 17. Bg2 Ne7 18. Bb4 { Key: White wins a pawn with active pieces. } 18... c5 19. dxc5 Rfd8 20. Ne5 Bxg2 21. Rxg2 bxc5 22. Rxc5 Ne4 23. Rxc8 Rxc8 24. Nd3 Nd5 25. Bd2 Rc2 26. Bc1 f5 27. Kd1 Rc8 28. f3 Nd6 29. Ke1 a5 30. e3 { Key: the pawn mass rolls forward. } 30... e5 31. gxf5 e4 32. fxe4 Nxe4 33. Bd2 a4 34. Nf2 Nd6 35. Rg4 Nc4 36. e4 Nf6 37. Rg3 Nxb2 38. e5 Nd5 39. f6 Kf7 40. Ne4 Nc4 41. fxg7 Kg8 42. Rd3 { Key: promotion with check wins. } 42... Ndb6 43. Bh6 Nxe5 44. Nf6+ Kf7 45. Rc3 Rxc3 46. g8=Q+ Kxf6 47. Bg7+ 1-0
+
+[Event "World Championship 2008 (game 3), Bonn"]
+[Site "Bonn GER"]
+[Date "2008.10.17"]
+[Round "3"]
+[White "Vladimir Kramnik"]
+[Black "Viswanathan Anand"]
+[Result "0-1"]
+[ECO "D49"]
+[Opening "Semi-Slav Defense: Meran Variation, Blumenfeld Variation"]
+[Themes "world-championship"]
+[Level "6"]
+[Why "The first win of the 2008 match and a modern model of attacking with Black: Anand's prepared 15...Bd6!? and the rook lift 17...Rg4! create threats while his own king walks to h6. The passed a-pawn race at the end is a reminder that the attacker must also count the opponent's threats."]
+
+1. d4 d5 2. c4 c6 3. Nf3 Nf6 4. Nc3 e6 5. e3 Nbd7 6. Bd3 dxc4 7. Bxc4 b5 8. Bd3 a6 9. e4 { Key: home preparation: Black keeps the bishop pair and plays for the g-file. } 9... c5 10. e5 cxd4 11. Nxb5 axb5 12. exf6 gxf6 13. O-O Qb6 14. Qe2 Bb7 15. Bxb5 Bd6 16. Rd1 { Key: Black's rook lift and king move keep the attack going a piece down. } 16... Rg8 17. g3 Rg4 18. Bf4 Bxf4 19. Nxd4 h5 20. Nxe6 fxe6 21. Rxd7 Kf8 22. Qd3 Rg7 23. Rxg7 Kxg7 24. gxf4 Rd8 25. Qe2 { Key: the king on h6 is safe and the pieces swarm around White's. } 25... Kh6 26. Kf1 Rg8 27. a4 Bg2+ 28. Ke1 Bh3 29. Ra3 Rg1+ 30. Kd2 Qd4+ 31. Kc2 Bg4 32. f3 Bf5+ 33. Bd3 Bh3 34. a5 Rg2 35. a6 { Key: Kramnik resigned: the a7-pawn can never promote and the king is caught, e.g. 42.Kxb1 Qb5+ 43.Kc2 Qc4+ 44.Kd2 Qd4+ 45.Ke2 Qxb2+ 46.Ke3 Qxa3+ winning the rook. } 35... Rxe2+ 36. Bxe2 Bf5+ 37. Kb3 Qe3+ 38. Ka2 Qxe2 39. a7 Qc4+ 40. Ka1 Qf1+ 41. Ka2 Bb1+ 0-1
+
+[Event "World Championship 2023 (game 6), Astana"]
+[Site "Astana KAZ"]
+[Date "2023.04.16"]
+[Round "6"]
+[White "Ding Liren"]
+[Black "Ian Nepomniachtchi"]
+[Result "1-0"]
+[ECO "D02"]
+[Opening "Queen's Pawn Game: London System"]
+[Themes "world-championship,attack,pawn-storm"]
+[Level "6"]
+[Why "Ding's first lead-equalising win, played with the London System: a rook lift via a3, the pawn push h4-h5 against a kingside with no dark-squared bishop, and a knight that lands on d6, d5, e7 and g6. A compact example of a modern attack built from a quiet opening."]
+
+1. d4 Nf6 2. Nf3 d5 3. Bf4 { Key: the London; trading the dark-squared bishops removes Black's best defender of the kingside dark squares. } 3... c5 4. e3 Nc6 5. Nbd2 cxd4 6. exd4 Bf5 7. c3 e6 8. Bb5 Bd6 9. Bxd6 Qxd6 10. O-O O-O 11. Re1 h6 12. Ne5 Ne7 13. a4 a6 14. Bf1 Nd7 15. Nxd7 { Key: the rook lift and the h-pawn start the attack. } 15... Qxd7 16. a5 Qc7 17. Qf3 Rfc8 18. Ra3 Bg6 19. Nb3 Nc6 20. Qg3 Qe7 21. h4 Re8 22. Nc5 { Key: White's pieces invade while Black's are scattered. } 22... e5 23. Rb3 Nxa5 24. Rxe5 Qf6 25. Ra3 Nc4 26. Bxc4 dxc4 27. h5 Bc2 28. Nxb7 Qb6 29. Nd6 Rxe5 30. Qxe5 Qxb2 31. Ra5 Kh7 32. Rc5 Qc1+ 33. Kh2 f6 34. Qg3 a5 35. Nxc4 a4 36. Ne3 { Key: mate on g7/h8 cannot be stopped. } 36... Bb1 37. Rc7 Rg8 38. Nd5 Kh8 39. Ra7 a3 40. Ne7 Rf8 41. d5 a2 42. Qc7 Kh7 43. Ng6 Rg8 44. Qf7 1-0
+
+[Event "World Championship 2023 (game 7), Astana"]
+[Site "Astana KAZ"]
+[Date "2023.04.18"]
+[Round "7"]
+[White "Ian Nepomniachtchi"]
+[Black "Ding Liren"]
+[Result "1-0"]
+[ECO "C07"]
+[Opening "French Defense: Tarrasch Variation, Open System, Euwe-Keres Line"]
+[Themes "world-championship,exchange-sacrifice,sacrifice"]
+[Level "6"]
+[Why "Ding plays an ambitious exchange sacrifice (18...Rd4!?) and reaches a position he should hold, then collapses in time trouble with 35...Qd3?? (35...Qxc5 holds). The game is a lesson in clock management and in how an active defence turns into a loss when the queen leaves the king."]
+
+1. e4 e6 2. d4 d5 3. Nd2 c5 4. Ngf3 cxd4 5. Nxd4 Nf6 6. exd5 Nxd5 7. N2f3 Be7 8. Bc4 Nc6 9. Nxc6 bxc6 10. O-O O-O 11. Qe2 Bb7 12. Bd3 Qc7 13. Qe4 { Key: Ding offers the exchange for the e5-knight and central control. } 13... Nf6 14. Qh4 c5 15. Bf4 Qb6 16. Ne5 Rad8 17. Rae1 g6 18. Bg5 Rd4 19. Qh3 { Key: Black has bishop and pawn for the exchange and active pieces. } 19... Qc7 20. b3 Nh5 21. f4 Bd6 22. c3 Nxf4 23. Bxf4 Rxf4 24. Rxf4 Bxe5 25. Rh4 Rd8 26. Be4 Bxe4 27. Rhxe4 Rd5 28. Rh4 { Key: the queen abandons the kingside. } 28... Qd6 29. Qe3 h5 30. g3 Bf6 31. Rc4 h4 32. gxh4 Rd2 33. Re2 Rd3 34. Qxc5 Rd1+ 35. Kg2 Qd3 36. Rf2 { Key: the doubled rooks on the f-file win the f6-bishop or mate; Ding resigned. } 36... Kg7 37. Rcf4 Qxc3 1-0
+
+[Event "World Championship 2023 (game 12), Astana"]
+[Site "Astana KAZ"]
+[Date "2023.04.26"]
+[Round "12"]
+[White "Ding Liren"]
+[Black "Ian Nepomniachtchi"]
+[Result "1-0"]
+[ECO "D04"]
+[Opening "Queen's Pawn Game: Colle System"]
+[Themes "world-championship,attack,defence,bishop-pair"]
+[Level "6"]
+[Why "Down 6-5 with three games left, Ding wins a double-edged game: he gives up the bishop pair to damage Black's kingside (12.Bxf6 gxf6), weathers Nepomniachtchi's h-file attack and strikes in the centre and on the queenside. The decisive mistake 34...f5? is answered by 35.Rxe6! and a passed d-pawn."]
+
+1. d4 Nf6 2. Nf3 d5 3. e3 c5 4. Nbd2 cxd4 5. exd4 Qc7 6. c3 Bd7 7. Bd3 Nc6 8. O-O Bg4 9. Re1 e6 10. Nf1 Bd6 11. Bg5 { Key: both sides accept weakened kings; White gets the h5-knight and the g-file. } 11... O-O 12. Bxf6 gxf6 13. Ng3 f5 14. h3 Bxf3 15. Qxf3 Ne7 16. Nh5 Kh8 17. g4 Rg8 18. Kh1 Ng6 19. Bc2 Nh4 20. Qe3 { Key: Nepomniachtchi piles up on the g-file; Ding opens the queenside and centre. } 20... Rg6 21. Rg1 f4 22. Qd3 Qe7 23. Rae1 Qg5 24. c4 dxc4 25. Qc3 b5 26. a4 b4 27. Qxc4 Rag8 28. Qc6 { Key: the attack is one tempo short; 34...f5 opens the e-file for White. } 28... Bb8 29. Qb7 Rh6 30. Be4 Rf8 31. Qxb4 Qd8 32. Qc3 Ng6 33. Bg2 Qh4 34. Re2 f5 35. Rxe6 { Key: the passed d-pawn and the e6-rook decide. } 35... Rxh5 36. gxh5 Qxh5 37. d5+ Kg8 38. d6 1-0
+
+[Event "World Championship 2023, rapid tiebreak (game 4), Astana"]
+[Site "Astana KAZ"]
+[Date "2023.04.30"]
+[Round "4"]
+[White "Ian Nepomniachtchi"]
+[Black "Ding Liren"]
+[Result "0-1"]
+[ECO "C84"]
+[Opening "Ruy Lopez: Closed, Martinez Variation"]
+[Themes "world-championship,endgame"]
+[Level "6"]
+[Why "The game that made Ding Liren world champion. In a position where a repetition would have sent the match to a fifth rapid game, Ding declined the draw with 46...Rg6!! and converted the passed c-pawn. Study it for the practical decision and for the technique of queen-and-rook play around a passed pawn."]
+
+1. e4 e5 2. Nf3 Nc6 3. Bb5 a6 4. Ba4 Nf6 5. O-O Be7 6. d3 b5 7. Bb3 d6 8. a4 Bd7 9. h3 O-O 10. Be3 Na5 11. Ba2 bxa4 12. Nc3 Rb8 13. Bb1 Qe8 14. b3 c5 15. Nxa4 Nc6 16. Nc3 a5 17. Nd2 Be6 18. Nc4 { Key: Black trades into a structure where White's c-pawns are weak. } 18... d5 19. exd5 Nxd5 20. Bd2 Nxc3 21. Bxc3 Bxc4 22. bxc4 Bd8 23. Bd2 Bc7 24. c3 f5 25. Re1 Rd8 26. Ra2 Qg6 27. Qe2 Qd6 28. g3 Rde8 29. Qf3 { Key: Ding wins the c4-pawn and gets a passed c-pawn. } 29... e4 30. dxe4 Ne5 31. Qg2 Nd3 32. Bxd3 Qxd3 33. exf5 Rxe1+ 34. Bxe1 Qxc4 35. Ra1 Rxf5 36. Bd2 h6 37. Qc6 Rf7 38. Re1 Kh7 39. Be3 Be5 40. Qe8 { Key: the draw by repetition is declined. } 40... Bxc3 41. Rc1 Rf6 42. Qd7 Qe2 43. Qd5 Bb4 44. Qe4+ Kg8 45. Qd5+ Kh7 46. Qe4+ Rg6 47. Qf5 { Key: the c- and a-pawns advance under queen cover. } 47... c4 48. h4 Qd3 49. Qf3 Rf6 50. Qg4 c3 51. Rd1 Qg6 52. Qc8 Rc6 53. Qa8 Rd6 54. Rxd6 Qxd6 55. Qe4+ Qg6 56. Qc4 Qb1+ 57. Kh2 a4 58. Bd4 a3 59. Qc7 Qg6 60. Qc4 { Key: the c-pawn promotes. } 60... c2 61. Be3 Bd6 62. Kg2 h5 63. Kf1 Be5 64. g4 hxg4 65. h5 Qf5 66. Qd5 g3 67. f4 a2 68. Qxa2 Bxf4 0-1
+
+[Event "World Championship 2024 (game 3), Singapore"]
+[Site "Singapore SIN"]
+[Date "2024.11.27"]
+[Round "3"]
+[White "Gukesh Dommaraju"]
+[Black "Ding Liren"]
+[Result "1-0"]
+[ECO "D35"]
+[Opening "Queen's Pawn Game: Symmetrical Variation"]
+[Themes "world-championship,initiative"]
+[Level "6"]
+[Why "Gukesh's first win in a world championship match, at 18. In an Exchange QGD he trades queens early, gains space with g4-g5 and h-file play, and wins a piece when Ding's knights overreach. A model of keeping the initiative in a queenless middlegame."]
+
+1. d4 Nf6 2. Nf3 d5 3. c4 e6 4. cxd5 { Key: queens off by move 9; White keeps space and the g-file. } 4... exd5 5. Nc3 c6 6. Qc2 g6 7. h3 Bf5 8. Qb3 Qb6 9. g4 Qxb3 10. axb3 Bc2 11. Bf4 h5 12. Rg1 hxg4 13. hxg4 Nbd7 14. Nd2 { Key: Black's knight raid nets two pawns but costs a piece. } 14... Rg8 15. g5 Nh5 16. Bh2 Rh8 17. f3 Ng7 18. Bg3 Rh5 19. e4 dxe4 20. fxe4 Ne6 21. Rc1 Nxd4 22. Bf2 Bg7 23. Ne2 Nxb3 24. Rxc2 Nxd2 25. Kxd2 Ne5 26. Nd4 { Key: the rook is trapped and White is a piece up; Ding resigned. } 26... Rd8 27. Ke2 Rh2 28. Bg2 a6 29. b3 Rd7 30. Rcc1 Ke7 31. Rcd1 Ke8 32. Bg3 Rh5 33. Nf3 Nxf3 34. Kxf3 Bd4 35. Rh1 Rxg5 36. Bh3 f5 37. Bf4 Rh5 1-0
+
+[Event "World Championship 2024 (game 11), Singapore"]
+[Site "Singapore SIN"]
+[Date "2024.12.08"]
+[Round "11"]
+[White "Gukesh Dommaraju"]
+[Black "Ding Liren"]
+[Result "1-0"]
+[ECO "A09"]
+[Opening "Réti Opening: Reversed Blumenfeld Gambit"]
+[Themes "world-championship"]
+[Level "6"]
+[Why "A strategic queenside squeeze (b4-b5-b6, Nc5, Rb5) ends with a tactical blow: after Ding's time-trouble error 28...Qc8??, 29.Qxc6! wins a piece because the g2-bishop x-rays c6. The game shows how a long positional plan creates the tactic."]
+
+1. Nf3 d5 2. c4 { Key: Gukesh grabs queenside space from the first moves. } 2... d4 3. b4 c5 4. e3 Nf6 5. a3 Bg4 6. exd4 cxd4 7. h3 Bxf3 8. Qxf3 Qc7 9. d3 a5 10. b5 Nbd7 11. g3 Nc5 12. Bg2 Nfd7 13. O-O { Key: the b-file and the b6-pawn sacrifice tie Black's queen to b7. } 13... Ne5 14. Qf4 Rd8 15. Rd1 g6 16. a4 h5 17. b6 Qd6 18. Ba3 Bh6 19. Bxc5 Qxc5 20. Qe4 Nc6 21. Na3 Rd7 22. Nc2 Qxb6 23. Rab1 Qc7 24. Rb5 O-O 25. Na1 { Key: with seconds on the clock Ding removes the queen's protection of the c6-knight along the diagonal. } 25... Rb8 26. Nb3 e6 27. Nc5 Re7 28. Rdb1 Qc8 29. Qxc6 { Key: 29...Qxc6 30.Bxc6 bxc6 31.Rxb8+ and 29...bxc6 30.Rxb8 both lose heavy material. } 1-0
+
+[Event "World Championship 2024 (game 14), Singapore"]
+[Site "Singapore SIN"]
+[Date "2024.12.12"]
+[Round "14"]
+[White "Ding Liren"]
+[Black "Gukesh Dommaraju"]
+[Result "0-1"]
+[ECO "A08"]
+[Opening "Zukertort Opening: Reversed Grünfeld"]
+[Themes "world-championship,endgame"]
+[Level "6"]
+[Why "The game that made Gukesh the youngest world champion. A level rook-and-bishop ending with an extra Black kingside pawn drifted toward a draw until 55.Rf2?? allowed 55...Rxf2 56.Kxf2 Bd5!, trading into a lost king-and-pawn ending. Study the ending for pawn-endgame fundamentals: the extra pawn, the opposition and the outside passed pawn."]
+
+1. Nf3 d5 2. g3 c5 3. Bg2 Nc6 4. d4 e6 5. O-O cxd4 6. Nxd4 Nge7 7. c4 Nxd4 8. Qxd4 Nc6 9. Qd1 d4 10. e3 Bc5 11. exd4 Bxd4 12. Nc3 O-O 13. Nb5 Bb6 14. b3 a6 15. Nc3 Bd4 16. Bb2 { Key: Gukesh keeps an extra kingside pawn and pressure on the queenside. } 16... e5 17. Qd2 Be6 18. Nd5 b5 19. cxb5 axb5 20. Nf4 exf4 21. Bxc6 Bxb2 22. Qxb2 Rb8 23. Rfd1 Qb6 24. Bf3 fxg3 25. hxg3 b4 26. a4 bxa3 27. Rxa3 g6 28. Qd4 { Key: rook and bishop each; Black has 4 kingside pawns vs 3. } 28... Qb5 29. b4 Qxb4 30. Qxb4 Rxb4 31. Ra8 Rxa8 32. Bxa8 g5 33. Bd5 Bf5 34. Rc1 Kg7 35. Rc7 Bg6 36. Rc4 Rb1+ 37. Kg2 Re1 38. Rb4 h5 39. Ra4 Re5 40. Bf3 Kh6 41. Kg1 Re6 42. Rc4 g4 43. Bd5 Rd6 44. Bb7 { Key: Gukesh keeps probing; the position is still a draw. } 44... Kg5 45. f3 f5 46. fxg4 hxg4 47. Rb4 Bf7 48. Kf2 Rd2+ 49. Kg1 Kf6 50. Rb6+ Kg5 51. Rb4 Be6 52. Ra4 Rb2 53. Ba8 Kf6 54. Rf4 Ke5 55. Rf2 { Key: the pawn ending is lost: after 59.Kf2 Kd4 60.Ke2 Ke4 61.Kf2 f4 the Black king wins the opposition and the g3-pawn. } 55... Rxf2 56. Kxf2 Bd5 57. Bxd5 Kxd5 58. Ke3 Ke5 0-1
+
+[Event "FIDE Candidates, Toronto"]
+[Site "Toronto CAN"]
+[Date "2024.04.13"]
+[Round "8"]
+[White "Vidit Gujrathi"]
+[Black "Gukesh Dommaraju"]
+[Result "0-1"]
+[ECO "C55"]
+[Opening "Italian Game: Two Knights Defense, Modern Bishop's Opening"]
+[Themes "world-championship,attack"]
+[Level "6"]
+[Why "One of the wins that carried Gukesh to the Candidates title. Black takes the a-file (17...Ra5!, 21...Ra2), keeps the pressure and, when White's king is pushed to h4, finishes with an exchange sacrifice (36...Rxf5!) and mate. A good modern example of converting a file into a king attack."]
+
+1. e4 e5 2. Nf3 Nc6 3. Bc4 Nf6 4. d3 a6 5. O-O h6 6. a4 Bc5 7. Be3 d6 8. Nbd2 O-O 9. c3 Re8 10. b4 { Key: Black seizes the a-file. } 10... Bxe3 11. fxe3 Be6 12. b5 Nb8 13. Bxe6 Rxe6 14. Qc2 Nbd7 15. d4 Qe8 16. Rae1 axb5 17. axb5 Ra5 18. c4 Qa8 19. h3 Re8 20. Kh2 b6 21. Rf2 { Key: the queen joins the back-rank attack. } 21... Ra2 22. Qd3 Ra3 23. Qb1 Qa4 24. Nh4 Ra8 25. Nf5 Kf8 26. Ref1 Ra1 27. Qd3 Qb4 28. Rxa1 Rxa1 29. c5 bxc5 30. Nc4 Qe1 31. Re2 { Key: the king is mated on the h-file (39.Kxh5 Qh3#/Qg4#). } 31... Qg1+ 32. Kg3 Nh5+ 33. Kh4 Ndf6 34. Nxh6 Qh2 35. Nf5 Rf1 36. g4 Rxf5 37. exf5 Qg3+ 38. Kg5 Nh7+ 0-1
+
+[Event "IBM Man vs Machine (game 2), New York"]
+[Site "New York USA"]
+[Date "1997.05.04"]
+[Round "2"]
+[White "Deep Blue (computer)"]
+[Black "Garry Kasparov"]
+[Result "1-0"]
+[ECO "C93"]
+[Opening "Ruy Lopez: Closed, Smyslov Defense"]
+[Themes "world-championship"]
+[Level "6"]
+[Why "The game that shook Kasparov: Deep Blue declined a pawn (37.Be4!! instead of 37.Qb6) and played a slow positional squeeze. Kasparov resigned on move 45 in a position later shown to be a draw by perpetual check (45...Qe3! 46.Qxd6 Re8!). Two lessons: a machine can play 'human' positional chess, and never resign before checking all the checks."]
+
+1. e4 e5 2. Nf3 Nc6 3. Bb5 a6 4. Ba4 Nf6 5. O-O Be7 6. Re1 b5 7. Bb3 d6 8. c3 O-O 9. h3 h6 10. d4 Re8 11. Nbd2 Bf8 12. Nf1 Bd7 13. Ng3 Na5 14. Bc2 c5 15. b3 { Key: the closed Ruy Lopez; White's a-file and the f4 break give a slow bind. } 15... Nc6 16. d5 Ne7 17. Be3 Ng6 18. Qd2 Nh7 19. a4 Nh4 20. Nxh4 Qxh4 21. Qe2 Qd8 22. b4 Qc7 23. Rec1 c4 24. Ra3 Rec8 25. Rca1 Qd8 26. f4 Nf6 { Key: White trades Black's defenders and opens the a-file. } 27. fxe5 dxe5 28. Qf1 Ne8 29. Qf2 Nd6 30. Bb6 Qe8 31. R3a2 Be7 32. Bc5 Bf8 33. Nf5 Bxf5 34. exf5 f6 35. Bxd6 Bxd6 36. axb5 axb5 37. Be4 { Key: Kasparov resigned; 45...Qe3! 46.Qxd6 Re8! 47.h4 h5! holds a perpetual (analysis after the game). } 37... Rxa2 38. Qxa2 Qd7 39. Qa7 Rc7 40. Qb6 Rb7 41. Ra8+ Kf7 42. Qa6 Qc7 43. Qc6 Qb6+ 44. Kf1 Rb8 45. Ra6 1-0
+
+[Event "IBM Man vs Machine (game 6), New York"]
+[Site "New York USA"]
+[Date "1997.05.11"]
+[Round "6"]
+[White "Deep Blue (computer)"]
+[Black "Garry Kasparov"]
+[Result "1-0"]
+[ECO "B17"]
+[Opening "Caro-Kann Defense: Karpov Variation, Modern Variation"]
+[Themes "world-championship,sacrifice"]
+[Level "6"]
+[Why "The most famous 19-move loss in history: Kasparov's move-order slip 7...h6?? allowed the known sacrifice 8.Nxe6!, and the Black king never escaped the centre. For students it is the standard Caro-Kann trap and a lesson in opening discipline."]
+
+1. e4 c6 2. d4 d5 3. Nc3 dxe4 4. Nxe4 Nd7 { Key: the correct order is 7...Bd6 and only later ...h6. } 5. Ng5 Ngf6 6. Bd3 e6 7. N1f3 h6 8. Nxe6 { Key: the king is stuck in the centre for a knight. } 8... Qe7 9. O-O fxe6 10. Bg6+ Kd8 11. Bf4 { Key: every White piece joins; Black cannot coordinate. } 11... b5 12. a4 Bb7 13. Re1 Nd5 14. Bg3 Kc8 15. axb5 cxb5 16. Qd3 Bc6 17. Bf5 { Key: the queen is won back with a crushing position (19...bxc4 20.Qxc4 and the king falls). } 17... exf5 18. Rxe7 Bxe7 19. c4 1-0
+
+[Event "AlphaZero vs Stockfish 8, 1000-game match (DeepMind, published 2018)"]
+[Site "London ENG"]
+[Date "2018.01.18"]
+[Round "?"]
+[White "AlphaZero"]
+[Black "Stockfish 8"]
+[Result "1-0"]
+[ECO "A17"]
+[Opening "English Opening: Anglo-Indian Defense, Nimzo-English"]
+[Themes "world-championship,exchange-sacrifice,sacrifice,initiative"]
+[Level "6"]
+[Why "From the games DeepMind released with the 2018 Science paper. AlphaZero gives a rook for a knight (33.Rf6!! Nxg5 34.hxg5+) to lock Black's king and bishopless kingside in a dark-square bind, then walks its own king to h5 to collect pawns. A clear illustration of the 'AlphaZero style': material for long-term mobility."]
+
+1. Nf3 e6 2. c4 Nf6 3. Nc3 Bb4 4. Qc2 O-O 5. a3 { Key: a Nimzo-English where AlphaZero keeps the bishop pair and queenside space. } 5... Bxc3 6. Qxc3 d6 7. b4 e5 8. Bb2 Nbd7 9. e3 Re8 10. d3 Nf8 11. Be2 a5 12. O-O Bg4 13. h3 Bh5 14. Qc2 h6 15. Bc3 b6 16. b5 N6d7 17. Rad1 Nc5 18. Ba1 Bg6 19. Qb2 Na4 20. Qa2 Nc5 21. d4 { Key: White accepts doubled f-pawns for open files toward the king. } 21... exd4 22. Nxd4 Be4 23. Bf3 Bxf3 24. gxf3 Nfe6 25. Kh2 Nxd4 26. Rxd4 Kh7 27. Qc2+ g6 28. Rf4 Qe7 29. Rg1 Rg8 30. h4 h5 31. Rg5 Kh6 32. e4 Ne6 33. Rf6 { Key: the exchange sacrifice; the pawns on f4/g5 and the a1-h8 diagonal paralyse Black. } 33... Nxg5 34. hxg5+ Kh7 35. f4 Rae8 36. Qd3 Rg7 37. f3 Kg8 38. Qd4 Kf8 39. Bc3 Rg8 40. a4 Rd8 41. Kh3 { Key: the king joins the attack and the queens come off into a won ending. } 41... Rd7 42. f5 gxf5 43. Rxf5 Qe6 44. Kh4 Re7 45. Qd5 Rg6 46. Kxh5 Re8 47. Bf6 Qd7 48. Kg4 Rc8 49. Qc6 Qe8 50. Qxe8+ Kxe8 51. Rd5 Rxf6 52. gxf6 Kd7 53. Kf5 c6 54. bxc6+ Kxc6 55. f4 Rh8 56. e5 1-0
+
+[Event "AlphaZero vs Stockfish 8, 1000-game match (DeepMind, published 2018)"]
+[Site "London ENG"]
+[Date "2018.01.18"]
+[Round "?"]
+[White "AlphaZero"]
+[Black "Stockfish 8"]
+[Result "1-0"]
+[ECO "B12"]
+[Opening "Caro-Kann Defense: Advance Variation"]
+[Themes "world-championship,sacrifice,zugzwang,positional"]
+[Level "6"]
+[Why "A Caro-Kann Advance in which AlphaZero trades queens on move 27 and then uses its king as an attacking piece (37.Kg3-h4-g5). After 43.a6! Black's rooks and bishop are reduced to shuffling; for ten moves (47-57) Stockfish has almost no useful move - a middlegame zugzwang. The win is completed by 61.Rxg6! and a passed pawn."]
+
+1. e4 c6 2. d4 d5 3. e5 Bf5 4. Be3 e6 5. Nd2 Nd7 6. Ngf3 Ne7 7. Be2 Qc7 8. O-O f6 9. c3 { Key: AlphaZero gives a pawn for development and the e-file; Black's king is forced to the queenside. } 9... fxe5 10. Nxe5 Nxe5 11. dxe5 Qxe5 12. Re1 Qc7 13. Bh5+ Ng6 14. g4 Bd3 15. Nb3 Bc4 16. Nd4 e5 17. b3 Ba6 18. Bf4 O-O-O { Key: queens off; material is level but White's rooks and bishop dominate. } 19. Bg3 Re8 20. a4 Kb8 21. b4 Bd6 22. Nf5 Bc4 23. Qd2 Ka8 24. Qg5 Re6 25. Nxd6 Rxd6 26. Bxg6 Rxg6 27. Qxe5 Qxe5 28. Rxe5 Rxg4 29. f3 Rg6 30. a5 Rf6 31. Rae1 Rff8 32. Kf2 g6 33. Re7 { Key: the king walks into Black's position with queens off. } 33... h5 34. Be5 Rhg8 35. Bg7 Rc8 36. Bd4 Bb5 37. Kg3 Bd3 38. Kh4 Bf5 39. Kg5 Rcd8 40. Bg7 Rc8 41. R1e2 Rcd8 42. h4 Rc8 43. a6 { Key: domination: Black can only shuffle while White improves. } 43... bxa6 44. Bd4 Kb8 45. Bxa7+ Ka8 46. Bc5 Kb8 47. Ra2 Bd3 48. Rd2 Bb1 49. Rd1 Bc2 50. Ba7+ Ka8 51. Rde1 Bd3 52. Bb6 Kb8 53. Bd4 Bf5 54. f4 Rcd8 55. Ra1 Bd3 56. Re3 Bb5 57. Rae1 Kc7 58. Kh6 Kc8 59. Re6 Ba4 60. Bc5 Kb7 61. Rxg6 Rxg6+ 62. Kxg6 d4 63. Bxd4 Bc2+ 64. Kxh5 c5 65. Bxc5 Kc8 66. Re5 Rh8+ 67. Kg4 Bd1+ 68. Kg3 Rh7 69. Bd4 Kd7 70. f5 Rg7+ 71. Kf2 1-0
+
