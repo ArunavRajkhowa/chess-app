@@ -1,0 +1,1617 @@
+{
+  "modules": [
+    {
+      "id": "b6m1",
+      "band": 6,
+      "title": "Calculation: the Aagaard toolkit",
+      "strand": "calculation",
+      "summary": "Five habits of strong calculators: list every forcing candidate, compare similar lines, eliminate what fails, check for intermediate moves and desperadoes, and look for the quiet move at the end of a line.",
+      "source": "Aagaard, Grandmaster Preparation: Calculation (candidate moves, combinational vision, comparison, elimination, intermediate moves, imagination); Yusupov, Boost Your Chess 3 (ch. 15 candidate moves, ch. 16 combinational vision, ch. 23 the elimination method) and Chess Evolution 3 (ch. 1 desperadoes, ch. 3 the comparison method); model games Botvinnik–Capablanca 1938, Kasparov–Topalov 1999, Lasker–Napier 1904, Réti–Bogoljubov 1924, Short–Timman 1991",
+      "lessons": [
+        {
+          "id": "b6m1l1",
+          "title": "Candidate moves and combinational vision",
+          "objective": "Put every forcing move on your candidate list, including the sacrifice that looks impossible, before you calculate any of them.",
+          "minutes": 14,
+          "sections": [
+            {
+              "type": "text",
+              "md": "Aagaard's finding from thousands of training positions: strong players rarely miss a win because they calculate it badly. They miss it because the winning move never reached their list of candidates.\n\nSo build the list before you calculate:\n\n1. Every check, capture and threat, for both sides.\n2. Every move that attacks the squares around the enemy king.\n3. The moves that look impossible: a piece put where it can be taken, a sacrifice on a defended square, a quiet move that ignores a threat.\n\nCombinational vision is the pattern half of the skill. Look for a piece that does two jobs, a king without a flight square, a pawn one step from promotion. When you see one, ask which move exploits it, even if that move gives away a piece.\n\nThen calculate, most forcing line first. Botvinnik–Capablanca, AVRO 1938, is the classic test: every natural move keeps an edge, and the winning move puts a bishop where the queen can take it."
+            },
+            {
+              "type": "position",
+              "fen": "8/p3q1kp/1p2Pnp1/3pQ3/2pP4/1nP3N1/1B4PP/6K1 w - - 5 30",
+              "arrows": [
+                {
+                  "from": "b2",
+                  "to": "a3",
+                  "brush": "green"
+                },
+                {
+                  "from": "a3",
+                  "to": "e7",
+                  "brush": "red"
+                },
+                {
+                  "from": "e6",
+                  "to": "e8",
+                  "brush": "blue"
+                }
+              ],
+              "highlights": [
+                {
+                  "square": "e7",
+                  "brush": "yellow"
+                },
+                {
+                  "square": "f6",
+                  "brush": "yellow"
+                }
+              ],
+              "caption": "Botvinnik–Capablanca, move 30, White to play. The queen on e7 has two jobs: she stops the e6-pawn and she guards the knight on f6. A piece with two jobs is a target."
+            },
+            {
+              "type": "quiz",
+              "fen": "8/p3q1kp/1p2Pnp1/3pQ3/2pP4/1nP3N1/1B4PP/6K1 w - - 5 30",
+              "question": "Which candidate attacks the overloaded piece?",
+              "options": [
+                "30.h4, gaining space on the kingside",
+                "30.Ba3, attacking the queen",
+                "30.Ne2, bringing the knight to d4 or f4"
+              ],
+              "answer": 1,
+              "explanation": "30.Ba3!! is Botvinnik's move, and it attacks the overloaded queen. 30...Qxa3 loses to the combination in the next challenge. 30...Qe8, the best defence, gives the pawn the e7-square and White keeps a winning attack (Stockfish +3.3). 30.h4 is also strong (+2.6 at depth 21 against +3.1 for 30.Ba3), but it gives Black a tempo and does not touch the overloaded queen."
+            },
+            {
+              "type": "challenge",
+              "fen": "8/p5kp/1p2Pnp1/3pQ3/2pP4/qnP3N1/6PP/6K1 w - - 0 31",
+              "prompt": "Capablanca took the bishop: 30...Qxa3. White to play. The queen has left e7. Find the move that wins.",
+              "solution": [
+                "g3h5"
+              ],
+              "hint": "The knight on f6 is the last guard of e8. First remove the pawn that shields the black king.",
+              "explanation": "31.Nh5+! gxh5 32.Qg5+ and 33.Qxf6+ wins the knight with check; then the e-pawn cannot be stopped. The game went 32...Kf8 33.Qxf6+ Kg8 34.e7 and Black resigned on move 41 after running out of checks. Stockfish rates 31.Nh5+ at +5.5; the next move, 31.Qc7+, only draws."
+            },
+            {
+              "type": "challenge",
+              "fen": "6k1/5r1p/p2N4/nppP2q1/2P5/1P2N3/PQ5P/7K w - - 0 30",
+              "prompt": "Petrosian–Spassky, World Championship 1966, game 10. White to play. Nothing guards the black queen on g5, and only the king guards the rook on f7. Find the combination.",
+              "solution": [
+                "b2h8",
+                "g8h8",
+                "d6f7",
+                "h8g7",
+                "f7g5"
+              ],
+              "hint": "A queen sacrifice with check drags the king onto a square where a knight fork works.",
+              "explanation": "30.Qh8+!! Kxh8 31.Nxf7+ Kg7 32.Nxg5. The knight takes the rook with check and then the queen. White ends a piece up (Stockfish +6.1). The candidate that looks impossible, a queen move to a square guarded by the king, is the only winning one; 30.Nxf7 wins less than a pawn's worth."
+            }
+          ]
+        },
+        {
+          "id": "b6m1l2",
+          "title": "The comparison method",
+          "objective": "When two candidates lead to similar positions, put the lines side by side and find the one detail that decides between them.",
+          "minutes": 12,
+          "sections": [
+            {
+              "type": "text",
+              "md": "Yusupov gives the comparison method a chapter in Chess Evolution 3, and Aagaard one in Calculation. The idea: when two candidate moves lead to similar positions, do not calculate each line to the end on its own. Put the two lines side by side and look for the one difference: a tempo, a check, a square that is covered in one line and free in the other.\n\nTypical pairs:\n\n- the same two moves in a different order;\n- two captures with different pieces;\n- two squares for the king in a pawn ending;\n- two rooks for one file.\n\nThe method saves time and catches errors. Most bad move orders come from calculating the first line, seeing that it works, and assuming the second is the same.\n\nThe test is from Kasparov–Topalov, Wijk aan Zee 1999. Black has just taken the rook: 24...cxd4. White has two forcing moves with the same two pieces, 25.Qxd4+ and 25.Re7+. Same pieces, other order. Find the difference."
+            },
+            {
+              "type": "position",
+              "fen": "b2r3r/k4p1p/p2q1np1/Np1P4/3p1Q2/P4PPB/1PP4P/1K2R3 w - - 0 25",
+              "arrows": [
+                {
+                  "from": "f4",
+                  "to": "d4",
+                  "brush": "blue"
+                },
+                {
+                  "from": "e1",
+                  "to": "e7",
+                  "brush": "green"
+                }
+              ],
+              "highlights": [
+                {
+                  "square": "a7",
+                  "brush": "red"
+                },
+                {
+                  "square": "d6",
+                  "brush": "yellow"
+                },
+                {
+                  "square": "b6",
+                  "brush": "yellow"
+                }
+              ],
+              "caption": "Kasparov–Topalov after 24...cxd4. Two candidates with the same pieces: the queen check on d4 and the rook check on e7."
+            },
+            {
+              "type": "quiz",
+              "fen": "b2r3r/k4p1p/p2q1np1/Np1P4/3p1Q2/P4PPB/1PP4P/1K2R3 w - - 0 25",
+              "question": "Compare 25.Qxd4+ and 25.Re7+. Why does only the rook check first work?",
+              "options": [
+                "After 25.Qxd4+ Black blocks with 25...Qb6 and offers a queen trade; after 25.Re7+ the queen cannot take the rook, because 25...Qxe7 26.Qxd4+ leads to mate.",
+                "Because 25.Qxd4+ loses the queen to a knight fork.",
+                "There is no difference: both checks win, Kasparov just chose one."
+              ],
+              "answer": 0,
+              "explanation": "Same pieces, different order. 25.Qxd4+? Qb6! blocks the check with a queen trade offer, and Black is better (Stockfish about -1.8). 25.Re7+! comes first, and now the d6-queen is overloaded: 25...Qxe7 26.Qxd4+ Qc5 27.Qxc5+ Kb8 28.Qb6+ Bb7 29.Qxb7#. One detail decides: in one order the black queen reaches b6 in time, in the other she is needed on e7."
+            },
+            {
+              "type": "challenge",
+              "fen": "b2r3r/k4p1p/p2q1np1/Np1P4/3p1Q2/P4PPB/1PP4P/1K2R3 w - - 0 25",
+              "prompt": "Now play it, in the right order. White to move.",
+              "solution": [
+                "e1e7",
+                "a7b6",
+                "f4d4"
+              ],
+              "hint": "Rook check first; then the queen takes on d4, also with check.",
+              "explanation": "25.Re7+! Kb6 26.Qxd4+. In the game Topalov went 26...Kxa5 27.b4+ Ka4, and the king was pulled among the white pawns. Each check gains the tempo that the other move order would have lost."
+            }
+          ]
+        },
+        {
+          "id": "b6m1l3",
+          "title": "The elimination method",
+          "objective": "When the best move cannot be calculated to the end, prove that every other move loses and play the one that remains.",
+          "minutes": 15,
+          "sections": [
+            {
+              "type": "text",
+              "md": "Some positions cannot be calculated to the end. The elimination method does not try. List the candidate moves, refute each one with a concrete line, and play the move that is left. You do not need to prove that it wins. You only need to prove that the others lose.\n\nThe method is strongest in defence and in critical positions, where most moves lose by force. Aagaard calls these critical decisions: the gap between the best move and the second-best is large, so it pays to spend time.\n\nTwo rules:\n\n1. Refute each rejected move with a real line, not a feeling. A move you rejected without a reason may be the only one.\n2. Keep the refutations short. A check, a fork or a mate in two is enough.\n\nKasparov–Topalov again, move 36. The black king has run to d1. Black's queen and rooks threaten mate, and almost every White move loses. One does not."
+            },
+            {
+              "type": "position",
+              "fen": "3r3r/1R3p1p/6p1/1p6/2q5/5PPB/1Q5P/1K1k4 w - - 4 36",
+              "arrows": [
+                {
+                  "from": "c4",
+                  "to": "d3",
+                  "brush": "red"
+                },
+                {
+                  "from": "d8",
+                  "to": "a8",
+                  "brush": "red"
+                },
+                {
+                  "from": "h3",
+                  "to": "f1",
+                  "brush": "green"
+                }
+              ],
+              "highlights": [
+                {
+                  "square": "d3",
+                  "brush": "yellow"
+                },
+                {
+                  "square": "b1",
+                  "brush": "yellow"
+                }
+              ],
+              "caption": "Move 36, White to play. If White passes, 36...Qd3+ 37.Ka1 Ra8+ mates (Stockfish: mate in five). The candidates must meet that threat."
+            },
+            {
+              "type": "challenge",
+              "fen": "3r3r/1R3p1p/6p1/1p6/2q5/5PPB/1Q5P/1K1k4 w - - 4 36",
+              "prompt": "White to play. Eliminate the moves that lose, then play the one that is left and follow it up.",
+              "solution": [
+                "h3f1",
+                "d8d2",
+                "b7d7",
+                "d2d7",
+                "f1c4"
+              ],
+              "hint": "Which piece can attack the queen and cover d3 at the same time? Then a rook offer deflects the d8-rook.",
+              "explanation": "36.Bf1!! attacks the queen and covers d3. 36...Rd2 is Black's best try (Stockfish, depth 22). 37.Rd7!! Rxd7 38.Bxc4 bxc4 39.Qxh8, and White ends with queen against rook. Every other 36th move loses: the second-best scores about -6.7 for White."
+            },
+            {
+              "type": "game",
+              "pgn": "[Event \"Hoogovens, Wijk aan Zee\"]\n[Site \"Wijk aan Zee NED\"]\n[Date \"1999.01.20\"]\n[Round \"4\"]\n[White \"Garry Kasparov\"]\n[Black \"Veselin Topalov\"]\n[Result \"1-0\"]\n[ECO \"B07\"]\n\n1. e4 d6 2. d4 Nf6 3. Nc3 g6 4. Be3 Bg7 5. Qd2 c6 6. f3 b5 7. Nge2 Nbd7 8. Bh6\nBxh6 9. Qxh6 Bb7 10. a3 e5 11. O-O-O Qe7 12. Kb1 a6 13. Nc1 O-O-O 14. Nb3 exd4\n15. Rxd4 c5 16. Rd1 Nb6 17. g3 Kb8 18. Na5 Ba8 19. Bh3 d5 20. Qf4+ Ka7 21.\nRhe1 d4 22. Nd5 Nbxd5 23. exd5 Qd6 24. Rxd4 cxd4 25. Re7+ Kb6 26. Qxd4+ Kxa5\n27. b4+ Ka4 28. Qc3 Qxd5 29. Ra7 Bb7 30. Rxb7 Qc4 31. Qxf6 Kxa3 32. Qxa6+ Kxb4\n33. c3+ Kxc3 34. Qa1+ Kd2 35. Qb2+ Kd1 36. Bf1 Rd2 37. Rd7 Rxd7 38. Bxc4 bxc4\n39. Qxh8 Rd3 40. Qa8 c3 41. Qa4+ Ke1 42. f4 f5 43. Kc1 Rd2 44. Qa7 1-0",
+              "title": "Kasparov vs Topalov, Wijk aan Zee 1999",
+              "mode": "replay",
+              "notes": {
+                "21": "11.O-O-O. Both players castle queenside (Black follows with 13...O-O-O). With the kings on the same wing there is no pawn race; the fight is for open files and diagonals.",
+                "34": "17...Kb8. The king steps off the c-file. Remember the square: in twenty moves this king will be on d1.",
+                "39": "20.Qf4+ Ka7 21.Rhe1. White's pieces gather around the black king, but Black still has a solid shell of pawns and pieces.",
+                "47": "24.Rxd4!! The rook is given to open the d-file and the long diagonal towards a7. Stockfish 16 at depth 22 rates it as White's best move, but only as about equal: the cool 24...Kb6! declines and holds.",
+                "48": "24...cxd4? Topalov takes. Now the second rook follows with check.",
+                "49": "25.Re7+!! If 25...Qxe7 26.Qxd4+ Qc5 27.Qxc5+ Kb8 28.Qb6+ Bb7 29.Qxb7#. So the king must walk.",
+                "53": "26.Qxd4+ Kxa5 27.b4+ Ka4. The king stands on a4, among white pawns.",
+                "70": "33.c3+ Kxc3 34.Qa1+ Kd2 35.Qb2+ Kd1. The king has walked from b8 to d1, across the whole board.",
+                "71": "36.Bf1!! The only move. Black threatened 36...Qd3+ with mate in five; every other White move loses (Stockfish: about -6.7 for the second-best move).",
+                "73": "37.Rd7!! A second quiet move: the rook offers itself on d7. If Black takes, 38.Bxc4 and 39.Qxh8 follow.",
+                "77": "37...Rxd7 38.Bxc4 bxc4 39.Qxh8. The combination is over: White has queen against rook.",
+                "87": "44.Qa7 and Black resigned."
+              }
+            },
+            {
+              "type": "quiz",
+              "question": "Suppose you cannot calculate every line after 36.Bf1 to the end. What makes the move safe to play anyway?",
+              "options": [
+                "Every other move lost by force, so the one remaining move had to be played.",
+                "The bishop move wins the black queen by force in every line.",
+                "It leads to a known theoretical endgame."
+              ],
+              "answer": 0,
+              "explanation": "That is the elimination method. Against a pass Black mates; against the other active tries Black wins too (Stockfish: the second-best move is about -6.7 for White). The bishop move is the survivor, and you may play it before its last line is clear. (Kasparov did see 36...Rd2 37.Rd7! in advance, but the method does not require it.)"
+            }
+          ]
+        },
+        {
+          "id": "b6m1l4",
+          "title": "Intermediate moves and desperadoes",
+          "objective": "Before any recapture, check for a forcing move to insert first; when a piece is lost anyway, make it take something before it goes.",
+          "minutes": 15,
+          "sections": [
+            {
+              "type": "text",
+              "md": "Every exchange has a moment where players stop calculating: the automatic recapture. Intermediate moves and desperadoes live in that moment.\n\nAn intermediate move (in German, Zwischenzug) is a forcing move played before the expected recapture: a check, a capture or a threat that must be answered first. Then you recapture, on better terms.\n\nA desperado is a piece that is lost anyway. Before it is taken, it takes something itself, best with check or with a new threat. When both sides have a piece en prise, the side to move decides who loses more.\n\nYusupov's chapter on desperadoes in Chess Evolution 3 and Aagaard's on intermediate moves give one habit. Before any recapture, ask three questions:\n\n1. Is my piece lost anyway? Then what can it take first?\n2. Is there a check or a bigger threat I can insert?\n3. If I recapture now, what does my opponent insert?\n\nLasker–Napier, Cambridge Springs 1904, is a whole game of these questions. From move 13 to move 28 almost every piece is attacked."
+            },
+            {
+              "type": "challenge",
+              "fen": "r1bq1rk1/ppn2pbp/6p1/3Pp1P1/3n1P1P/2N1B3/PPP1N3/R2QKB1R w KQ - 1 14",
+              "prompt": "Lasker–Napier, move 14. White to play. Take the knight on d4. After Black takes back the pawn on d5, the white knight is attacked by the e5-pawn. Do not trade it: find the intermediate move.",
+              "solution": [
+                "e2d4",
+                "c7d5",
+                "d4f5"
+              ],
+              "hint": "The knight should move with a purpose. Which square brings it next to the black king?",
+              "explanation": "14.Nxd4 Nxd5 15.Nf5! The knight goes towards the king instead of trading itself. Once the d5-knight moves, the queens face each other on the open d-file, and that prepares the next intermediate move. Stockfish: 15.Nf5 +1.0, 15.Nxd5 -0.3."
+            },
+            {
+              "type": "challenge",
+              "fen": "r1bq1rk1/pp3pbp/6p1/4pNP1/5P1P/2n1B3/PPP5/R2QKB1R w KQ - 0 16",
+              "prompt": "Black played 15...Nxc3, attacking the white queen. Do not recapture on c3 yet. White to play: two intermediate moves.",
+              "solution": [
+                "d1d8",
+                "f8d8",
+                "f5e7"
+              ],
+              "hint": "The queens face each other. Take first, then check.",
+              "explanation": "16.Qxd8! Rxd8 17.Ne7+ Kh8. Queen trade first, then a check: White gains two tempi while the c3-knight is still under attack. Stockfish: 16.Qxd8 +1.2; 16.Nh6+ -1.1 and 16.bxc3 -2.7."
+            },
+            {
+              "type": "challenge",
+              "fen": "r1b1r2k/pp2NBbp/8/2B3Pp/4np2/8/PPP5/R3K2R w KQ - 1 22",
+              "prompt": "Move 22. Pieces hang everywhere: the f7-bishop attacks the e8-rook, the e4-knight attacks the c5-bishop, and the g7-bishop eyes b2. White to play.",
+              "solution": [
+                "f7e8",
+                "g7b2",
+                "a1b1"
+              ],
+              "hint": "When both sides have pieces en prise, take the most valuable thing first. Then answer Black's desperado with a threat of your own.",
+              "explanation": "22.Bxe8! takes the rook. 22...Bxb2 is Black's desperado: a pawn with an attack on the a1-rook. 23.Rb1! moves the rook and attacks the bishop. Stockfish: 22.Bxe8 +1.9, 22.Bxh5 -0.3; 23.Rb1 +2.3, 23.Rc1 +0.5."
+            },
+            {
+              "type": "game",
+              "pgn": "[White \"Emanuel Lasker\"]\n[Black \"William Napier\"]\n[Event \"Cambridge Springs (round 3)\"]\n[Date \"1904\"]\n[Result \"1-0\"]\n[ECO \"B72\"]\n[Site \"Cambridge Springs\"]\n[Round \"3\"]\n[Themes \"attack,defence,calculation,initiative\"]\n[Level \"4\"]\n[PlyCount \"69\"]\n\n1. e4 c5 2. Nc3 Nc6 3. Nf3 g6 4. d4 cxd4 5. Nxd4 Bg7 6. Be3 d6 7. h3 Nf6 8. g4\nO-O 9. g5 Ne8 10. h4 Nc7 11. f4 e5 12. Nde2 d5 13. exd5 Nd4 14. Nxd4 Nxd5 15.\nNf5 Nxc3 16. Qxd8 Rxd8 17. Ne7+ Kh8 18. h5 Re8 19. Bc5 gxh5 20. Bc4 exf4 21.\nBxf7 Ne4 22. Bxe8 Bxb2 23. Rb1 Bc3+ 24. Kf1 Bg4 25. Bxh5 Bxh5 26. Rxh5 Ng3+ 27.\nKg2 Nxh5 28. Rxb7 a5 29. Rb3 Bg7 30. Rh3 Ng3 31. Kf3 Ra6 32. Kxf4 Ne2+ 33. Kf5\nNc3 34. a3 Na4 35. Be3 1-0",
+              "title": "Lasker vs Napier, Cambridge Springs 1904",
+              "mode": "replay",
+              "notes": {
+                "15": "7.h3 and 8.g4: Lasker storms the kingside with pawns before he has castled.",
+                "24": "12...d5! Napier answers the wing attack with a strike in the centre, while the white king is still on e1. From here to move 28 almost every piece is attacked.",
+                "29": "14.Nxd4 Nxd5 15.Nf5! The intermediate move. The d4-knight was attacked by the e5-pawn; instead of trading on d5 it jumps to f5, next to the black king. As soon as the d5-knight moves, the queens face each other on the d-file.",
+                "31": "15...Nxc3 16.Qxd8! Before taking the c3-knight, White trades queens.",
+                "33": "16...Rxd8 17.Ne7+ Kh8. A check first; the c3-knight is still attacked by the b2-pawn.",
+                "35": "18.h5!? A third intermediate move, a pawn attack on g6. Stockfish prefers 18.f5 (+1.1 against +0.5), but the idea is the same: every white move carries a threat.",
+                "43": "22.Bxe8. With pieces hanging on both sides, White takes the biggest one first: a rook.",
+                "44": "22...Bxb2. Black answers in kind: the bishop takes a pawn and hits the a1-rook.",
+                "45": "23.Rb1. The rook escapes with an attack on the bishop.",
+                "55": "28.Rxb7. The dust settles: White's rook is on the seventh rank and Black's minor pieces are loose.",
+                "69": "35.Be3 and Black resigned. The knight on a4 is cut off."
+              }
+            },
+            {
+              "type": "quiz",
+              "question": "Your knight is attacked by a pawn and cannot be saved. Which move do you look for first?",
+              "options": [
+                "A retreat square, in case the pawn does not take.",
+                "A capture with the knight, ideally with check or a new threat, before the pawn takes it.",
+                "A second piece to defend the knight."
+              ],
+              "answer": 1,
+              "explanation": "That is the desperado. A doomed piece that takes a pawn with check has won a pawn and a tempo. A retreat is impossible by assumption, and a defender does not help against a pawn: the pawn still wins a piece for a pawn."
+            }
+          ]
+        },
+        {
+          "id": "b6m1l5",
+          "title": "Imagination: the quiet move",
+          "objective": "Look past the end of the forcing sequence for the quiet move that cuts a defence, takes a square or brings one more piece.",
+          "minutes": 14,
+          "sections": [
+            {
+              "type": "text",
+              "md": "Forcing lines end. Most players calculate the checks and captures, stop, and judge what they see. Aagaard's chapter on imagination points at the move after the forcing sequence: a quiet move that cuts a defender's line, takes a flight square or brings one more piece.\n\nThree kinds of quiet move to look for:\n\n1. Interference: put a piece on the line between a defender and what it defends.\n2. A king move in the attack: when the opponent has no checks, your king can join.\n3. The quiet tightening move: no check, but the threat is mate and nothing parries it.\n\nA quiet move is hard to see because it gives the opponent a free move. Before you reject it, ask what he can do with that move. If the answer is nothing useful, the quiet move is often the strongest.\n\nTwo classics follow. In Réti–Bogoljubov, New York 1924, a bishop steps between a rook and the square it guards. In Short–Timman, Tilburg 1991, the white king walks from g1 to g5 with the queens still on."
+            },
+            {
+              "type": "challenge",
+              "fen": "3r1bk1/ppq3pp/2p5/2P2Q1B/8/1P4P1/P6P/5RK1 w - - 2 24",
+              "prompt": "Réti–Bogoljubov, New York 1924. White to play. The queen and the rook behind it attack the f8-bishop. After a check, its only defender will be the d8-rook. Find the check, then the quiet move.",
+              "solution": [
+                "h5f7",
+                "g8h8",
+                "f7e8"
+              ],
+              "hint": "After the check, put the bishop on the line between the d8-rook and f8.",
+              "explanation": "24.Bf7+ Kh8 25.Be8!! The bishop cuts the d8-rook off from f8. 25...Rxe8 26.Qxf8+ Rxf8 27.Rxf8# and anything else loses the f8-bishop. Bogoljubov resigned. Stockfish: 25.Be8 +10.8, the next move only +0.03."
+            },
+            {
+              "type": "position",
+              "fen": "3rBb1k/ppq3pp/2p5/2P2Q2/8/1P4P1/P6P/5RK1 b - - 5 25",
+              "arrows": [
+                {
+                  "from": "d8",
+                  "to": "f8",
+                  "brush": "red"
+                },
+                {
+                  "from": "f5",
+                  "to": "f8",
+                  "brush": "green"
+                },
+                {
+                  "from": "f1",
+                  "to": "f8",
+                  "brush": "green"
+                }
+              ],
+              "highlights": [
+                {
+                  "square": "e8",
+                  "brush": "yellow"
+                },
+                {
+                  "square": "f8",
+                  "brush": "red"
+                }
+              ],
+              "caption": "After 25.Be8!!: the bishop stands on the d8-rook's line to f8. The f8-bishop is now attacked twice and defended by nobody."
+            },
+            {
+              "type": "challenge",
+              "fen": "4rrk1/1bpR1p2/1pq1pQp1/p3P2p/P1PR3P/5NK1/2P2PP1/8 w - - 4 33",
+              "prompt": "Short–Timman, Tilburg 1991. White to play. The queen is on f6, the rooks control the seventh rank and the d-file, and Black has no checks. Find the quiet winning plan.",
+              "solution": [
+                "g3f4"
+              ],
+              "hint": "Which white piece is not yet taking part, and where would it support the queen?",
+              "explanation": "33.Kf4! The king walks to g5 and h6, from where it supports Qg7 mate. The game ended 33...Bc8 34.Kg5 1-0. Stockfish: 33.Kf4 +7.4, 33.Kh2 +3.4."
+            },
+            {
+              "type": "game",
+              "pgn": "[Event \"Interpolis, Tilburg\"]\n[Site \"Tilburg NED\"]\n[Date \"1991.??.??\"]\n[Round \"4\"]\n[White \"Nigel Short\"]\n[Black \"Jan Timman\"]\n[Result \"1-0\"]\n[ECO \"B04\"]\n\n1. e4 Nf6 2. e5 Nd5 3. d4 d6 4. Nf3 g6 5. Bc4 Nb6 6. Bb3 Bg7 7. Qe2 Nc6 8. O-O\nO-O 9. h3 a5 10. a4 dxe5 11. dxe5 Nd4 12. Nxd4 Qxd4 13. Re1 e6 14. Nd2 Nd5 15.\nNf3 Qc5 16. Qe4 Qb4 17. Bc4 Nb6 18. b3 Nxc4 19. bxc4 Re8 20. Rd1 Qc5 21. Qh4\nb6 22. Be3 Qc6 23. Bh6 Bh8 24. Rd8 Bb7 25. Rad1 Bg7 26. R8d7 Rf8 27. Bxg7 Kxg7\n28. R1d4 Rae8 29. Qf6+ Kg8 30. h4 h5 31. Kh2 Rc8 32. Kg3 Rce8 33. Kf4 Bc8 34.\nKg5 1-0",
+              "title": "Short vs Timman, Tilburg 1991",
+              "mode": "replay",
+              "notes": {
+                "33": "17.Bc4! Nb6 18.b3 Nxc4 19.bxc4. White keeps the e5-pawn and the space; Black's pieces have few good squares.",
+                "47": "24.Rd8! The rook invades the eighth rank.",
+                "53": "27.Bxg7 Kxg7. Black's best defender, the dark-squared bishop, is gone.",
+                "57": "28.R1d4 Rae8 29.Qf6+ Kg8 30.h4 h5. The queen sits on f6 and the rooks hold the seventh rank and the d-file. Black has no active move.",
+                "61": "31.Kh2! The king walk starts. Black has no checks, and his pieces are tied to the defence. (Stockfish rates 31.Qf4 a little higher; both win.)",
+                "63": "31...Rc8 32.Kg3 Rce8.",
+                "65": "33.Kf4! The king heads for h6, where it supports Qg7 mate.",
+                "67": "33...Bc8 34.Kg5 and Black resigned. The threat is Kh6 and Qg7 mate; Stockfish finds mate in nine against any defence."
+              }
+            },
+            {
+              "type": "quiz",
+              "question": "Why could Short walk his king up the board with queens and rooks still on?",
+              "options": [
+                "Black had no checks, and his pieces were tied to the defence of f7, g7 and the back rank.",
+                "Kings are always safe in the middlegame when the queens are on.",
+                "The white king was protected by its pawn shield on f2 and g2."
+              ],
+              "answer": 0,
+              "explanation": "A king walk is safe when the opponent cannot create a single threat against the king. Timman's pieces were tied to f7, g7 and the eighth rank. The pawns on f2 and g2 stayed behind, so they gave the king no cover at all."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "b6m2",
+      "band": 6,
+      "title": "Attack and the initiative",
+      "strand": "model games",
+      "summary": "The dynamic side of the middlegame through master games: the king caught in the centre, the pawn storm, the initiative and the positional exchange sacrifice.",
+      "source": "Yusupov, Boost Your Chess 3 (ch. 1 attacking the king in the centre, ch. 20 pawn storms, ch. 21 the initiative); Euwe & Kramer, The Middlegame, Book II (dynamic features: the initiative, the attack on the king); Marin, Learn from the Legends (Petrosian's exchange sacrifices); model games Deep Blue–Kasparov 1997, Tal–Portisch 1965, Spassky–Petrosian 1969, Capablanca–Bernstein 1911, Petrosian–Spassky 1966, AlphaZero–Stockfish 2018",
+      "lessons": [
+        {
+          "id": "b6m2l1",
+          "title": "Attacking the king in the centre",
+          "objective": "Keep the enemy king in the centre and open lines to it before it can castle, even at the cost of material.",
+          "minutes": 15,
+          "sections": [
+            {
+              "type": "text",
+              "md": "A king that has not castled by move 15 is a target, if you can open the centre before it escapes. Yusupov's chapter on the subject in Boost Your Chess 3 reduces the method to three steps:\n\n1. Stop castling. Check the king, pin a piece, or control the squares it needs (f8 and g8, or d8 and c8).\n2. Open the centre. The e- and d-files are the roads to the king. A pawn break, or a piece sacrifice on e6, d5 or f7, removes the last shield.\n3. Bring every piece. Each move should add an attacker or gain a tempo with a threat. A slow move gives the king time to run.\n\nMaterial is secondary while the king is stuck. A sacrifice that keeps the king in the centre for five moves is often worth more than the piece. The danger runs the other way too: if the attack stops, the extra material decides.\n\nTwo models follow: Deep Blue's knight sacrifice against Kasparov in 1997, and Tal's rook sacrifice against Portisch in 1965."
+            },
+            {
+              "type": "challenge",
+              "fen": "r1bqkb1r/pp1n1pp1/2p1pn1p/6N1/3P4/3B1N2/PPP2PPP/R1BQK2R w KQkq - 0 8",
+              "prompt": "Deep Blue–Kasparov, game 6, New York 1997. White to play. Black's last move, 7...h6, attacks the g5-knight. Black has not castled. Find the sacrifice that keeps the king in the centre.",
+              "solution": [
+                "g5e6"
+              ],
+              "hint": "Do not retreat. Which square next to the black king can the knight take on, with an attack on the queen?",
+              "explanation": "8.Nxe6! The knight takes a pawn and attacks the queen and the f8-bishop. Kasparov played 8...Qe7 9.O-O fxe6 10.Bg6+ Kd8; his king never castled and he resigned on move 19. Stockfish: 8.Nxe6 +1.2, the retreat 8.Ne4 +0.2."
+            },
+            {
+              "type": "game",
+              "pgn": "[Event \"Candidates quarter-final (game 2), Bled\"]\n[Site \"Bled YUG\"]\n[Date \"1965.??.??\"]\n[Round \"2\"]\n[White \"Mikhail Tal\"]\n[Black \"Lajos Portisch\"]\n[Result \"1-0\"]\n[ECO \"B10\"]\n\n1. e4 c6 2. Nc3 d5 3. Nf3 dxe4 4. Nxe4 Bg4 5. h3 Bxf3 6. Qxf3 Nd7 7. d4 Ngf6\n8. Bd3 Nxe4 9. Qxe4 e6 10. O-O Be7 11. c3 Nf6 12. Qh4 Nd5 13. Qg4 Bf6 14. Re1\nQb6 15. c4 Nb4 16. Rxe6+ fxe6 17. Qxe6+ Kf8 18. Bf4 Rd8 19. c5 Nxd3 20. cxb6\nNxf4 21. Qg4 Nd5 22. bxa7 Ke7 23. b4 Ra8 24. Re1+ Kd6 25. b5 Rxa7 26. Re6+ Kc7\n27. Rxf6 1-0",
+              "title": "Tal vs Portisch, Bled 1965 (Candidates, game 2)",
+              "mode": "replay",
+              "notes": {
+                "18": "8...Nxe4 9.Qxe4 e6. Black has given White a lead in development and still has to castle.",
+                "30": "14.Re1 Qb6 15.c4 Nb4. The black king is still on e8, and the queen and knight go after the queenside.",
+                "31": "16.Rxe6+!! The rook is given to keep the king in the centre. Stockfish 16 rates it as White's best move but only as level (0.00): the attack is worth a draw with perfect defence, and it is very hard to defend at the board.",
+                "34": "16...fxe6 17.Qxe6+ Kf8. The king has moved, so castling is gone, and the e-file is open.",
+                "35": "18.Bf4! The last bishop joins the attack. It is the only good move: the alternatives score about -1.7 or worse.",
+                "37": "18...Rd8 19.c5! The pawn hits the queen. After 19...Nxd3 20.cxb6 Nxf4 21.Qg4 Nd5 22.bxa7 Tal has won the queen back and has a pawn on a7.",
+                "45": "22...Ke7 23.b4! Ra8 24.Re1+. The black king is in the centre again, and the a7-pawn ties down a rook.",
+                "53": "24...Kd6 25.b5 Rxa7 26.Re6+ Kc7 27.Rxf6 and Black resigned."
+              }
+            },
+            {
+              "type": "challenge",
+              "fen": "r4k1r/pp4pp/1qp1Qb2/8/1nPP4/3B3P/PP3PP1/R1B3K1 w - - 1 18",
+              "prompt": "Tal–Portisch after 16.Rxe6+ fxe6 17.Qxe6+ Kf8. White is a rook down for two pawns. Find the move that keeps the attack alive.",
+              "solution": [
+                "c1f4"
+              ],
+              "hint": "Every white piece must join with a threat. One piece has not moved yet.",
+              "explanation": "18.Bf4! develops the last piece towards d6 and the h2-b8 diagonal. It is the only good move: Stockfish rates it at +0.3, and every other move at -1.7 or worse. The game went 18...Rd8 19.c5! and Tal won the queen back."
+            },
+            {
+              "type": "quiz",
+              "fen": "r3k2r/pp3ppp/1qp1pb2/8/1nPP2Q1/3B3P/PP3PP1/R1B1R1K1 w kq - 1 16",
+              "question": "What did the rook sacrifice 16.Rxe6+ achieve?",
+              "options": [
+                "It won material by force.",
+                "It took away castling, opened the e-file and kept the king in the centre, at the cost of a rook for two pawns.",
+                "It forced a draw by perpetual check."
+              ],
+              "answer": 1,
+              "explanation": "After 16.Rxe6+ fxe6 17.Qxe6+ Kf8 the king can never castle, and the e-file is open. Stockfish rates the sacrifice as level (0.00) with perfect defence, so it did not win by force; at the board the defence proved too hard, and Portisch resigned on move 27. That is the trade-off of attacking a central king: the material is gone for good, the attack has to be fed."
+            }
+          ]
+        },
+        {
+          "id": "b6m2l2",
+          "title": "Pawn storms and opposite-side castling",
+          "objective": "When the kings stand on opposite wings, open lines with pawns faster than the opponent and count every tempo.",
+          "minutes": 14,
+          "sections": [
+            {
+              "type": "text",
+              "md": "With the kings on opposite wings, both sides can throw pawns at the enemy king without weakening their own. The game becomes a race. Yusupov's chapter on pawn storms gives its rules:\n\n1. Count tempi. Your storm matters only if it opens a file before the other side's storm does.\n2. Pawns open lines; pieces mate. Push the pawn that will hit a pawn in front of the king (g4-g5 against ...h6, f4-f5 against ...e6), then put rooks on the opened file.\n3. A pawn given to open a file is cheap. A tempo spent winning a pawn may lose the race.\n4. Defend only when you must. One defensive move can cost the whole attack.\n\nSpassky–Petrosian, World Championship 1969, game 19, is the textbook race. Spassky castles long, gives a pawn on g4 to open the g-file, pushes f5 and e5, and then sacrifices a knight. Black's counterplay never arrives."
+            },
+            {
+              "type": "game",
+              "pgn": "[Event \"World Championship 1969 (game 19), Moscow\"]\n[Site \"Moscow URS\"]\n[Date \"1969.??.??\"]\n[Round \"19\"]\n[White \"Boris Spassky\"]\n[Black \"Tigran Petrosian\"]\n[Result \"1-0\"]\n[ECO \"B94\"]\n\n1. e4 c5 2. Nf3 d6 3. d4 cxd4 4. Nxd4 Nf6 5. Nc3 a6 6. Bg5 Nbd7 7. Bc4 Qa5 8.\nQd2 h6 9. Bxf6 Nxf6 10. O-O-O e6 11. Rhe1 Be7 12. f4 O-O 13. Bb3 Re8 14. Kb1\nBf8 15. g4 Nxg4 16. Qg2 Nf6 17. Rg1 Bd7 18. f5 Kh8 19. Rdf1 Qd8 20. fxe6 fxe6\n21. e5 dxe5 22. Ne4 Nh5 23. Qg6 exd4 24. Ng5 1-0",
+              "title": "Spassky vs Petrosian, World Championship 1969, game 19",
+              "mode": "replay",
+              "notes": {
+                "19": "10.O-O-O. Black castles short two moves later: kings on opposite wings, and the race begins.",
+                "29": "15.g4! Nxg4 16.Qg2. A pawn is given to open the g-file against the black king.",
+                "33": "16...Nf6 17.Rg1. The rook takes the open file.",
+                "35": "17...Bd7 18.f5! The second pawn hits e6.",
+                "41": "20.fxe6 fxe6 21.e5! A third pawn is given to clear e4 for the knight.",
+                "43": "21...dxe5 22.Ne4! The knight jumps towards g5 and f6; the d4-knight is left to its fate.",
+                "45": "22...Nh5 23.Qg6! The queen aims at h7. One more attacker and it is mate.",
+                "47": "23...exd4 24.Ng5 and Black resigned. After 24...hxg5 25.Qxh5+ Kg8 26.Qf7+ Kh8 27.Rf3 the rook joins and mate follows (Stockfish: mate in 12)."
+              }
+            },
+            {
+              "type": "challenge",
+              "fen": "r2qrb1k/1p1b2p1/p3pn1p/4p3/3N4/1BN5/PPP3QP/1K3RR1 w - - 0 22",
+              "prompt": "Spassky–Petrosian, move 22. White to play. Two pawns have been given to open lines. Bring the next piece, even if it costs another.",
+              "solution": [
+                "c3e4"
+              ],
+              "hint": "The c3-knight can reach the kingside in two jumps. The d4-knight may be taken; that does not matter.",
+              "explanation": "22.Ne4! The knight heads for g5 and f6. Petrosian played 22...Nh5 23.Qg6! exd4 24.Ng5 (next challenge). Stockfish: 22.Ne4 +3.5, 22.Nf3 +2.1."
+            },
+            {
+              "type": "challenge",
+              "fen": "r2qrb1k/1p1b2p1/p3p1Qp/7n/3pN3/1B6/PPP4P/1K3RR1 w - - 0 24",
+              "prompt": "After 22...Nh5 23.Qg6 exd4. White to play and finish the attack.",
+              "solution": [
+                "e4g5"
+              ],
+              "hint": "The queen on g6 already aims at h7. Which knight move adds a second attacker on h7?",
+              "explanation": "24.Ng5! and Petrosian resigned. The threat is Qh7 mate. 24...hxg5 25.Qxh5+ Kg8 26.Qf7+ Kh8 27.Rf3 brings the rook and mates (Stockfish: mate in 12). Stockfish: 24.Ng5 +5.7, 24.Qxh5 +3.9."
+            },
+            {
+              "type": "quiz",
+              "fen": "r1b1rbk1/1p3pp1/p2ppn1p/q7/3NPP2/1BN5/PPPQ2PP/1K1RR3 w - - 5 15",
+              "question": "Why did Spassky play 15.g4 even though the pawn could be taken?",
+              "options": [
+                "To open the g-file for his rook against the black king.",
+                "To win the h6-pawn.",
+                "To stop Black from castling."
+              ],
+              "answer": 0,
+              "explanation": "15.g4 Nxg4 16.Qg2 Nf6 17.Rg1: one pawn bought an open file aimed at g7. With the kings on opposite wings, a pawn given to open a line is a cheap price, and Black had already castled, so the third option does not apply."
+            }
+          ]
+        },
+        {
+          "id": "b6m2l3",
+          "title": "The initiative",
+          "objective": "Keep the right to make threats: prefer the forcing move over the move that grabs material, and convert the initiative before it runs out.",
+          "minutes": 15,
+          "sections": [
+            {
+              "type": "text",
+              "md": "Euwe and Kramer split the middlegame into static features (material, pawn structure, weak squares) and dynamic ones. The first dynamic feature is the initiative: the power to make threats the opponent must answer.\n\nThe initiative is a temporary asset. Each threat buys one move. When the threats stop, the opponent regroups and the static features decide again. So the side with the initiative must:\n\n1. Prefer moves with threats to moves without them, even at the cost of a pawn.\n2. Aim the threats where the opponent is weakest, so the answers are passive.\n3. Convert in time: turn the initiative into something that lasts, such as material, a broken king position or a passed pawn.\n\nThe defender does the reverse: ignore threats that are not real, and win a tempo back whenever possible.\n\nCapablanca–Bernstein, San Sebastián 1911, shows the price of grabbing pawns against the initiative. Bernstein's queen takes on a2 and c2 while every white piece gathers on the kingside."
+            },
+            {
+              "type": "game",
+              "pgn": "[White \"Jose Raul Capablanca\"]\n[Black \"Ossip Bernstein\"]\n[Event \"San Sebastian (round 1)\"]\n[Date \"1911\"]\n[Result \"1-0\"]\n[ECO \"C66\"]\n[Site \"San Sebastian\"]\n[Round \"1\"]\n[Themes \"attack,sacrifice,calculation,initiative\"]\n[Level \"3\"]\n[PlyCount \"67\"]\n\n1. e4 e5 2. Nf3 Nc6 3. Bb5 Nf6 4. O-O Be7 5. Nc3 d6 6. Bxc6+ bxc6 7. d4 exd4 8.\nNxd4 Bd7 9. Bg5 O-O 10. Re1 h6 11. Bh4 Nh7 12. Bxe7 Qxe7 13. Qd3 Rab8 14. b3\nNg5 15. Rad1 Qe5 16. Qe3 Ne6 17. Nce2 Qa5 18. Nf5 Nc5 19. Ned4 Kh7 20. g4 Rbe8\n21. f3 Ne6 22. Ne2 Qxa2 23. Neg3 Qxc2 24. Rc1 Qb2 25. Nh5 Rh8 26. Re2 Qe5 27.\nf4 Qb5 28. Nfxg7 Nc5 29. Nxe8 Bxe8 30. Qc3 f6 31. Nxf6+ Kg6 32. Nh5 Rg8 33. f5+\nKg5 34. Qe3+ 1-0",
+              "title": "Capablanca vs Bernstein, San Sebastián 1911",
+              "mode": "replay",
+              "notes": {
+                "11": "6.Bxc6+ bxc6. Black has doubled c-pawns; White develops towards the kingside.",
+                "39": "17.Nce2 Qa5 18.Nf5 Nc5 19.Ned4 Kh7 20.g4. Two knights on f5 and d4, and the g-pawn joins.",
+                "44": "22...Qxa2. The queen takes a pawn on the far side of the board.",
+                "46": "23.Neg3 Qxc2. A second pawn, and the queen is far from her king.",
+                "53": "27.f4! Another pawn joins the attack with gain of time against the queen on e5.",
+                "55": "27...Qb5 28.Nfxg7! The pawn shield breaks. Stockfish +2.0; the quiet 28.Rf2 is only +0.2.",
+                "61": "29.Nxe8 Bxe8 30.Qc3 f6 31.Nxf6+! The last pawn near the king falls, and the king is driven forward.",
+                "67": "31...Kg6 32.Nh5 Rg8 33.f5+ Kg5 34.Qe3+ and Black resigned."
+              }
+            },
+            {
+              "type": "challenge",
+              "fen": "4r2r/p1pb1ppk/2ppn2p/4qN1N/4P1P1/1P2QP2/4R2P/2R3K1 w - - 6 27",
+              "prompt": "Capablanca–Bernstein, move 27. White to play. The black queen has come back to e5 after taking the a- and c-pawns. Keep making threats.",
+              "solution": [
+                "f3f4"
+              ],
+              "hint": "A pawn can hit the queen and join the attack at the same time.",
+              "explanation": "27.f4! hits the queen and adds a pawn to the attack. Stockfish: 27.f4 +1.5; the quiet 27.Rg2 is -0.4. Bernstein played 27...Qb5."
+            },
+            {
+              "type": "challenge",
+              "fen": "4r2r/p1pb1ppk/2ppn2p/1q3N1N/4PPP1/1P2Q3/4R2P/2R3K1 w - - 1 28",
+              "prompt": "After 27.f4 Qb5. White to play. Break the pawn shield.",
+              "solution": [
+                "f5g7"
+              ],
+              "hint": "A knight takes on g7. What does the other knight do next?",
+              "explanation": "28.Nfxg7! Nxg7 29.Nf6+ is the point: the knight checks the king and forks the d7-bishop and the e8-rook. Bernstein played 28...Nc5 29.Nxe8 Bxe8. Stockfish: 28.Nfxg7 +2.0, 28.Rf2 +0.2."
+            },
+            {
+              "type": "challenge",
+              "fen": "4b2r/p1p4k/2pp1p1p/1qn4N/4PPP1/1PQ5/4R2P/2R3K1 w - - 0 31",
+              "prompt": "Move 31. White to play. The black king stands on h7 behind a thin pawn shell. Keep the initiative.",
+              "solution": [
+                "h5f6"
+              ],
+              "hint": "The f6-pawn is the last pawn near the king. Take it with check.",
+              "explanation": "31.Nxf6+! Kg6 32.Nh5 Rg8 33.f5+ Kg5 34.Qe3+ and Bernstein resigned. Stockfish: 31.Nxf6+ +5.5; the next move, 31.Re3, +3.2."
+            },
+            {
+              "type": "quiz",
+              "question": "Bernstein's queen won two pawns (22...Qxa2 and 23...Qxc2). In Euwe and Kramer's terms, what did he trade?",
+              "options": [
+                "A dynamic factor (time and the safety of his king) for a static one (two pawns).",
+                "A static factor (pawn structure) for a dynamic one (the initiative).",
+                "Nothing: the pawns were free."
+              ],
+              "answer": 0,
+              "explanation": "Material is a static feature; it lasts. Time is dynamic: while the queen spent moves on a2, c2 and b2, White used them to bring a knight to h5, a rook to e2 and the f-pawn forward. The pawns would have counted in an endgame. Bernstein never reached one."
+            }
+          ]
+        },
+        {
+          "id": "b6m2l4",
+          "title": "The positional exchange sacrifice",
+          "objective": "Give a rook for a minor piece when the minor piece gets a square the rook can never contest and the position stays closed.",
+          "minutes": 16,
+          "sections": [
+            {
+              "type": "text",
+              "md": "The exchange sacrifice gives a rook for a minor piece. Petrosian made it a positional weapon: he gave the exchange not for a mating attack but for squares, for a blockade, or to remove the opponent's best piece. Marin's Learn from the Legends gives Petrosian's exchange sacrifices a chapter of their own.\n\nWhen does it pay?\n\n1. The minor piece you get, or keep, has a strong square that the opponent's rook cannot challenge.\n2. The rook you give up has no open file to work on.\n3. The opponent's remaining pieces are passive, or his king becomes weak.\n4. A pawn comes with it, and the position stays closed.\n\nRooks need open files. While the position stays closed and your minor piece dominates, a rook can be worth less than a knight.\n\nTwo games follow: Petrosian–Spassky, World Championship 1966, game 10, and AlphaZero–Stockfish (published 2018), where the program gave a rook for a knight to lock the black king in a dark-square bind."
+            },
+            {
+              "type": "game",
+              "pgn": "[Event \"World Championship 1966 (game 10), Moscow\"]\n[Site \"Moscow URS\"]\n[Date \"1966.??.??\"]\n[Round \"10\"]\n[White \"Tigran Petrosian\"]\n[Black \"Boris Spassky\"]\n[Result \"1-0\"]\n[ECO \"E66\"]\n\n1. Nf3 Nf6 2. g3 g6 3. c4 Bg7 4. Bg2 O-O 5. O-O Nc6 6. Nc3 d6 7. d4 a6 8. d5\nNa5 9. Nd2 c5 10. Qc2 e5 11. b3 Ng4 12. e4 f5 13. exf5 gxf5 14. Nd1 b5 15. f3\ne4 16. Bb2 exf3 17. Bxf3 Bxb2 18. Qxb2 Ne5 19. Be2 f4 20. gxf4 Bh3 21. Ne3\nBxf1 22. Rxf1 Ng6 23. Bg4 Nxf4 24. Rxf4 Rxf4 25. Be6+ Rf7 26. Ne4 Qh4 27. Nxd6\nQg5+ 28. Kh1 Ra7 29. Bxf7+ Rxf7 30. Qh8+ 1-0",
+              "title": "Petrosian vs Spassky, World Championship 1966, game 10",
+              "mode": "replay",
+              "notes": {
+                "27": "14.Nd1! The knight heads for e3, where it will watch f5 and g4.",
+                "35": "15.f3 e4 16.Bb2 exf3 17.Bxf3 Bxb2 18.Qxb2. The dark-squared bishops are traded; the black king has lost a defender.",
+                "40": "19.Be2 f4 20.gxf4 Bh3. The bishop attacks the f1-rook.",
+                "41": "21.Ne3!! Petrosian lets the rook go. Stockfish rates 21.Ne3 at +0.5 and every other move at equal or worse: the knight on e3, covering f5 and g4, is worth more than the rook.",
+                "43": "21...Bxf1 22.Rxf1. An exchange down for a pawn, but the light squares around the black king belong to White.",
+                "47": "22...Ng6 23.Bg4 Nxf4 24.Rxf4! The second exchange. Stockfish prefers 24.Ne4 (+3.4 against +2.5); both win.",
+                "51": "24...Rxf4 25.Be6+ Rf7 26.Ne4. The rook on f7 is pinned and the knight heads for d6.",
+                "57": "26...Qh4 27.Nxd6 Qg5+ 28.Kh1 Ra7 29.Bxf7+ Rxf7.",
+                "59": "30.Qh8+!! and Black resigned: 30...Kxh8 31.Nxf7+ and 32.Nxg5 leaves White a piece up."
+              }
+            },
+            {
+              "type": "challenge",
+              "fen": "r2q1rk1/7p/p2p4/nppPn3/2P2P2/1P5b/PQ1NB2P/R2N1RK1 w - - 1 21",
+              "prompt": "Petrosian–Spassky, move 21. White to play. The bishop on h3 attacks the f1-rook. Save the rook, or find something better.",
+              "solution": [
+                "d1e3"
+              ],
+              "hint": "A knight on e3 would control f5 and g4 for the rest of the game. Is that worth a rook?",
+              "explanation": "21.Ne3!! lets the bishop take the rook. The knight on e3 covers f5 and g4, the bishop comes to g4 next, and the black king has no light-squared defender. Stockfish: 21.Ne3 +0.5, 21.Ne4 -0.4, 21.Rf2 -0.8."
+            },
+            {
+              "type": "challenge",
+              "fen": "r5r1/2p1qp2/1p1pn1pk/pP4Rp/2P1PR1P/P4P2/2Q2P1K/B7 w - - 1 33",
+              "prompt": "AlphaZero–Stockfish (published 2018), move 33. White to play. The e6-knight attacks the rook on g5. Do not save the rook.",
+              "solution": [
+                "f4f6"
+              ],
+              "hint": "Attack the knight from the side. If it takes on g5, the h-pawn recaptures with check and locks the kingside.",
+              "explanation": "33.Rf6!! leaves the g5-rook en prise. In the game 33...Nxg5 34.hxg5+ Kh7 35.f4: the pawns on f4 and g5 and the bishop on a1 lock the black king in. Stockfish today declines with 33...Kh7 but still rates White better: 33.Rf6 +1.4, every other move about 0.0."
+            },
+            {
+              "type": "quiz",
+              "fen": "r2q1rk1/7p/p2p4/nppPn3/2P2P2/1P2N3/PQ1NB2P/5RK1 b - - 0 22",
+              "question": "After 21.Ne3 Bxf1 22.Rxf1, what does White have for the exchange?",
+              "options": [
+                "A pawn, a knight on e3 that covers f5 and g4, and the light squares around the black king.",
+                "A forced mating attack.",
+                "Nothing; Petrosian simply blundered the rook."
+              ],
+              "answer": 0,
+              "explanation": "White had already won a pawn on f4. The knight on e3 and the bishop arriving on g4 control the light squares that Black's lost bishop used to guard. Stockfish calls it +0.5, a small edge, not a forced win. The win came from Spassky's difficulty in finding any active plan."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "b6m3",
+      "band": 6,
+      "title": "Static and dynamic features",
+      "strand": "strategy",
+      "summary": "Sort advantages into static and dynamic, then apply it to the structures of master play: hanging pawns, pawn majorities and bishop against knight.",
+      "source": "Euwe & Kramer, The Middlegame (Book I static features, Book II dynamic features); Yusupov, Chess Evolution 3 (ch. 2 static advantages) and Boost Your Chess 3 (ch. 6 hanging pawns, ch. 13 bishop against knight, ch. 18-19 pawn majorities, ch. 24 knight against bishop); Silman, How to Reassess Your Chess (statics and dynamics); model games Kasparov–Shirov 1994, Korchnoi–Karpov 1981, Fischer–Spassky 1972, Botvinnik–Capablanca 1938, Fischer–Taimanov 1971",
+      "lessons": [
+        {
+          "id": "b6m3l1",
+          "title": "Static and dynamic advantages",
+          "objective": "Sort every advantage into static or dynamic, and let that decide whether you may wait or must act now.",
+          "minutes": 14,
+          "sections": [
+            {
+              "type": "text",
+              "md": "Euwe and Kramer's The Middlegame is built on one division.\n\nStatic features change slowly: material, pawn structure, weak squares, the bishop pair, a passed pawn, a piece on an outpost that nothing can remove.\n\nDynamic features change every move: a lead in development, the initiative, a king caught in an open position, piece activity that depends on threats.\n\nThe division decides the plan.\n\n- If your advantages are static, you can wait. Stop counterplay, trade the right pieces, and let the weakness or the extra pawn decide later.\n- If your advantages are dynamic, act now. Open lines, make threats, and convert before the opponent completes his development or closes the position.\n\nYusupov's chapter on static advantages in Chess Evolution 3 adds the defender's view: against a dynamic advantage, survive the next few moves; against a static one, look for activity at once, because waiting only lets it grow.\n\nKasparov–Shirov, Horgen 1994, is a pure case: Kasparov gives the exchange for a static asset."
+            },
+            {
+              "type": "game",
+              "pgn": "[Event \"Credit Suisse Masters, Horgen\"]\n[Site \"Horgen SUI\"]\n[Date \"1994.??.??\"]\n[Round \"9\"]\n[White \"Garry Kasparov\"]\n[Black \"Alexei Shirov\"]\n[Result \"1-0\"]\n[ECO \"B33\"]\n\n1. e4 c5 2. Nf3 e6 3. d4 cxd4 4. Nxd4 Nf6 5. Nc3 Nc6 6. Ndb5 d6 7. Bf4 e5 8.\nBg5 a6 9. Na3 b5 10. Nd5 Be7 11. Bxf6 Bxf6 12. c3 Bb7 13. Nc2 Nb8 14. a4 bxa4\n15. Rxa4 Nd7 16. Rb4 Nc5 17. Rxb7 Nxb7 18. b4 Bg5 19. Na3 O-O 20. Nc4 a5 21.\nBd3 axb4 22. cxb4 Qb8 23. h4 Bh6 24. Ncb6 Ra2 25. O-O Rd2 26. Qf3 Qa7 27. Nd7\nNd8 28. Nxf8 Kxf8 29. b5 Qa3 30. Qf5 Ke8 31. Bc4 Rc2 32. Qxh7 Rxc4 33. Qg8+\nKd7 34. Nb6+ Ke7 35. Nxc4 Qc5 36. Ra1 Qd4 37. Ra3 Bc1 38. Ne3 1-0",
+              "title": "Kasparov vs Shirov, Horgen 1994",
+              "mode": "replay",
+              "notes": {
+                "19": "10.Nd5. The knight takes the d5-square, the hole in front of Black's d6-pawn.",
+                "27": "13...Nb8 14.a4! bxa4 15.Rxa4. The rook comes to the fourth rank to hunt the b7-bishop, Black's best defender of the light squares.",
+                "33": "16.Rb4 Nc5 17.Rxb7!! A rook for the light-squared bishop. No immediate tactic follows; White gets a knight on d5 that no black pawn or bishop can challenge.",
+                "35": "17...Nxb7 18.b4! The pawn takes c5 from the knight. The knight on b7 has no good square.",
+                "41": "19.Na3 O-O 20.Nc4 a5 21.Bd3. Knights on c4 and d5, the bishop on d3: White's minor pieces all stand on light squares.",
+                "53": "24.Ncb6 Ra2 25.O-O Rd2 26.Qf3 Qa7 27.Nd7 Nd8 28.Nxf8 Kxf8. White gets the exchange back and keeps the domination. (Stockfish prefers 27.Bb5, +1.7 against +0.8.)",
+                "75": "38.Ne3 and Black resigned."
+              }
+            },
+            {
+              "type": "quiz",
+              "fen": "r2qk2r/1n3ppp/p2p1b2/3Np3/1P2P3/2P5/2N2PPP/3QKB1R b Kkq - 0 18",
+              "question": "Kasparov–Shirov after 17.Rxb7 Nxb7 18.b4. White is an exchange down. What kind of compensation does he have?",
+              "options": [
+                "Static: no black pawn or bishop can ever challenge the d5-knight, and the light squares stay weak. White can take his time.",
+                "Dynamic: White must mate quickly or lose on material.",
+                "None: Stockfish shows White losing."
+              ],
+              "answer": 0,
+              "explanation": "Black has no light-squared bishop and no pawn that can attack d5, so the knight can stay there as long as White wants. That is a static advantage; it does not run away. Stockfish rates 17.Rxb7 at about +0.3, level with the quiet alternatives: fair compensation, not a forced win. Kasparov took about ten moves to win the exchange back."
+            },
+            {
+              "type": "quiz",
+              "fen": "r1bk1b1r/pp1nq1p1/2p1pnBp/8/3P4/5N2/PPP2PPP/R1BQ1RK1 w - - 2 11",
+              "question": "Deep Blue–Kasparov 1997 after 10.Bg6+ Kd8. White has given a knight for a pawn. What kind of advantage does White have, and what follows?",
+              "options": [
+                "Static: White can wait, the black king will stay on d8 for ever.",
+                "Dynamic: the black king is in the centre and Black's pieces are undeveloped. White must open lines at once, before Black can untangle.",
+                "Material: White is ahead and should simplify."
+              ],
+              "answer": 1,
+              "explanation": "A lead in development and a king in the centre are dynamic. Given a few quiet moves, Black would tuck the king away on c7, develop the bishops, and the extra knight would decide. White played 11.Bf4 and 13.Re1, each move adding an attacker, and won on move 19."
+            }
+          ]
+        },
+        {
+          "id": "b6m3l2",
+          "title": "Hanging pawns",
+          "objective": "Judge hanging pawns by their mobility: push one when the advance opens a line, and attack them by forcing an advance that leaves a hole.",
+          "minutes": 15,
+          "sections": [
+            {
+              "type": "text",
+              "md": "Hanging pawns are two pawns side by side on half-open files, usually on c5 and d5 (or c4 and d4), with no friendly pawns beside them. They come from the Queen's Gambit, the Queen's Indian and the Nimzo-Indian.\n\nTheir strength is dynamic. They control four central squares, and either one can advance. The push ...d4 or ...c4 opens lines for the pieces behind it at the moment it happens.\n\nTheir weakness is static. No pawn can defend them. If one advances too early, the other is left backward or isolated, and a blockader on the square in front of them fixes both.\n\nYusupov's chapter in Boost Your Chess 3 gives the plans:\n\n- With the pawns: keep pieces on, support the pawns with rooks and queen, and push when the push opens a line or hits a piece.\n- Against them: trade pieces, press them from the c- and d-files, and force an advance that leaves a hole.\n\nKorchnoi–Karpov, World Championship 1981, game 9, shows the pawns used well."
+            },
+            {
+              "type": "position",
+              "fen": "r2q1rk1/pb1nbpp1/5n1p/2pp4/7B/2N1PN2/PP2BPPP/2RQ1RK1 w - - 0 13",
+              "arrows": [
+                {
+                  "from": "d5",
+                  "to": "d4",
+                  "brush": "green"
+                },
+                {
+                  "from": "c5",
+                  "to": "c4",
+                  "brush": "green"
+                }
+              ],
+              "highlights": [
+                {
+                  "square": "c5",
+                  "brush": "yellow"
+                },
+                {
+                  "square": "d5",
+                  "brush": "yellow"
+                }
+              ],
+              "caption": "Korchnoi–Karpov 1981, game 9, after 12...bxc5. Hanging pawns on c5 and d5: they control b4, c4, d4 and e4, and either one can push."
+            },
+            {
+              "type": "game",
+              "pgn": "[Event \"World Championship 1981 (game 9), Merano\"]\n[Site \"Merano ITA\"]\n[Date \"1981.10.??\"]\n[Round \"9\"]\n[White \"Viktor Korchnoi\"]\n[Black \"Anatoly Karpov\"]\n[Result \"0-1\"]\n[ECO \"D58\"]\n\n1. c4 e6 2. Nc3 d5 3. d4 Be7 4. Nf3 Nf6 5. Bg5 h6 6. Bh4 O-O 7. e3 b6 8. Rc1\nBb7 9. Be2 Nbd7 10. cxd5 exd5 11. O-O c5 12. dxc5 bxc5 13. Qc2 Rc8 14. Rfd1\nQb6 15. Qb1 Rfd8 16. Rc2 Qe6 17. Bg3 Nh5 18. Rcd2 Nxg3 19. hxg3 Nf6 20. Qc2 g6\n21. Qa4 a6 22. Bd3 Kg7 23. Bb1 Qb6 24. a3 d4 25. Ne2 dxe3 26. fxe3 c4 27. Ned4\nQc7 28. Nh4 Qe5 29. Kh1 Kg8 30. Ndf3 Qxg3 31. Rxd8+ Bxd8 32. Qb4 Be4 33. Bxe4\nNxe4 34. Rd4 Nf2+ 35. Kg1 Nd3 36. Qb7 Rb8 37. Qd7 Bc7 38. Kh1 Rxb2 39. Rxd3\ncxd3 40. Qxd3 Qd6 41. Qe4 Qd1+ 42. Ng1 Qd6 43. Nhf3 Rb5 0-1",
+              "title": "Korchnoi vs Karpov, World Championship 1981, game 9",
+              "mode": "replay",
+              "notes": {
+                "24": "11...c5 12.dxc5 bxc5. Black has hanging pawns on c5 and d5.",
+                "34": "13.Qc2 Rc8 14.Rfd1 Qb6 15.Qb1 Rfd8 16.Rc2 Qe6 17.Bg3 Nh5! Karpov goes after the dark-squared bishop.",
+                "38": "18.Rcd2 Nxg3 19.hxg3 Nf6. Black now has the two bishops, and White has one piece fewer to attack the pawns.",
+                "48": "20.Qc2 g6 21.Qa4 a6 22.Bd3 Kg7 23.Bb1 Qb6 24.a3 d4! The break, when every black piece supports it. Stockfish rates it about the same as 24...Bc6 (Black +1.3 to +1.5): the timing, not the move alone, is the point.",
+                "52": "25.Ne2 dxe3 26.fxe3 c4! The second pawn advances and opens the b6-queen's diagonal to e3 and g1.",
+                "60": "27.Ned4 Qc7 28.Nh4 Qe5 29.Kh1 Kg8 30.Ndf3 Qxg3. Black has won a pawn and the white king is exposed.",
+                "86": "43.Nhf3 Rb5 and White resigned."
+              }
+            },
+            {
+              "type": "challenge",
+              "fen": "2rr4/1b2bpk1/pq3npp/2p5/Q7/P3PNP1/1P1RN1P1/1B1R2K1 b - - 0 26",
+              "orientation": "black",
+              "prompt": "Korchnoi–Karpov, move 26. Black to play. Karpov has already pushed ...d4 and exchanged on e3. Push the other pawn at the right moment.",
+              "solution": [
+                "c5c4"
+              ],
+              "hint": "Which diagonal opens when the c-pawn leaves c5? Look at the queen on b6.",
+              "explanation": "26...c4! opens the a7-g1 diagonal for the b6-queen against e3 and the king on g1, and takes the d3-square from the b1-bishop. Stockfish: Black +3.9 after 26...c4, +2.7 after 26...Rxd2."
+            },
+            {
+              "type": "position",
+              "fen": "2r2qk1/r2n2p1/p3p2p/2p5/3pP3/Q7/PP2BPPP/2R2RK1 w - - 0 21",
+              "arrows": [
+                {
+                  "from": "f2",
+                  "to": "f4",
+                  "brush": "green"
+                },
+                {
+                  "from": "f4",
+                  "to": "f5",
+                  "brush": "green"
+                },
+                {
+                  "from": "e4",
+                  "to": "e5",
+                  "brush": "green"
+                }
+              ],
+              "highlights": [
+                {
+                  "square": "e6",
+                  "brush": "red"
+                },
+                {
+                  "square": "c5",
+                  "brush": "yellow"
+                },
+                {
+                  "square": "d4",
+                  "brush": "yellow"
+                }
+              ],
+              "caption": "The other side: Fischer–Spassky 1972, game 6, after 20.e4 d4. Fischer forced one hanging pawn forward. The pawns no longer stand side by side, e6 becomes a target, and White's e- and f-pawns roll on (21.f4, 22.e5, later f5)."
+            },
+            {
+              "type": "quiz",
+              "question": "When is the advance ...d4 good for the side with hanging pawns on c5 and d5?",
+              "options": [
+                "When it opens a line or hits a piece, and the c5-pawn is not left weak behind it.",
+                "As early as possible, to gain space.",
+                "Never: hanging pawns must stay side by side."
+              ],
+              "answer": 0,
+              "explanation": "Karpov pushed ...d4 on move 24, when every piece stood behind it, and ...c4 two moves later, when it opened the queen's diagonal. Spassky in 1972 had to push ...d4 because Fischer attacked d5 with e4; the push came on White's terms and left c5 and e6 as targets. Same move, different timing."
+            }
+          ]
+        },
+        {
+          "id": "b6m3l3",
+          "title": "Pawn majorities",
+          "objective": "Use a pawn majority to make a passed pawn: in the centre to gain space and open lines, on the wing to create an outside passed pawn for the endgame.",
+          "minutes": 14,
+          "sections": [
+            {
+              "type": "text",
+              "md": "A majority is a group of pawns that outnumbers the opponent's pawns on that part of the board: three against two on the queenside, or two against one in the centre. Yusupov gives each kind a chapter in Boost Your Chess 3.\n\nA central majority is a middlegame weapon. Advanced with support, it gains space, drives enemy pieces from their squares and opens lines towards the king. Its danger: pushed too early or without support, the pawns become targets.\n\nA queenside majority is an endgame weapon. It produces an outside passed pawn, far from the kings, which pulls the enemy king away while your king eats the pawns on the other wing.\n\nTwo rules for any majority:\n\n1. The candidate moves first. The candidate is the pawn with no enemy pawn on its file; it is the one that will become passed.\n2. Support before you push. A pawn that advances alone is blockaded and lost.\n\nBotvinnik–Capablanca, AVRO 1938, is the model of a central majority: e3-e4-e5, then f4-f5, and a passed pawn on e6."
+            },
+            {
+              "type": "game",
+              "pgn": "[White \"Mikhail Botvinnik\"]\n[Black \"Jose Raul Capablanca\"]\n[Event \"AVRO tournament (round played in Rotterdam)\"]\n[Date \"1938\"]\n[Result \"1-0\"]\n[ECO \"E49\"]\n[Site \"Rotterdam\"]\n[Round \"-\"]\n[Themes \"pawn-structure,attack,sacrifice,classic\"]\n[Level \"3\"]\n[PlyCount \"81\"]\n\n1. d4 Nf6 2. c4 e6 3. Nc3 Bb4 4. e3 d5 5. a3 Bxc3+ 6. bxc3 c5 7. cxd5 exd5 8.\nBd3 O-O 9. Ne2 b6 10. O-O Ba6 11. Bxa6 Nxa6 12. Bb2 Qd7 13. a4 Rfe8 14. Qd3 c4\n15. Qc2 Nb8 16. Rae1 Nc6 17. Ng3 Na5 18. f3 Nb3 19. e4 Qxa4 20. e5 Nd7 21. Qf2\ng6 22. f4 f5 23. exf6 Nxf6 24. f5 Rxe1 25. Rxe1 Re8 26. Re6 Rxe6 27. fxe6 Kg7\n28. Qf4 Qe8 29. Qe5 Qe7 30. Ba3 Qxa3 31. Nh5+ gxh5 32. Qg5+ Kf8 33. Qxf6+ Kg8\n34. e7 Qc1+ 35. Kf2 Qc2+ 36. Kg3 Qd3+ 37. Kh4 Qe4+ 38. Kxh5 Qe2+ 39. Kh4 Qe4+\n40. g4 Qe1+ 41. Kh5 1-0",
+              "title": "Botvinnik vs Capablanca, AVRO 1938",
+              "mode": "replay",
+              "notes": {
+                "14": "7.cxd5 exd5. White's centre pawns (d4, e3) face a single black d-pawn. The plan is f3 and e4: the central majority advances.",
+                "28": "14.Qd3 c4. Capablanca closes the queenside and goes after the a4-pawn. All of White's play must now come in the centre.",
+                "37": "17.Ng3 Na5 18.f3 Nb3 19.e4! The majority starts to roll while the black knights are on the queenside.",
+                "39": "19...Qxa4 20.e5. The e-pawn gains space and drives the knight from f6.",
+                "45": "20...Nd7 21.Qf2 g6 22.f4 f5 23.exf6. White takes en passant and keeps the pawns moving.",
+                "47": "23...Nxf6 24.f5! The f-pawn advances; lines open towards the black king.",
+                "53": "24...Rxe1 25.Rxe1 Re8 26.Re6 Rxe6 27.fxe6. The majority has made a passed pawn on e6.",
+                "59": "28.Qf4 Qe8 29.Qe5 Qe7 30.Ba3!! The deflection: see the first lesson of this band.",
+                "81": "41.Kh5 and Black resigned: the checks are over."
+              }
+            },
+            {
+              "type": "challenge",
+              "fen": "r3r1k1/p6p/1p3np1/3p4/q1pP1P2/1nP3N1/1B3QPP/4RRK1 w - - 0 24",
+              "prompt": "Botvinnik–Capablanca, move 24. White to play. The e-pawn has done its work. Bring the next pawn of the majority.",
+              "solution": [
+                "f4f5"
+              ],
+              "hint": "Which pawn opens a line towards the black king and attacks g6?",
+              "explanation": "24.f5! The f-pawn advances against g6 and opens lines. After 24...Rxe1 25.Rxe1 Re8 26.Re6 the majority turns into a passed pawn on e6. Stockfish: 24.f5 +1.6, 24.h3 +0.6."
+            },
+            {
+              "type": "position",
+              "fen": "4k3/pp3ppp/8/8/8/8/PPP2PPP/4K3 w - - 0 1",
+              "arrows": [
+                {
+                  "from": "c2",
+                  "to": "c4",
+                  "brush": "green"
+                },
+                {
+                  "from": "c4",
+                  "to": "c5",
+                  "brush": "green"
+                }
+              ],
+              "highlights": [
+                {
+                  "square": "c2",
+                  "brush": "yellow"
+                }
+              ],
+              "caption": "A queenside majority: three white pawns against two. The c-pawn has no black pawn on its file: it is the candidate and leads the advance, with the a- and b-pawns following in support."
+            },
+            {
+              "type": "quiz",
+              "fen": "4k3/pp3ppp/8/8/8/8/PPP2PPP/4K3 w - - 0 1",
+              "question": "In the diagram, White wants a passed pawn on the queenside. Which pawn should lead the advance?",
+              "options": [
+                "The c-pawn: it has no black pawn on its file.",
+                "The a-pawn: it is furthest from the black king.",
+                "The b-pawn: it is in the middle of the group."
+              ],
+              "answer": 0,
+              "explanation": "The candidate rule: the pawn without an opposing pawn on its file advances first, and the others support it. If a pawn with an enemy pawn in front of it goes first, one black pawn can often hold up two white ones."
+            }
+          ]
+        },
+        {
+          "id": "b6m3l4",
+          "title": "Bishop against knight",
+          "objective": "Decide bishop or knight from the pawn structure, and use the bishop's waiting moves to put the knight side in zugzwang.",
+          "minutes": 16,
+          "sections": [
+            {
+              "type": "text",
+              "md": "Bishop or knight? Yusupov devotes two chapters of Boost Your Chess 3 to it, and the answer always comes from the pawns.\n\nThe bishop is better when:\n\n- pawns stand on both wings, so a long-range piece can attack on one side and defend on the other;\n- the position is open, or can be opened;\n- the enemy pawns are fixed on the bishop's colour.\n\nThe knight is better when:\n\n- the pawns are blocked and stand on one wing;\n- it has an outpost that no pawn can attack;\n- the enemy bishop is bad, shut in by its own pawns.\n\nOne more point decides many endings. A knight needs an even number of moves to come back to a square, so it cannot lose a tempo. A bishop can usually make a waiting move on the same diagonal. In zugzwang fights the bishop's side has the spare moves.\n\nFischer–Taimanov, Candidates 1971, game 4, is the model. Pawns on both wings, Black's pawns partly on light squares, and Fischer's light-squared bishop gains tempi until the knight and king run out of moves."
+            },
+            {
+              "type": "game",
+              "pgn": "[Event \"Candidates quarter-final (game 4), Vancouver\"]\n[Site \"Vancouver CAN\"]\n[Date \"1971.05.??\"]\n[Round \"4\"]\n[White \"Robert J. Fischer\"]\n[Black \"Mark Taimanov\"]\n[Result \"1-0\"]\n[ECO \"B47\"]\n\n1. e4 c5 2. Nf3 Nc6 3. d4 cxd4 4. Nxd4 Qc7 5. Nc3 e6 6. g3 a6 7. Bg2 Nf6 8.\nO-O Nxd4 9. Qxd4 Bc5 10. Bf4 d6 11. Qd2 h6 12. Rad1 e5 13. Be3 Bg4 14. Bxc5\ndxc5 15. f3 Be6 16. f4 Rd8 17. Nd5 Bxd5 18. exd5 e4 19. Rfe1 Rxd5 20. Rxe4+\nKd8 21. Qe2 Rxd1+ 22. Qxd1+ Qd7 23. Qxd7+ Kxd7 24. Re5 b6 25. Bf1 a5 26. Bc4\nRf8 27. Kg2 Kd6 28. Kf3 Nd7 29. Re3 Nb8 30. Rd3+ Kc7 31. c3 Nc6 32. Re3 Kd6\n33. a4 Ne7 34. h3 Nc6 35. h4 h5 36. Rd3+ Kc7 37. Rd5 f5 38. Rd2 Rf6 39. Re2\nKd7 40. Re3 g6 41. Bb5 Rd6 42. Ke2 Kd8 43. Rd3 Kc7 44. Rxd6 Kxd6 45. Kd3 Ne7\n46. Be8 Kd5 47. Bf7+ Kd6 48. Kc4 Kc6 49. Be8+ Kb7 50. Kb5 Nc8 51. Bc6+ Kc7 52.\nBd5 Ne7 53. Bf7 Kb7 54. Bb3 Ka7 55. Bd1 Kb7 56. Bf3+ Kc7 57. Ka6 Nc8 58. Bd5\nNe7 59. Bc4 Nc6 60. Bf7 Ne7 61. Be8 Kd8 62. Bxg6 Nxg6 63. Kxb6 Kd7 64. Kxc5\nNe7 65. b4 axb4 66. cxb4 Nc8 67. a5 Nd6 68. b5 Ne4+ 69. Kb6 Kc8 70. Kc6 Kb8\n71. b6 1-0",
+              "title": "Fischer vs Taimanov, Vancouver 1971 (Candidates, game 4)",
+              "mode": "replay",
+              "notes": {
+                "33": "17.Nd5! Bxd5 18.exd5. White gives the knight for the bishop and keeps his light-squared bishop against Black's knight.",
+                "45": "18...e4 19.Rfe1 Rxd5 20.Rxe4+ Kd8 21.Qe2 Rxd1+ 22.Qxd1+ Qd7 23.Qxd7+ Kxd7. Queens off; pawns on both wings.",
+                "51": "24.Re5 b6 25.Bf1 a5 26.Bc4. The bishop eyes f7 and the queenside at the same time.",
+                "87": "44.Rxd6 Kxd6. Rooks off: pure bishop against knight.",
+                "95": "45.Kd3 Ne7 46.Be8 Kd5 47.Bf7+ Kd6 48.Kc4. The bishop checks to gain time; the white king walks in.",
+                "113": "49.Be8+ Kb7 50.Kb5 Nc8 51.Bc6+ Kc7 52.Bd5 Ne7 53.Bf7 Kb7 54.Bb3 Ka7 55.Bd1 Kb7 56.Bf3+ Kc7 57.Ka6. The bishop shuffles while keeping its job; the king reaches a6.",
+                "123": "62.Bxg6! The bishop gives itself up to make two passed pawns. (Stockfish also likes 62.Bf7; both win.)",
+                "125": "62...Nxg6 63.Kxb6. The b6-pawn falls and the c5-pawn follows.",
+                "141": "71.b6 and Black resigned: the a- and b-pawns cannot both be stopped."
+              }
+            },
+            {
+              "type": "quiz",
+              "fen": "8/8/1pnk2p1/pBp2p1p/P4P1P/2P3P1/1P2K3/8 w - - 0 45",
+              "question": "Fischer–Taimanov after 44.Rxd6 Kxd6. Why is White's bishop better than Black's knight here?",
+              "options": [
+                "Pawns on both wings, several black pawns on light squares, and the bishop can make waiting moves while the knight cannot lose a tempo.",
+                "Black has more pawns.",
+                "All the pawns are blocked on one wing, which favours the bishop."
+              ],
+              "answer": 0,
+              "explanation": "With pawns on a- to c-files and f- to h-files the knight cannot cover both wings. The f5-, g6- and h5-pawns stand on light squares, where the bishop can attack them. And when it came to zugzwang (move 57), the bishop simply changed squares on its diagonals while Black's king and knight had to give way."
+            },
+            {
+              "type": "challenge",
+              "fen": "3k4/8/Kp4n1/p1p2p1p/P4P1P/2P3P1/1P6/8 w - - 0 63",
+              "prompt": "Fischer–Taimanov after 62.Bxg6 Nxg6. White has given the bishop for two pawns. White to play.",
+              "solution": [
+                "a6b6"
+              ],
+              "hint": "The king is already next to the queenside pawns. Take one and head for the next.",
+              "explanation": "63.Kxb6! Kd7 64.Kxc5: the a- and b-pawns become two connected passed pawns, and the knight cannot stop them and guard the kingside. Stockfish: 63.Kxb6 +3.3; 63.Kb7 only +0.3."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "b6m4",
+      "band": 6,
+      "title": "Prophylaxis and defence",
+      "strand": "thinking",
+      "summary": "Think about the opponent's plan before your own, defend by counterattack, give or take material on purpose, and steer for fortresses.",
+      "source": "Dvoretsky and Yusupov, prophylactic thinking (Boost Your Chess 3 ch. 3 counterplay, ch. 7 counter-attack, ch. 12 prophylactic thinking, ch. 14 defence); Yusupov, Chess Evolution 3 (fortresses); Aagaard, Grandmaster Preparation: Calculation (ch. 3 prophylaxis) and Positional Play (the three questions); Nimzowitsch, My System; de la Villa, 100 Endgames You Must Know (fortresses); model games Karpov–Unzicker 1974, Karpov–Spassky 1974, Geller–Euwe 1953, Karpov–Kasparov 1985, Reshevsky–Petrosian 1953, Capablanca–Marshall 1918, Carlsen–Caruana 2018",
+      "lessons": [
+        {
+          "id": "b6m4l1",
+          "title": "Prophylactic thinking",
+          "objective": "Before choosing a move, ask what your opponent wants to do, and prefer the move that improves your position and stops his plan.",
+          "minutes": 15,
+          "sections": [
+            {
+              "type": "text",
+              "md": "Dvoretsky's prophylactic thinking is one habit: before you choose your move, ask what your opponent wants to do, and how you can stop it. Nimzowitsch called the result prophylaxis; Petrosian and Karpov built careers on it.\n\nAsk the question in two forms:\n\n1. What is his threat? That is defence, and every player does it.\n2. What is his plan, if he had a free move? That is prophylaxis: you stop the plan before it becomes a threat.\n\nAagaard turns this into three training questions for quiet positions:\n\n- Where are the weaknesses, his and mine?\n- Which is my worst piece?\n- What is my opponent's idea?\n\nThe answers point to the move: improve the worst piece to a square where it also stops his idea, or attack a weakness in a way that leaves him nothing useful to do. A player without useful moves soon makes harmful ones.\n\nKarpov–Unzicker, Nice Olympiad 1974, is the purest example. Most of Karpov's moves take something away from Black rather than threaten something."
+            },
+            {
+              "type": "game",
+              "pgn": "[Event \"Nice Olympiad (final A)\"]\n[Site \"Nice FRA\"]\n[Date \"1974.??.??\"]\n[Round \"3\"]\n[White \"Anatoly Karpov\"]\n[Black \"Wolfgang Unzicker\"]\n[Result \"1-0\"]\n[ECO \"C98\"]\n\n1. e4 e5 2. Nf3 Nc6 3. Bb5 a6 4. Ba4 Nf6 5. O-O Be7 6. Re1 b5 7. Bb3 d6 8. c3\nO-O 9. h3 Na5 10. Bc2 c5 11. d4 Qc7 12. Nbd2 Nc6 13. d5 Nd8 14. a4 Rb8 15.\naxb5 axb5 16. b4 Nb7 17. Nf1 Bd7 18. Be3 Ra8 19. Qd2 Rfc8 20. Bd3 g6 21. Ng3\nBf8 22. Ra2 c4 23. Bb1 Qd8 24. Ba7 Ne8 25. Bc2 Nc7 26. Rea1 Qe7 27. Bb1 Be8\n28. Ne2 Nd8 29. Nh2 Bg7 30. f4 f6 31. f5 g5 32. Bc2 Bf7 33. Ng3 Nb7 34. Bd1 h6\n35. Bh5 Qe8 36. Qd1 Nd8 37. Ra3 Kf8 38. R1a2 Kg8 39. Ng4 Kf8 40. Ne3 Kg8 41.\nBxf7+ Nxf7 42. Qh5 Nd8 43. Qg6 Kh8 44. Nh5 1-0",
+              "title": "Karpov vs Unzicker, Nice Olympiad 1974",
+              "mode": "replay",
+              "notes": {
+                "27": "13.d5 Nd8 14.a4! The centre is closed, so the play moves to the wings. Karpov starts on the queenside.",
+                "31": "14...Rb8 15.axb5 axb5 16.b4. The queenside pawns are fixed; the a-file is the only open line.",
+                "43": "17.Nf1 Bd7 18.Be3 Ra8 19.Qd2 Rfc8 20.Bd3 g6 21.Ng3 Bf8 22.Ra2. White prepares to double rooks on the a-file.",
+                "47": "22...c4 23.Bb1 Qd8 24.Ba7! The bishop stands between the rooks on the a-file. White can now double rooks behind it, and Black cannot contest the file. Stockfish rates the best rook moves a little higher (about +0.7 against +0.5); Karpov's move is aimed at Black's plan, not at the evaluation.",
+                "59": "24...Ne8 25.Bc2 Nc7 26.Rea1 Qe7 27.Bb1 Be8 28.Ne2 Nd8 29.Nh2 Bg7 30.f4. With the queenside locked, Karpov opens a second front on the kingside.",
+                "61": "30...f6 31.f5! g5. Now the kingside is closed too. Black's pieces have few squares and no targets.",
+                "69": "32.Bc2 Bf7 33.Ng3 Nb7 34.Bd1 h6 35.Bh5. White offers to trade Black's last active piece, the f7-bishop.",
+                "79": "35...Qe8 36.Qd1 Nd8 37.Ra3 Kf8 38.R1a2 Kg8 39.Ng4 Kf8 40.Ne3 Kg8. Black can only move his king back and forth.",
+                "87": "41.Bxf7+ Nxf7 42.Qh5 Nd8 43.Qg6 Kh8 44.Nh5 and Black resigned."
+              }
+            },
+            {
+              "type": "quiz",
+              "fen": "r1rq1bk1/1n1b1p1p/3p1np1/1p1Pp3/1Pp1P3/2P1BNNP/R2Q1PP1/1B2R1K1 w - - 2 24",
+              "question": "Karpov–Unzicker, move 24. White holds the only open file with the rook on a2. What does Black want to do next?",
+              "options": [
+                "Contest the a-file and trade rooks there, to ease his cramped position.",
+                "Attack the white king with ...h5-h4.",
+                "Win the e4-pawn with ...Nxe4."
+              ],
+              "answer": 0,
+              "explanation": "Black's rook on a8 faces White's rook on a2. A rook trade on the only open file would leave White nothing to attack with. 24.Ba7! stands between the rooks, so White can double behind the bishop and Black can never challenge the file. Stockfish rates the best rook moves a little higher (about +0.7 against +0.5), but 24.Ba7 shows the method: first find his plan, then take it away."
+            },
+            {
+              "type": "position",
+              "fen": "r2r2k1/4qp2/2p3p1/p3p2p/PnQ1P2b/2N1B2P/1PPR2P1/5RK1 w - - 6 24",
+              "arrows": [
+                {
+                  "from": "c3",
+                  "to": "b1",
+                  "brush": "green"
+                },
+                {
+                  "from": "b1",
+                  "to": "d2",
+                  "brush": "green"
+                },
+                {
+                  "from": "d2",
+                  "to": "f3",
+                  "brush": "green"
+                },
+                {
+                  "from": "f3",
+                  "to": "e5",
+                  "brush": "red"
+                }
+              ],
+              "highlights": [
+                {
+                  "square": "c3",
+                  "brush": "yellow"
+                },
+                {
+                  "square": "e5",
+                  "brush": "red"
+                },
+                {
+                  "square": "c6",
+                  "brush": "red"
+                }
+              ],
+              "caption": "Karpov–Spassky, Candidates 1974, game 9, move 24. The c3-knight attacks nothing. Karpov played 24.Nb1!!, to come back via d2 to f3, where it hits the weak e5-pawn."
+            },
+            {
+              "type": "quiz",
+              "fen": "r2r2k1/4qp2/2p3p1/p3p2p/PnQ1P2b/2N1B2P/1PPR2P1/5RK1 w - - 6 24",
+              "question": "Karpov–Spassky, move 24. Use Aagaard's second question: which is White's worst piece?",
+              "options": [
+                "The c3-knight: from c3 it attacks no weakness.",
+                "The c4-queen.",
+                "The e3-bishop."
+              ],
+              "answer": 0,
+              "explanation": "The queen on c4 already hits c6 and f7, and the bishop holds the dark squares. The knight has no target from c3. 24.Nb1!! is the start of its trip to d2 and f3, where it attacks e5. Stockfish agrees: 24.Nb1 is the best move (+1.4)."
+            }
+          ]
+        },
+        {
+          "id": "b6m4l2",
+          "title": "Defence and counterattack",
+          "objective": "Meet a wing attack with a counterattack where the attacker's pieces are not, and find the only moves when there is no time to wait.",
+          "minutes": 16,
+          "sections": [
+            {
+              "type": "text",
+              "md": "Defence is not waiting. Yusupov's chapters on defence, counterplay and counter-attack in Boost Your Chess 3 give the defender three tools, in order of preference:\n\n1. Counterattack where the attacker is not. If his pieces are committed to one wing, his other wing and his king are short of defenders. A counter-threat that must be answered stops the attack for a move, and often for good.\n2. Give material back. A pawn or the exchange returned at the right moment breaks the attack's momentum.\n3. Simplify. Every exchange of an attacking piece reduces the danger; the queen is the first piece to trade.\n\nTwo errors to avoid: passive defence that lets the attacker bring one more piece, and panic, a sacrifice made before you have checked whether the threat is real.\n\nGeller–Euwe, Zürich 1953, is the classic. Geller's queen has broken into h7 and his rook stands on h4. Euwe gives a rook to bring his own rook to the second rank, and his attack arrives first."
+            },
+            {
+              "type": "game",
+              "pgn": "[Event \"Candidates Tournament, Zurich\"]\n[Site \"Zurich SUI\"]\n[Date \"1953.??.??\"]\n[Round \"2\"]\n[White \"Efim Geller\"]\n[Black \"Max Euwe\"]\n[Result \"0-1\"]\n[ECO \"E28\"]\n\n1. d4 Nf6 2. c4 e6 3. Nc3 Bb4 4. e3 c5 5. a3 Bxc3+ 6. bxc3 b6 7. Bd3 Bb7 8. f3\nNc6 9. Ne2 O-O 10. O-O Na5 11. e4 Ne8 12. Ng3 cxd4 13. cxd4 Rc8 14. f4 Nxc4\n15. f5 f6 16. Rf4 b5 17. Rh4 Qb6 18. e5 Nxe5 19. fxe6 Nxd3 20. Qxd3 Qxe6 21.\nQxh7+ Kf7 22. Bh6 Rh8 23. Qxh8 Rc2 24. Rc1 Rxg2+ 25. Kf1 Qb3 26. Ke1 Qf3 0-1",
+              "title": "Geller vs Euwe, Zürich 1953 (Candidates)",
+              "mode": "replay",
+              "notes": {
+                "28": "11.e4 Ne8 12.Ng3 cxd4 13.cxd4 Rc8 14.f4 Nxc4. Euwe takes a pawn and lets White attack on the kingside.",
+                "33": "15.f5 f6 16.Rf4 b5 17.Rh4. The rook swings to the h-file.",
+                "42": "17...Qb6 18.e5 Nxe5 19.fxe6 Nxd3 20.Qxd3 Qxe6 21.Qxh7+ Kf7. Queen on h7, rook on h4: it looks decisive.",
+                "44": "22.Bh6 Rh8!? Euwe offers a rook to pull the queen into the corner. Stockfish prefers 22...Qd5 (Black +0.7) to Euwe's move (White +0.5); the point comes next move.",
+                "46": "23.Qxh8 Rc2!! The only move. The rook reaches the second rank, aiming at g2. Every other move loses.",
+                "47": "24.Rc1? The losing move. Stockfish wanted 24.d5, about level.",
+                "50": "24...Rxg2+ 25.Kf1 Qb3! White is ahead in material but cannot meet the queen and rook on his king.",
+                "52": "26.Ke1 Qf3 and White resigned."
+              }
+            },
+            {
+              "type": "challenge",
+              "fen": "2r1n2Q/pb1p1kp1/4qp1B/1p6/3P3R/P5N1/6PP/R5K1 b - - 0 23",
+              "orientation": "black",
+              "prompt": "Geller–Euwe, after 22.Bh6 Rh8 23.Qxh8. Black has given a rook for a pawn and his king is open. Black to play: one move holds.",
+              "solution": [
+                "c8c2"
+              ],
+              "hint": "Do not defend the king. Bring a rook to the rank where the white king lives.",
+              "explanation": "23...Rc2!! The rook reaches the second rank and aims at g2. It is the only move: Stockfish rates it about level (White +0.3), and every other move loses (White +3.8 or more)."
+            },
+            {
+              "type": "challenge",
+              "fen": "4n2Q/pb1p1kp1/4qp1B/1p6/3P3R/P5N1/2r3PP/2R3K1 b - - 2 24",
+              "orientation": "black",
+              "prompt": "Geller played 24.Rc1?. Black to play and win.",
+              "solution": [
+                "c2g2",
+                "g1f1",
+                "e6b3"
+              ],
+              "hint": "Take on g2 with check, then bring the queen to the light squares around the white king.",
+              "explanation": "24...Rxg2+! 25.Kf1 Qb3! The queen and rook close in on the king; White has more material and no defence. 26.Ke1 Qf3 and White resigned. Stockfish: 24...Rxg2+ Black +8.2; the next move, 24...Rb2, gives White +0.5."
+            },
+            {
+              "type": "challenge",
+              "fen": "b3r2k/q5bp/4R3/4P1P1/P1Q4R/2N5/1rn3BP/7K b - - 2 41",
+              "orientation": "black",
+              "prompt": "Karpov–Kasparov, World Championship 1985, game 24, move 41. Karpov's attack has run out of steam. Black to play: finish the counterattack.",
+              "solution": [
+                "a8g2",
+                "h1g2",
+                "c2d4"
+              ],
+              "hint": "Remove the g2-bishop with check. Then the knight on c2 is blocking a rook: move it with a threat.",
+              "explanation": "41...Bxg2+! 42.Kxg2 Nd4+! A discovered check from the b2-rook, and the knight attacks the e6-rook. Karpov resigned and Kasparov became world champion. Stockfish: 41...Bxg2+ Black +7.5, 41...Reb8 +3.7."
+            },
+            {
+              "type": "game",
+              "pgn": "[Event \"World Championship 1985 (game 24), Moscow\"]\n[Site \"Moscow URS\"]\n[Date \"1985.11.09\"]\n[Round \"24\"]\n[White \"Anatoly Karpov\"]\n[Black \"Garry Kasparov\"]\n[Result \"0-1\"]\n[ECO \"B85\"]\n\n1. e4 c5 2. Nf3 d6 3. d4 cxd4 4. Nxd4 Nf6 5. Nc3 a6 6. Be2 e6 7. O-O Be7 8. f4\nO-O 9. Kh1 Qc7 10. a4 Nc6 11. Be3 Re8 12. Bf3 Rb8 13. Qd2 Bd7 14. Nb3 b6 15.\ng4 Bc8 16. g5 Nd7 17. Qf2 Bf8 18. Bg2 Bb7 19. Rad1 g6 20. Bc1 Rbc8 21. Rd3 Nb4\n22. Rh3 Bg7 23. Be3 Re7 24. Kg1 Rce8 25. Rd1 f5 26. gxf6 Nxf6 27. Rg3 Rf7 28.\nBxb6 Qb8 29. Be3 Nh5 30. Rg4 Nf6 31. Rh4 g5 32. fxg5 Ng4 33. Qd2 Nxe3 34. Qxe3\nNxc2 35. Qb6 Ba8 36. Rxd6 Rb7 37. Qxa6 Rxb3 38. Rxe6 Rxb2 39. Qc4 Kh8 40. e5\nQa7+ 41. Kh1 Bxg2+ 42. Kxg2 Nd4+ 0-1",
+              "title": "Karpov vs Kasparov, World Championship 1985, game 24",
+              "mode": "replay",
+              "notes": {
+                "29": "15.g4 Bc8 16.g5 Nd7. Karpov, who needed a win, starts a pawn storm on the kingside.",
+                "43": "17.Qf2 Bf8 18.Bg2 Bb7 19.Rad1 g6 20.Bc1 Rbc8 21.Rd3 Nb4 22.Rh3. Rook, queen and pawns aim at the black king.",
+                "50": "23.Be3 Re7 24.Kg1 Rce8 25.Rd1 f5! The counterpunch in the centre: the e4-pawn and the long diagonal become targets.",
+                "62": "26.gxf6 Nxf6 27.Rg3 Rf7 28.Bxb6 Qb8 29.Be3 Nh5 30.Rg4 Nf6 31.Rh4 g5! Black opens lines against the white king.",
+                "68": "32.fxg5 Ng4 33.Qd2 Nxe3 34.Qxe3 Nxc2. The knights win material while White's attack has nothing left.",
+                "84": "35.Qb6 Ba8 36.Rxd6 Rb7 37.Qxa6 Rxb3 38.Rxe6 Rxb2 39.Qc4 Kh8 40.e5 Qa7+ 41.Kh1 Bxg2+ 42.Kxg2 Nd4+ and White resigned. Kasparov became world champion."
+              }
+            },
+            {
+              "type": "quiz",
+              "fen": "2r1n2Q/pb1p1kp1/4qp1B/1p6/3P3R/P5N1/6PP/R5K1 b - - 0 23",
+              "orientation": "black",
+              "question": "Geller–Euwe after 23.Qxh8. Why is 23...Rc2 better than a defensive move such as 23...gxh6?",
+              "options": [
+                "Because White's pieces are all on the kingside, and a counter-threat on the second rank must be answered at once.",
+                "Because 23...Rc2 wins the white queen by force.",
+                "Because rooks belong on open files in every position."
+              ],
+              "answer": 0,
+              "explanation": "Geller's queen, rook and bishop are all far from his own king. 23...Rc2 creates a threat (...Rxg2+) that costs White time; 23...gxh6 gives White a free move to continue the attack, and Stockfish rates it as lost (White +3.9). The rook move does not win anything by force: with 24.d5 White keeps the balance."
+            }
+          ]
+        },
+        {
+          "id": "b6m4l3",
+          "title": "Material in defence: give it, or take it",
+          "objective": "Give material back when it destroys the attacker's main asset, and accept a sacrifice when you have calculated that the attack is not decisive.",
+          "minutes": 15,
+          "sections": [
+            {
+              "type": "text",
+              "md": "The defender's relation to material runs both ways.\n\nGiving it back. When the attacker's play depends on one piece, one file or one pawn chain, the defender can give the exchange or a pawn to destroy it. Petrosian's 25...Re6!! against Reshevsky is the model: a rook for a bishop, so that a knight can blockade the centre for good. The material is not lost; it is spent on a static asset.\n\nTaking it. When the opponent sacrifices, take if you have calculated that the attack is not decisive. Capablanca, against Marshall's prepared gambit in New York 1918, took the pawn and then the piece, and defended accurately. Refusing a sacrifice out of fear gives the attacker the initiative for free.\n\nThe test in both cases comes from Euwe and Kramer's split between static and dynamic. What will the position look like in ten moves? If his attack will have burnt out and your material remains, take. If his attack will grow and your extra material cannot help, give it back and change the character of the game."
+            },
+            {
+              "type": "game",
+              "pgn": "[Event \"Candidates Tournament, Zurich\"]\n[Site \"Zurich SUI\"]\n[Date \"1953.??.??\"]\n[Round \"2\"]\n[White \"Samuel Reshevsky\"]\n[Black \"Tigran Petrosian\"]\n[Result \"1/2-1/2\"]\n[ECO \"E58\"]\n\n1. d4 Nf6 2. c4 e6 3. Nc3 Bb4 4. e3 O-O 5. Bd3 d5 6. Nf3 c5 7. O-O Nc6 8. a3\nBxc3 9. bxc3 b6 10. cxd5 exd5 11. Bb2 c4 12. Bc2 Bg4 13. Qe1 Ne4 14. Nd2 Nxd2\n15. Qxd2 Bh5 16. f3 Bg6 17. e4 Qd7 18. Rae1 dxe4 19. fxe4 Rfe8 20. Qf4 b5 21.\nBd1 Re7 22. Bg4 Qe8 23. e5 a5 24. Re3 Rd8 25. Rfe1 Re6 26. a4 Ne7 27. Bxe6\nfxe6 28. Qf1 Nd5 29. Rf3 Bd3 30. Rxd3 cxd3 31. Qxd3 b4 32. cxb4 axb4 33. a5\nRa8 34. Ra1 Qc6 35. Bc1 Qc7 36. a6 Qb6 37. Bd2 b3 38. Qc4 h6 39. h3 b2 40. Rb1\nKh8 41. Be1 1/2-1/2",
+              "title": "Reshevsky vs Petrosian, Zürich 1953 (Candidates)",
+              "mode": "replay",
+              "notes": {
+                "26": "11.Bb2 c4 12.Bc2 Bg4 13.Qe1 Ne4. Black fixes the queenside; White keeps the bishop pair and a mobile centre.",
+                "45": "17.e4 Qd7 18.Rae1 dxe4 19.fxe4 Rfe8 20.Qf4 b5 21.Bd1 Re7 22.Bg4 Qe8 23.e5. The white centre rolls forward.",
+                "50": "24.Re3 Rd8 25.Rfe1 Re6!! The rook blocks e6 and offers itself to the g4-bishop. Stockfish also picks 25...Re6 as Black's best move (White +0.8; 25...Ra7 gives +1.4).",
+                "54": "26.a4 Ne7 27.Bxe6 fxe6. The e6-pawn and a knight on d5 will blockade the centre.",
+                "56": "28.Qf1 Nd5. The knight reaches its square. No pawn can drive it away, and it stops d4-d5.",
+                "59": "29.Rf3 Bd3 30.Rxd3 cxd3 31.Qxd3. Reshevsky gives the exchange back to free his position.",
+                "81": "41.Be1 and the players agreed a draw. The sacrifice did its job: the position held."
+              }
+            },
+            {
+              "type": "challenge",
+              "fen": "3rq1k1/4rppp/2n3b1/pp2P3/2pP1QB1/P1P1R3/1B4PP/4R1K1 b - - 3 25",
+              "orientation": "black",
+              "prompt": "Reshevsky–Petrosian, Zürich 1953, move 25. Black to play. White's e- and d-pawns and the g4-bishop press against e6. Stop the centre for good, even at a cost.",
+              "solution": [
+                "e7e6"
+              ],
+              "hint": "Put a rook on e6, where the bishop can take it. What recaptures, and which piece then comes to d5?",
+              "explanation": "25...Re6!! If White takes, ...fxe6 and ...Nd5 blockade the centre: in the game 26.a4 Ne7 27.Bxe6 fxe6 28.Qf1 Nd5. Stockfish also picks 25...Re6 as Black's best move (White +0.8; 25...Ra7 gives +1.4)."
+            },
+            {
+              "type": "challenge",
+              "fen": "r4rk1/2p2ppp/p2b4/1p6/3P2bq/1BP2Q1P/PP2RnP1/RNB3K1 w - - 2 17",
+              "prompt": "Capablanca–Marshall, New York 1918, move 17. Marshall's prepared attack: a knight sits on f2, the black queen is on h4, and the g4-bishop attacks the white queen. White to play.",
+              "solution": [
+                "h3g4"
+              ],
+              "hint": "Count what Black has after you take the bishop. Do not retreat the queen.",
+              "explanation": "17.hxg4! Capablanca takes. 17...Bh2+ 18.Kf1 Bg3 19.Rxf2 Qh1+ 20.Ke2 Bxf2 21.Bd2 and his king walked to safety on c2; he won on move 36. Stockfish: 17.hxg4 +1.7, 17.Qxf2 -1.0."
+            },
+            {
+              "type": "quiz",
+              "fen": "3rq1k1/4rppp/2n3b1/pp2P3/2pP1QB1/P1P1R3/1B4PP/4R1K1 b - - 3 25",
+              "orientation": "black",
+              "question": "Why did Petrosian give the exchange with 25...Re6?",
+              "options": [
+                "To blockade the centre: after Bxe6 fxe6, a knight on d5 stops the white pawns for good.",
+                "To win the e5-pawn.",
+                "To start a mating attack on the white king."
+              ],
+              "answer": 0,
+              "explanation": "Before 25...Re6, White's plan was to push the centre pawns and open lines for the bishops. After the exchange sacrifice the e6-pawn and the d5-knight form a wall that no white pawn can attack. Reshevsky later gave the exchange back to free himself, and the game was drawn."
+            }
+          ]
+        },
+        {
+          "id": "b6m4l4",
+          "title": "Fortresses",
+          "objective": "Recognise a fortress before you reach it, steer for it even at a cost, and hold it by keeping the king and pieces on the squares that close the entry.",
+          "minutes": 14,
+          "sections": [
+            {
+              "type": "text",
+              "md": "A fortress is a position the stronger side cannot win however long he plays, because he cannot break in. Yusupov's chapter in Chess Evolution 3 and de la Villa's appendix list the common types:\n\n- the wrong rook pawn: bishop and rook pawn against a king in the corner, when the bishop does not control the promotion square;\n- opposite-coloured bishops with the pawns blocked on the defender's colour;\n- a blocked pawn chain that the attacker's king cannot cross;\n- material down, but every entry square covered, as in Carlsen–Caruana 2018.\n\nThe defender's method:\n\n1. Recognise the fortress before you reach it, and steer for it, even at the cost of material.\n2. Put the king where the attacker needs to go: usually the corner, or the square in front of the passed pawn.\n3. Keep the pieces on squares that hold the line, and do not move pawns that are part of the wall.\n\nThe attacker's method is the reverse: change the structure before the fortress is complete."
+            },
+            {
+              "type": "position",
+              "fen": "8/8/5pKb/5P2/5k2/1B2n3/8/8 w - - 0 81",
+              "arrows": [],
+              "highlights": [
+                {
+                  "square": "g6",
+                  "brush": "green"
+                },
+                {
+                  "square": "f5",
+                  "brush": "green"
+                },
+                {
+                  "square": "h6",
+                  "brush": "yellow"
+                }
+              ],
+              "caption": "Carlsen–Caruana, World Championship 2018, game 6, final position. Black has an extra knight, but the white king on g6 and the bishop guard every entry. Draw agreed; Stockfish shows 0.00."
+            },
+            {
+              "type": "challenge",
+              "fen": "8/5k2/7K/8/7P/3B4/8/8 b - - 0 1",
+              "orientation": "black",
+              "prompt": "Black to play. White has a light-squared bishop and the h-pawn, and the h8-square is dark. Only one king move draws.",
+              "solution": [
+                "f7g8"
+              ],
+              "hint": "Run for the corner, and take the route that the white king cannot cut.",
+              "explanation": "1...Kg8! and the king reaches h8. The bishop can never control h8, so the king cannot be driven out: a fortress. Every other move loses (tablebase); for example 1...Kf8? 2.Kh7! and the king never gets to g8 or h8."
+            },
+            {
+              "type": "drill",
+              "fen": "8/8/4k3/7P/6K1/8/8/1B6 b - - 0 1",
+              "orientation": "black",
+              "goal": "draw",
+              "max_moves": 25,
+              "prompt": "Black to move. Reach the h8-corner and hold the draw.",
+              "tip": "Go f7, then g7 or g8, then h8. Once in the corner, step between h8 and g8 (or h7) and never leave. If the bishop checks you out of h7, go back to h8."
+            },
+            {
+              "type": "quiz",
+              "question": "King in the h8-corner against king, light-squared bishop and h-pawn. Why can White not win?",
+              "options": [
+                "The bishop can never attack h8, so the king can never be driven out of the corner.",
+                "The white king cannot reach the h-file.",
+                "The h-pawn cannot pass the g7-square."
+              ],
+              "answer": 0,
+              "explanation": "The promotion square h8 is dark and the bishop moves on light squares. White can take g8 and g7 away, but then the black king shuttles on h8 and h7, or it is stalemate. With a dark-squared bishop the same position is an easy win."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "b6m5",
+      "band": 6,
+      "title": "Endgames IV: key positions and technique",
+      "strand": "endgames",
+      "summary": "Dvoretsky's key positions for knight against pawn, opposite-coloured bishops and queen endings, and the method for converting a won endgame.",
+      "source": "Dvoretsky, Dvoretsky's Endgame Manual (knight against pawns, knight endgames, opposite-coloured bishops, queen endgames); Yusupov, Boost Your Chess 3 (ch. 2 realizing an advantage, ch. 4 knight endings), Build Up Your Chess 3 (opposite-coloured bishops) and Chess Evolution 3 (ch. 24 queen endings); Shereshevsky, Endgame Strategy; model games Topalov–Shirov 1998, Capablanca–Tartakower 1924, Carlsen–Karjakin 2016",
+      "lessons": [
+        {
+          "id": "b6m5l1",
+          "title": "Knight endings",
+          "objective": "Play knight endings like pawn endings: activate the king, value the outside passed pawn, and know the knight check that stops a pawn on the seventh.",
+          "minutes": 13,
+          "sections": [
+            {
+              "type": "text",
+              "md": "Botvinnik said that knight endings are pawn endings. The same factors decide: the active king and the passed pawn. A knight is a short-range piece; it cannot watch both wings at once. Yusupov's chapter on knight endings in Boost Your Chess 3 adds four points:\n\n1. An outside passed pawn is even stronger than in a pawn ending: the knight that stops it is out of play.\n2. A knight cannot lose a tempo. It needs an even number of moves to return to a square, so zugzwang is common.\n3. Against a far-advanced pawn, the lone knight draws if it can reach a square in front of the pawn, or give a check that also covers the promotion square.\n4. Rook pawns are the knight's worst enemy: in the corner it has only two squares.\n\nDvoretsky's key positions for knight against pawn come down to one geometry. A knight on d3 checks a king on b2 and covers c1. A knight on d2 checks a king on b3 and covers b1. Learn both."
+            },
+            {
+              "type": "position",
+              "fen": "8/8/8/8/8/3N3K/1kp5/8 b - - 1 1",
+              "arrows": [
+                {
+                  "from": "d3",
+                  "to": "b2",
+                  "brush": "red"
+                },
+                {
+                  "from": "d3",
+                  "to": "c1",
+                  "brush": "green"
+                }
+              ],
+              "highlights": [
+                {
+                  "square": "c1",
+                  "brush": "yellow"
+                },
+                {
+                  "square": "c2",
+                  "brush": "yellow"
+                }
+              ],
+              "caption": "The key geometry: the knight on d3 checks the king on b2 and covers c1, the promotion square. One move does both jobs, so the pawn cannot advance this turn."
+            },
+            {
+              "type": "challenge",
+              "fen": "8/8/8/8/8/1k3N1K/1p6/8 w - - 0 1",
+              "prompt": "White to play. The b-pawn is one step from promotion and the white king is far away. Only one move draws.",
+              "solution": [
+                "f3d2"
+              ],
+              "hint": "Find the knight check that also covers b1.",
+              "explanation": "1.Nd2+! checks the king on b3 and covers b1. After 1...Kc3 2.Nb1+ the knight keeps checking or blocking; the pawn never queens. Every other move loses (tablebase). Stockfish: 1.Nd2+ -0.4, a tablebase draw; 1.Kg4 -5.0."
+            },
+            {
+              "type": "drill",
+              "fen": "8/8/8/4N3/8/7K/1kp5/8 w - - 0 1",
+              "goal": "draw",
+              "max_moves": 20,
+              "prompt": "White to play. Stop the c-pawn with the knight and hold the draw.",
+              "tip": "Start with the check that covers c1 (Nd3+). Then keep the knight on squares that attack c1, or check the king whenever it guards c1. If the pawn promotes, the knight must be able to take it."
+            },
+            {
+              "type": "quiz",
+              "question": "Why are knight endings called \"pawn endings\" (Botvinnik)?",
+              "options": [
+                "Because the same factors decide them: king activity and passed pawns, since a knight cannot cover both wings.",
+                "Because the knights are usually traded at once.",
+                "Because a knight is worth about one pawn in the endgame."
+              ],
+              "answer": 0,
+              "explanation": "A knight moves slowly and covers a small area. So an active king that eats pawns, and a passed pawn far from the knight, decide the game, exactly as in a king-and-pawn ending. The knight stays worth about three pawns; it just cannot be in two places."
+            }
+          ]
+        },
+        {
+          "id": "b6m5l2",
+          "title": "Opposite-coloured bishops",
+          "objective": "Know when opposite-coloured bishops draw (blockade on the defender's colour) and when they win (distant passed pawns, an active king), and use the king above material.",
+          "minutes": 15,
+          "sections": [
+            {
+              "type": "text",
+              "md": "With bishops of opposite colours, the defender's king and bishop can blockade pawns on squares the attacker's bishop never controls. Even two extra pawns are often a draw. Dvoretsky's chapter on these endings and Yusupov's in Build Up Your Chess 3 give the rules:\n\n1. Connected passed pawns are stopped by the king in front of them, on the squares the defending bishop controls.\n2. Two passed pawns win when they are far apart, as a rule with at least two files between them: the king stops one, and the bishop cannot stop the other and guard everything else.\n3. The attacker needs his king. The bishop alone cannot force pawns past a blockade.\n4. The defender puts his king in front of the most dangerous pawn and uses his bishop on a long diagonal against the other.\n\nTopalov–Shirov, Linares 1998, shows rule 3 in its most extreme form. Black has passed pawns on a4 and d5. To bring his king to e4 and d3, Shirov gives his bishop away."
+            },
+            {
+              "type": "game",
+              "pgn": "[Event \"Linares\"]\n[Site \"Linares ESP\"]\n[Date \"1998.03.04\"]\n[Round \"10\"]\n[White \"Veselin Topalov\"]\n[Black \"Alexei Shirov\"]\n[Result \"0-1\"]\n[ECO \"D85\"]\n\n1. d4 Nf6 2. c4 g6 3. Nc3 d5 4. cxd5 Nxd5 5. e4 Nxc3 6. bxc3 Bg7 7. Bb5+ c6 8.\nBa4 O-O 9. Ne2 Nd7 10. O-O e5 11. f3 Qe7 12. Be3 Rd8 13. Qc2 Nb6 14. Bb3 Be6\n15. Rad1 Nc4 16. Bc1 b5 17. f4 exd4 18. Nxd4 Bg4 19. Rde1 Qc5 20. Kh1 a5 21.\nh3 Bd7 22. a4 bxa4 23. Ba2 Be8 24. e5 Nb6 25. f5 Nd5 26. Bd2 Nb4 27. Qxa4 Nxa2\n28. Qxa2 Bxe5 29. fxg6 hxg6 30. Bg5 Rd5 31. Re3 Qd6 32. Qe2 Bd7 33. c4 Bxd4\n34. cxd5 Bxe3 35. Qxe3 Re8 36. Qc3 Qxd5 37. Bh6 Re5 38. Rf3 Qc5 39. Qa1 Bf5\n40. Re3 f6 41. Rxe5 Qxe5 42. Qa2+ Qd5 43. Qxd5+ cxd5 44. Bd2 a4 45. Bc3 Kf7\n46. h4 Ke6 47. Kg1 Bh3 48. gxh3 Kf5 49. Kf2 Ke4 50. Bxf6 d4 51. Be7 Kd3 52.\nBc5 Kc4 53. Be7 Kb3 0-1",
+              "title": "Topalov vs Shirov, Linares 1998",
+              "mode": "replay",
+              "notes": {
+                "56": "24.e5 Nb6 25.f5 Nd5 26.Bd2 Nb4 27.Qxa4 Nxa2 28.Qxa2 Bxe5. Black collects pawns while the white attack fades.",
+                "70": "33.c4 Bxd4 34.cxd5 Bxe3 35.Qxe3 Re8. Shirov simplifies into an ending where his extra pawns count.",
+                "86": "41.Rxe5 Qxe5 42.Qa2+ Qd5 43.Qxd5+ cxd5. Bishops of opposite colours. Black has passed pawns on a4 and d5.",
+                "94": "47...Bh3!! The bishop is given away so that the black king can reach e4 and d3. Stockfish at depth 22 agrees it is by far the strongest move (Black +4.5; the next move +0.9).",
+                "98": "48.gxh3 Kf5 49.Kf2 Ke4. The king arrives first. The bishop must watch the a-pawn and the d-pawn at once.",
+                "106": "50.Bxf6 d4 51.Be7 Kd3 52.Bc5 Kc4 53.Be7 Kb3 and White resigned."
+              }
+            },
+            {
+              "type": "challenge",
+              "fen": "8/8/4kpp1/3p4/p6P/2B4P/8/6K1 b - - 0 48",
+              "orientation": "black",
+              "prompt": "Topalov–Shirov after 47...Bh3 48.gxh3. Black has given his bishop. Black to play.",
+              "solution": [
+                "e6f5"
+              ],
+              "hint": "The king must reach the centre before the white king does. Which square leads to e4?",
+              "explanation": "48...Kf5! 49.Kf2 Ke4. The king supports the d-pawn while the a-pawn ties down the bishop. Stockfish: 48...Kf5 Black +4.7; 48...f5 only 0.00."
+            },
+            {
+              "type": "position",
+              "fen": "8/8/5pp1/3p4/p3k2P/2B4P/5K2/8 w - - 3 50",
+              "arrows": [
+                {
+                  "from": "d5",
+                  "to": "d4",
+                  "brush": "green"
+                },
+                {
+                  "from": "e4",
+                  "to": "d3",
+                  "brush": "green"
+                },
+                {
+                  "from": "a4",
+                  "to": "a1",
+                  "brush": "red"
+                }
+              ],
+              "highlights": [
+                {
+                  "square": "c3",
+                  "brush": "yellow"
+                },
+                {
+                  "square": "a1",
+                  "brush": "red"
+                },
+                {
+                  "square": "d1",
+                  "brush": "red"
+                }
+              ],
+              "caption": "After 49...Ke4. The a-pawn and the d-pawn have two files between them. The bishop on c3 must stop both, and the black king escorts the d-pawn."
+            },
+            {
+              "type": "quiz",
+              "question": "With opposite-coloured bishops, which pair of extra passed pawns gives the best winning chances?",
+              "options": [
+                "Pawns far apart, such as on the a- and d-files.",
+                "Connected pawns, such as on the d- and e-files.",
+                "Doubled pawns on one file."
+              ],
+              "answer": 0,
+              "explanation": "Connected pawns can be stopped by the king on the defending bishop's colour, with the bishop guarding the other square. Pawns far apart split the defence: the king can stop one, the bishop must stop the other, and the attacking king breaks through on one side."
+            }
+          ]
+        },
+        {
+          "id": "b6m5l3",
+          "title": "Queen endings",
+          "objective": "Win queen endings with the cross-check and the passed pawn, and save them with perpetual check.",
+          "minutes": 14,
+          "sections": [
+            {
+              "type": "text",
+              "md": "Queen endings are the longest and most tactical endings in chess. The last chapter of Yusupov's Chess Evolution 3 and Dvoretsky's chapter on queen endgames reduce them to four ideas:\n\n1. The passed pawn counts more than material: how far it has advanced matters more than how many pawns each side has.\n2. Centralise the queen. From the centre it stops the pawn, guards its own king and checks in every direction.\n3. The defender's main weapon is perpetual check. The attacker's king needs shelter, often in front of his own pawn or near the enemy pawns.\n4. The cross-check: answer a check by putting your queen in the way, with check of your own. If he trades queens, the pawn ending decides; if he does not, you win his queen.\n\nDrill the cross-check and the perpetual. The first wins queen endings, the second saves them."
+            },
+            {
+              "type": "challenge",
+              "fen": "1k5q/8/5P2/8/8/8/3Q4/7K w - - 0 1",
+              "prompt": "White to play. The black queen checks on the h-file. Escape with a check of your own.",
+              "solution": [
+                "d2h2",
+                "h8h2",
+                "h1h2"
+              ],
+              "hint": "Which square on the h-file blocks the check and attacks the king on b8?",
+              "explanation": "1.Qh2+! blocks the check and gives check along the h2-b8 diagonal: a cross-check. 1...Qxh2+ 2.Kxh2 and the f-pawn is outside the black king's square: f7 and f8 follow. A king move instead loses the queen to Qxh8. Stockfish: 1.Qh2+ wins; 1.Kg2 Qxf6 is a draw."
+            },
+            {
+              "type": "position",
+              "fen": "Q7/1P3ppk/8/8/3q4/6PP/7K/8 b - - 0 1",
+              "arrows": [
+                {
+                  "from": "d4",
+                  "to": "f2",
+                  "brush": "green"
+                },
+                {
+                  "from": "f2",
+                  "to": "f1",
+                  "brush": "blue"
+                }
+              ],
+              "highlights": [
+                {
+                  "square": "h2",
+                  "brush": "red"
+                },
+                {
+                  "square": "b8",
+                  "brush": "red"
+                }
+              ],
+              "caption": "Black to move. White threatens b8=Q. Black checks from f2 and f1 in turn: the white king can only go between h1 and h2, and the white queen cannot block on g1 or g2."
+            },
+            {
+              "type": "drill",
+              "fen": "Q7/1P3ppk/8/8/3q4/6PP/7K/8 b - - 0 1",
+              "orientation": "black",
+              "goal": "draw",
+              "max_moves": 10,
+              "prompt": "Black to move. Give perpetual check before the b-pawn queens.",
+              "tip": "Start with Qf2+. The king has only h1 and h2: check on f1 when it goes to h1, and on f2 when it goes to h2. The white queen cannot block on g1 or g2."
+            },
+            {
+              "type": "quiz",
+              "question": "Your king is in check from the enemy queen. You block with your own queen and give check at the same time. What is this called, and what does it force?",
+              "options": [
+                "A cross-check: the opponent must trade queens or lose his queen.",
+                "A skewer: it wins a rook behind the king.",
+                "A stalemate trick: it forces a draw."
+              ],
+              "answer": 0,
+              "explanation": "The cross-check is the main winning tool in queen endings. It ends the opponent's checks at once, and the resulting pawn ending (or the extra queen) decides. Before you enter it, count the pawn ending."
+            }
+          ]
+        },
+        {
+          "id": "b6m5l4",
+          "title": "Realising an advantage",
+          "objective": "Convert a winning position by method: do not hurry, activate the king, create a second weakness, and break through only when everything is ready.",
+          "minutes": 18,
+          "sections": [
+            {
+              "type": "text",
+              "md": "Yusupov's chapter on realising an advantage and Shereshevsky's Endgame Strategy agree on the method. A won position is not won until the technique is right.\n\n1. Do not hurry. If the opponent has no counterplay, improve every piece before you act.\n2. Activate the king. In the endgame it is a strong piece.\n3. Two weaknesses. One weakness can be defended. Attack a second one on the other wing, and the defender's pieces cannot cover both.\n4. Trade the right pieces: his active ones, not yours.\n5. Calculate the transition. A pawn ending or a pure rook ending must be checked to the end before you go into it.\n\nTwo models. In Capablanca–Tartakower, New York 1924, Capablanca lets two pawns go to bring his king to f6. In Carlsen–Karjakin, World Championship 2016, game 10, Carlsen makes fifty moves of small improvements before he breaks through with 57.b5."
+            },
+            {
+              "type": "game",
+              "pgn": "[White \"Jose Raul Capablanca\"]\n[Black \"Savielly Tartakower\"]\n[Event \"New York\"]\n[Date \"1924\"]\n[Result \"1-0\"]\n[ECO \"A85\"]\n[Site \"New York\"]\n[Round \"-\"]\n[Themes \"endgame,rook-endgame,calculation,classic\"]\n[Level \"3\"]\n[PlyCount \"103\"]\n\n1. d4 e6 2. Nf3 f5 3. c4 Nf6 4. Bg5 Be7 5. Nc3 O-O 6. e3 b6 7. Bd3 Bb7 8. O-O\nQe8 9. Qe2 Ne4 10. Bxe7 Nxc3 11. bxc3 Qxe7 12. a4 Bxf3 13. Qxf3 Nc6 14. Rfb1\nRae8 15. Qh3 Rf6 16. f4 Na5 17. Qf3 d6 18. Re1 Qd7 19. e4 fxe4 20. Qxe4 g6 21.\ng3 Kf8 22. Kg2 Rf7 23. h4 d5 24. cxd5 exd5 25. Qxe8+ Qxe8 26. Rxe8+ Kxe8 27. h5\nRf6 28. hxg6 hxg6 29. Rh1 Kf8 30. Rh7 Rc6 31. g4 Nc4 32. g5 Ne3+ 33. Kf3 Nf5\n34. Bxf5 gxf5 35. Kg3 Rxc3+ 36. Kh4 Rf3 37. g6 Rxf4+ 38. Kg5 Re4 39. Kf6 Kg8\n40. Rg7+ Kh8 41. Rxc7 Re8 42. Kxf5 Re4 43. Kf6 Rf4+ 44. Ke5 Rg4 45. g7+ Kg8 46.\nRxa7 Rg1 47. Kxd5 Rc1 48. Kd6 Rc2 49. d5 Rc1 50. Rc7 Ra1 51. Kc6 Rxa4 52. d6\n1-0",
+              "title": "Capablanca vs Tartakower, New York 1924",
+              "mode": "replay",
+              "notes": {
+                "45": "23.h4! Capablanca steers for the ending. The h-pawn will open the h-file for his rook.",
+                "53": "23...d5 24.cxd5 exd5 25.Qxe8+ Qxe8 26.Rxe8+ Kxe8 27.h5. Queens and a pair of rooks are off; the h-pawn goes forward to open the h-file.",
+                "59": "27...Rf6 28.hxg6 hxg6 29.Rh1! Kf8 30.Rh7. The rook takes the open h-file and reaches the seventh rank.",
+                "68": "31.g4 Nc4 32.g5 Ne3+ 33.Kf3 Nf5 34.Bxf5 gxf5. A pure rook ending.",
+                "69": "35.Kg3!! The king heads for h4, g5 and f6. Black may take c3 and f4 with check.",
+                "77": "35...Rxc3+ 36.Kh4 Rf3 37.g6 Rxf4+ 38.Kg5 Re4 39.Kf6! Two pawns down, but king, rook and g-pawn threaten mate and promotion.",
+                "93": "39...Kg8 40.Rg7+ Kh8 41.Rxc7 Re8 42.Kxf5 Re4 43.Kf6 Rf4+ 44.Ke5 Rg4 45.g7+ Kg8 46.Rxa7 Rg1 47.Kxd5. The king collects the pawns.",
+                "103": "52.d6 and Black resigned."
+              }
+            },
+            {
+              "type": "challenge",
+              "fen": "5k2/p1p4R/1pr5/3p1pP1/P2P1P2/2P2K2/8/8 w - - 0 35",
+              "prompt": "Capablanca–Tartakower, move 35. White to play. The rook is on the seventh rank and the g-pawn is passed. Bring the last piece.",
+              "solution": [
+                "f3g3"
+              ],
+              "hint": "Black can take c3 and f4 with check. Let him: where does the king want to be?",
+              "explanation": "35.Kg3!! heads for h4, g5 and f6. 35...Rxc3+ 36.Kh4 Rf3 37.g6 Rxf4+ 38.Kg5: two pawns gone, but the king, the rook on h7 and the g-pawn create mating and promotion threats. Stockfish: 35.Kg3 +2.2, the next move +0.3."
+            },
+            {
+              "type": "challenge",
+              "fen": "5k2/p1p4R/1p4P1/3p1pK1/P2Pr3/8/8/8 w - - 2 39",
+              "prompt": "After 38...Re4. White to play. Two pawns down. Keep the king moving.",
+              "solution": [
+                "g5f6"
+              ],
+              "hint": "The king belongs next to the g-pawn and the black king.",
+              "explanation": "39.Kf6! threatens Rh8 mate and g7. Black must give way: 39...Kg8 40.Rg7+ Kh8 41.Rxc7 and the white king collects the pawns. Stockfish: 39.Kf6 +3.1, 39.Rd7 +1.1."
+            },
+            {
+              "type": "game",
+              "pgn": "[Event \"World Championship 2016 (game 10), New York\"]\n[Site \"New York USA\"]\n[Date \"2016.11.24\"]\n[Round \"10\"]\n[White \"Magnus Carlsen\"]\n[Black \"Sergey Karjakin\"]\n[Result \"1-0\"]\n[ECO \"C65\"]\n\n1. e4 e5 2. Nf3 Nc6 3. Bb5 Nf6 4. d3 Bc5 5. c3 O-O 6. Bg5 h6 7. Bh4 Be7 8. O-O\nd6 9. Nbd2 Nh5 10. Bxe7 Qxe7 11. Nc4 Nf4 12. Ne3 Qf6 13. g3 Nh3+ 14. Kh1 Ne7\n15. Bc4 c6 16. Bb3 Ng6 17. Qe2 a5 18. a4 Be6 19. Bxe6 fxe6 20. Nd2 d5 21. Qh5\nNg5 22. h4 Nf3 23. Nxf3 Qxf3+ 24. Qxf3 Rxf3 25. Kg2 Rf7 26. Rfe1 h5 27. Nf1\nKf8 28. Nd2 Ke7 29. Re2 Kd6 30. Nf3 Raf8 31. Ng5 Re7 32. Rae1 Rfe8 33. Nf3 Nh8\n34. d4 exd4 35. Nxd4 g6 36. Re3 Nf7 37. e5+ Kd7 38. Rf3 Nh6 39. Rf6 Rg7 40. b4\naxb4 41. cxb4 Ng8 42. Rf3 Nh6 43. a5 Nf5 44. Nb3 Kc7 45. Nc5 Kb8 46. Rb1 Ka7\n47. Rd3 Rc7 48. Ra3 Nd4 49. Rd1 Nf5 50. Kh3 Nh6 51. f3 Rf7 52. Rd4 Nf5 53. Rd2\nRh7 54. Rb3 Ree7 55. Rdd3 Rh8 56. Rb1 Rhh7 57. b5 cxb5 58. Rxb5 d4 59. Rb6 Rc7\n60. Nxe6 Rc3 61. Nf4 Rhc7 62. Nd5 Rxd3 63. Nxc7 Kb8 64. Nb5 Kc8 65. Rxg6 Rxf3\n66. Kg2 Rb3 67. Nd6+ Nxd6 68. Rxd6 Re3 69. e6 Kc7 70. Rxd4 Rxe6 71. Rd5 Rh6\n72. Kf3 Kb8 73. Kf4 Ka7 74. Kg5 Rh8 75. Kf6 1-0",
+              "title": "Carlsen vs Karjakin, World Championship 2016, game 10",
+              "mode": "replay",
+              "notes": {
+                "37": "19.Bxe6 fxe6. Black accepts doubled e-pawns.",
+                "47": "20.Nd2 d5 21.Qh5 Ng5 22.h4 Nf3+ 23.Nxf3 Qxf3+ 24.Qxf3 Rxf3. Queens off. The e6- and d5-pawns are long-term targets.",
+                "77": "36.Re3 Nf7 37.e5+ Kd7 38.Rf3 Nh6 39.Rf6! The rook fixes g6 and e6.",
+                "79": "39...Rg7 40.b4! axb4 41.cxb4. Space on the queenside: the second front.",
+                "89": "43.a5 Nf5 44.Nb3 Kc7 45.Nc5. The knight on c5 and the b-file tie the black king to the queenside.",
+                "113": "57.b5! After fifty moves of improvement, the break. Stockfish +1.5; 57.Rbb3 +1.0.",
+                "119": "57...cxb5 58.Rxb5 d4 59.Rb6 Rc7 60.Nxe6! The weak pawn falls, with an attack on the c7-rook.",
+                "149": "75.Kf6 and Black resigned."
+              }
+            },
+            {
+              "type": "challenge",
+              "fen": "8/kpr4r/1R2p1p1/P1N1Pn1p/3p3P/3R1PPK/8/8 w - - 2 60",
+              "prompt": "Carlsen–Karjakin, move 60. White to play. The e6-pawn has been weak since move 19. Two pieces can take it; one of them gains a tempo.",
+              "solution": [
+                "c5e6"
+              ],
+              "hint": "Which capture also attacks a black rook?",
+              "explanation": "60.Nxe6! takes the pawn and attacks the c7-rook. Karjakin played 60...Rc3 61.Nf4 and Carlsen converted. Stockfish: 60.Nxe6 +2.0, 60.Rb5 +0.7."
+            },
+            {
+              "type": "quiz",
+              "question": "Which principle explains Capablanca's 35.Kg3, which let Black win two pawns?",
+              "options": [
+                "King activity: in a rook ending, a king supporting the rook on the seventh and a passed pawn is worth more than two pawns.",
+                "When ahead in material, trade pieces, not pawns.",
+                "Rooks belong behind passed pawns."
+              ],
+              "answer": 0,
+              "explanation": "Capablanca was not ahead in material after 37...Rxf4+; he was two pawns down. What he had was activity: the king on f6, the rook on h7 and the pawn on g6 made threats Black could not meet, and the material came back with interest."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
