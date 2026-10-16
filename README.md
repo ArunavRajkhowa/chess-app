@@ -47,7 +47,7 @@ facts, it is just terser.
 backend/        FastAPI app: engine pool, bots, review, puzzles, coach, content loaders, routers
 frontend/       React + TypeScript + Vite; the board, pages, the WASM engine worker
 data/           openings (lichess TSV, CC0), lessons (JSON), puzzles (JSONL), games (PGN), the SQLite file
-scripts/        self-play, puzzle generation, lesson validation
+scripts/        self-play, puzzle generation, lesson validation, bot calibration (calibrate_bots.py)
 tests/          pytest; frontend/e2e holds the Playwright tests
 ```
 
