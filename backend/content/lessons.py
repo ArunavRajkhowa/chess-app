@@ -91,6 +91,11 @@ def _validate_section(sec: dict) -> dict:
                 raise ValueError(f"solution move {uci} illegal in {b.fen()}")
             b.push(mv)
         sec["solution_san"] = _sans(board, sol)
+        also = sec.get("also") or []  # other first moves as good as the solution's (within the validator's tolerance)
+        for uci in also:
+            if chess.Move.from_uci(uci) not in board.legal_moves:
+                raise ValueError(f"alternative move {uci} illegal in {board.fen()}")
+        sec["also_san"] = [board.san(chess.Move.from_uci(u)) for u in also]
         if sec.get("accept_any_check") and not any(board.gives_check(m) for m in board.legal_moves):
             raise ValueError("accept_any_check challenge with no checking move")
     elif t == "quiz":

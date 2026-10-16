@@ -7,7 +7,7 @@ export interface Band { band: number; name: string; subtitle: string; rating: st
 export type Section =
   | { type: "text"; md: string }
   | { type: "position"; fen: string; orientation?: "white" | "black"; arrows?: { from: string; to: string; brush: Brush }[]; highlights?: { square: string; brush: Brush }[]; caption?: string }
-  | { type: "challenge"; fen: string; prompt: string; solution: string[]; solution_san: string[]; hint?: string; explanation?: string; accept_any_legal?: boolean; accept_any_check?: boolean; orientation?: "white" | "black" }
+  | { type: "challenge"; fen: string; prompt: string; solution: string[]; solution_san: string[]; hint?: string; explanation?: string; accept_any_legal?: boolean; accept_any_check?: boolean; also?: string[]; also_san?: string[]; orientation?: "white" | "black" }
   | { type: "quiz"; question: string; options: string[]; answer: number; explanation?: string; fen?: string }
   | { type: "drill"; fen: string; goal: "mate" | "promote" | "draw" | "survive" | "win_material"; max_moves?: number; prompt: string; tip?: string; orientation?: "white" | "black" }
   | { type: "game"; pgn: string; title?: string; mode?: "guess" | "replay"; notes?: Record<string, string>; plies: { ply: number; san: string; uci: string; fen: string }[]; headers: Record<string, string> };
