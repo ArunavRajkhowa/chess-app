@@ -11,7 +11,7 @@ export function PlayPage() {
   const [game, setGame] = useState<GameState | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [lastChoice, setLastChoice] = useState<{ bot: BotPublic; color: "white" | "black" | "random"; coach: boolean } | null>(null);
+  const [lastChoice, setLastChoice] = useState<{ bot: BotPublic; color: "white" | "black" | "random"; coach: boolean; tc: string | null } | null>(null);
   const loadEngine = useEngine((s) => s.load);
 
   useEffect(() => { void loadEngine(); }, [loadEngine]);
@@ -21,12 +21,12 @@ export function PlayPage() {
     api.game(gameId).then(setGame).catch((e: Error) => setError(e.message));
   }, [gameId]);
 
-  const start = async (bot: BotPublic, color: "white" | "black" | "random", coach: boolean) => {
+  const start = async (bot: BotPublic, color: "white" | "black" | "random", coach: boolean, tc: string | null = null) => {
     setBusy(true);
     setError(null);
     try {
-      const g = await api.newGame(bot.id, color, coach || bot.id === "coach");
-      setLastChoice({ bot, color, coach });
+      const g = await api.newGame(bot.id, color, coach || bot.id === "coach", tc);
+      setLastChoice({ bot, color, coach, tc });
       setGame(g);
       navigate(`/play/${g.id}`);
     } catch (e) {
@@ -42,7 +42,7 @@ export function PlayPage() {
         key={game.id}
         initial={game}
         onNewGame={() => navigate("/play")}
-        onRematch={() => (lastChoice ? start(lastChoice.bot, lastChoice.color, lastChoice.coach) : navigate("/play"))}
+        onRematch={() => (lastChoice ? start(lastChoice.bot, lastChoice.color, lastChoice.coach, lastChoice.tc) : navigate("/play"))}
       />
     );
   }

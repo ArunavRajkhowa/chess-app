@@ -1,0 +1,271 @@
+{
+  "themes": [
+    {
+      "key": "checkmates",
+      "name": "Checkmates",
+      "blurb": "Force mate with the pieces you have left."
+    },
+    {
+      "key": "pawn",
+      "name": "Pawn endgames",
+      "blurb": "Opposition, key squares, breakthroughs."
+    },
+    {
+      "key": "rook",
+      "name": "Rook endgames",
+      "blurb": "Lucena, Philidor, Vancura, the active rook."
+    },
+    {
+      "key": "minor",
+      "name": "Minor pieces",
+      "blurb": "Bishops, knights and the pawns they fight over."
+    },
+    {
+      "key": "queen",
+      "name": "Queen endgames",
+      "blurb": "Queen against pawn, queen against rook."
+    }
+  ],
+  "positions": [
+    {
+      "key": "mate-two-rooks",
+      "theme": "checkmates",
+      "title": "Two rooks: the ladder",
+      "fen": "8/8/8/3k4/8/8/8/R1R3K1 w - - 0 1",
+      "goal": "mate",
+      "max_moves": 10,
+      "level": 1,
+      "tip": "One rook cuts the king off, the other checks; leapfrog to the edge."
+    },
+    {
+      "key": "mate-queen",
+      "theme": "checkmates",
+      "title": "King and queen",
+      "fen": "8/8/8/3k4/8/8/8/4QK2 w - - 0 1",
+      "goal": "mate",
+      "max_moves": 12,
+      "level": 1,
+      "tip": "Keep the queen a knight's move from the king; never take the last square unless it is mate."
+    },
+    {
+      "key": "mate-rook",
+      "theme": "checkmates",
+      "title": "King and rook",
+      "fen": "8/8/8/3k4/8/8/8/R3K3 w - - 0 1",
+      "goal": "mate",
+      "max_moves": 18,
+      "level": 1,
+      "tip": "Box the king, take the opposition with your king, then check on the edge. Use a rook waiting move when the kings face each other."
+    },
+    {
+      "key": "mate-two-bishops",
+      "theme": "checkmates",
+      "title": "Two bishops",
+      "fen": "8/8/8/3k4/8/8/8/2B1KB2 w - - 0 1",
+      "goal": "mate",
+      "max_moves": 22,
+      "level": 2,
+      "tip": "The bishops side by side build a wall on neighbouring diagonals; drive the king to a corner, king in support."
+    },
+    {
+      "key": "mate-bishop-knight",
+      "theme": "checkmates",
+      "title": "Bishop and knight",
+      "fen": "8/8/8/8/8/8/8/k1K1BN2 w - - 0 1",
+      "goal": "mate",
+      "max_moves": 12,
+      "level": 4,
+      "tip": "Mate only in the corner of the bishop's colour. Here the king is already there: use the W-manoeuvre of the knight."
+    },
+    {
+      "key": "pawn-opposition-win",
+      "theme": "pawn",
+      "title": "Opposition: win with the king in front",
+      "fen": "8/8/4k3/8/8/4K3/4P3/8 w - - 0 1",
+      "goal": "promote",
+      "max_moves": 14,
+      "level": 1,
+      "tip": "Take the opposition with your king, then advance the pawn only when the king can no longer be driven back. The pawn behind the king gives you spare tempi."
+    },
+    {
+      "key": "pawn-spare-tempo",
+      "theme": "pawn",
+      "title": "Opposition with a spare tempo",
+      "fen": "8/8/8/4k3/8/8/4PK2/8 w - - 0 1",
+      "goal": "promote",
+      "max_moves": 16,
+      "level": 2,
+      "tip": "Step to e3 to take the opposition. Whenever the black king matches you, the pawn move e2-e3 or e3-e4 hands the move back."
+    },
+    {
+      "key": "pawn-key-squares",
+      "theme": "pawn",
+      "title": "Reach a key square",
+      "fen": "8/8/8/8/4P3/8/8/4K2k w - - 0 1",
+      "goal": "promote",
+      "max_moves": 14,
+      "level": 2,
+      "tip": "The key squares of a pawn on e4 are d6, e6, f6. Get the king there before advancing the pawn."
+    },
+    {
+      "key": "pawn-rook-pawn-draw",
+      "theme": "pawn",
+      "title": "Hold the rook pawn",
+      "fen": "7k/8/5K1P/8/8/8/8/8 b - - 0 1",
+      "goal": "draw",
+      "max_moves": 20,
+      "level": 1,
+      "tip": "Stay in the corner. The king cannot be driven out without stalemate."
+    },
+    {
+      "key": "pawn-square-rule",
+      "theme": "pawn",
+      "title": "The rule of the square",
+      "fen": "8/8/8/8/8/k7/5P2/6K1 w - - 0 1",
+      "goal": "promote",
+      "max_moves": 8,
+      "level": 1,
+      "tip": "Count the square from the pawn to the queening rank. The king on a3 is outside it: run."
+    },
+    {
+      "key": "pawn-outside-passed",
+      "theme": "pawn",
+      "title": "Outside passed pawn",
+      "fen": "8/8/4k1p1/5p2/P3K3/5PP1/8/8 w - - 0 1",
+      "goal": "win_material",
+      "max_moves": 24,
+      "level": 2,
+      "tip": "Push the a-pawn: the black king must leave the kingside to stop it, and your king eats the pawns it left behind."
+    },
+    {
+      "key": "pawn-breakthrough",
+      "theme": "pawn",
+      "title": "The breakthrough",
+      "fen": "8/ppp5/8/PPP5/8/8/8/k6K w - - 0 1",
+      "goal": "promote",
+      "max_moves": 8,
+      "level": 3,
+      "tip": "b6! axb6 c6! or cxb6 a6!: give two pawns to make one unstoppable."
+    },
+    {
+      "key": "rook-lucena",
+      "theme": "rook",
+      "title": "Lucena: build the bridge",
+      "fen": "1K1k4/1P6/8/8/8/8/r7/2R5 w - - 0 1",
+      "goal": "promote",
+      "max_moves": 12,
+      "level": 2,
+      "tip": "Rd1+ pushes the king away, then Rd4: the rook on the fourth rank shelters your king from checks."
+    },
+    {
+      "key": "rook-philidor",
+      "theme": "rook",
+      "title": "Philidor: the third-rank defence",
+      "fen": "4k3/1R6/8/3KP3/8/8/8/r7 b - - 0 1",
+      "goal": "draw",
+      "max_moves": 24,
+      "level": 2,
+      "tip": "Keep your rook on the sixth rank until the pawn arrives there; then check from behind forever."
+    },
+    {
+      "key": "rook-vancura",
+      "theme": "rook",
+      "title": "Vancura: rook pawn on the sixth",
+      "fen": "R7/6k1/P4r2/8/3K4/8/8/8 b - - 0 1",
+      "goal": "draw",
+      "max_moves": 30,
+      "level": 4,
+      "tip": "Your rook attacks the pawn from the side along the sixth rank; if the white king approaches, check it from the side. Keep your king on g7 or h7."
+    },
+    {
+      "key": "rook-vs-pawn",
+      "theme": "rook",
+      "title": "Rook against a far-advanced pawn",
+      "fen": "8/8/8/8/8/1k6/1p6/R5K1 w - - 0 1",
+      "goal": "draw",
+      "max_moves": 20,
+      "level": 3,
+      "tip": "The rook alone holds: keep it behind the pawn and bring the king."
+    },
+    {
+      "key": "rook-seventh",
+      "theme": "rook",
+      "title": "Pigs on the seventh",
+      "fen": "6k1/pp3ppp/8/8/8/8/PPP2PPP/R5K1 w - - 0 1",
+      "goal": "win_material",
+      "max_moves": 10,
+      "level": 2,
+      "tip": "The open file leads to the seventh rank; the rook feeds on pawns there."
+    },
+    {
+      "key": "minor-wrong-bishop",
+      "theme": "minor",
+      "title": "Wrong-coloured bishop",
+      "fen": "7k/8/6KP/8/8/8/2B5/8 b - - 0 1",
+      "goal": "draw",
+      "max_moves": 20,
+      "level": 1,
+      "tip": "The bishop does not control h8. Shuffle in the corner."
+    },
+    {
+      "key": "minor-knight-vs-pawn",
+      "theme": "minor",
+      "title": "Knight stops the pawn",
+      "fen": "8/8/8/8/8/1k6/1p6/1N1K4 w - - 0 1",
+      "goal": "draw",
+      "max_moves": 20,
+      "level": 3,
+      "tip": "The knight blockades the queening square and the king stays close. Never let the knight be driven off b1 while the king is far."
+    },
+    {
+      "key": "minor-bishop-vs-knight",
+      "theme": "minor",
+      "title": "Bishop against knight with pawns on both wings",
+      "fen": "8/8/p3k3/1p4p1/1P4P1/P3B3/4K3/5n2 w - - 0 1",
+      "goal": "win_material",
+      "max_moves": 30,
+      "level": 4,
+      "tip": "Pawns on both wings favour the bishop: it attacks on both sides at once while the knight is slow. Fix the pawns on the knight's colour and pick one up."
+    },
+    {
+      "key": "minor-opposite-bishops",
+      "theme": "minor",
+      "title": "Opposite-coloured bishops: the fortress",
+      "fen": "8/8/4k3/2b5/8/1P6/3BK3/8 b - - 0 1",
+      "goal": "draw",
+      "max_moves": 24,
+      "level": 3,
+      "tip": "Keep your bishop on the long diagonal that watches the pawn's path and your king in front of the pawn. Never trade the bishop."
+    },
+    {
+      "key": "queen-vs-pawn-centre",
+      "theme": "queen",
+      "title": "Queen against a centre pawn on the seventh",
+      "fen": "8/8/8/8/5K2/8/3kp3/5Q2 w - - 0 1",
+      "goal": "win_material",
+      "max_moves": 30,
+      "level": 2,
+      "tip": "Check, force the king in front of the pawn, and use that tempo to bring your king closer. Repeat until the pawn falls."
+    },
+    {
+      "key": "queen-vs-pawn-bishop",
+      "theme": "queen",
+      "title": "Queen against a bishop pawn: the draw",
+      "fen": "8/6K1/8/8/8/8/1kp5/4Q3 w - - 0 1",
+      "goal": "survive",
+      "max_moves": 16,
+      "level": 3,
+      "tip": "With a c-pawn the defender has a stalemate trick: on the corner square the king is stalemated. Learn why this is a draw."
+    },
+    {
+      "key": "queen-vs-rook",
+      "theme": "queen",
+      "title": "Queen against rook",
+      "fen": "8/8/8/8/1k6/8/2r5/K2Q4 w - - 0 1",
+      "goal": "win_material",
+      "max_moves": 40,
+      "level": 5,
+      "tip": "Drive the king to the edge; the rook must stay close to its king or be forked. Win it with a check that also attacks the rook."
+    }
+  ]
+}

@@ -30,7 +30,9 @@ CREATE TABLE IF NOT EXISTS games (
     opening_name TEXT,
     white_name TEXT,
     black_name TEXT,
-    source TEXT NOT NULL DEFAULT 'bot'
+    source TEXT NOT NULL DEFAULT 'bot',
+    coach_mode INTEGER NOT NULL DEFAULT 0,
+    start_fen TEXT
 );
 CREATE TABLE IF NOT EXISTS reviews (
     game_id TEXT PRIMARY KEY REFERENCES games(id),
@@ -75,6 +77,8 @@ _ADDED_COLUMNS = (
     ("games", "white_name", "TEXT"),
     ("games", "black_name", "TEXT"),
     ("games", "source", "TEXT NOT NULL DEFAULT 'bot'"),
+    ("games", "coach_mode", "INTEGER NOT NULL DEFAULT 0"),
+    ("games", "start_fen", "TEXT"),
 )
 
 

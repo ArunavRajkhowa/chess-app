@@ -11,9 +11,10 @@ interface Props {
   active?: boolean;
   thinking?: boolean;
   says?: string | null;
+  clock?: React.ReactNode;
 }
 
-export function PlayerCard({ name, subtitle, avatar, color, captured, materialEdge, active, thinking, says }: Props) {
+export function PlayerCard({ name, subtitle, avatar, color, captured, materialEdge, active, thinking, says, clock }: Props) {
   const opp = color === "white" ? "b" : "w";
   return (
     <div className={`playercard ${active ? "active" : ""}`} data-testid={`player-${color}`}>
@@ -32,6 +33,7 @@ export function PlayerCard({ name, subtitle, avatar, color, captured, materialEd
         </div>
       </div>
       {says && <div className="playercard-bubble" role="status">{says}</div>}
+      {clock}
     </div>
   );
 }

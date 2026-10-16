@@ -1,0 +1,4 @@
+.clock { margin-left: auto; font-family: var(--font-mono); font-size: var(--fs-xl); font-weight: 700; padding: 6px 12px; border-radius: var(--r-sm); background: var(--bg-elev-2); color: var(--ink-2); min-width: 92px; text-align: center; }
+.clock.active { background: var(--ink); color: var(--ink-inverse); }
+.clock.low { color: var(--danger); }
+.clock.active.low { background: var(--danger); color: white; }

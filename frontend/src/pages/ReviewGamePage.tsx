@@ -1,6 +1,6 @@
 import { Chess } from "chess.js";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { Board } from "../components/board/Board";
 import type { Shape } from "../components/board/shapes";
 import { EvalBar } from "../components/play/EvalBar";
@@ -33,6 +33,9 @@ export function ReviewGamePage() {
   const [retry, setRetry] = useState<{ ply: number; status: "waiting" | "correct" | "wrong"; text: string } | null>(null);
   const [explanation, setExplanation] = useState<string | null>(null);
   const [explaining, setExplaining] = useState(false);
+  const [narrative, setNarrative] = useState<string | null>(null);
+  const [narrating, setNarrating] = useState(false);
+  const navigate = useNavigate();
   const evaluate = useEngine((s) => s.evaluate);
   const loadEngine = useEngine((s) => s.load);
   const pollRef = useRef<number | null>(null);
@@ -136,6 +139,25 @@ export function ReviewGamePage() {
     }
   };
 
+  const practiceFromHere = async () => {
+    const side = chess.turn() === "w" ? "white" : "black";
+    try {
+      const g = await api.newGame("coach", side, true, null, fen);
+      navigate(`/play/${g.id}`);
+    } catch (e) { setError(e instanceof Error ? e.message : String(e)); }
+  };
+  const tellStory = async () => {
+    setNarrating(true);
+    setNarrative("");
+    try {
+      await streamCoach("/api/coach/summary", { game_id: gameId }, (chunk) => setNarrative((t) => (t ?? "") + chunk));
+    } catch (e) {
+      setNarrative(`Coach unavailable: ${e instanceof Error ? e.message : String(e)}`);
+    } finally {
+      setNarrating(false);
+    }
+  };
+
   if (error) return <div className="chip chip-danger">{error}</div>;
   if (!report) {
     return (
@@ -197,6 +219,11 @@ export function ReviewGamePage() {
             <div><div className="review-acc black num" data-testid="acc-black">{report.black.accuracy}</div><div className="review-rating">{names.black} · est. {report.black.estimated_rating}</div></div>
           </div>
           <div className="faint" style={{ textAlign: "center", marginTop: 6 }}>{opening} · depth {report.depth}</div>
+          <div className="row" style={{ justifyContent: "center", marginTop: 10 }}>
+            <button className="btn btn-sm" onClick={tellStory} disabled={narrating} data-testid="summary-btn">{narrating ? "Writing…" : "Coach summary"}</button>
+            <button className="btn btn-sm" onClick={practiceFromHere} data-testid="practice-btn">Practice from here</button>
+          </div>
+          {narrative && <p className="coach-explanation" data-testid="narrative" style={{ marginTop: 10 }}>{narrative}</p>}
         </div>
         <div className="card">
           <CoachPanel

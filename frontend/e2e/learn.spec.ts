@@ -21,9 +21,9 @@ test("open the curriculum, complete a lesson with a challenge, a quiz and a dril
   await page.locator('[data-square="f7"].sq').click();
   await expect(page.getByTestId("task-ok")).toBeVisible();
   await page.getByTestId("continue").click();
-  // epaulette-style mate Qxd8#
-  await page.locator('[data-square="d1"].sq').click();
-  await page.locator('[data-square="d8"].sq').click();
+  // epaulette mate Qe6#
+  await page.locator('[data-square="a2"].sq').click();
+  await page.locator('[data-square="e6"].sq').click();
   await expect(page.getByTestId("task-ok")).toBeVisible();
   await page.getByTestId("continue").click();
   // quiz

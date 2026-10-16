@@ -103,3 +103,22 @@ def test_selector_strength_ladder(event_loop):
             await pool.stop()
 
     event_loop.run_until_complete(run())
+
+
+def test_timed_game_from_a_position_and_flag(client):
+    fen = "r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 2 3"
+    game = client.post("/api/play/games", json={"bot_id": "sam", "player_color": "white", "time_control": "3+2", "fen": fen}).json()
+    assert game["start_fen"].startswith("r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2") and game["time_control"] == "3+2"
+    assert game["turn"] == "w" and "f1c4" in game["legal_moves"]
+    r = client.post(f"/api/play/games/{game['id']}/move", json={"move": "Bc4"}).json()
+    assert r["bot_move"] is not None and '[SetUp "1"]' in r["game"]["pgn"] and 'TimeControl "180+2"' in r["game"]["pgn"]
+    flagged = client.post(f"/api/play/games/{game['id']}/flag").json()
+    assert flagged["status"] == "finished" and flagged["termination"] == "timeout" and flagged["result"] == "0-1"
+    # a black-to-move start position makes the bot move first when the player is white
+    black_to_move = "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1"
+    g2 = client.post("/api/play/games", json={"bot_id": "pip", "player_color": "white", "fen": black_to_move}).json()
+    assert len(g2["moves"]) == 1 and g2["moves"][0]["by"] == "bot"
+    assert client.post("/api/play/games", json={"bot_id": "pip", "player_color": "white", "fen": "junk"}).status_code == 400
+    untimed = client.post("/api/play/games", json={"bot_id": "pip", "player_color": "white"}).json()
+    assert client.post(f"/api/play/games/{untimed['id']}/flag").status_code == 409
+    assert client.post("/api/content/reload").json()["lessons"] >= 7

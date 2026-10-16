@@ -25,6 +25,6 @@ export const learnApi = {
   lesson: (id: string) => req<LessonDetail>(`/api/learn/lessons/${id}`),
   progress: (lesson_id: string, completed: boolean, score: number | null, state: Record<string, unknown> = {}) =>
     req<{ ok: boolean }>("/api/learn/progress", { method: "POST", body: JSON.stringify({ lesson_id, completed, score, state }) }),
-  drillMove: (fen: string, move: string, goal: string) =>
-    req<{ fen: string; played: string; reply: { san: string; uci: string } | null; outcome: { result: "success" | "fail"; reason: string } | null }>("/api/learn/drill/move", { method: "POST", body: JSON.stringify({ fen, move, goal }) }),
+  drillMove: (fen: string, move: string, goal: string, start_fen?: string) =>
+    req<{ fen: string; played: string; reply: { san: string; uci: string } | null; outcome: { result: "success" | "fail"; reason: string } | null }>("/api/learn/drill/move", { method: "POST", body: JSON.stringify({ fen, move, goal, start_fen }) }),
 };

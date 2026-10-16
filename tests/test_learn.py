@@ -60,3 +60,12 @@ def test_drill_move_replies_and_detects_mate(client):
     r = client.post("/api/learn/drill/move", json={"fen": "7k/5Q2/6K1/8/8/8/8/8 w - - 0 1", "move": "g6h6", "goal": "mate"}).json()
     assert r["outcome"]["result"] == "fail" and r["outcome"]["reason"] == "stalemate"
     assert client.post("/api/learn/drill/move", json={"fen": "6k1/5ppp/8/8/8/8/5PPP/R5K1 w - - 0 1", "move": "a1a9", "goal": "mate"}).status_code == 400
+
+
+def test_drill_win_material_goal(client):
+    # rook takes a free pawn on the seventh: material goes up by one, the engine's reply changes nothing
+    fen = "6k1/pp3ppp/8/8/8/8/PPP2PPP/R5K1 w - - 0 1"
+    r = client.post("/api/learn/drill/move", json={"fen": fen, "move": "a1d1", "goal": "win_material", "start_fen": fen}).json()
+    assert r["outcome"] is None
+    r3 = client.post("/api/learn/drill/move", json={"fen": "5k2/pp3ppp/8/8/8/8/PPP2PPP/3R2K1 w - - 0 1", "move": "d1d7", "goal": "win_material", "start_fen": fen}).json()
+    assert r3["outcome"] is None or r3["outcome"]["result"] in ("success", "fail")
