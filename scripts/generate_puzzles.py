@@ -63,8 +63,10 @@ async def extend_solution(pool: EnginePool, board: chess.Board, first: chess.Mov
         best_mv, best_cp, best_score, _ = lines[0]
         mate = _mate_distance(best_score, solver)
         gap = best_cp - lines[1][1] if len(lines) > 1 else 9999
-        # stop when the tactic has resolved: no forcing only-move left or a quiet winning position
-        if gap < MIN_ONLY_MOVE_GAP and mate is None:
+        second_mates = len(lines) > 1 and lines[1][2].pov(solver).is_mate() and (lines[1][2].pov(solver).mate() or 0) > 0
+        # stop when the tactic has resolved: no only-move left (a second mating move counts as a
+        # second solution), or a quiet winning position
+        if (gap < MIN_ONLY_MOVE_GAP and mate is None) or (mate is not None and second_mates):
             break
         if mate is None and best_cp < MIN_RESULT_CP:
             return None
@@ -72,6 +74,8 @@ async def extend_solution(pool: EnginePool, board: chess.Board, first: chess.Mov
         b.push(best_mv)
         if mate == 1 or b.is_checkmate():
             break
+    if len(moves) % 2 == 0:
+        moves.pop()  # never end on the opponent's reply: the solver's move closes the puzzle
     return moves
 
 

@@ -50,8 +50,8 @@
                 "d1d8"
               ],
               "accept_any_check": true,
-              "hint": "The queen can reach the back rank or the a2–g8 diagonal.",
-              "explanation": "Qd8+ or Qb3+ both give check. The king has an escape square on h7 because Black played ...h6 earlier, so neither check is mate."
+              "hint": "The queen can reach the back rank. The a2–g8 diagonal is blocked by the pawn on f7.",
+              "explanation": "Qd8+ is the only check: the pawn on f7 blocks the a2–g8 diagonal. It is not mate, because the king escapes to h7, the square Black opened by playing ...h6 earlier."
             },
             {
               "type": "quiz",
@@ -243,7 +243,7 @@
                   "brush": "green"
                 }
               ],
-              "caption": "1.Qc3 is a knight's move from the king on d5. The king is confined to d4–h8 region squares beyond c-file and 3rd rank? No: to d-h files and ranks 4-8. Keep copying its moves."
+              "caption": "1.Qc3 puts the queen a knight's move from the king on d5. The king is now boxed in on the d- to h-files and ranks 4 to 8. Keep copying its moves."
             },
             {
               "type": "drill",

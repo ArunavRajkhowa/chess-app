@@ -11,7 +11,7 @@ import { puzzleApi, type Puzzle, type PuzzleTheme } from "../lib/puzzleApi";
 import "./Puzzles.css";
 
 type Mode = "rated" | "custom" | "rush" | "daily" | "mistakes";
-type Phase = "intro" | "solving" | "solved" | "failed";
+type Phase = "intro" | "solving" | "solved" | "failed" | "revealed";
 
 interface Solver {
   chess: Chess;
@@ -21,11 +21,12 @@ interface Solver {
   phase: Phase;
   wrongMove: [Square, Square] | null;
   hintLevel: number;
+  played: string[]; // the solver's accepted moves, UCI, sent to the server to judge the attempt
 }
 
 function startSolver(p: Puzzle): Solver {
   const chess = new Chess(p.fen);
-  return { chess, fen: chess.fen(), index: 0, lastMove: null, phase: "intro", wrongMove: null, hintLevel: 0 };
+  return { chess, fen: chess.fen(), index: 0, lastMove: null, phase: "intro", wrongMove: null, hintLevel: 0, played: [] };
 }
 
 export function PuzzlesPage() {
@@ -36,7 +37,7 @@ export function PuzzlesPage() {
   const [puzzle, setPuzzle] = useState<Puzzle | null>(null);
   const [solver, setSolver] = useState<Solver | null>(null);
   const [playerRating, setPlayerRating] = useState<number | null>(null);
-  const [result, setResult] = useState<{ delta: number; rating_after: number; puzzle_rating: number } | null>(null);
+  const [result, setResult] = useState<{ delta: number; rating_after: number; puzzle_rating: number | null } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [streak, setStreak] = useState(0);
   const [stats, setStats] = useState<{ rating: number; attempts: number; solved: number; accuracy: number | null; rush_best: Record<string, number> } | null>(null);
@@ -45,7 +46,14 @@ export function PuzzlesPage() {
   const [now, setNow] = useState(Date.now());
   const startedAt = useRef<number>(Date.now());
   const [params] = useSearchParams();
-  const [hearts, setHearts] = useState(5);
+  const [hearts, setHeartsState] = useState(5);
+  const heartsKey = useRef<string | null>(null); // daily hearts survive a reload: "daily-hearts:<date>"
+  const setHearts = (h: number | ((x: number) => number)) => setHeartsState((cur) => {
+    const next = typeof h === "function" ? h(cur) : h;
+    try { if (heartsKey.current) localStorage.setItem(heartsKey.current, String(next)); } catch { /* storage off */ }
+    return next;
+  });
+  const recorded = useRef(false); // one attempt per puzzle load: a retry is practice, not a second result
   const [mistakes, setMistakes] = useState<{ queue: Puzzle[]; i: number; total: number } | null>(null);
 
   useEffect(() => {
@@ -55,7 +63,13 @@ export function PuzzlesPage() {
   useEffect(() => {
     if (params.get("daily")) {
       setMode("daily");
-      puzzleApi.daily().then((r) => { setHearts(5); void load(r.puzzle); }).catch((e: Error) => setError(e.message));
+      puzzleApi.daily().then((r) => {
+        heartsKey.current = `daily-hearts:${r.date}`;
+        let saved: number | null = null;
+        try { saved = Number(localStorage.getItem(heartsKey.current) ?? "") || null; } catch { /* storage off */ }
+        setHearts(saved ?? 5);
+        void load(r.puzzle);
+      }).catch((e: Error) => setError(e.message));
     }
   }, [params]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -81,6 +95,7 @@ export function PuzzlesPage() {
   }, [now, rush, finishRush]);
 
   const load = useCallback(async (p: Puzzle, rating?: number) => {
+    recorded.current = false;
     setPuzzle(p);
     setResult(null);
     setError(null);
@@ -144,21 +159,24 @@ export function PuzzlesPage() {
     }
   };
 
-  const record = async (solved: boolean) => {
-    if (!puzzle) return;
+  const record = async (solved: boolean, moves: string[]) => {
+    if (!puzzle || recorded.current) return;
+    recorded.current = true;
+    const hinted = (solver?.hintLevel ?? 0) >= 1; // lichess and chess.com count a hinted puzzle as missed
     if (mode === "rush" && rush) {
       const next = { ...rush, score: rush.score + (solved ? 1 : 0), wrong: rush.wrong + (solved ? 0 : 1) };
       setRush(next);
       if (next.wrong >= 3) { await finishRush(next); return; }
-      puzzleApi.attempt(puzzle.id, solved, (Date.now() - startedAt.current) / 1000, "rush").catch(() => undefined);
+      puzzleApi.attempt(puzzle.id, moves, (Date.now() - startedAt.current) / 1000, "rush", hinted).catch(() => undefined);
       setTimeout(() => void nextPuzzleFrom(next), solved ? 500 : 1200);
       return;
     }
     try {
-      const r = await puzzleApi.attempt(puzzle.id, solved, (Date.now() - startedAt.current) / 1000, mode === "rated" ? "rated" : mode === "daily" ? "daily" : mode === "mistakes" ? "mistakes" : "custom");
+      const r = await puzzleApi.attempt(puzzle.id, moves, (Date.now() - startedAt.current) / 1000, mode === "rated" ? "rated" : mode === "daily" ? "daily" : mode === "mistakes" ? "mistakes" : "custom", hinted);
       setResult({ delta: r.delta, rating_after: r.rating_after, puzzle_rating: r.puzzle_rating });
       setPlayerRating(r.rating_after);
-      setStats((s) => (s ? { ...s, rating: r.rating_after, attempts: s.attempts + 1, solved: s.solved + (solved ? 1 : 0) } : s));
+      // the stats card counts rated attempts only, as the server does
+      if (mode === "rated") setStats((s) => (s ? { ...s, rating: r.rating_after, attempts: s.attempts + 1, solved: s.solved + (r.solved ? 1 : 0) } : s));
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
     }
@@ -179,20 +197,20 @@ export function PuzzlesPage() {
     const expected = puzzle.moves[solver.index];
     const played = from + to + (promotion ?? "");
     const isMate = c.isCheckmate();
-    if (played === expected || (isMate && expected.slice(0, 4) === played.slice(0, 4)) || isMate) {
+    const playedSoFar = [...solver.played, played];
+    if (played === expected || isMate) {
       playSound(soundForMove(mv, c));
       const index = solver.index + 1;
       if (index >= puzzle.moves.length || isMate) {
-        setSolver({ ...solver, chess: c, fen: c.fen(), index, lastMove: [from, to], phase: "solved" });
+        setSolver({ ...solver, chess: c, fen: c.fen(), index, lastMove: [from, to], phase: "solved", played: playedSoFar });
         setStreak((s) => s + 1);
         playSound("correct");
-        void record(true);
-        if (mode === "daily") puzzleApi.dailySolved().catch(() => undefined);
+        void record(true, playedSoFar);
         return;
       }
       // opponent replies
       const reply = puzzle.moves[index];
-      setSolver({ ...solver, chess: c, fen: c.fen(), index, lastMove: [from, to] });
+      setSolver({ ...solver, chess: c, fen: c.fen(), index, lastMove: [from, to], played: playedSoFar });
       setTimeout(() => {
         const c2 = new Chess(c.fen());
         const rm = safeMove(c2, reply);
@@ -207,21 +225,22 @@ export function PuzzlesPage() {
       playSound("wrong");
       setSolver({ ...solver, phase: "failed", wrongMove: [from, to] });
       setStreak(0);
-      void record(false);
+      void record(false, playedSoFar);
     }
   };
 
   const retry = () => {
     if (!puzzle) return;
-    void load(puzzle);
+    void load(puzzle).then(() => { recorded.current = true; }); // practice only: the first attempt already counted
     setResult(null);
   };
 
   const solverColor = puzzle?.solver_color === "white" ? "w" : "b";
   const dests = useMemo(() => (solver && solver.phase === "solving" ? destsFor(solver.chess) : new Map()), [solver]);
   const shapes: Shape[] = [];
-  if (solver && puzzle && solver.phase === "solving" && solver.hintLevel >= 1) {
-    const exp = puzzle.moves[solver.index];
+  const hintMove = solver && puzzle && solver.phase === "solving" && solver.hintLevel >= 1 ? puzzle.moves[solver.index] : undefined;
+  if (solver && hintMove) {
+    const exp = hintMove;
     shapes.push(solver.hintLevel >= 2 ? { orig: exp.slice(0, 2), dest: exp.slice(2, 4), brush: "green" } : { orig: exp.slice(0, 2), brush: "yellow" });
   }
   const highlights = solver?.wrongMove && (solver.phase === "failed" || mode === "daily") ? [{ square: solver.wrongMove[1], brush: "red" as const }] : [];
@@ -280,7 +299,7 @@ export function PuzzlesPage() {
         {puzzle && solver && (
           <div className="card">
             <div className="row" style={{ justifyContent: "space-between" }}>
-              <strong data-testid="puzzle-turn">{solver.phase === "solved" ? "Solved!" : solver.phase === "failed" ? "Not quite" : solver.phase === "intro" ? `${mode === "daily" ? "Daily puzzle · " : ""}Watch the opponent's move…` : `${mode === "daily" ? "Daily puzzle · " : ""}${puzzle.solver_color === "white" ? "White" : "Black"} to play`}</strong>
+              <strong data-testid="puzzle-turn">{solver.phase === "solved" ? "Solved!" : solver.phase === "revealed" ? "Solution shown" : solver.phase === "failed" ? "Not quite" : solver.phase === "intro" ? `${mode === "daily" ? "Daily puzzle · " : ""}Watch the opponent's move…` : `${mode === "daily" ? "Daily puzzle · " : ""}${puzzle.solver_color === "white" ? "White" : "Black"} to play`}</strong>
               <span className="chip">puzzle {puzzle.rating}</span>
             </div>
             {playerRating !== null && mode === "rated" && <div className="faint">Your puzzle rating: <b className="num">{playerRating}</b>{result && <span className={result.delta >= 0 ? "ok" : "bad"}> ({result.delta >= 0 ? "+" : ""}{result.delta})</span>}</div>}
@@ -289,10 +308,17 @@ export function PuzzlesPage() {
                 <button className="btn btn-sm" onClick={() => setSolver({ ...solver, hintLevel: Math.min(2, solver.hintLevel + 1) })} data-testid="puzzle-hint"><Lightbulb size={14} /> {solver.hintLevel === 0 ? "Hint" : solver.hintLevel === 1 ? "Show move" : "Shown"}</button>
               </div>
             )}
-            {solver.phase === "failed" && (
+            {(solver.phase === "failed" || solver.phase === "revealed") && (
               <div className="row" style={{ marginTop: 8 }}>
                 <button className="btn btn-sm" onClick={retry} data-testid="puzzle-retry"><RotateCcw size={14} /> Retry</button>
-                <button className="btn btn-sm" onClick={() => { const c = new Chess(solver.fen); const exp = puzzle.moves[solver.index]; safeMove(c, exp); setSolver({ ...solver, chess: c, fen: c.fen(), lastMove: [exp.slice(0, 2), exp.slice(2, 4)], phase: "solved" }); }}>Show solution</button>
+                {solver.phase === "failed" && <button className="btn btn-sm" onClick={() => {
+                  // play the rest of the line from where the solver went wrong; giving up is not solving
+                  const c = new Chess(solver.fen);
+                  const rest = puzzle.moves.slice(solver.index);
+                  for (const m of rest) safeMove(c, m);
+                  const last = rest[rest.length - 1];
+                  setSolver({ ...solver, chess: c, fen: c.fen(), lastMove: last ? [last.slice(0, 2), last.slice(2, 4)] : solver.lastMove, phase: "revealed" });
+                }} data-testid="puzzle-show-solution">Show solution</button>}
                 {mode !== "rush" && <button className="btn btn-sm btn-primary" onClick={nextPuzzle} data-testid="puzzle-next">Next</button>}
               </div>
             )}
@@ -301,12 +327,12 @@ export function PuzzlesPage() {
                 {mode === "daily" ? <span className="chip chip-ok">Done for today. Come back tomorrow.</span> : <button className="btn btn-sm btn-primary" onClick={nextPuzzle} data-testid="puzzle-next">Next puzzle</button>}
               </div>
             )}
-            {(solver.phase === "solved" || solver.phase === "failed") && (
+            {(solver.phase === "solved" || solver.phase === "failed" || solver.phase === "revealed") && (
               <div className="row" style={{ marginTop: 10, flexWrap: "wrap" }}>
                 {puzzle.themes.map((t) => <span key={t} className="chip">{themes.find((x) => x.key === t)?.name ?? t}</span>)}
               </div>
             )}
-            {puzzle.source?.white && <div className="faint" style={{ marginTop: 8 }}>From {puzzle.source.white} vs {puzzle.source.black}{puzzle.source.year ? `, ${puzzle.source.year}` : ""}{(puzzle.source as { played?: string }).played ? ` · you played ${(puzzle.source as { played?: string }).played}` : ""}</div>}
+            {puzzle.source?.white && <div className="faint" style={{ marginTop: 8 }}>From {puzzle.source.white} vs {puzzle.source.black}{/^\d{4}$/.test(String(puzzle.source.year ?? "")) ? `, ${puzzle.source.year}` : ""}{(puzzle.source as { played?: string }).played ? ` · you played ${(puzzle.source as { played?: string }).played}` : ""}</div>}
             {mode === "mistakes" && mistakes && <div className="faint">mistake {mistakes.i + 1} of {mistakes.total}</div>}
           </div>
         )}
