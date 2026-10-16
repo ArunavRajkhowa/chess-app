@@ -105,7 +105,7 @@
        "prompt": "Black to play and win. Levitsky–Marshall, Breslau 1912. Marshall found a queen move to a square where White can take her three ways, and every capture loses.",
        "solution": [
         "c3g3"
-       ],
+       ], "also": ["c3b4", "c3a3"],
        "hint": "Look at g3. Which white piece stops ...Ne2+ from being deadly, and what happens if it is lured to g3?",
        "explanation": "23...Qg3!! 24.hxg3 Ne2# (the h-pawn has left h2, so the rook on h3 covers h2 and h1). 24.fxg3 Ne2+ 25.Kh1 Rxf1# (the f-pawn has left the f-file). 24.Qxg3 Ne2+ 25.Kh1 Nxg3+ 26.Kg1 (26.fxg3 Rxf1#) and Black has the queen back and stays a piece up. Levitsky resigned. The engine also likes 23...Qa3, but 23...Qg3 is the move that lures every defender."
       },
