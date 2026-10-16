@@ -1,0 +1,14 @@
+.puzzles { display: grid; grid-template-columns: minmax(320px, 600px) minmax(300px, 400px); gap: var(--s-5); align-items: start; }
+.puzzles-side { display: flex; flex-direction: column; gap: var(--s-3); }
+.puzzles-empty { display: flex; flex-direction: column; gap: var(--s-3); align-items: flex-start; min-height: 320px; justify-content: center; }
+.theme-grid { display: flex; flex-wrap: wrap; gap: 6px; }
+.theme-chip { border: 1px solid var(--line); background: var(--bg-elev-2); color: var(--ink); border-radius: 999px; padding: 4px 10px; font-size: var(--fs-xs); font-weight: 600; cursor: pointer; }
+.theme-chip.on { border-color: var(--brand); background: color-mix(in srgb, var(--brand) 22%, transparent); }
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--s-2); }
+.stats-grid .faint { font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: 0.05em; }
+.rush-bar { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s-2); }
+.rush-score { font-size: var(--fs-2xl); font-weight: 800; }
+.rush-strikes { color: var(--danger); font-weight: 800; letter-spacing: 2px; }
+.rush-done { grid-column: 1 / -1; display: flex; align-items: center; gap: var(--s-2); }
+.ok { color: var(--ok); } .bad { color: var(--danger); }
+@media (max-width: 900px) { .puzzles { grid-template-columns: 1fr; } }

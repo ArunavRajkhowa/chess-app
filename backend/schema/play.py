@@ -46,6 +46,7 @@ class GameState(BaseModel):
     in_check: bool
     turn: Literal["w", "b"]
     legal_moves: list[str]
+    threats: list[dict] = []
 
 
 class MoveResponse(BaseModel):

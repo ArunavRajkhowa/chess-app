@@ -1,0 +1,14 @@
+.openings { display: grid; grid-template-columns: minmax(320px, 560px) minmax(320px, 460px); gap: var(--s-5); align-items: start; }
+.openings-side { display: flex; flex-direction: column; gap: var(--s-3); }
+.input-row { gap: var(--s-2); }
+.results { list-style: none; margin: 8px 0 0; padding: 0; max-height: 260px; overflow: auto; }
+.results button, .conts button { width: 100%; text-align: left; background: none; border: 0; padding: 6px 4px; border-radius: var(--r-sm); cursor: pointer; color: var(--ink); display: flex; gap: 8px; align-items: center; }
+.results button:hover, .conts button:hover { background: var(--bg-hover); }
+.conts { list-style: none; margin: 0; padding: 0; max-height: 50vh; overflow: auto; }
+.conts-san { width: 52px; font-size: var(--fs-lg); }
+.conts-name { flex: 1 1 auto; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: var(--fs-sm); }
+.conts-bar { width: 70px; height: 6px; background: var(--bg-elev-2); border-radius: 999px; overflow: hidden; }
+.conts-bar i { display: block; height: 100%; background: var(--brand); }
+.families { display: flex; flex-wrap: wrap; gap: 6px; }
+.theme-chip { border: 1px solid var(--line); background: var(--bg-elev-2); color: var(--ink); border-radius: 999px; padding: 4px 10px; font-size: var(--fs-xs); font-weight: 600; cursor: pointer; }
+@media (max-width: 900px) { .openings { grid-template-columns: 1fr; } }

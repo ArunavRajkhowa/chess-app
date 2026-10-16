@@ -1,0 +1,9 @@
+.coachpage { display: grid; grid-template-columns: minmax(320px, 560px) minmax(320px, 480px); gap: var(--s-5); align-items: start; }
+.coach-chat { display: flex; flex-direction: column; gap: var(--s-3); max-height: calc(100vh - 60px); }
+.coach-turns { flex: 1 1 auto; overflow-y: auto; display: flex; flex-direction: column; gap: var(--s-2); min-height: 240px; }
+.turn { display: flex; flex-direction: column; gap: 2px; }
+.turn.user .turn-body { align-self: flex-end; background: var(--brand); color: var(--brand-ink); }
+.turn-body { max-width: 90%; padding: 8px 12px; border-radius: var(--r-md); background: var(--bg-elev-2); white-space: pre-wrap; font-size: var(--fs-sm); }
+.presets { display: flex; flex-wrap: wrap; gap: 6px; }
+.settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-5); }
+@media (max-width: 900px) { .coachpage, .settings-grid { grid-template-columns: 1fr; } }

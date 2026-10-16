@@ -1,5 +1,6 @@
-/* Browser Stockfish (WASM, single thread) behind a Web Worker, spoken to in UCI. One search at a
-   time; a new `analyse` stops the previous one, and stale `info` lines are dropped by search id. */
+/* Browser Stockfish (WASM, single thread) behind a Web Worker, spoken to in UCI. Searches are
+   serialised: a new `analyse` stops the running one, waits for its `bestmove`, then starts. A
+   search that was superseded while still queued resolves empty without touching the engine. */
 
 export interface EngineLine {
   multipv: number;
@@ -25,15 +26,24 @@ export interface AnalyseResult {
   lines: EngineLine[];
   bestmove: string | null;
   fen: string;
+  /** True when the search was cancelled by a newer request before it ran. */
+  skipped?: boolean;
 }
 
-type Resolver = (value: AnalyseResult) => void;
+interface Search {
+  id: number;
+  fen: string;
+  opts: AnalyseOptions;
+  resolve: (r: AnalyseResult) => void;
+  lines: Map<number, EngineLine>;
+}
 
 export class Engine {
   private worker: Worker;
-  private searchId = 0;
-  private lines = new Map<number, EngineLine>();
-  private current: { id: number; fen: string; resolve: Resolver; opts: AnalyseOptions } | null = null;
+  private nextId = 0;
+  private latestId = 0;
+  private current: Search | null = null;
+  private queue: Promise<void> = Promise.resolve();
   private waiters: { token: string; resolve: () => void }[] = [];
   readonly name: string;
 
@@ -61,49 +71,44 @@ export class Engine {
     this.worker.postMessage(cmd);
   }
 
-  setOption(name: string, value: string | number | boolean): void {
-    this.send(`setoption name ${name} value ${value}`);
-  }
-
-  async newGame(): Promise<void> {
-    this.send("ucinewgame");
-    this.send("isready");
-    await this.waitFor("readyok");
-  }
-
   private waitFor(token: string): Promise<void> {
     return new Promise((resolve) => this.waiters.push({ token, resolve }));
   }
 
-  /** Stops any running search and resolves it with what it had. */
+  /** Asks the running search to finish now; its promise resolves with the lines found so far. */
   stop(): void {
     if (this.current) this.send("stop");
   }
 
   analyse(fen: string, opts: AnalyseOptions = {}): Promise<AnalyseResult> {
-    this.finishCurrent(null);
-    const id = ++this.searchId;
-    this.lines = new Map();
-    const multipv = Math.max(1, opts.multipv ?? 1);
-    this.setOption("MultiPV", multipv);
-    this.send(`position fen ${fen}`);
-    const go = opts.movetimeMs ? `go movetime ${opts.movetimeMs}` : `go depth ${opts.depth ?? 18}`;
-    return new Promise<AnalyseResult>((resolve) => {
-      this.current = { id, fen, resolve, opts };
-      this.send(go);
+    const id = ++this.nextId;
+    this.latestId = id;
+    const run = new Promise<AnalyseResult>((resolve) => {
+      this.queue = this.queue.then(() => this.runSearch({ id, fen, opts, resolve, lines: new Map() }));
+    });
+    this.stop();
+    return run;
+  }
+
+  private runSearch(search: Search): Promise<void> {
+    if (search.id !== this.latestId) {
+      search.resolve({ lines: [], bestmove: null, fen: search.fen, skipped: true });
+      return Promise.resolve();
+    }
+    this.current = search;
+    const multipv = Math.max(1, search.opts.multipv ?? 1);
+    this.send(`setoption name MultiPV value ${multipv}`);
+    this.send(`position fen ${search.fen}`);
+    const go = search.opts.movetimeMs ? `go movetime ${search.opts.movetimeMs}` : `go depth ${search.opts.depth ?? 18}`;
+    this.send(go);
+    return new Promise<void>((done) => {
+      const original = search.resolve;
+      search.resolve = (r) => { original(r); done(); };
     });
   }
 
-  private finishCurrent(bestmove: string | null): void {
-    const cur = this.current;
-    if (!cur) return;
-    this.current = null;
-    cur.resolve({ lines: this.sortedLines(), bestmove, fen: cur.fen });
-    if (bestmove === null) this.send("stop");
-  }
-
-  private sortedLines(): EngineLine[] {
-    return [...this.lines.values()].sort((a, b) => a.multipv - b.multipv);
+  private sortedLines(s: Search): EngineLine[] {
+    return [...s.lines.values()].sort((a, b) => a.multipv - b.multipv);
   }
 
   private onLine(line: string): void {
@@ -113,17 +118,19 @@ export class Engine {
         this.waiters.splice(i, 1);
       }
     }
+    const cur = this.current;
+    if (!cur) return;
     if (line.startsWith("bestmove")) {
       const bm = line.split(" ")[1] ?? null;
-      if (this.current) this.finishCurrent(bm === "(none)" ? null : bm);
+      this.current = null;
+      cur.resolve({ lines: this.sortedLines(cur), bestmove: bm === "(none)" ? null : bm, fen: cur.fen });
       return;
     }
-    if (!line.startsWith("info") || !this.current) return;
-    if (!line.includes(" pv ") || !line.includes(" score ")) return;
-    const parsed = parseInfo(line, this.current.fen);
+    if (!line.startsWith("info") || !line.includes(" pv ") || !line.includes(" score ")) return;
+    const parsed = parseInfo(line, cur.fen);
     if (!parsed) return;
-    this.lines.set(parsed.multipv, parsed);
-    this.current.opts.onUpdate?.(this.sortedLines());
+    cur.lines.set(parsed.multipv, parsed);
+    cur.opts.onUpdate?.(this.sortedLines(cur));
   }
 
   terminate(): void {

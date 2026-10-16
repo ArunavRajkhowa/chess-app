@@ -1,0 +1,24 @@
+.gameview { display: grid; grid-template-columns: minmax(320px, 640px) minmax(300px, 380px); gap: var(--s-5); align-items: start; }
+.gameview-board-col { display: flex; flex-direction: column; gap: 2px; }
+.gameview-board-row { display: flex; gap: var(--s-2); align-items: stretch; }
+.gameview-board-row .board { flex: 1 1 auto; }
+.gameview-board-row .evalbar { flex: 0 0 22px; align-self: stretch; height: auto; }
+.gameview-side { display: flex; flex-direction: column; gap: var(--s-3); max-height: calc(100vh - 48px); position: sticky; top: var(--s-4); }
+.gameview-side .movelist { flex: 1 1 auto; min-height: 160px; max-height: 40vh; border: 1px solid var(--line); border-radius: var(--r-sm); }
+.gameview-result { text-align: center; padding: var(--s-3); border-radius: var(--r-md); background: var(--bg-elev-2); }
+.gameview-result.won h2 { color: var(--brand); }
+.gameview-result.lost h2 { color: var(--danger); }
+.gameview-result.draw h2 { color: var(--ink-2); }
+.feedback { display: flex; flex-direction: column; gap: 2px; padding: 8px 10px; border-radius: var(--r-sm); border-left: 4px solid var(--line-strong); background: var(--bg-elev-2); font-size: var(--fs-sm); }
+.feedback strong { font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: 0.05em; }
+.feedback.cls-best, .feedback.cls-excellent, .feedback.cls-good { border-color: var(--c-best); }
+.feedback.cls-best strong { color: var(--c-best); }
+.feedback.cls-inaccuracy { border-color: var(--c-inaccuracy); } .feedback.cls-inaccuracy strong { color: var(--c-inaccuracy); }
+.feedback.cls-mistake { border-color: var(--c-mistake); } .feedback.cls-mistake strong { color: var(--c-mistake); }
+.feedback.cls-blunder { border-color: var(--c-blunder); } .feedback.cls-blunder strong { color: var(--c-blunder); }
+.feedback.cls-book { border-color: var(--c-book); } .feedback.cls-book strong { color: var(--c-book); }
+.gameview-nav { display: flex; gap: 2px; align-items: center; }
+.gameview-actions { display: flex; flex-wrap: wrap; gap: var(--s-2); }
+.gameview-toggles { display: flex; flex-wrap: wrap; gap: var(--s-3); font-size: var(--fs-sm); color: var(--ink-2); }
+.gameview-toggles label { display: flex; gap: 6px; align-items: center; cursor: pointer; }
+@media (max-width: 900px) { .gameview { grid-template-columns: 1fr; } .gameview-side { position: static; max-height: none; } }

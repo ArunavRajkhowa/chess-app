@@ -36,6 +36,7 @@ async def save_game(game_id: str, *, moves: list[dict], pgn: str, status: str, r
 async def list_games(limit: int = 50) -> list[dict[str, Any]]:
     return await database.fetch_all(
         "SELECT id, created_at, updated_at, player_color, bot_id, time_control, status, result, termination, "
-        "opening_eco, opening_name, json_array_length(moves_json) AS plies FROM games ORDER BY updated_at DESC LIMIT ?",
+        "opening_eco, opening_name, white_name, black_name, source, json_array_length(moves_json) AS plies "
+        "FROM games ORDER BY updated_at DESC LIMIT ?",
         (limit,),
     )

@@ -27,6 +27,8 @@ export interface BoardProps {
   shapes?: Shape[];
   /** Programmatic highlight squares (e.g. a lesson's target). */
   highlights?: { square: Square; brush: Brush }[];
+  /** Small badges drawn in a square's corner (move classification icons). */
+  markers?: { square: Square; text: string; className?: string }[];
   onMove?: (from: Square, to: Square, promotion?: PromotionPiece) => void;
   onSelect?: (square: Square | null) => void;
   onUserShapes?: (shapes: Shape[]) => void;
@@ -61,6 +63,7 @@ export function Board({
   check = null,
   shapes = [],
   highlights = [],
+  markers = [],
   onMove,
   onSelect,
   onUserShapes,
@@ -311,6 +314,9 @@ export function Board({
           >
             {showCoordinates && col === 0 && <span className="coord rank">{sq[1]}</span>}
             {showCoordinates && row === 7 && <span className="coord file">{sq[0]}</span>}
+            {markers.filter((m) => m.square === sq).map((m, i) => (
+              <span key={i} className={`sq-marker ${m.className ?? ""}`}>{m.text}</span>
+            ))}
           </div>
         ))}
       </div>
