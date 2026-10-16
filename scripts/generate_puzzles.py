@@ -41,6 +41,27 @@ async def _lines(pool: EnginePool, board: chess.Board, depth: int, multipv: int 
     return out
 
 
+async def solution_is_unique(pool: EnginePool, board: chess.Board, solution: list[chess.Move]) -> bool:
+    """Every solver move checked again at VERIFY_DEPTH: no second move that mates as fast, and no
+    second move within MIN_ONLY_MOVE_GAP while both win. A second move that mates at once is fine
+    (the solver accepts any mate). Without this, 7% of solver moves had an equal alternative."""
+    b = board.copy()
+    for i, mv in enumerate(solution):
+        if i % 2 == 0:
+            lines = await _lines(pool, b, VERIFY_DEPTH, 2)
+            if len(lines) > 1:
+                s1, s2 = lines[0][2].pov(b.turn), lines[1][2].pov(b.turn)
+                alt = lines[1][0] if lines[0][0] == mv else lines[0][0]
+                after_alt = b.copy()
+                after_alt.push(alt)
+                both_mate = s1.is_mate() and s2.is_mate() and (s1.mate() or 0) > 0 and 0 < (s2.mate() or 0) <= (s1.mate() or 0)
+                both_win = not s1.is_mate() and not s2.is_mate() and (s1.score() or 0) - (s2.score() or 0) < MIN_ONLY_MOVE_GAP
+                if (both_mate or both_win) and not after_alt.is_checkmate():
+                    return False
+        b.push(mv)
+    return True
+
+
 async def extend_solution(pool: EnginePool, board: chess.Board, first: chess.Move) -> list[chess.Move] | None:
     """Solver move, then the opponent's best reply, repeated while the solver has an only-move."""
     solver = board.turn
@@ -229,7 +250,7 @@ async def scan_game(pool: EnginePool, game: chess.pgn.Game, source: dict, seen: 
         if key in seen:
             continue
         solution = await extend_solution(pool, board, best_mv)
-        if not solution:
+        if not solution or not await solution_is_unique(pool, board, solution):
             continue
         end = board.copy()
         for s in solution:
