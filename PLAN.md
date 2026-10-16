@@ -122,24 +122,29 @@ accuracy by phase, blunder rate, puzzle rating by theme.
 
 ## 4. What is built and what is next
 
-Built and tested (43 backend tests, 8 Playwright flows): everything in section 1. Content so far
-is a seed: band 0 and part of band 1 (7 lessons, 30 sections), one annotated master game, 36
-generated puzzles plus a second batch generating from 72 self-play games.
+Built and tested (83 backend tests, 21 Playwright flows): everything in section 1, with the
+content in the README table (185 lessons in all nine bands, 125 annotated master games, 558
+puzzles, 24 endgame positions).
+
+Four independent critics then used the running app (play, review, learning, engine and API) and
+reported 49 defects; every one was reproduced, fixed with a test and committed. The largest were:
+a static path that served files outside `frontend/dist`, a kingless FEN that crashed Stockfish
+for good, puzzle and endgame results taken from the browser's word, 136 puzzles that could not be
+solved, draws declared one move early, and review accuracy weighted by the wrong ply.
 
 Next, in order:
-1. Lesson content for bands 1-6 from the curriculum research, validated with the engine.
-2. Curated master games (80+) with move-by-move explanations and theme tags.
-3. Puzzle library to several thousand from master games and self-play; theme detection for
-   deflection and attraction.
-4. Bot Elo calibration by self-play against fixed `UCI_Elo` opponents (`scripts/calibrate_bots.py`).
-5. More endgame positions (de la Villa's hundred) and a knight-and-bishop mate walkthrough.
-6. Spaced repetition of missed puzzles and lesson challenges (SM-2 ladder).
-7. Opening ideas per family (plans, traps, model games) once the openings research lands.
+1. Measure bot strength against people (the calibration is four games per bot against Stockfish).
+2. Spaced repetition of missed puzzles and lesson challenges (SM-2 ladder).
+3. A larger puzzle library: more source games; the generator keeps one solution per solver move.
+4. More endgame positions (de la Villa's hundred) and a knight-and-bishop mate walkthrough.
+5. Opening ideas per family (plans, traps, model games).
+6. A strong player's review of the lesson prose: the engine checks the moves, not the teaching.
 
 ## 5. Risks
 
 - The coach's quality depends on the fact sheet. A missing fact (for example, a discovered
   attack the rules do not detect) makes the model generic, never wrong. Add facts, not freedom.
 - Bot strength labels are unmeasured against humans. Say "about" until measured.
-- Content is the long pole. The validators keep it correct; nothing keeps it interesting except
-  review by a strong player.
+- Content is the long pole. Agents wrote the lessons and an engine-checking reviewer pass found
+  and fixed many wrong claims; the validators keep the moves correct. Whether the teaching is
+  good still needs a strong player's review.

@@ -11,6 +11,17 @@ verified.
 
 No paywall, no account. Everything is stored in one SQLite file under `data/`.
 
+## What is inside
+
+| Content | Count | How it is checked |
+|---|---|---|
+| Lessons | 185 lessons in 49 modules, bands 0 (rules) to 8 (master), 1,017 sections | `scripts/validate_lessons.py --engine`: every challenge is the engine's best move or as good |
+| Master games | 125 games in 27 themes, 561 key-moment notes | replayed at load; a test replays every move line in every note |
+| Puzzles | 558, rated 400-2000 | replayed at load; every solver move has one solution at depth 16 |
+| Endgames | 24 positions in five themes | engine goal check; no piece hangs at the start |
+| Openings | 3,865 named lines (lichess, CC0) | parsed at load |
+| Bots | 20, from 250 to 3200 | `data/bot_calibration.json` (four games each against Stockfish) |
+
 ## Run it
 
 Requires Python 3.12+ and Node 22+. A native Stockfish makes Game Review faster but is not
