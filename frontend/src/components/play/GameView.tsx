@@ -43,6 +43,20 @@ function parseTimeControl(tc: string | null): { baseMs: number; incMs: number } 
   return { baseMs: m * 60_000, incMs: inc * 1000 };
 }
 
+/** Clocks saved at the last move, so a reload does not give the player back their time. */
+function savedClocks(game: GameState): { w: number; b: number } | null {
+  try {
+    const raw = localStorage.getItem(`play-clock:${game.id}`);
+    if (!raw) return null;
+    const { w, b, savedAt } = JSON.parse(raw) as { w: number; b: number; savedAt: number };
+    const clocks = { w, b };
+    if (game.status === "active" && game.moves.length > 0) clocks[game.turn] = Math.max(0, clocks[game.turn] - (Date.now() - savedAt));
+    return clocks;
+  } catch {
+    return null;
+  }
+}
+
 function fenAtPly(game: GameState, ply: number): string {
   if (ply <= 0) return game.start_fen ?? new Chess().fen();
   return game.moves[ply - 1]?.fen ?? game.fen;
@@ -70,14 +84,14 @@ export function GameView({ initial, onNewGame, onRematch }: Props) {
   const [helpUsed, setHelpUsed] = useState(0);
   const lastEvalBefore = useRef<{ fen: string; win: number; best: string | null } | null>(null);
   const tc = useMemo(() => parseTimeControl(initial.time_control), [initial.time_control]);
-  const [clocks, setClocks] = useState<{ w: number; b: number }>({ w: tc?.baseMs ?? 0, b: tc?.baseMs ?? 0 });
+  const [clocks, setClocks] = useState<{ w: number; b: number }>(() => (tc && savedClocks(initial)) || { w: tc?.baseMs ?? 0, b: tc?.baseMs ?? 0 });
   const lowWarned = useRef(false);
   const flagged = useRef(false);
 
   const live = viewPly === game.moves.length;
   const fen = fenAtPly(game, viewPly);
   const chess = useMemo(() => new Chess(fen), [fen]);
-  const dests = useMemo(() => (live && game.status === "active" && !botThinking ? destsFor(chess) : new Map()), [chess, live, game.status, botThinking]);
+  const dests = useMemo(() => (live && game.status === "active" && !botThinking ? destsFor(chess, true) : new Map()), [chess, live, game.status, botThinking]);
   const myColor = game.player_color === "white" ? "w" : "b";
   const orientation = game.player_color;
   const captured = useMemo(() => capturedFromFen(fen), [fen]);
@@ -167,8 +181,8 @@ export function GameView({ initial, onNewGame, onRematch }: Props) {
     const optimistic: GameState = {
       ...game,
       fen: c.fen(),
-      moves: [...game.moves, { ply: game.moves.length + 1, san: mv.san, uci: from + to + (promotion ?? ""), fen: c.fen(), by: "player", source: null, eval_cp: null }],
-      last_move: [from, to],
+      moves: [...game.moves, { ply: game.moves.length + 1, san: mv.san, uci: mv.lan, fen: c.fen(), by: "player", source: null, eval_cp: null }],
+      last_move: [mv.from, mv.to],
       turn: c.turn(),
       in_check: c.inCheck(),
       legal_moves: [],
@@ -179,8 +193,8 @@ export function GameView({ initial, onNewGame, onRematch }: Props) {
     setBotThinking(true);
     addIncrement(myColor);
     try {
-      const res = await api.move(game.id, from + to + (promotion ?? ""));
-      applyServerState(res.game, res.player_move.ply, res.player_move.uci, res.player_move.san);
+      const res = await api.move(game.id, mv.lan);
+      applyServerState(res.game, optimistic.moves.length, res.player_move.uci, res.player_move.san);
       if (res.bot_says) setBotSays(res.bot_says);
       if (res.bot_move) {
         setPending(res.game);
@@ -251,6 +265,10 @@ export function GameView({ initial, onNewGame, onRematch }: Props) {
     }
   }, [clocks, tc, game.status, game.id, myColor, clockSide]);
   const addIncrement = (side: "w" | "b") => { if (tc?.incMs) setClocks((c) => ({ ...c, [side]: c[side] + tc.incMs })); };
+  useEffect(() => {
+    if (!tc) return;
+    try { localStorage.setItem(`play-clock:${game.id}`, JSON.stringify({ ...clocks, savedAt: Date.now() })); } catch { /* no storage: a reload restarts the clocks */ }
+  }, [game.moves.length]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const shapes: Shape[] = [];
   if (hint && live) shapes.push({ orig: hint.move_uci.slice(0, 2), dest: hint.move_uci.slice(2, 4), brush: "green" });
@@ -258,7 +276,7 @@ export function GameView({ initial, onNewGame, onRematch }: Props) {
     for (const t of game.threats.slice(0, 3)) shapes.push({ orig: t.uci.slice(0, 2), dest: t.uci.slice(2, 4), brush: "red" });
   }
 
-  const moveItems: MoveListItem[] = game.moves.map((m) => ({ ply: m.ply, san: m.san, classification: feedback && feedback.ply === m.ply && showFeedback ? feedback.classification : undefined }));
+  const moveItems: MoveListItem[] = game.moves.map((m, i) => ({ ply: i + 1, san: m.san, classification: feedback && feedback.ply === i + 1 && showFeedback ? feedback.classification : undefined }));
   const playerWon = game.status === "finished" && game.result !== "1/2-1/2" && (game.result === "1-0") === (game.player_color === "white");
   const resultTitle = game.status !== "finished" ? "" : game.result === "1/2-1/2" ? "Draw" : playerWon ? "You won!" : `${botName} won`;
 
@@ -326,7 +344,7 @@ export function GameView({ initial, onNewGame, onRematch }: Props) {
         )}
         {error && <div className="chip chip-danger">{error}</div>}
 
-        <MoveList moves={moveItems} currentPly={viewPly} onSelect={setViewPly} opening={null} />
+        <MoveList moves={moveItems} currentPly={viewPly} onSelect={setViewPly} opening={null} startFen={game.start_fen} />
 
         <div className="gameview-nav">
           <button className="btn btn-ghost btn-sm" onClick={() => setViewPly(0)} title="First move"><ChevronFirst size={16} /></button>
@@ -339,7 +357,7 @@ export function GameView({ initial, onNewGame, onRematch }: Props) {
         {game.status === "active" ? (
           <div className="gameview-actions">
             <button className="btn btn-sm" onClick={doHint} disabled={!live || botThinking || chess.turn() !== myColor} data-testid="hint-btn"><Lightbulb size={14} /> Hint</button>
-            <button className="btn btn-sm" onClick={doTakeback} disabled={botThinking || game.moves.length === 0} data-testid="takeback-btn"><RotateCcw size={14} /> Takeback</button>
+            <button className="btn btn-sm" onClick={doTakeback} disabled={botThinking || !game.moves.some((m) => m.by === "player")} data-testid="takeback-btn"><RotateCcw size={14} /> Takeback</button>
             <button className="btn btn-sm btn-danger" onClick={doResign} data-testid="resign-btn"><Flag size={14} /> Resign</button>
           </div>
         ) : (

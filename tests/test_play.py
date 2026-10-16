@@ -149,3 +149,80 @@ def test_takeback_before_the_players_first_move_is_refused(client):
     assert client.post(f"/api/play/games/{game['id']}/takeback").status_code == 409
     state = client.get(f"/api/play/games/{game['id']}").json()
     assert state["turn"] == "b" and len(state["moves"]) == 1
+
+
+def test_book_moves_come_from_the_bots_own_engine_lines(event_loop):
+    """A book move is one of the bot's engine candidates: Elena opens 1.e4 or 1.d4, never a random
+    named move like 1.g4. After 1.d4 d5 Ivy's top line is the London; she takes a line on the way to
+    her favourite Queen's Gambit or Catalan instead."""
+    from backend.bots.selector import _favourite_positions, _leads_to
+
+    async def run():
+        pool = EnginePool()
+        await pool.start()
+        try:
+            rng = random.Random(2)
+            elena = [await choose_move(chess.Board(), get_bot("elena"), pool, rng) for _ in range(8)]
+            assert {c.move.uci() for c in elena} <= {"e2e4", "d2d4", "g1f3", "c2c4"}
+            assert all(c.source == "book" for c in elena)
+            board = chess.Board()
+            board.push_san("d4")
+            board.push_san("d5")
+            ivy = get_bot("ivy")
+            favourite = _favourite_positions(ivy.personality.favourite_openings)
+            picks = [(await choose_move(board, ivy, pool, rng)).move for _ in range(6)]
+            assert all(_leads_to(board, mv, favourite) for mv in picks), picks
+        finally:
+            await pool.stop()
+
+    event_loop.run_until_complete(run())
+
+
+def test_draws_wait_for_the_third_occurrence_and_the_hundredth_half_move(client):
+    """The bot has one legal move each time, so each sequence is forced."""
+    fen = "5B1k/p7/P7/8/8/2K5/8/2Q3R1 w - - 0 1"
+    gid = client.post("/api/play/games", json={"bot_id": "omar", "player_color": "white", "fen": fen}).json()["id"]
+    for mv in ("c1d2", "d2d1", "d1d2", "d2d1"):
+        game = client.post(f"/api/play/games/{gid}/move", json={"move": mv}).json()["game"]
+    assert game["status"] == "active"  # the position has occurred twice, not three times
+    mate = client.post(f"/api/play/games/{gid}/move", json={"move": "d1h5"}).json()["game"]
+    assert (mate["result"], mate["termination"]) == ("1-0", "checkmate")
+    gid = client.post("/api/play/games", json={"bot_id": "omar", "player_color": "white", "fen": fen}).json()["id"]
+    for mv in ("c1d2", "d2d1", "d1d2", "d2d1", "d1d2"):
+        game = client.post(f"/api/play/games/{gid}/move", json={"move": mv}).json()["game"]
+    assert (game["result"], game["termination"]) == ("1/2-1/2", "threefold repetition")
+
+    fifty = "7k/8/5K2/8/8/8/1P6/6Q1 w - - 97 120"
+    gid = client.post("/api/play/games", json={"bot_id": "omar", "player_color": "white", "fen": fifty}).json()["id"]
+    game = client.post(f"/api/play/games/{gid}/move", json={"move": "g1g2"}).json()["game"]
+    assert game["status"] == "active" and chess.Board(game["fen"]).halfmove_clock == 99
+    assert client.get(f"/api/play/games/{gid}/hint").status_code == 200
+    mate = client.post(f"/api/play/games/{gid}/move", json={"move": "g2g7"}).json()["game"]
+    assert (mate["result"], mate["termination"]) == ("1-0", "checkmate")
+
+
+def test_flag_against_a_bare_king_is_a_draw(client):
+    fen = "7k/8/5K2/8/8/8/1P6/6Q1 w - - 0 60"
+    game = client.post("/api/play/games", json={"bot_id": "pip", "player_color": "white", "fen": fen, "time_control": "3+2"}).json()
+    flagged = client.post(f"/api/play/games/{game['id']}/flag").json()
+    assert (flagged["result"], flagged["termination"]) == ("1/2-1/2", "timeout vs insufficient material")
+
+
+def test_hint_is_white_view_and_refused_after_the_game(client):
+    # Black (the player) to move and a queen up: the eval bar's view is White's, so the hint is negative.
+    fen = "q3k3/8/8/8/8/8/8/4K3 b - - 0 1"
+    game = client.post("/api/play/games", json={"bot_id": "pip", "player_color": "black", "fen": fen}).json()
+    assert client.get(f"/api/play/games/{game['id']}/hint").json()["eval_text"].startswith(("-", "-M"))
+    client.post(f"/api/play/games/{game['id']}/resign")
+    assert client.get(f"/api/play/games/{game['id']}/hint").status_code == 409
+
+
+def test_two_moves_posted_at_once_are_stored_as_answered(client):
+    """Each accepted move is stored with the bot's reply; one cannot overwrite the other."""
+    from concurrent.futures import ThreadPoolExecutor
+
+    fen = "r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 2 5"
+    gid = client.post("/api/play/games", json={"bot_id": "omar", "player_color": "white", "fen": fen}).json()["id"]
+    with ThreadPoolExecutor(2) as ex:
+        codes = list(ex.map(lambda mv: client.post(f"/api/play/games/{gid}/move", json={"move": mv}).status_code, ["d2d4", "f1c4"]))
+    assert len(client.get(f"/api/play/games/{gid}").json()["moves"]) == 2 * codes.count(200)

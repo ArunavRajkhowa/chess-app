@@ -107,15 +107,17 @@ class EnginePool:
         time_seconds: float | None = None,
         nodes: int | None = None,
         multipv: int = 1,
+        root_moves: list[chess.Move] | None = None,
     ) -> list[chess.engine.InfoDict]:
         """Analysis under bot settings (Skill Level / UCI_Elo). Returns multipv lines the bot
-        selector chooses from; the caller decides the move, not the engine's bestmove."""
+        selector chooses from; the caller decides the move, not the engine's bestmove.
+        `root_moves` limits the search to those first moves."""
         _require_legal(board)
         s = self.slots["play"]
         limit = chess.engine.Limit(depth=depth, time=time_seconds, nodes=nodes)
         async with s.lock:
             await s.configure(options)
-            infos = await s.engine.analyse(board, limit, multipv=multipv)
+            infos = await s.engine.analyse(board, limit, multipv=multipv, root_moves=root_moves)
         return infos if isinstance(infos, list) else [infos]
 
 

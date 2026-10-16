@@ -1,19 +1,21 @@
 """Chooses a bot's move from honest engine lines. Strength comes from the search depth the bot
-is given and the softmax temperature over centipawn loss; personality nudges line scores; the
-first plies may come from the opening book so games vary."""
+is given and the softmax temperature over centipawn loss; personality nudges line scores. In the
+first plies a line on the way to one of the bot's favourite named openings is preferred."""
 from __future__ import annotations
 
 import logging
 import math
 import random
+import re
 from dataclasses import dataclass
+from functools import lru_cache
 
 import chess
 import chess.engine
 
 from ..engine.pool import EnginePool
 from ..engine.score import cp_from_score
-from ..openings.book import OpeningBook, load_book
+from ..openings.book import load_book
 from .roster import Bot
 
 LOGGER = logging.getLogger("chess.bots")
@@ -65,19 +67,29 @@ def _material_balance(board: chess.Board, color: chess.Color) -> int:
     return total
 
 
-def _book_move(board: chess.Board, bot: Bot, book: OpeningBook, rng: random.Random) -> chess.Move | None:
-    conts = book.continuations(board)
-    if not conts:
-        return None
-    weights = []
-    for _, op in conts:
-        w = 1.0
-        for fav in bot.personality.favourite_openings:
-            if fav.lower() in op.name.lower():
-                w = 6.0
-        weights.append(w)
-    mv, _ = rng.choices(conts, weights=weights, k=1)[0]
-    return mv
+@lru_cache(maxsize=None)
+def _favourite_positions(favourites: tuple[str, ...]) -> frozenset[str]:
+    """Every position (EPD) on a named book line of these openings, so 1.d4 counts toward the London System.
+    A favourite matches whole words: "Slav" names the Slav and Semi-Slav, not the Boleslavsky Variation."""
+    keys: set[str] = set()
+    if not favourites:
+        return frozenset()
+    pattern = re.compile(r"\b(?:" + "|".join(re.escape(f) for f in favourites) + r")\b", re.IGNORECASE)
+    for op in load_book().all:
+        if pattern.search(op.name):
+            board = chess.Board()
+            for token in op.pgn.split():
+                if not token[0].isdigit():
+                    board.push_san(token)
+                    keys.add(board.epd())
+    return frozenset(keys)
+
+
+def _leads_to(board: chess.Board, move: chess.Move, positions: frozenset[str]) -> bool:
+    board.push(move)
+    key = board.epd()
+    board.pop()
+    return key in positions
 
 
 ADAPTIVE_BOT_ID = "coach"
@@ -105,11 +117,6 @@ async def choose_move(board: chess.Board, bot: Bot, pool: EnginePool, rng: rando
         raise ValueError("no legal moves: the game is over")
     temp, random_prob = _adaptive(bot, board)
 
-    if board.ply() < bot.selection.book_plies:
-        mv = _book_move(board, bot, load_book(), rng)
-        if mv is not None and mv in legal:
-            return BotChoice(move=mv, source="book", cp_loss=0, best_move=None, eval_cp=None)
-
     if random_prob and rng.random() < random_prob:
         mv = rng.choice(legal)
         return BotChoice(move=mv, source="random", cp_loss=0, best_move=None, eval_cp=None)
@@ -134,12 +141,31 @@ async def choose_move(board: chess.Board, bot: Bot, pool: EnginePool, rng: rando
         return BotChoice(move=mv, source="random", cp_loss=0, best_move=None, eval_cp=None)
 
     best_move, best_cp = lines[0]
+    # In the opening, a line on the way to one of the bot's favourite openings wins over the others.
+    in_book = board.ply() < bot.selection.book_plies
+    named = dict(load_book().continuations(board)) if in_book else {}
+    favourite = _favourite_positions(bot.personality.favourite_openings) if in_book else frozenset()
+    candidates = [(mv, cp) for mv, cp in lines if _leads_to(board, mv, favourite)]
+    if favourite and not candidates:
+        # the favourite's move is not among the bot's top lines (Mei's 1...c6 at depth 4): judge it at
+        # the same depth and play it when it costs no more than the bot's tolerance
+        fav_moves = [mv for mv in legal if _leads_to(board, mv, favourite)]
+        if fav_moves:
+            fav_infos = await pool.play_move(
+                board, options={"UCI_LimitStrength": False, "Skill Level": 20},
+                depth=bot.search.depth if bot.search.movetime_seconds is None else None,
+                time_seconds=bot.search.movetime_seconds, multipv=min(len(fav_moves), 3), root_moves=fav_moves,
+            )
+            fav_lines = [(i["pv"][0], cp_from_score(i["score"], board.turn)) for i in fav_infos if i.get("pv") and i.get("score") is not None]
+            candidates = [(mv, cp) for mv, cp in fav_lines if best_cp - cp <= bot.personality.favourite_max_loss_cp]
+            lines = lines + [(mv, cp) for mv, cp in candidates if mv not in dict(lines)]
+    candidates = candidates or lines
     balance = _material_balance(board, board.turn)
-    if temp <= 0 or len(lines) == 1:
-        chosen = best_move
+    if temp <= 0 or len(candidates) == 1:
+        chosen = candidates[0][0]
     else:
         scored = []
-        for mv, cp in lines:
+        for mv, cp in candidates:
             adj = cp + _personality_bonus(board, mv, bot, balance)
             scored.append((mv, adj))
         top = max(a for _, a in scored)
@@ -149,6 +175,6 @@ async def choose_move(board: chess.Board, bot: Bot, pool: EnginePool, rng: rando
     chosen_cp = next(cp for mv, cp in lines if mv == chosen)
     eval_white = chosen_cp if board.turn == chess.WHITE else -chosen_cp
     return BotChoice(
-        move=chosen, source="engine", cp_loss=max(0, best_cp - chosen_cp),
+        move=chosen, source="book" if chosen in named else "engine", cp_loss=max(0, best_cp - chosen_cp),
         best_move=best_move, eval_cp=eval_white,
     )
