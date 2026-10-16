@@ -1,0 +1,7 @@
+.endgames { display: grid; grid-template-columns: minmax(320px, 600px) minmax(300px, 420px); gap: var(--s-5); align-items: start; }
+.endgames-side { position: sticky; top: var(--s-4); }
+.eg-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+.eg-row { display: flex; align-items: center; gap: var(--s-2); width: 100%; text-align: left; background: none; border: 0; color: var(--ink); padding: 8px; border-radius: var(--r-sm); cursor: pointer; }
+.eg-row:hover { background: var(--bg-hover); }
+.eg-row.current { background: var(--bg-hover); box-shadow: inset 3px 0 0 var(--brand); }
+@media (max-width: 900px) { .endgames { grid-template-columns: 1fr; } .endgames-side { position: static; } }

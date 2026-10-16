@@ -33,6 +33,8 @@ export interface GameState {
   player_color: "white" | "black";
   bot: BotPublic | { id: string; name: string; avatar: string; white_name?: string; black_name?: string };
   coach_mode: boolean;
+  time_control: string | null;
+  start_fen: string | null;
   opening: { eco: string; name: string } | null;
   last_move: [string, string] | null;
   in_check: boolean;
@@ -163,8 +165,10 @@ const post = <T,>(path: string, body?: unknown) => request<T>(path, { method: "P
 export const api = {
   health: () => request<{ ok: boolean; engine: { name: string; kind: string }; openings: number; coach: { llm: boolean; model: string } }>("/api/health"),
   bots: () => request<{ bots: BotPublic[] }>("/api/bots"),
-  newGame: (bot_id: string, player_color: "white" | "black" | "random", coach_mode = false) =>
-    post<GameState>("/api/play/games", { bot_id, player_color, coach_mode }),
+  newGame: (bot_id: string, player_color: "white" | "black" | "random", coach_mode = false, time_control: string | null = null, fen: string | null = null) =>
+    post<GameState>("/api/play/games", { bot_id, player_color, coach_mode, time_control, fen }),
+  flag: (id: string) => post<GameState>(`/api/play/games/${id}/flag`),
+  reloadContent: () => post<{ lessons: number; puzzles: number; games: number }>("/api/content/reload"),
   game: (id: string) => request<GameState>(`/api/play/games/${id}`),
   games: () => request<{ games: GameSummary[] }>("/api/play/games"),
   move: (id: string, move: string, want_eval = false) => post<MoveResponse>(`/api/play/games/${id}/move`, { move, want_eval }),

@@ -8,11 +8,13 @@ from typing import Any
 from .db import database
 
 
-async def insert_game(*, player_color: str, bot_id: str, coach_mode: bool) -> str:
+async def insert_game(*, player_color: str, bot_id: str, coach_mode: bool, time_control: str | None = None,
+                      start_fen: str | None = None) -> str:
     game_id = uuid.uuid4().hex[:12]
     await database.execute(
-        "INSERT INTO games(id, player_color, bot_id, time_control, status, moves_json) VALUES(?,?,?,?,?,?)",
-        (game_id, player_color, bot_id, "coach" if coach_mode else "casual", "active", "[]"),
+        "INSERT INTO games(id, player_color, bot_id, time_control, status, moves_json, coach_mode, start_fen) "
+        "VALUES(?,?,?,?,?,?,?,?)",
+        (game_id, player_color, bot_id, time_control, "active", "[]", int(coach_mode), start_fen),
     )
     return game_id
 
@@ -36,7 +38,7 @@ async def save_game(game_id: str, *, moves: list[dict], pgn: str, status: str, r
 async def list_games(limit: int = 50) -> list[dict[str, Any]]:
     return await database.fetch_all(
         "SELECT id, created_at, updated_at, player_color, bot_id, time_control, status, result, termination, "
-        "opening_eco, opening_name, white_name, black_name, source, json_array_length(moves_json) AS plies "
+        "opening_eco, opening_name, white_name, black_name, source, coach_mode, start_fen, json_array_length(moves_json) AS plies "
         "FROM games ORDER BY updated_at DESC LIMIT ?",
         (limit,),
     )

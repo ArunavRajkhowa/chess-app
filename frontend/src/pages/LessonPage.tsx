@@ -3,6 +3,7 @@ import { ArrowLeft, ArrowRight, Lightbulb } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Board } from "../components/board/Board";
+import { DrillBoard, type DrillOutcome } from "../components/learn/DrillBoard";
 import type { Shape } from "../components/board/shapes";
 import { checkSquare, destsFor, soundForMove } from "../lib/chess/game";
 import { START_FEN, type PromotionPiece, type Square } from "../lib/chess/types";
@@ -184,49 +185,16 @@ function Quiz({ section, onResult, onNext, nextLabel }: { section: Extract<Secti
 }
 
 function Drill({ section, onResult, onNext, nextLabel }: { section: Extract<Section, { type: "drill" }>; onResult: (ok: boolean) => void; onNext: () => void; nextLabel: string }) {
-  const [fen, setFen] = useState(section.fen);
-  const [moves, setMoves] = useState(0);
-  const [outcome, setOutcome] = useState<{ result: "success" | "fail"; reason: string } | null>(null);
-  const [busy, setBusy] = useState(false);
-  const [last, setLast] = useState<[Square, Square] | null>(null);
-  const chess = useMemo(() => new Chess(fen), [fen]);
-  const learner = new Chess(section.fen).turn();
-  const dests = useMemo(() => (outcome || busy ? new Map() : destsFor(chess)), [chess, outcome, busy]);
-  const onMove = async (from: Square, to: Square, promotion?: PromotionPiece) => {
-    const c = new Chess(fen);
-    const mv = c.move({ from, to, promotion });
-    if (!mv) return;
-    playSound(soundForMove(mv, c));
-    setFen(c.fen()); setLast([from, to]); setBusy(true);
-    try {
-      const r = await learnApi.drillMove(fen, from + to + (promotion ?? ""), section.goal);
-      const n = moves + 1;
-      setMoves(n);
-      if (r.reply) {
-        setTimeout(() => { setFen(r.fen); setLast([r.reply!.uci.slice(0, 2), r.reply!.uci.slice(2, 4)]); const c2 = new Chess(r.fen); playSound(c2.inCheck() ? "check" : "move"); }, 300);
-      } else {
-        setFen(r.fen);
-      }
-      let out = r.outcome;
-      if (!out && section.max_moves && n >= section.max_moves) out = { result: "fail", reason: `move limit of ${section.max_moves} reached` };
-      if (out) { setOutcome(out); onResult(out.result === "success"); playSound(out.result === "success" ? "win" : "lose"); }
-    } catch (e) {
-      setOutcome({ result: "fail", reason: e instanceof Error ? e.message : String(e) });
-    } finally {
-      setBusy(false);
-    }
-  };
-  const reset = () => { setFen(section.fen); setMoves(0); setOutcome(null); setLast(null); };
+  const [outcome, setOutcome] = useState<DrillOutcome | null>(null);
+  const [resetToken, setResetToken] = useState(0);
   return (
     <div className="stack">
-      <Board fen={fen} orientation={section.orientation ?? (learner === "w" ? "white" : "black")} movable={{ color: learner, dests }} lastMove={last} check={checkSquare(chess)} onMove={onMove} />
+      <DrillBoard fen={section.fen} goal={section.goal} maxMoves={section.max_moves} orientation={section.orientation} resetToken={resetToken} onOutcome={(o) => { setOutcome(o); onResult(o.result === "success"); }} />
       <div className="card stack">
         <strong data-testid="drill-prompt">{section.prompt}</strong>
         {section.tip && <div className="muted">{section.tip}</div>}
-        <div className="row"><span className="chip">moves: <b className="num">{moves}</b>{section.max_moves ? ` / ${section.max_moves}` : ""}</span>{busy && <span className="chip chip-info">engine…</span>}</div>
-        {outcome && <div className={`task-banner ${outcome.result === "success" ? "ok" : "bad"}`} data-testid={outcome.result === "success" ? "task-ok" : "task-bad"}>{outcome.result === "success" ? "Done: " : "Not this time: "}{outcome.reason}.</div>}
         <div className="row">
-          <button className="btn btn-sm" onClick={reset}>Restart</button>
+          <button className="btn btn-sm" onClick={() => { setOutcome(null); setResetToken((t) => t + 1); }}>Restart</button>
           {outcome && <button className="btn btn-primary" onClick={onNext} data-testid="continue">{nextLabel}</button>}
           {!outcome && <button className="btn btn-sm btn-ghost" onClick={() => { onResult(false); onNext(); }}>Skip</button>}
         </div>

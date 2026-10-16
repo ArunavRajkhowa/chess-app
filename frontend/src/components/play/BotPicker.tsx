@@ -10,8 +10,13 @@ const TIERS: { key: BotPublic["tier"]; label: string; blurb: string }[] = [
   { key: "special", label: "Personalities", blurb: "Coach, trap setters, grinders." },
 ];
 
+const TIME_CONTROLS: { key: string | null; label: string }[] = [
+  { key: null, label: "No clock" }, { key: "1+0", label: "1 min" }, { key: "3+2", label: "3 | 2" }, { key: "5+0", label: "5 min" },
+  { key: "10+0", label: "10 min" }, { key: "15+10", label: "15 | 10" }, { key: "30+0", label: "30 min" },
+];
+
 interface Props {
-  onStart: (bot: BotPublic, color: "white" | "black" | "random", coachMode: boolean) => void;
+  onStart: (bot: BotPublic, color: "white" | "black" | "random", coachMode: boolean, timeControl: string | null) => void;
   busy?: boolean;
   initialBotId?: string;
 }
@@ -21,6 +26,7 @@ export function BotPicker({ onStart, busy, initialBotId }: Props) {
   const [selected, setSelected] = useState<BotPublic | null>(null);
   const [color, setColor] = useState<"white" | "black" | "random">("white");
   const [coachMode, setCoachMode] = useState(false);
+  const [timeControl, setTimeControl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -89,11 +95,16 @@ export function BotPicker({ onStart, busy, initialBotId }: Props) {
                 </button>
               ))}
             </div>
+            <div className="row" style={{ flexWrap: "wrap" }} role="radiogroup" aria-label="Time control">
+              {TIME_CONTROLS.map((t) => (
+                <button key={t.label} type="button" role="radio" aria-checked={timeControl === t.key} className={`btn btn-sm ${timeControl === t.key ? "btn-primary" : ""}`} onClick={() => setTimeControl(t.key)} data-testid={`tc-${t.key ?? "none"}`}>{t.label}</button>
+              ))}
+            </div>
             <label className="row" style={{ cursor: "pointer" }}>
               <input type="checkbox" checked={coachMode} onChange={(e) => setCoachMode(e.target.checked)} />
               <span>Coach mode: move feedback, hints, takebacks and threats</span>
             </label>
-            <button type="button" className="btn btn-primary btn-lg" disabled={busy} onClick={() => onStart(selected, color, coachMode)} data-testid="start-game">
+            <button type="button" className="btn btn-primary btn-lg" disabled={busy} onClick={() => onStart(selected, color, coachMode, timeControl)} data-testid="start-game">
               {busy ? "Starting…" : `Play ${selected.name}`}
             </button>
           </>

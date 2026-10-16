@@ -25,11 +25,15 @@ LIVE_EVAL_DEPTH = 12
 PIECE_VALUES = {chess.PAWN: 1, chess.KNIGHT: 3, chess.BISHOP: 3, chess.ROOK: 5, chess.QUEEN: 9, chess.KING: 0}
 
 
-def _board_from_moves(moves: list[dict]) -> chess.Board:
-    board = chess.Board()
+def _board_from_moves(moves: list[dict], start_fen: str | None = None) -> chess.Board:
+    board = chess.Board(start_fen) if start_fen else chess.Board()
     for m in moves:
         board.push_uci(m["uci"])
     return board
+
+
+def _board_of(row: dict) -> chess.Board:
+    return _board_from_moves(row["moves"], row.get("start_fen"))
 
 
 def _pgn(moves: list[dict], row: dict, bot_name: str) -> str:
@@ -40,6 +44,11 @@ def _pgn(moves: list[dict], row: dict, bot_name: str) -> str:
     game.headers["White"] = white
     game.headers["Black"] = black
     game.headers["Result"] = row.get("result") or "*"
+    if row.get("start_fen"):
+        game.setup(chess.Board(row["start_fen"]))
+    if row.get("time_control"):
+        minutes, inc = row["time_control"].split("+")
+        game.headers["TimeControl"] = f"{int(minutes) * 60}+{inc}"
     if row.get("opening_eco"):
         game.headers["ECO"] = row["opening_eco"]
     if row.get("opening_name"):
@@ -66,9 +75,11 @@ def _termination(board: chess.Board) -> tuple[str, str] | None:
 
 async def _state(row: dict) -> GameState:
     moves = row["moves"]
-    board = _board_from_moves(moves)
+    board = _board_of(row)
     bot = get_bot(row["bot_id"]) if row.get("bot_id") else None
-    opening, _ = load_book().classify_game([chess.Move.from_uci(m["uci"]) for m in moves])
+    opening = None
+    if not row.get("start_fen"):
+        opening, _ = load_book().classify_game([chess.Move.from_uci(m["uci"]) for m in moves])
     return GameState(
         id=row["id"],
         fen=board.fen(),
@@ -80,7 +91,9 @@ async def _state(row: dict) -> GameState:
         player_color=row["player_color"],
         bot=bot_public(bot) if bot else {"id": "import", "name": row.get("black_name") or "Import", "avatar": "📄",
                                          "white_name": row.get("white_name"), "black_name": row.get("black_name")},
-        coach_mode=row.get("time_control") == "coach",
+        coach_mode=bool(row.get("coach_mode")),
+        time_control=row.get("time_control"),
+        start_fen=row.get("start_fen"),
         opening={"eco": opening.eco, "name": opening.name} if opening else None,
         last_move=[moves[-1]["uci"][:2], moves[-1]["uci"][2:4]] if moves else None,
         in_check=board.is_check(),
@@ -96,7 +109,9 @@ async def _persist(row: dict, board: chess.Board) -> None:
     if term:
         row["status"] = "finished"
         row["result"], row["termination"] = term
-    opening, _ = load_book().classify_game([chess.Move.from_uci(m["uci"]) for m in row["moves"]])
+    opening = None
+    if not row.get("start_fen"):
+        opening, _ = load_book().classify_game([chess.Move.from_uci(m["uci"]) for m in row["moves"]])
     row["opening_eco"] = opening.eco if opening else None
     row["opening_name"] = opening.name if opening else None
     row["pgn"] = _pgn(row["moves"], row, bot.name)
@@ -146,11 +161,22 @@ async def new_game(req: NewGameRequest) -> GameState:
     if req.bot_id not in BOTS_BY_ID:
         raise HTTPException(404, f"unknown bot {req.bot_id!r}")
     color = req.player_color if req.player_color != "random" else random.choice(["white", "black"])
-    game_id = await store.insert_game(player_color=color, bot_id=req.bot_id, coach_mode=req.coach_mode)
+    start_fen = None
+    if req.fen:
+        try:
+            start_board = chess.Board(req.fen)
+        except ValueError:
+            raise HTTPException(400, f"bad FEN {req.fen!r}")
+        if not start_board.is_valid() or start_board.is_game_over():
+            raise HTTPException(400, "the start position is illegal or already finished")
+        start_fen = start_board.fen()
+    game_id = await store.insert_game(player_color=color, bot_id=req.bot_id, coach_mode=req.coach_mode,
+                                      time_control=req.time_control, start_fen=start_fen)
     row = await store.read_game(game_id)
     assert row is not None
-    board = chess.Board()
-    if color == "black":
+    board = _board_of(row)
+    bot_to_move = board.turn != (chess.WHITE if color == "white" else chess.BLACK)
+    if bot_to_move:
         await _bot_reply(row, board)
     await _persist(row, board)
     return await _state(row)
@@ -181,7 +207,7 @@ async def make_move(game_id: str, req: MoveRequest) -> MoveResponse:
         raise HTTPException(404, "no such game")
     if row["status"] != "active":
         raise HTTPException(409, "game is finished")
-    board = _board_from_moves(row["moves"])
+    board = _board_of(row)
     player_is_white = row["player_color"] == "white"
     if board.turn != (chess.WHITE if player_is_white else chess.BLACK):
         raise HTTPException(409, "not your turn")
@@ -221,7 +247,24 @@ async def resign(game_id: str) -> GameState:
     row["status"] = "finished"
     row["result"] = "0-1" if row["player_color"] == "white" else "1-0"
     row["termination"] = "resignation"
-    await _persist(row, _board_from_moves(row["moves"]))
+    await _persist(row, _board_of(row))
+    return await _state(row)
+
+
+@router.post("/games/{game_id}/flag", response_model=GameState)
+async def flag(game_id: str) -> GameState:
+    """The player's clock ran out. The browser keeps the clock; the server records the result."""
+    row = await store.read_game(game_id)
+    if not row:
+        raise HTTPException(404, "no such game")
+    if row["status"] != "active":
+        raise HTTPException(409, "game is finished")
+    if not row.get("time_control"):
+        raise HTTPException(409, "this game has no clock")
+    row["status"] = "finished"
+    row["result"] = "0-1" if row["player_color"] == "white" else "1-0"
+    row["termination"] = "timeout"
+    await _persist(row, _board_of(row))
     return await _state(row)
 
 
@@ -238,7 +281,7 @@ async def takeback(game_id: str) -> GameState:
         moves.pop()
     if moves and moves[-1]["by"] == "player":
         moves.pop()
-    await _persist(row, _board_from_moves(moves))
+    await _persist(row, _board_of(row))
     return await _state(row)
 
 
@@ -247,7 +290,7 @@ async def hint(game_id: str) -> HintResponse:
     row = await store.read_game(game_id)
     if not row:
         raise HTTPException(404, "no such game")
-    board = _board_from_moves(row["moves"])
+    board = _board_of(row)
     if board.is_game_over(claim_draw=True):
         raise HTTPException(409, "game is finished")
     infos = await pool.analyse(board, depth=HINT_DEPTH)

@@ -54,25 +54,25 @@ async def stored_report(game_id: str) -> dict | None:
     return json.loads(row["report_json"]) if row else None
 
 
-def start_review(game_id: str, moves: list[chess.Move], *, depth: int, result: str | None) -> ReviewJob:
+def start_review(game_id: str, moves: list[chess.Move], *, depth: int, result: str | None, start_fen: str | None = None) -> ReviewJob:
     existing = _by_game.get(game_id)
     if existing and _jobs[existing].status in (STATUS_QUEUED, STATUS_RUNNING):
         return _jobs[existing]
     job = ReviewJob(id=uuid.uuid4().hex[:10], game_id=game_id, total_positions=len(moves) + 1)
     _jobs[job.id] = job
     _by_game[game_id] = job.id
-    job.task = asyncio.create_task(_run(job, moves, depth, result))
+    job.task = asyncio.create_task(_run(job, moves, depth, result, start_fen))
     return job
 
 
-async def _run(job: ReviewJob, moves: list[chess.Move], depth: int, result: str | None) -> None:
+async def _run(job: ReviewJob, moves: list[chess.Move], depth: int, result: str | None, start_fen: str | None) -> None:
     job.status = STATUS_RUNNING
 
     async def progress(done: int, total: int) -> None:
         job.done_positions, job.total_positions = done, total
 
     try:
-        report = await review_moves(moves, pool, depth=depth, result=result, progress=progress)
+        report = await review_moves(moves, pool, depth=depth, result=result, progress=progress, start_fen=start_fen)
         job.report = report.to_dict()
         await database.execute(
             "INSERT INTO reviews(game_id, report_json) VALUES(?, ?) "

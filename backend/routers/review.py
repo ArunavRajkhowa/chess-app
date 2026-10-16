@@ -42,7 +42,7 @@ async def start(game_id: str, req: StartReviewRequest) -> dict:
         raise HTTPException(404, "no such game")
     if not row["moves"]:
         raise HTTPException(400, "the game has no moves")
-    job = jobs.start_review(game_id, _moves_of(row), depth=DEPTHS[req.mode], result=row.get("result"))
+    job = jobs.start_review(game_id, _moves_of(row), depth=DEPTHS[req.mode], result=row.get("result"), start_fen=row.get("start_fen"))
     return job.public()
 
 

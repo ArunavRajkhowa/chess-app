@@ -126,8 +126,9 @@ async def review_moves(
     multipv: int = 2,
     result: str | None = None,
     progress: Callable[[int, int], Awaitable[None]] | None = None,
+    start_fen: str | None = None,
 ) -> GameReport:
-    boards: list[chess.Board] = [chess.Board()]
+    boards: list[chess.Board] = [chess.Board(start_fen) if start_fen else chess.Board()]
     for mv in moves:
         b = boards[-1].copy()
         b.push(mv)
@@ -144,7 +145,7 @@ async def review_moves(
             await progress(i + 1, n + 1)
 
     book = load_book()
-    opening, book_exit_ply = book.classify_game(moves)
+    opening, book_exit_ply = book.classify_game(moves) if not start_fen else (None, 0)
     phases = phases_for_game(boards)
 
     def side_cp(i: int, pov: chess.Color, line: int = 0) -> int | None:

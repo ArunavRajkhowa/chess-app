@@ -28,6 +28,14 @@ class DrillMove(BaseModel):
     move: str
     goal: str = Field(pattern="^(mate|promote|draw|survive|win_material)$")
     depth: int = Field(DRILL_DEPTH, ge=1, le=20)
+    start_fen: str | None = Field(None, description="the drill's first position; needed for win_material")
+
+
+PIECE_VALUES = {chess.PAWN: 1, chess.KNIGHT: 3, chess.BISHOP: 3, chess.ROOK: 5, chess.QUEEN: 9}
+
+
+def _material_balance(board: chess.Board, color: chess.Color) -> int:
+    return sum(v * (len(board.pieces(pt, color)) - len(board.pieces(pt, not color))) for pt, v in PIECE_VALUES.items())
 
 
 @router.get("/curriculum")
@@ -95,20 +103,27 @@ async def drill_move(req: DrillMove) -> dict:
     if move not in board.legal_moves:
         raise HTTPException(400, f"illegal move {req.move}")
     learner = board.turn
+    start_balance = None
+    if req.goal == "win_material":
+        try:
+            start_balance = _material_balance(chess.Board(req.start_fen or req.fen), learner)
+        except ValueError:
+            raise HTTPException(400, "bad start_fen")
     san = board.san(move)
     board.push(move)
-    outcome = _outcome(board, learner, req.goal, move)
+    outcome = _outcome(board, learner, req.goal, move, start_balance)
     reply = None
     if outcome is None and not board.is_game_over(claim_draw=True):
         infos = await pool.analyse(board, depth=req.depth, slot="play")
         rm = infos[0]["pv"][0]
         reply = {"san": board.san(rm), "uci": rm.uci()}
         board.push(rm)
-        outcome = _outcome(board, learner, req.goal, None)
+        outcome = _outcome(board, learner, req.goal, None, start_balance)
     return {"fen": board.fen(), "played": san, "reply": reply, "outcome": outcome}
 
 
-def _outcome(board: chess.Board, learner: chess.Color, goal: str, learner_move: chess.Move | None) -> dict | None:
+def _outcome(board: chess.Board, learner: chess.Color, goal: str, learner_move: chess.Move | None,
+             start_balance: int | None = None) -> dict | None:
     if board.is_checkmate():
         won = board.turn != learner
         return {"result": "success" if (won and goal in ("mate", "win_material", "survive")) else "fail", "reason": "checkmate" if won else "you were mated"}
@@ -118,4 +133,10 @@ def _outcome(board: chess.Board, learner: chess.Color, goal: str, learner_move: 
         return {"result": "success" if goal in ("draw", "survive") else "fail", "reason": "draw"}
     if goal == "promote" and learner_move is not None and learner_move.promotion:
         return {"result": "success", "reason": "promoted"}
+    if goal == "win_material" and start_balance is not None and learner_move is None:
+        gained = _material_balance(board, learner) - start_balance
+        if gained >= 1:
+            return {"result": "success", "reason": f"won material (+{gained})"}
+        if gained <= -3:
+            return {"result": "fail", "reason": f"lost material ({gained})"}
     return None

@@ -1,6 +1,7 @@
 import { Chess } from "chess.js";
 import { Flame, Lightbulb, RotateCcw, Timer, Trophy } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Board } from "../components/board/Board";
 import type { Shape } from "../components/board/shapes";
 import { checkSquare, destsFor, soundForMove } from "../lib/chess/game";
@@ -9,7 +10,7 @@ import { play as playSound } from "../lib/sound";
 import { puzzleApi, type Puzzle, type PuzzleTheme } from "../lib/puzzleApi";
 import "./Puzzles.css";
 
-type Mode = "rated" | "custom" | "rush";
+type Mode = "rated" | "custom" | "rush" | "daily";
 type Phase = "intro" | "solving" | "solved" | "failed";
 
 interface Solver {
@@ -43,11 +44,19 @@ export function PuzzlesPage() {
   const [rush, setRush] = useState<{ queue: Puzzle[]; i: number; score: number; wrong: number; endsAt: number | null; mode: "3m" | "5m" | "survival"; finished: boolean } | null>(null);
   const [now, setNow] = useState(Date.now());
   const startedAt = useRef<number>(Date.now());
+  const [params] = useSearchParams();
+  const [hearts, setHearts] = useState(5);
 
   useEffect(() => {
     puzzleApi.themes().then((r) => setThemes(r.themes)).catch(() => undefined);
     puzzleApi.stats().then(setStats).catch(() => undefined);
   }, []);
+  useEffect(() => {
+    if (params.get("daily")) {
+      setMode("daily");
+      puzzleApi.daily().then((r) => { setHearts(5); void load(r.puzzle); }).catch((e: Error) => setError(e.message));
+    }
+  }, [params]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (!rush || rush.finished || rush.endsAt === null) return;
@@ -132,7 +141,7 @@ export function PuzzlesPage() {
       return;
     }
     try {
-      const r = await puzzleApi.attempt(puzzle.id, solved, (Date.now() - startedAt.current) / 1000, mode === "rated" ? "rated" : "custom");
+      const r = await puzzleApi.attempt(puzzle.id, solved, (Date.now() - startedAt.current) / 1000, mode === "rated" ? "rated" : mode === "daily" ? "daily" : "custom");
       setResult({ delta: r.delta, rating_after: r.rating_after, puzzle_rating: r.puzzle_rating });
       setPlayerRating(r.rating_after);
       setStats((s) => (s ? { ...s, rating: r.rating_after, attempts: s.attempts + 1, solved: s.solved + (solved ? 1 : 0) } : s));
@@ -175,6 +184,10 @@ export function PuzzlesPage() {
         if (rm) playSound(soundForMove(rm, c2));
         setSolver((cur) => (cur ? { ...cur, chess: c2, fen: c2.fen(), index: index + 1, lastMove: [reply.slice(0, 2), reply.slice(2, 4)] } : cur));
       }, 350);
+    } else if (mode === "daily" && hearts > 1) {
+      playSound("wrong");
+      setHearts((h) => h - 1);
+      setSolver({ ...solver, wrongMove: [from, to], hintLevel: Math.max(solver.hintLevel, 1) });
     } else {
       playSound("wrong");
       setSolver({ ...solver, phase: "failed", wrongMove: [from, to] });
@@ -196,7 +209,7 @@ export function PuzzlesPage() {
     const exp = puzzle.moves[solver.index];
     shapes.push(solver.hintLevel >= 2 ? { orig: exp.slice(0, 2), dest: exp.slice(2, 4), brush: "green" } : { orig: exp.slice(0, 2), brush: "yellow" });
   }
-  const highlights = solver?.phase === "failed" && solver.wrongMove ? [{ square: solver.wrongMove[1], brush: "red" as const }] : [];
+  const highlights = solver?.wrongMove && (solver.phase === "failed" || mode === "daily") ? [{ square: solver.wrongMove[1], brush: "red" as const }] : [];
   const remaining = rush && rush.endsAt !== null ? Math.max(0, Math.ceil((rush.endsAt - now) / 1000)) : null;
 
   return (
@@ -209,6 +222,7 @@ export function PuzzlesPage() {
             ))}
           </div>
           {streak > 1 && <span className="chip chip-ok"><Flame size={12} /> {streak} in a row</span>}
+          {mode === "daily" && <span className="chip chip-danger" data-testid="hearts">{"♥".repeat(hearts)}<span className="faint">{"♥".repeat(5 - hearts)}</span></span>}
         </div>
         {puzzle && solver ? (
           <Board
@@ -251,7 +265,7 @@ export function PuzzlesPage() {
         {puzzle && solver && (
           <div className="card">
             <div className="row" style={{ justifyContent: "space-between" }}>
-              <strong data-testid="puzzle-turn">{solver.phase === "solved" ? "Solved!" : solver.phase === "failed" ? "Not quite" : `${puzzle.solver_color === "white" ? "White" : "Black"} to play`}</strong>
+              <strong data-testid="puzzle-turn">{solver.phase === "solved" ? "Solved!" : solver.phase === "failed" ? "Not quite" : solver.phase === "intro" ? `${mode === "daily" ? "Daily puzzle · " : ""}Watch the opponent's move…` : `${mode === "daily" ? "Daily puzzle · " : ""}${puzzle.solver_color === "white" ? "White" : "Black"} to play`}</strong>
               <span className="chip">puzzle {puzzle.rating}</span>
             </div>
             {playerRating !== null && mode === "rated" && <div className="faint">Your puzzle rating: <b className="num">{playerRating}</b>{result && <span className={result.delta >= 0 ? "ok" : "bad"}> ({result.delta >= 0 ? "+" : ""}{result.delta})</span>}</div>}
@@ -269,7 +283,7 @@ export function PuzzlesPage() {
             )}
             {solver.phase === "solved" && mode !== "rush" && (
               <div className="row" style={{ marginTop: 8 }}>
-                <button className="btn btn-sm btn-primary" onClick={nextPuzzle} data-testid="puzzle-next">Next puzzle</button>
+                {mode === "daily" ? <span className="chip chip-ok">Done for today. Come back tomorrow.</span> : <button className="btn btn-sm btn-primary" onClick={nextPuzzle} data-testid="puzzle-next">Next puzzle</button>}
               </div>
             )}
             {(solver.phase === "solved" || solver.phase === "failed") && (

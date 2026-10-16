@@ -4,3 +4,6 @@
 .home-tile-icon { font-size: 30px; }
 .home-games { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
 .home-games li { display: flex; align-items: center; gap: var(--s-3); padding: 8px 4px; border-top: 1px solid var(--line); }
+.home-two { display: grid; grid-template-columns: minmax(300px, 1fr) minmax(300px, 1.2fr); gap: var(--s-4); align-items: start; }
+.home-daily-body { display: flex; gap: var(--s-4); align-items: flex-start; }
+@media (max-width: 900px) { .home-two { grid-template-columns: 1fr; } }

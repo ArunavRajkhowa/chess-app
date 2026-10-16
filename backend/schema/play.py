@@ -13,6 +13,8 @@ class NewGameRequest(BaseModel):
     bot_id: str
     player_color: Literal["white", "black", "random"] = "white"
     coach_mode: bool = False
+    time_control: str | None = Field(None, pattern=r"^\d+\+\d+$", description="minutes+increment seconds, e.g. 10+0")
+    fen: str | None = Field(None, description="start from this position instead of the initial one")
 
 
 class MoveRequest(BaseModel):
@@ -41,6 +43,8 @@ class GameState(BaseModel):
     player_color: PlayerColor
     bot: dict
     coach_mode: bool
+    time_control: str | None
+    start_fen: str | None
     opening: dict | None
     last_move: list[str] | None
     in_check: bool
