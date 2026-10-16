@@ -1,0 +1,10 @@
+.analysis { display: grid; grid-template-columns: minmax(320px, 600px) minmax(320px, 440px); gap: var(--s-5); align-items: start; }
+.analysis-side { display: flex; flex-direction: column; gap: var(--s-3); position: sticky; top: var(--s-4); }
+.engine-lines { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.engine-lines button { display: flex; gap: var(--s-2); align-items: baseline; width: 100%; text-align: left; background: var(--bg-elev-2); border: 0; color: var(--ink); padding: 6px 8px; border-radius: var(--r-sm); cursor: pointer; font-size: var(--fs-sm); }
+.engine-lines button:hover { background: var(--bg-hover); }
+.engine-lines .eval { min-width: 52px; padding: 1px 6px; border-radius: 4px; text-align: center; }
+.engine-lines .eval.white { background: #f0f0f0; color: #1b1a18; }
+.engine-lines .eval.black { background: #1b1a18; color: #f0f0f0; }
+.analysis .movelist { max-height: 40vh; }
+@media (max-width: 900px) { .analysis { grid-template-columns: 1fr; } .analysis-side { position: static; } }

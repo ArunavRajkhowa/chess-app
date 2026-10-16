@@ -3,7 +3,7 @@ import { ArrowLeftRight, ChevronFirst, ChevronLast, ChevronLeft, ChevronRight, F
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { api, type Classification, type GameState, type HintResponse } from "../../lib/api";
-import { checkSquare, destsFor, soundForMove } from "../../lib/chess/game";
+import { checkSquare, destsFor, safeMove, soundForMove } from "../../lib/chess/game";
 import { capturedFromFen } from "../../lib/chess/material";
 import type { PromotionPiece, Square } from "../../lib/chess/types";
 import { winPercent, type EngineLine } from "../../lib/engine/uci";
@@ -140,7 +140,7 @@ export function GameView({ initial, onNewGame, onRematch }: Props) {
       if (tc?.incMs) setClocks((c) => ({ ...c, [myColor === "w" ? "b" : "w"]: c[myColor === "w" ? "b" : "w"] + tc.incMs }));
       if (botMove?.by === "bot") {
         const c = new Chess(pending.moves.length >= 2 ? pending.moves[pending.moves.length - 2].fen : pending.start_fen ?? new Chess().fen());
-        const mv = c.move(botMove.uci);
+        const mv = safeMove(c, botMove.uci);
         if (mv) playSound(soundForMove(mv, c));
       }
       if (pending.status === "finished") finishSound(pending);
@@ -157,7 +157,7 @@ export function GameView({ initial, onNewGame, onRematch }: Props) {
   const onMove = async (from: Square, to: Square, promotion?: PromotionPiece) => {
     if (!live || game.status !== "active" || botThinking) return;
     const c = new Chess(fen);
-    const mv = c.move({ from, to, promotion });
+    const mv = safeMove(c, { from, to, promotion });
     if (!mv) { playSound("illegal"); return; }
     playSound(soundForMove(mv, c));
     setHint(null);

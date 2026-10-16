@@ -6,7 +6,19 @@ import json
 import pytest
 from fastapi.testclient import TestClient
 
+import datetime as dt
+
 from backend.puzzles.glicko import Rating, expected_score, update
+from backend.routers.puzzles import _streak
+
+
+def test_streak_counts_consecutive_days():
+    today = dt.date(2026, 10, 16)
+    assert _streak([], today) == 0
+    assert _streak(["2026-10-16"], today) == 1
+    assert _streak(["2026-10-14", "2026-10-15"], today) == 2  # yesterday's streak still alive today
+    assert _streak(["2026-10-12", "2026-10-13"], today) == 0
+    assert _streak(["2026-10-13", "2026-10-14", "2026-10-15", "2026-10-16"], today) == 4
 
 
 def test_glicko_moves_in_the_right_direction():
@@ -56,9 +68,29 @@ def test_next_attempt_and_stats(client):
     client.post("/api/puzzles/p1/attempt", json={"solved": False, "mode": "custom"})
     s = client.get("/api/puzzles/stats/me").json()
     assert s["attempts"] == 1 and s["solved"] == 1
-    assert client.get("/api/puzzles/daily").json()["puzzle"]["id"]
+    d = client.get("/api/puzzles/daily").json()
+    assert d["puzzle"]["id"] and d["streak"] == 0 and d["solved_today"] is False
+    assert client.post("/api/puzzles/daily/solved").json()["streak"] == 1
+    assert client.get("/api/puzzles/daily").json()["solved_today"] is True
     rush = client.get("/api/puzzles/rush/start?mode=3m").json()
     assert rush["strikes"] == 3 and 1 <= len(rush["puzzles"]) <= 3
     fin = client.post("/api/puzzles/rush/finish", json={"mode": "3m", "score": 7, "wrong": 3, "seconds": 180}).json()
     assert fin["new_best"] is True and fin["best"] == 7
     assert client.get("/api/puzzles/nope").status_code == 404
+
+
+def test_vision_scores(client):
+    assert client.get("/api/vision").json()["best"] == {"find": 0, "name": 0}
+    r = client.post("/api/vision/score", json={"mode": "find", "score": 21}).json()
+    assert r["new_best"] and r["best"]["find"] == 21
+    assert client.post("/api/vision/score", json={"mode": "find", "score": 10}).json()["new_best"] is False
+    assert client.post("/api/vision/score", json={"mode": "x", "score": 1}).status_code == 422
+
+
+def test_awards_are_queries(client):
+    a = client.get("/api/awards").json()
+    assert a["earned"] == 0 and a["total"] >= 20
+    client.post("/api/puzzles/p1/attempt", json={"solved": True, "seconds": 3})
+    a = client.get("/api/awards").json()
+    assert any(x["key"] == "tactics-newbie" and x["earned"] for x in a["awards"])
+    assert a["facts"]["puzzles_solved"] == 1

@@ -53,15 +53,43 @@ class Bot:
     on_loss: str = "Well played! You got me this time."
     on_draw: str = "A draw. Fair result."
     description: str = ""
+    chat: dict[str, tuple[str, ...]] = field(default_factory=dict)
+
+
+# What a bot says when something happens. Keys are events the play API detects after each move pair.
+CHAT_EVENTS = ("capture_mine", "capture_yours", "check_given", "check_received", "long_game", "bot_winning", "bot_losing")
+DEFAULT_CHAT: dict[str, tuple[str, ...]] = {
+    "capture_mine": ("Ouch. I needed that one.", "Fair capture. I will get it back.", "Hmm. I did not see that."),
+    "capture_yours": ("Thank you for the piece.", "I will take that.", "One for me."),
+    "check_given": ("Check.", "Your king looks lonely.", "Careful now."),
+    "check_received": ("A check. Noted.", "I see your check. My king is fine.", "Checks are cheap; mates are not."),
+    "long_game": ("A long fight. I like those.", "Still here. Are you?"),
+    "bot_winning": ("The material is on my side now.", "This is going well for me. Find something."),
+    "bot_losing": ("You are ahead. Do not relax.", "I am worse. Let us see if you can convert."),
+}
+PERSONALITY_CHAT: dict[str, dict[str, tuple[str, ...]]] = {
+    "pip": {"capture_mine": ("Oh no, my piece!", "Wait, you can do that?"), "capture_yours": ("I took something! Is that good?",), "check_given": ("Is this check? I think it is check!",), "bot_losing": ("I am losing again, aren't I?",)},
+    "max": {"capture_yours": ("Mine! All mine!", "Grab first, think later."), "capture_mine": ("Hey! Give that back.",), "check_given": ("Run, king, run!",)},
+    "rafa": {"capture_mine": ("A pawn for the initiative. Worth it.",), "check_given": ("The attack begins.",), "bot_losing": ("Material is temporary. Pressure is forever.",)},
+    "mei": {"capture_mine": ("Patience. Everything is still protected.",), "bot_winning": ("Small advantages, one at a time.",)},
+    "trickster": {"capture_yours": ("Did you see the trap? There is another one.",), "check_given": ("Surprise.",), "bot_losing": ("Fine. No more tricks. Maybe.",)},
+    "wall": {"capture_mine": ("Even walls lose a brick now and then.",), "check_received": ("You will need more than a check.",)},
+    "grinder": {"bot_winning": ("Now we grind.",), "long_game": ("The endgame is where I live.",)},
+    "coach": {"capture_mine": ("Good. You saw the loose piece.",), "capture_yours": ("That was hanging. Check what my pieces attack before you move.",), "check_received": ("Nice check. Did it gain anything?",), "bot_losing": ("You are winning. Simplify: trade pieces, not pawns.",)},
+    "stockfish": {"capture_mine": ("Noted.",), "capture_yours": ("Correct.",), "check_given": ("Check.",)},
+}
 
 
 def _bot(id, name, elo, tier, tagline, avatar, depth, temp, *, multipv=4, random_move=0.0,
          movetime=None, personality=None, description="", **lines) -> Bot:
+    chat = {k: tuple(v) for k, v in DEFAULT_CHAT.items()}
+    for k, v in PERSONALITY_CHAT.get(id, {}).items():
+        chat[k] = tuple(v) + chat[k]
     return Bot(
         id=id, name=name, elo=elo, tier=tier, tagline=tagline, avatar=avatar,
         search=SearchProfile(depth=depth, movetime_seconds=movetime, multipv=multipv),
         selection=SelectionProfile(temperature_cp=temp, random_move_prob=random_move),
-        personality=personality or Personality(), description=description, **lines,
+        personality=personality or Personality(), description=description, chat=chat, **lines,
     )
 
 
@@ -113,7 +141,7 @@ BOTS: list[Bot] = [
          description="The engine at full strength with no restraint. Nobody beats this one."),
     # Special ------------------------------------------------------------------------------------
     _bot("coach", "Coach", 1200, TIER_SPECIAL, "Adapts to you, explains moves", "🎓", 6, 40, multipv=4,
-         description="Coach plays at your level, allows takebacks, shows threats and explains every move on request.",
+         description="Coach adapts its strength to how you are doing: harder when you are ahead, gentler when you are behind. Takebacks, threats and hints are on.",
          greeting="Let's play and learn. Ask me for a hint any time."),
     _bot("trickster", "Trickster", 1500, TIER_SPECIAL, "Sets traps every game", "🎭", 7, 30, multipv=4,
          personality=Personality(aggression=0.9, favourite_openings=("Stafford", "Englund", "Budapest", "Blackmar-Diemer", "Fried Liver", "Scholar's Mate")),

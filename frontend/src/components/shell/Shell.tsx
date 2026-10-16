@@ -1,4 +1,4 @@
-import { BarChart3, BookOpen, Brain, Crown, Flag, GraduationCap, Home, Library, Puzzle, Settings, Swords, TrendingUp } from "lucide-react";
+import { BarChart3, BookOpen, Brain, Crown, Eye, Flag, GraduationCap, Home, Library, Microscope, Puzzle, Settings, Swords, TrendingUp } from "lucide-react";
 import { NavLink, Outlet } from "react-router-dom";
 import { useSettings } from "../../store/settings";
 import "./Shell.css";
@@ -9,9 +9,11 @@ const NAV = [
   { to: "/puzzles", label: "Puzzles", icon: Puzzle },
   { to: "/learn", label: "Learn", icon: GraduationCap },
   { to: "/endgames", label: "Endgames", icon: Flag },
+  { to: "/vision", label: "Vision", icon: Eye },
   { to: "/openings", label: "Openings", icon: BookOpen },
   { to: "/games", label: "Master games", icon: Library },
   { to: "/review", label: "Game review", icon: TrendingUp },
+  { to: "/analysis", label: "Analysis", icon: Microscope },
   { to: "/coach", label: "Coach", icon: Brain },
   { to: "/insights", label: "Insights", icon: BarChart3 },
   { to: "/settings", label: "Settings", icon: Settings },

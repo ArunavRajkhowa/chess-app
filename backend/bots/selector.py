@@ -80,18 +80,37 @@ def _book_move(board: chess.Board, bot: Bot, book: OpeningBook, rng: random.Rand
     return mv
 
 
+ADAPTIVE_BOT_ID = "coach"
+ADAPTIVE_MATERIAL_EDGE = 2  # pawns ahead/behind (bot's view) that change the bot's strength
+
+
+def _adaptive(bot: Bot, board: chess.Board) -> tuple[float, float]:
+    """Temperature and random-move chance for this move. Only the adaptive bot changes: when the
+    player is ahead it plays sharper, when the player is behind it loosens up."""
+    temp, rnd = bot.selection.temperature_cp, bot.selection.random_move_prob
+    if bot.id != ADAPTIVE_BOT_ID:
+        return temp, rnd
+    balance = _material_balance(board, board.turn)
+    if balance <= -ADAPTIVE_MATERIAL_EDGE:
+        return temp * 0.4, 0.0
+    if balance >= ADAPTIVE_MATERIAL_EDGE:
+        return temp * 2.5, 0.08
+    return temp, rnd
+
+
 async def choose_move(board: chess.Board, bot: Bot, pool: EnginePool, rng: random.Random | None = None) -> BotChoice:
     rng = rng or random.Random()
     legal = list(board.legal_moves)
     if not legal:
         raise ValueError("no legal moves: the game is over")
+    temp, random_prob = _adaptive(bot, board)
 
     if board.ply() < bot.selection.book_plies:
         mv = _book_move(board, bot, load_book(), rng)
         if mv is not None and mv in legal:
             return BotChoice(move=mv, source="book", cp_loss=0, best_move=None, eval_cp=None)
 
-    if bot.selection.random_move_prob and rng.random() < bot.selection.random_move_prob:
+    if random_prob and rng.random() < random_prob:
         mv = rng.choice(legal)
         return BotChoice(move=mv, source="random", cp_loss=0, best_move=None, eval_cp=None)
 
@@ -115,7 +134,6 @@ async def choose_move(board: chess.Board, bot: Bot, pool: EnginePool, rng: rando
         return BotChoice(move=mv, source="random", cp_loss=0, best_move=None, eval_cp=None)
 
     best_move, best_cp = lines[0]
-    temp = bot.selection.temperature_cp
     balance = _material_balance(board, board.turn)
     if temp <= 0 or len(lines) == 1:
         chosen = best_move

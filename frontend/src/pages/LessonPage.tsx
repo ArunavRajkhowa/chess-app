@@ -5,7 +5,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { Board } from "../components/board/Board";
 import { DrillBoard, type DrillOutcome } from "../components/learn/DrillBoard";
 import type { Shape } from "../components/board/shapes";
-import { checkSquare, destsFor, soundForMove } from "../lib/chess/game";
+import { checkSquare, destsFor, safeMove, soundForMove } from "../lib/chess/game";
 import { START_FEN, type PromotionPiece, type Square } from "../lib/chess/types";
 import { learnApi, type LessonDetail, type Section } from "../lib/learnApi";
 import { Markdown } from "../lib/markdown";
@@ -122,7 +122,7 @@ function Challenge({ section, onResult, onNext, nextLabel }: { section: Extract<
   const onMove = (from: Square, to: Square, promotion?: PromotionPiece) => {
     if (state.status === "done") return;
     const c = new Chess(fen);
-    const mv = c.move({ from, to, promotion });
+    const mv = safeMove(c, { from, to, promotion });
     if (!mv) return;
     const uci = from + to + (promotion ?? "");
     const expected = section.solution[index];
@@ -139,7 +139,7 @@ function Challenge({ section, onResult, onNext, nextLabel }: { section: Extract<
       }
       const reply = section.solution[i];
       setFen(c.fen()); setIndex(i);
-      setTimeout(() => { const c2 = new Chess(c.fen()); const rm = c2.move(reply); if (rm) playSound(soundForMove(rm, c2)); setFen(c2.fen()); setIndex(i + 1); setLast([reply.slice(0, 2), reply.slice(2, 4)]); }, 350);
+      setTimeout(() => { const c2 = new Chess(c.fen()); const rm = safeMove(c2, reply); if (rm) playSound(soundForMove(rm, c2)); setFen(c2.fen()); setIndex(i + 1); setLast([reply.slice(0, 2), reply.slice(2, 4)]); }, 350);
     } else {
       playSound("wrong");
       setState({ ...state, status: "bad", attempts: state.attempts + 1, text: `${mv.san} is not it. Try again${section.hint ? " or take a hint" : ""}.` });

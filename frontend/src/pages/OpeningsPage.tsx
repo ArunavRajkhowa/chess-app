@@ -3,7 +3,7 @@ import { Search } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Board } from "../components/board/Board";
 import { MoveList } from "../components/play/MoveList";
-import { checkSquare, destsFor, soundForMove } from "../lib/chess/game";
+import { checkSquare, destsFor, safeMove, soundForMove } from "../lib/chess/game";
 import { START_FEN, type PromotionPiece, type Square } from "../lib/chess/types";
 import { play as playSound } from "../lib/sound";
 import "./Openings.css";
@@ -50,13 +50,13 @@ export function OpeningsPage() {
   };
 
   const playSan = (san: string) => {
-    const mv = chess.move(san);
+    const mv = safeMove(chess, san);
     if (!mv) return;
     playSound(soundForMove(mv, chess));
     sync();
   };
   const onMove = (from: Square, to: Square, promotion?: PromotionPiece) => {
-    const mv = chess.move({ from, to, promotion });
+    const mv = safeMove(chess, { from, to, promotion });
     if (!mv) return;
     playSound(soundForMove(mv, chess));
     sync();
@@ -65,7 +65,7 @@ export function OpeningsPage() {
     chess.reset();
     for (const tok of pgn.split(" ")) {
       if (/^\d/.test(tok)) continue;
-      chess.move(tok);
+      safeMove(chess, tok);
     }
     sync();
     setResults([]);

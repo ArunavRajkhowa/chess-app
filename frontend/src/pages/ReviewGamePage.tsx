@@ -9,7 +9,7 @@ import { CoachPanel } from "../components/review/CoachPanel";
 import { EvalGraph } from "../components/review/EvalGraph";
 import { ReportTable } from "../components/review/ReportTable";
 import { api, type GameReport, type ReviewedMove } from "../lib/api";
-import { checkSquare, destsFor, soundForMove } from "../lib/chess/game";
+import { checkSquare, destsFor, safeMove, soundForMove } from "../lib/chess/game";
 import type { PromotionPiece, Square } from "../lib/chess/types";
 import { winPercent } from "../lib/engine/uci";
 import { gameAccuracy } from "../lib/review/accuracy";
@@ -106,7 +106,7 @@ export function ReviewGamePage() {
   const onRetryMove = async (from: Square, to: Square, promotion?: PromotionPiece) => {
     if (!retry || !current) return;
     const c = new Chess(fen);
-    const mv = c.move({ from, to, promotion });
+    const mv = safeMove(c, { from, to, promotion });
     if (!mv) return;
     playSound(soundForMove(mv, c));
     const uci = from + to + (promotion ?? "");

@@ -1,7 +1,7 @@
 import { Chess } from "chess.js";
 import { useMemo, useState } from "react";
 import { Board } from "../board/Board";
-import { checkSquare, destsFor, soundForMove } from "../../lib/chess/game";
+import { checkSquare, destsFor, safeMove, soundForMove } from "../../lib/chess/game";
 import type { PromotionPiece, Square } from "../../lib/chess/types";
 import { learnApi } from "../../lib/learnApi";
 import { play as playSound } from "../../lib/sound";
@@ -31,7 +31,7 @@ export function DrillBoard({ fen: startFen, goal, maxMoves, orientation, onOutco
 
   const onMove = async (from: Square, to: Square, promotion?: PromotionPiece) => {
     const c = new Chess(state.fen);
-    const mv = c.move({ from, to, promotion });
+    const mv = safeMove(c, { from, to, promotion });
     if (!mv) return;
     playSound(soundForMove(mv, c));
     setState((s) => ({ ...s, fen: c.fen(), last: [from, to], busy: true }));

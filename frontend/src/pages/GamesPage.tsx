@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Board } from "../components/board/Board";
 import { MoveList } from "../components/play/MoveList";
-import { checkSquare, destsFor, soundForMove } from "../lib/chess/game";
+import { checkSquare, destsFor, safeMove, soundForMove } from "../lib/chess/game";
 import { START_FEN, type PromotionPiece, type Square } from "../lib/chess/types";
 import { Markdown } from "../lib/markdown";
 import { play as playSound } from "../lib/sound";
@@ -93,7 +93,7 @@ function GameStudy({ gameId }: { gameId: string }) {
   const onGuess = async (from: Square, to: Square, promotion?: PromotionPiece) => {
     if (!game) return;
     const c = new Chess(fen);
-    const mv = c.move({ from, to, promotion });
+    const mv = safeMove(c, { from, to, promotion });
     if (!mv) return;
     const res = await fetch("/api/games/guess", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ game_id: game.id, ply: ply + 1, move: from + to + (promotion ?? "") }) });
     const r = await res.json();
@@ -101,7 +101,7 @@ function GameStudy({ gameId }: { gameId: string }) {
     setFeedback(`${r.your_san}: ${r.verdict === "master" ? "the master's move!" : `${r.note} Game move: ${r.master_san}.`}`);
     playSound(r.points >= 2 ? "correct" : "wrong");
     const master = new Chess(fen);
-    const mm = master.move(game.moves[ply].uci);
+    const mm = safeMove(master, game.moves[ply].uci);
     if (mm) playSound(soundForMove(mm, master));
     setPly(ply + 1);
   };

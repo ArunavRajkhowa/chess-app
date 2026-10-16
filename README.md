@@ -1,10 +1,13 @@
 # Chess Coach
 
 Play, review and learn chess in one app that runs on your own machine. Twenty bots from 250 to
-3200 with personalities, chess.com-style Game Review with accuracy and key moments, a puzzle
-trainer with ratings and Puzzle Rush, a spiral curriculum from the rules to master level, an
-opening explorer, annotated master games with guess-the-move, Insights over your games, and a
-coach powered by Claude that only talks about facts the engine verified.
+3200 with personalities, chat and an adaptive coach bot; clocks; chess.com-style Game Review
+with accuracy, key moments, retry and practice-from-here; a puzzle trainer with ratings, Puzzle
+Rush, a daily puzzle with streaks and puzzles made from your own mistakes; an endgame trainer; a
+board vision trainer; an analysis board with engine lines; a spiral curriculum from the rules to
+master level; an opening explorer; annotated master games with guess-the-move; Insights and
+awards over your games; and a coach powered by Claude that only talks about facts the engine
+verified.
 
 No paywall, no account. Everything is stored in one SQLite file under `data/`.
 

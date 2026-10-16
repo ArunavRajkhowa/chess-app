@@ -25,6 +25,11 @@ export function LearnPage() {
         <div className="learn-total"><div className="faint">lessons done</div><b className="num">{done} / {total}</b></div>
       </div>
       {error && <div className="chip chip-danger">{error}</div>}
+      <div className="row" style={{ flexWrap: "wrap" }}>
+        <Link to="/vision" className="btn">👁 Board vision trainer</Link>
+        <Link to="/endgames" className="btn">🏁 Endgame trainer</Link>
+        <Link to="/games" className="btn">📚 Master games</Link>
+      </div>
       <div className="bands">
         {bands.map((b) => (
           <section key={b.band} className={`band card ${open === b.band ? "open" : ""} ${b.lessons_total === 0 ? "empty" : ""}`}>
