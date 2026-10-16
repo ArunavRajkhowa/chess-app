@@ -1,0 +1,115 @@
+/* Design tokens. Colour is state, not hierarchy: hierarchy comes from weight, size, spacing.
+   A new hex in a component rule is a defect unless it is a state with no token here. */
+:root {
+  color-scheme: dark;
+
+  /* Surfaces: chess.com-like warm dark neutrals */
+  --bg: #262421;
+  --bg-elev: #302e2b;
+  --bg-elev-2: #3a3734;
+  --bg-hover: #45423e;
+  --line: #3f3c38;
+  --line-strong: #57534e;
+
+  /* Ink */
+  --ink: #e8e6e3;
+  --ink-2: #b9b6b1;
+  --ink-3: #8b8780;
+  --ink-inverse: #1b1a18;
+
+  /* Brand */
+  --brand: #81b64c;
+  --brand-strong: #95bb4a;
+  --brand-ink: #14200a;
+  --accent: #f5c242;
+
+  /* States (also the move classification colours) */
+  --c-brilliant: #1baca6;
+  --c-great: #5c8bb0;
+  --c-best: #81b64c;
+  --c-excellent: #96bc4b;
+  --c-good: #96af8b;
+  --c-book: #a88865;
+  --c-inaccuracy: #f7c631;
+  --c-mistake: #ffa459;
+  --c-miss: #ff7769;
+  --c-blunder: #fa412d;
+  --c-forced: #96af8b;
+  --danger: #fa412d;
+  --warn: #f7c631;
+  --ok: #81b64c;
+  --info: #5c8bb0;
+
+  /* Board themes (overridden by [data-board]) */
+  --sq-light: #eeeed2;
+  --sq-dark: #769656;
+  --sq-coord-on-light: #769656;
+  --sq-coord-on-dark: #eeeed2;
+  --sq-last: rgba(255, 255, 51, 0.5);
+  --sq-selected: rgba(255, 255, 51, 0.5);
+  --sq-dest: rgba(0, 0, 0, 0.14);
+  --sq-check: radial-gradient(circle at center, rgba(255, 0, 0, 0.95) 0%, rgba(231, 0, 0, 0.75) 25%, rgba(169, 0, 0, 0) 89%);
+  --sq-premove: rgba(20, 30, 85, 0.5);
+  --sq-hover: rgba(255, 255, 255, 0.35);
+  --arrow-green: rgba(21, 120, 27, 0.85);
+  --arrow-red: rgba(224, 32, 32, 0.85);
+  --arrow-blue: rgba(0, 48, 136, 0.85);
+  --arrow-yellow: rgba(229, 178, 0, 0.85);
+
+  /* Type */
+  --font: "Inter", "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+  --fs-xs: 11px;
+  --fs-sm: 13px;
+  --fs-md: 14px;
+  --fs-lg: 16px;
+  --fs-xl: 20px;
+  --fs-2xl: 26px;
+  --fs-3xl: 34px;
+
+  /* Space & shape */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 24px;
+  --s-6: 32px;
+  --s-7: 48px;
+  --r-sm: 6px;
+  --r-md: 10px;
+  --r-lg: 16px;
+  --shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+
+  --anim: 180ms;
+  --nav-w: 200px;
+}
+
+[data-board="brown"] {
+  --sq-light: #f0d9b5;
+  --sq-dark: #b58863;
+  --sq-coord-on-light: #b58863;
+  --sq-coord-on-dark: #f0d9b5;
+}
+[data-board="blue"] {
+  --sq-light: #dee3e6;
+  --sq-dark: #8ca2ad;
+  --sq-coord-on-light: #8ca2ad;
+  --sq-coord-on-dark: #dee3e6;
+}
+[data-board="purple"] {
+  --sq-light: #e6dbf0;
+  --sq-dark: #8f6fb0;
+  --sq-coord-on-light: #8f6fb0;
+  --sq-coord-on-dark: #e6dbf0;
+}
+[data-board="walnut"] {
+  --sq-light: #c9b48a;
+  --sq-dark: #8a6240;
+  --sq-coord-on-light: #8a6240;
+  --sq-coord-on-dark: #c9b48a;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --anim: 0ms; }
+}

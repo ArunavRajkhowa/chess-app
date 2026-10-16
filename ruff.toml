@@ -1,0 +1,12 @@
+# Lint config scoped to rules that catch defects, not style opinions.
+target-version = "py312"
+line-length = 110
+exclude = [".venv", "frontend", "**/__pycache__", "data"]
+
+[lint]
+select = ["F", "E9", "E711", "E712", "E713", "E714", "E722", "B", "ASYNC", "S102", "S307"]
+ignore = ["B008", "B904", "B905", "ASYNC109", "ASYNC230", "ASYNC240"]
+
+[lint.per-file-ignores]
+"tests/**" = ["S101", "S108", "F401"]
+"scripts/**" = ["ASYNC"]

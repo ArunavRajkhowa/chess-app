@@ -1,0 +1,39 @@
+# ── Secrets — never commit a real .env. Only *.env.example templates are tracked. ──
+.env
+**/.env
+.env.*
+**/.env.*
+!.env.example
+!**/.env.example
+
+# ── Python ──
+__pycache__/
+*.py[cod]
+build/
+dist/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+
+# ── Node / frontend ──
+frontend/node_modules/
+frontend/dist/
+frontend/public/engine/
+frontend/test-results/
+frontend/playwright-report/
+*.local
+npm-debug.log*
+
+# ── Runtime data ──
+data/chess.sqlite3*
+data/traces/
+*.log
+
+# ── OS / editor ──
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json
