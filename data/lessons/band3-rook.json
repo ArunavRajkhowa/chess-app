@@ -275,7 +275,7 @@
        "prompt": "White to play. Black's rook on d8 guards the knight on d5. It also has a second job. Take the knight.",
        "solution": [
         "d1d5"
-       ],
+       ], "also": ["e1e5", "d1d2", "d1d3"],
        "hint": "What does the rook on d8 guard besides the knight?",
        "explanation": "1.Rxd5! If 1...Rxd5, then 2.Re8 is mate: the rook on d8 also guarded the back rank and cannot do both jobs. So White simply wins the knight. The rook is overloaded."
       },
@@ -1265,7 +1265,7 @@
        "prompt": "Black to play and draw with Philidor's method. Put the rook on the right rank.",
        "solution": [
         "a1a6"
-       ],
+       ], "also": ["a1a2", "a1a3", "a1a5"],
        "hint": "Which rank must the white king reach to win? Guard it with your rook.",
        "explanation": "1...Ra6! The white king cannot step onto the sixth rank. If White waits, Black waits too, with the rook along the sixth rank. White's only try is 2.e6, and that takes away the king's shelter."
       },
@@ -1275,7 +1275,7 @@
        "prompt": "White has pushed the pawn to e6. Black to play: the rook leaves the sixth rank. Drop it to the first rank, far behind the white king.",
        "solution": [
         "a6a1"
-       ],
+       ], "also": ["a6a4", "a6a5", "a6a3"],
        "hint": "Checks from behind need distance.",
        "explanation": "2...Ra1! Now come checks from behind: 3.Kd6 Rd1+ 4.Ke5 Re1+ and so on. The pawn on e6 cannot shield its own king, and the black king on e8 stops the pawn. Draw."
       },
@@ -1364,7 +1364,7 @@
        "prompt": "White to play. Step one: cut the black king off by one more file.",
        "solution": [
         "d1e1"
-       ],
+       ], "also": ["d1d4", "d1d7", "d1d5"],
        "hint": "A check on the e-file.",
        "explanation": "1.Re1+! The king must go to the f-file (1...Kf7). Now the rook on the e-file keeps it away from d7 and d8, the squares next to the pawn."
       },
@@ -1374,7 +1374,7 @@
        "prompt": "Step two: build the bridge. Put your rook where it can block checks later.",
        "solution": [
         "e1e4"
-       ],
+       ], "also": ["c8d7", "c8d8", "e1e5"],
        "hint": "The fourth rank.",
        "explanation": "2.Re4! After 2...Rb1 3.Kd7 Rd1+ 4.Kc6 Rc1+ 5.Kd6 Rd1+ 6.Kc5 Rc1+ 7.Rc4 the checks are over and the pawn queens. Other rook moves can also win here, but the fourth rank is the method that always works."
       },
@@ -1844,7 +1844,7 @@
        "prompt": "White to play. Mini-plan two: load the c-file. Which rook move starts the gun?",
        "solution": [
         "c2c3"
-       ],
+       ], "also": ["e3b3", "b5f1", "b5d3", "b5e2"],
        "hint": "The queen will go behind the rooks later; first make room on c2.",
        "explanation": "24.Rc3! frees c2 for the other rook. After 24...Qd7 25.R1c2 and 26.Qc1, two rooks and the queen stand on the c-file. Black can only defend c6."
       },
@@ -2045,7 +2045,7 @@
        "prompt": "Black to play. Use the kingside pawns to gain space and push the bishop on f4 back.",
        "solution": [
         "g6g5"
-       ],
+       ], "also": ["d8d1", "h7h6", "g7f8"],
        "hint": "Attack the bishop with a pawn.",
        "explanation": "22...g5! The bishop must retreat, and the black pawns take squares on the kingside. Later ...h6 and ...f5 follow, and the white pieces have fewer and fewer good squares."
       },
@@ -2055,7 +2055,7 @@
        "prompt": "Black to play. The white knight on b3 is the weakest white piece. Take its squares away.",
        "solution": [
         "a7a5"
-       ],
+       ], "also": ["d8d7"],
        "hint": "Push the a-pawn towards a4.",
        "explanation": "27...a5! threatens ...a4, driving the knight from b3. After 28.Nc1 a4 the knight on c1 has no good square, and the bishops rule both wings."
       },
@@ -2153,7 +2153,7 @@
        "prompt": "Black to play. Put a knight on the square in front of the isolated pawn.",
        "solution": [
         "b6d5"
-       ],
+       ], "also": ["c8d7", "a7a5", "f6d5"],
        "hint": "Which square can no white pawn ever attack?",
        "explanation": "11...Nbd5! The knight blockades d5, the square in front of the isolated pawn. No white pawn can drive it away, and from d5 it also attacks the bishop on f4 and the knight on c3."
       },
