@@ -318,6 +318,8 @@ async def takeback(game_id: str) -> GameState:
     if row["status"] != "active":
         raise HTTPException(409, "game is finished")
     moves = row["moves"]
+    if not any(m["by"] == "player" for m in moves):
+        raise HTTPException(409, "nothing to take back yet")
     while moves and moves[-1]["by"] == "bot":
         moves.pop()
     if moves and moves[-1]["by"] == "player":

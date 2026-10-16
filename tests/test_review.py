@@ -35,12 +35,37 @@ def test_special_labels():
     assert judge(win_before=95.0, win_after=60.0, best_win_was_available=95.0, cp_loss=400) == C.MISS
 
 
+def test_book_line_blunder_and_losing_miss_are_blunders():
+    assert judge(is_book=True, win_before=50.0, win_after=41.0, cp_loss=90) == C.BOOK  # dubious theory stays book
+    assert judge(is_book=True, win_before=43.5, win_after=0.0, cp_loss=10000) == C.BLUNDER  # 2.g4?? in the Fool's mate line
+    assert judge(win_before=100.0, win_after=20.0, best_win_was_available=100.0, cp_loss=1000) == C.BLUNDER  # missed mate and lost
+    assert judge(win_before=100.0, win_after=99.9, best_win_was_available=100.0, cp_loss=9000, mate_missed=True) == C.MISS  # Qa3 for Rd8#
+
+
+def test_game_accuracy_weights_each_move_by_its_own_ply():
+    # 5 positions -> window 2; white moves are plies 1 and 3, whose windows are (50,50) and (50,90).
+    weights = C.volatility_weights([50, 50, 50, 90, 10])
+    assert weights == [0.5, 0.5, 12.0, 12.0]
+    assert C.game_accuracy([100.0, 50.0], weights[0::2]) == 59.3  # (52.0 weighted + 66.7 harmonic) / 2
+
+
 def test_game_accuracy_rewards_consistency():
-    flat = C.game_accuracy([50] * 21, [95] * 20)
-    spiky = C.game_accuracy([50, 90, 10] * 7, [95] * 20)
+    flat = C.game_accuracy([95] * 20, C.volatility_weights([50] * 21)[0::2])
+    spiky = C.game_accuracy([95] * 20, C.volatility_weights([50, 90, 10] * 7)[0::2])
     assert 90 < flat <= 100
     assert abs(flat - spiky) < 6
     assert C.estimate_rating(10) > C.estimate_rating(50) > C.estimate_rating(150)
+
+
+def test_a_sacrifice_can_leave_another_piece_hanging():
+    from backend.review.report import _sacrificed_pawns
+    board = chess.Board()
+    for san in "Nf3 Nf6 c4 g6 Nc3 Bg7 d4 O-O Bf4 d5 Qb3 dxc4 Qxc4 c6 e4 Nbd7 Rd1 Nb6 Qc5 Bg4 Bg5 Na4 Qa3 Nxc3 bxc3 Nxe4 Bxe7 Qb6 Bc4 Nxc3 Bc5 Rfe8+ Kf1".split():
+        board.push_san(san)
+    assert _sacrificed_pawns(board, board.parse_san("Be6")) == 9 - 3  # Byrne-Fischer 1956: the queen stays en prise to Bc5
+    assert _sacrificed_pawns(chess.Board(), chess.Move.from_uci("g1f3")) == 0
+    opera = chess.Board("3rkb1r/p2nqppp/5n2/1B2p1B1/4P3/1Q6/PPP2PPP/2KR3R w k - 3 13")
+    assert _sacrificed_pawns(opera, opera.parse_san("Rxd7")) == 2  # Morphy's exchange sacrifice
 
 
 def test_phase_detection():
@@ -134,3 +159,32 @@ def test_mistake_puzzles_come_from_reviews(client):
         a = client.post(f"/api/puzzles/{p['id']}/attempt", json={"solved": True, "mode": "mistakes"}).json()
         assert a["delta"] == 0
         assert client.get("/api/puzzles/mistakes").json()["puzzles"][-1]["solved_before"] in (True, False)
+
+
+def test_fen_import_is_reviewed_from_the_fen(client):
+    fen = "8/8/8/3k4/8/8/7Q/4K3 w - - 0 40"
+    pgn = f'[SetUp "1"]\n[FEN "{fen}"]\n\n40. Qh5+ Kd4 41. Qe2 Kc3 *'
+    r = client.post("/api/review/import", json={"pgn": pgn, "mode": "quick"})
+    assert r.status_code == 200, r.text
+    rep = _wait(client, r.json()["job"]["id"])["report"]
+    assert rep["moves"][0]["fen_before"] == fen
+    assert [m["move_number"] for m in rep["moves"]] == [40, 40, 41, 41]
+    assert client.get(f"/api/review/games/{r.json()['game_id']}").json()["game"]["start_fen"] == fen
+
+
+def test_fools_mate_notes_name_the_mate(client):
+    r = client.post("/api/review/import", json={"pgn": "1. f3 e5 2. g4 Qh4# 0-1", "mode": "quick"})
+    rep = _wait(client, r.json()["job"]["id"])["report"]
+    g4, qh4 = rep["moves"][2], rep["moves"][3]
+    assert g4["classification"] == C.BLUNDER and "mate in 1" in g4["note"] and "pawns lost" not in g4["note"]
+    assert qh4["note"] == "Checkmate."
+    assert 3 in rep["key_moments"]
+
+
+def test_summary_fallback_names_only_errors():
+    from backend.routers.coach import _rules_summary
+    side = {"accuracy": 80.0, "phase_accuracy": {"opening": 80.0, "middlegame": None, "endgame": None}}
+    moves = [{"is_key_moment": True, "color": "white", "move_number": 5, "san": "Nxe5", "classification": C.BRILLIANT,
+              "best_move_san": "Nxe5", "win_before": 60.0, "win_after": 60.0}]
+    text = _rules_summary({"white": side, "black": side, "opening": None, "moves": moves}, "white")
+    assert "was better" not in text and "strongest phase" not in text

@@ -142,3 +142,10 @@ def test_bot_chat_and_adaptive_coach(client):
     b = chess.Board("rnbqkbnr/ppp1pppp/8/3p4/4P3/8/PPPP1PPP/RNBQKBNR w KQkq d6 0 2")
     lines = {_chat_line(row, b, chess.Move.from_uci("e4d5"), chess.Move.from_uci("d8d5"), _random.Random(i)) for i in range(30)}
     assert any(line for line in lines)
+
+
+def test_takeback_before_the_players_first_move_is_refused(client):
+    game = client.post("/api/play/games", json={"bot_id": "sam", "player_color": "black"}).json()
+    assert client.post(f"/api/play/games/{game['id']}/takeback").status_code == 409
+    state = client.get(f"/api/play/games/{game['id']}").json()
+    assert state["turn"] == "b" and len(state["moves"]) == 1

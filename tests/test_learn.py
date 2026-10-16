@@ -69,3 +69,12 @@ def test_drill_win_material_goal(client):
     assert r["outcome"] is None
     r3 = client.post("/api/learn/drill/move", json={"fen": "5k2/pp3ppp/8/8/8/8/PPP2PPP/3R2K1 w - - 0 1", "move": "d1d7", "goal": "win_material", "start_fen": fen}).json()
     assert r3["outcome"] is None or r3["outcome"]["result"] in ("success", "fail")
+
+
+def test_drill_accepts_san_and_refuses_a_position_without_a_king(client):
+    fen = "r3k3/8/8/8/8/8/8/R3K3 w Qq - 0 1"
+    for move in ("Rxa8", "O-O-O"):
+        r = client.post("/api/learn/drill/move", json={"fen": fen, "move": move, "goal": "mate"})
+        assert r.status_code == 200, (move, r.text)
+    r = client.post("/api/learn/drill/move", json={"fen": "4k3/8/8/8/8/8/8/R7 w - - 0 1", "move": "a1a2", "goal": "mate"})
+    assert r.status_code == 400

@@ -16,6 +16,16 @@ from .locator import engine_kind, find_engine_command
 
 LOGGER = logging.getLogger("chess.engine_pool")
 
+class IllegalPosition(ValueError):
+    """A position the engine must never see: Stockfish crashes, and stays dead, on a board
+    python-chess calls invalid (a missing king, the side not to move in check)."""
+
+
+def _require_legal(board: chess.Board) -> None:
+    if not board.is_valid():
+        raise IllegalPosition(f"illegal position {board.fen()!r}: {board.status()!r}")
+
+
 # Options python-chess manages itself; passing them in configure() raises.
 _MANAGED = {"MultiPV", "Ponder", "UCI_Chess960", "UCI_Variant", "UCI_AnalyseMode", "UCI_Opponent"}
 
@@ -80,6 +90,7 @@ class EnginePool:
         slot: str = "analysis",
     ) -> list[chess.engine.InfoDict]:
         """Full-strength analysis. Returns one InfoDict per principal variation, best first."""
+        _require_legal(board)
         s = self.slots[slot]
         limit = chess.engine.Limit(depth=depth, time=time_seconds, nodes=nodes)
         async with s.lock:
@@ -99,6 +110,7 @@ class EnginePool:
     ) -> list[chess.engine.InfoDict]:
         """Analysis under bot settings (Skill Level / UCI_Elo). Returns multipv lines the bot
         selector chooses from; the caller decides the move, not the engine's bestmove."""
+        _require_legal(board)
         s = self.slots["play"]
         limit = chess.engine.Limit(depth=depth, time=time_seconds, nodes=nodes)
         async with s.lock:

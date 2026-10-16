@@ -37,11 +37,14 @@ BRILLIANT_MIN_WIN_AFTER = 40.0
 BRILLIANT_MAX_WIN_BEFORE = 92.0
 BRILLIANT_MIN_SACRIFICE_PAWNS = 2  # knight or more, or two pawns of material given up
 BRILLIANT_WINNING_ANYWAY_SECOND_WIN = 95.0  # second-best line already this good: no brilliancy
-# "Miss": the mover had a winning shot (best line this good) and played something clearly worse.
+# "Miss": the mover had a winning shot (best line this good) and played something clearly worse,
+# but is still at least level afterwards; a move that also loses is a blunder.
 MISS_MIN_BEST_WIN = 85.0
 MISS_MIN_DROP = 10.0
+MISS_MIN_WIN_AFTER = 50.0
 
-# Opening book moves count as book only this far into the game.
+# Opening book moves count as book only this far into the game, and only when they are not
+# blunders: a named trap line (Fool's mate) still shows the losing move as a blunder.
 BOOK_MAX_PLY = 24
 
 
@@ -68,14 +71,15 @@ def classify_move(
     best_win_was_available: float,
     in_check_before: bool = False,
     is_promotion: bool = False,
+    mate_missed: bool = False,
 ) -> str:
     """Decide one move's label. `best_win_was_available` is the mover's win% if they had played the
     engine's top move (equal to win_before by construction, kept explicit for the Miss rule)."""
     if is_forced:
         return FORCED
-    if is_book:
-        return BOOK
     drop = max(0.0, win_before - win_after)
+    if is_book and drop <= MISTAKE_MAX_DROP:
+        return BOOK
 
     if is_best or cp_loss <= 0:
         winning_anyway = second_best_win is not None and second_best_win >= BRILLIANT_WINNING_ANYWAY_SECOND_WIN
@@ -95,7 +99,9 @@ def classify_move(
             return GREAT
         return BEST
 
-    if best_win_was_available >= MISS_MIN_BEST_WIN and drop >= MISS_MIN_DROP and win_after < MISS_MIN_BEST_WIN:
+    if mate_missed and win_after >= MISS_MIN_WIN_AFTER:
+        return MISS  # a forced mate let go while still winning: Qa3 instead of Rd8#
+    if best_win_was_available >= MISS_MIN_BEST_WIN and drop >= MISS_MIN_DROP and MISS_MIN_WIN_AFTER <= win_after < MISS_MIN_BEST_WIN:
         return MISS
     if drop <= EXCELLENT_MAX_DROP:
         return EXCELLENT
@@ -113,22 +119,25 @@ def move_accuracy(win_before: float, win_after: float) -> float:
     return max(0.0, min(100.0, 103.1668 * math.exp(-0.04354 * drop) - 3.1669))
 
 
-def game_accuracy(win_percents_white_view: list[float], move_accuracies: list[float]) -> float:
-    """lichess game accuracy: the mean of a volatility-weighted average and the harmonic mean of
-    the per-move accuracies. `win_percents_white_view` has one entry per position (n+1)."""
-    if not move_accuracies:
-        return 100.0
-    n = len(win_percents_white_view)
-    window = max(2, min(8, n // 10))
-    windows: list[list[float]] = []
-    for i in range(len(move_accuracies)):
-        lo = max(0, i + 1 - window)
-        windows.append(win_percents_white_view[lo : i + 2])
+def volatility_weights(win_percents_white_view: list[float]) -> list[float]:
+    """lichess's weight for each move (one per ply): the standard deviation of white's win% over a
+    window of positions ending at that move, clamped to 0.5..12. Input has one entry per position."""
+    wp = win_percents_white_view
+    window = max(2, min(8, len(wp) // 10))
+    windows = [wp[:window]] * (window - 2) + [wp[i : i + window] for i in range(len(wp) - window + 1)]
     weights = []
     for w in windows:
         mean = sum(w) / len(w)
         var = sum((x - mean) ** 2 for x in w) / len(w)
         weights.append(max(0.5, min(12.0, math.sqrt(var))))
+    return weights
+
+
+def game_accuracy(move_accuracies: list[float], weights: list[float]) -> float:
+    """lichess game accuracy for one side: the mean of the volatility-weighted average and the
+    harmonic mean of that side's move accuracies. `weights` are volatility_weights at those plies."""
+    if not move_accuracies:
+        return 100.0
     weighted = sum(a * w for a, w in zip(move_accuracies, weights)) / sum(weights)
     harmonic = len(move_accuracies) / sum(1.0 / max(a, 0.01) for a in move_accuracies)
     return round((weighted + harmonic) / 2.0, 1)

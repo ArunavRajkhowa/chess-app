@@ -23,15 +23,13 @@ def explain_move_text(*, move_san: str, mover: str, classification: str, best_sa
         reasons = []
         if after_me["hanging_pieces"]:
             reasons.append(f"it leaves your {after_me['hanging_pieces'][0]} hanging")
-        threats = facts_after.get("threats_against_side_to_move") or []
-        if facts_after["side_to_move"] == opp and after_opp:
-            pass
+        replies = facts_after.get("candidate_moves") or []  # the opponent's best answers to the move
         if facts_after.get("in_check") and facts_after["side_to_move"] == mover:
             reasons.append("it walks into a check")
         if after_me["attackers_near_king"] >= 2:
             reasons.append(f"{after_me['attackers_near_king']} enemy pieces now sit near your king on {after_me['king_square']}")
-        if not reasons and threats:
-            reasons.append(f"the opponent now threatens {threats[0]['san']}")
+        if not reasons and replies:
+            reasons.append(f"it allows {replies[0]['move']}")
         if reasons:
             parts.append("The problem: " + "; ".join(reasons) + ".")
         parts.append(f"Better was {best_san} ({eval_before} before, {eval_after} after your move)." + (f" The line: {' '.join(best_line)}." if best_line else ""))

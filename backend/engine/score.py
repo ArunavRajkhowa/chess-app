@@ -19,12 +19,8 @@ def win_percent_from_cp(cp: int) -> float:
 
 def cp_from_score(score: chess.engine.PovScore, pov: chess.Color = chess.WHITE) -> int:
     """Centipawns from the given side's view. Mate in N becomes ±(MATE_CP - N) so a faster mate
-    scores higher than a slower one."""
-    s = score.pov(pov)
-    if s.is_mate():
-        n = s.mate() or 0
-        return (MATE_CP - abs(n)) if n > 0 else -(MATE_CP - abs(n))
-    return s.score() or 0
+    scores higher than a slower one; a mate already on the board is +MATE_CP for the winner."""
+    return score.pov(pov).score(mate_score=MATE_CP)
 
 
 def win_percent_from_score(score: chess.engine.PovScore, pov: chess.Color = chess.WHITE) -> float:
@@ -43,6 +39,8 @@ def describe_score(score: chess.engine.PovScore, pov: chess.Color = chess.WHITE)
     s = score.pov(pov)
     if s.is_mate():
         n = s.mate() or 0
+        if n == 0:
+            return "#"
         return f"M{n}" if n > 0 else f"-M{abs(n)}"
     cp = s.score() or 0
     return f"{cp / 100:+.2f}"

@@ -18,6 +18,7 @@ from ..coach.client import CoachDeclined, llm_enabled, prompt, stream_text
 from ..coach.facts import position_facts
 from ..engine.pool import pool
 from ..review import jobs
+from ..review.classify import BLUNDER, MISS, MISTAKE
 from ..settings import settings
 from ..storage import games as store
 
@@ -101,6 +102,8 @@ async def facts(fen: str) -> dict:
         board = chess.Board(fen)
     except ValueError:
         raise HTTPException(400, f"bad FEN {fen!r}")
+    if not board.is_valid():
+        raise HTTPException(400, f"illegal position {fen!r}")
     return await position_facts(board, pool)
 
 
@@ -138,6 +141,8 @@ async def chat(req: ChatRequest):
         board = chess.Board(req.fen)
     except ValueError:
         raise HTTPException(400, f"bad FEN {req.fen!r}")
+    if not board.is_valid():
+        raise HTTPException(400, f"illegal position {req.fen!r}")
     f = await position_facts(board, pool)
     history = "\n".join(f"{t.get('role', 'user')}: {t.get('content', '')}" for t in req.history[-8:])
     user = prompt("chat").format(player_level=req.level, facts=json.dumps(f))
@@ -154,6 +159,8 @@ async def hint(req: HintRequest):
         board = chess.Board(req.fen)
     except ValueError:
         raise HTTPException(400, f"bad FEN {req.fen!r}")
+    if not board.is_valid():
+        raise HTTPException(400, f"illegal position {req.fen!r}")
     f = await position_facts(board, pool)
     user = prompt("hint").format(player_level=req.level, hint_level=req.hint_level, facts=json.dumps(f))
     rules = fallback.hint_text(f, req.hint_level)
@@ -187,13 +194,13 @@ def _rules_summary(report: dict, player_color: str) -> str:
     me = report[player_color]
     opp = report["black" if player_color == "white" else "white"]
     opening = report["opening"]["name"] if report.get("opening") else "an unnamed opening"
-    key = [m for m in report["moves"] if m["is_key_moment"] and m["color"] == player_color]
-    worst = sorted(key, key=lambda m: m["win_before"] - m["win_after"], reverse=True)[:2]
+    errors = [m for m in report["moves"] if m["color"] == player_color and m["classification"] in (MISTAKE, MISS, BLUNDER)]
+    worst = sorted(errors, key=lambda m: m["win_before"] - m["win_after"], reverse=True)[:2]
     parts = [f"You played {opening} with {me['accuracy']}% accuracy against {opp['accuracy']}%."]
     for m in worst:
         parts.append(f"Move {m['move_number']} {m['san']} was a {m['classification']}; {m['best_move_san']} was better.")
     phases = {k: v for k, v in me["phase_accuracy"].items() if v is not None}
-    if phases:
+    if len(phases) >= 2:
         best = max(phases, key=phases.get)
         weak = min(phases, key=phases.get)
         parts.append(f"Your strongest phase was the {best} ({phases[best]}%), your weakest the {weak} ({phases[weak]}%).")
