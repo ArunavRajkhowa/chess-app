@@ -709,7 +709,7 @@
               "prompt": "White to play. Develop the king's bishop to the diagonal that points at f7.",
               "solution": [
                 "f1c4"
-              ],
+              ], "also": ["f1b5", "d2d4", "b1c3"],
               "hint": "The bishop on f1 can go to c4, b5 or e2. Which one eyes the pawn in front of the black king?",
               "explanation": "3.Bc4 is the Italian game: the bishop looks at f7, the weakest square around the black king. 3.Bb5 and 3.d4 are also good moves; all three follow the rules."
             },
@@ -719,7 +719,7 @@
               "prompt": "White to play. Two pieces are out and the way is clear. Put the king in safety.",
               "solution": [
                 "e1g1"
-              ],
+              ], "also": ["c2c3", "b1d2", "a2a4"],
               "hint": "Castle.",
               "explanation": "5.O-O. The king goes to g1 behind three pawns and the rook comes to f1. Black will castle next, and both sides have finished the first stage of the opening."
             },
@@ -799,7 +799,7 @@
               "prompt": "Black to play. The queen attacks e5. Defend it with a developing knight move.",
               "solution": [
                 "b8c6"
-              ],
+              ], "also": ["d7d6", "g8f6", "d8e7"],
               "hint": "Which knight move protects e5?",
               "explanation": "2...Nc6 defends the pawn and brings a piece out. 2...d6 also holds the pawn but develops nothing; 2...Nf6?? does not defend e5 and loses it with check."
             },
@@ -880,7 +880,7 @@
               "prompt": "Black to play. White threatens Qxf7#. Defend with the move that also attacks the queen.",
               "solution": [
                 "g7g6"
-              ],
+              ], "also": ["d8e7", "d8f6", "g8h6"],
               "hint": "A pawn can block the diagonal from h5 to f7.",
               "explanation": "3...g6 blocks the h5-f7 diagonal and attacks the queen, which must move again. 3...Qe7 also defends f7 and is fine; 3...Nf6?? loses to 4.Qxf7#."
             },
@@ -891,7 +891,7 @@
               "prompt": "Black to play. The queen has come to f3 and threatens Qxf7# again. Defend by developing.",
               "solution": [
                 "g8f6"
-              ],
+              ], "also": ["d8e7", "f7f5", "d8f6"],
               "hint": "Block the f-file with a piece that belongs there anyway.",
               "explanation": "4...Nf6 blocks the queen's line to f7 and develops a knight. White has moved the queen twice; Black has two pieces out and will play ...Bg7 and ...O-O."
             },
@@ -1113,7 +1113,7 @@
               "prompt": "Black to play. White's knight attacks e5. Defend it with a developing move.",
               "solution": [
                 "b8c6"
-              ],
+              ], "also": ["g8f6", "d7d6"],
               "hint": "Which knight protects e5?",
               "explanation": "2...Nc6: the pawn is defended and a piece is out. 2...d6 also defends but blocks the bishop on f8. 2...Nf6 ignores the threat and counter-attacks e4; it is playable but harder."
             },
@@ -1159,7 +1159,7 @@
               "prompt": "Black to play. White's queen threatens both Qxf7# and Qxe5+. One queen move defends both.",
               "solution": [
                 "d8e7"
-              ],
+              ], "also": ["d8f6"],
               "hint": "The queen on e7 covers f7 and e5.",
               "explanation": "3...Qe7 defends f7 and e5 at the same time. 3...Qf6 does the same. 3...g6?? stops the mate but drops the rook: 4.Qxe5+ and 5.Qxh8."
             }

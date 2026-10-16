@@ -1201,7 +1201,7 @@
               "prompt": "Reshevsky–Petrosian, Zürich 1953, move 25. Black to play. White's e- and d-pawns and the g4-bishop press against e6. Stop the centre for good, even at a cost.",
               "solution": [
                 "e7e6"
-              ],
+              ], "also": ["e7a7"],
               "hint": "Put a rook on e6, where the bishop can take it. What recaptures, and which piece then comes to d5?",
               "explanation": "25...Re6!! If White takes, ...fxe6 and ...Nd5 blockade the centre: in the game 26.a4 Ne7 27.Bxe6 fxe6 28.Qf1 Nd5. Stockfish also picks 25...Re6 as Black's best move (White +0.8; 25...Ra7 gives +1.4)."
             },
