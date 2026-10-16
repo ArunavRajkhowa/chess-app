@@ -51,3 +51,22 @@ test("takeback undoes the player's move and the bot's reply", async ({ page }) =
   await expect(page.locator(".movelist-move")).toHaveCount(0, { timeout: 10_000 });
   await expect(page.locator(".piece")).toHaveCount(32);
 });
+
+test("a game from a position: castling onto the rook, move numbers, list navigation", async ({ page }) => {
+  const errors: string[] = [];
+  page.on("pageerror", (err) => errors.push(err.message));
+  const fen = "r3k2r/pppq1ppp/2npbn2/2b1p3/2B1P3/2NPBN2/PPPQ1PPP/R3K2R w KQkq - 0 8";
+  const res = await page.request.post("/api/play/games", { data: { bot_id: "pip", player_color: "white", fen } });
+  const game = await res.json();
+  await page.goto(`/play/${game.id}`);
+  await expect(page.getByTestId("gameview")).toBeVisible();
+  await expect(page.getByTestId("takeback-btn")).toBeDisabled();
+  await clickMove(page, "e1", "h1");
+  await expect(page.locator(".movelist-move")).toHaveCount(2, { timeout: 15_000 });
+  await expect(page.locator(".movelist-move").first()).toHaveText("O-O");
+  await expect(page.locator(".movelist-num").first()).toHaveText("8.");
+  await page.locator(".movelist-move").first().click();
+  await expect(page.locator(".chip-warn", { hasText: "viewing move 1" })).toBeVisible();
+  await expect(page.locator(".piece")).toHaveCount(32);
+  expect(errors).toEqual([]);
+});

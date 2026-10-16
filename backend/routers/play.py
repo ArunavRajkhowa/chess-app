@@ -2,8 +2,10 @@
 hint or a takeback, resign. The server holds the rules (python-chess) so a game is always legal."""
 from __future__ import annotations
 
+import asyncio
 import logging
 import random
+from collections import defaultdict
 
 import chess
 import chess.pgn
@@ -23,6 +25,8 @@ router = APIRouter(prefix="/api/play", tags=["play"])
 HINT_DEPTH = 16
 LIVE_EVAL_DEPTH = 12
 PIECE_VALUES = {chess.PAWN: 1, chess.KNIGHT: 3, chess.BISHOP: 3, chess.ROOK: 5, chess.QUEEN: 9, chess.KING: 0}
+# One lock per game: a move, takeback, resign or flag reads the game, changes it and stores it whole.
+_GAME_LOCKS: defaultdict[str, asyncio.Lock] = defaultdict(asyncio.Lock)
 
 
 def _board_from_moves(moves: list[dict], start_fen: str | None = None) -> chess.Board:
@@ -66,9 +70,9 @@ def _termination(board: chess.Board) -> tuple[str, str] | None:
         return ("1/2-1/2", "stalemate")
     if board.is_insufficient_material():
         return ("1/2-1/2", "insufficient material")
-    if board.can_claim_threefold_repetition():
+    if board.is_repetition(3):
         return ("1/2-1/2", "threefold repetition")
-    if board.can_claim_fifty_moves():
+    if board.is_fifty_moves():
         return ("1/2-1/2", "fifty-move rule")
     return None
 
@@ -122,7 +126,7 @@ async def _persist(row: dict, board: chess.Board) -> None:
 
 
 async def _bot_reply(row: dict, board: chess.Board) -> MoveRecord | None:
-    if board.is_game_over(claim_draw=True):
+    if _termination(board):
         return None
     bot = get_bot(row["bot_id"])
     choice = await choose_move(board, bot, pool)
@@ -241,91 +245,99 @@ async def get_game(game_id: str) -> GameState:
 
 @router.post("/games/{game_id}/move", response_model=MoveResponse)
 async def make_move(game_id: str, req: MoveRequest) -> MoveResponse:
-    row = await store.read_game(game_id)
-    if not row:
-        raise HTTPException(404, "no such game")
-    if row["status"] != "active":
-        raise HTTPException(409, "game is finished")
-    board = _board_of(row)
-    player_is_white = row["player_color"] == "white"
-    if board.turn != (chess.WHITE if player_is_white else chess.BLACK):
-        raise HTTPException(409, "not your turn")
-    move = _parse_move(board, req.move)
-    if move not in board.legal_moves:
-        raise HTTPException(400, f"illegal move {req.move!r} in {board.fen()}")
+    async with _GAME_LOCKS[game_id]:
+        row = await store.read_game(game_id)
+        if not row:
+            raise HTTPException(404, "no such game")
+        if row["status"] != "active":
+            raise HTTPException(409, "game is finished")
+        board = _board_of(row)
+        player_is_white = row["player_color"] == "white"
+        if board.turn != (chess.WHITE if player_is_white else chess.BLACK):
+            raise HTTPException(409, "not your turn")
+        move = _parse_move(board, req.move)
+        if move not in board.legal_moves:
+            raise HTTPException(400, f"illegal move {req.move!r} in {board.fen()}")
 
-    before = board.copy()
-    san = board.san(move)
-    board.push(move)
-    player_rec = {"ply": board.ply(), "san": san, "uci": move.uci(), "fen": board.fen(), "by": "player", "source": None, "eval_cp": None}
-    row["moves"].append(player_rec)
+        before = board.copy()
+        san = board.san(move)
+        board.push(move)
+        player_rec = {"ply": board.ply(), "san": san, "uci": move.uci(), "fen": board.fen(), "by": "player", "source": None, "eval_cp": None}
+        row["moves"].append(player_rec)
 
-    bot_rec = None
-    if not _termination(board):
-        bot_rec = await _bot_reply(row, board)
-    await _persist(row, board)
-    says = _bot_comment(row) or _chat_line(row, before, move, chess.Move.from_uci(bot_rec.uci) if bot_rec else None, random.Random())
+        bot_rec = None
+        if not _termination(board):
+            bot_rec = await _bot_reply(row, board)
+        await _persist(row, board)
+        says = _bot_comment(row) or _chat_line(row, before, move, chess.Move.from_uci(bot_rec.uci) if bot_rec else None, random.Random())
 
-    eval_cp = None
-    eval_text = None
-    if req.want_eval and row["status"] == "active":
-        infos = await pool.analyse(board, depth=LIVE_EVAL_DEPTH)
-        eval_cp = cp_from_score(infos[0]["score"], chess.WHITE)
-        eval_text = describe_score(infos[0]["score"], chess.WHITE)
-    return MoveResponse(
-        game=await _state(row), player_move=MoveRecord(**player_rec), bot_move=bot_rec,
-        bot_says=says, eval_cp=eval_cp, eval_text=eval_text,
-    )
+        eval_cp = None
+        eval_text = None
+        if req.want_eval and row["status"] == "active":
+            infos = await pool.analyse(board, depth=LIVE_EVAL_DEPTH)
+            eval_cp = cp_from_score(infos[0]["score"], chess.WHITE)
+            eval_text = describe_score(infos[0]["score"], chess.WHITE)
+        return MoveResponse(
+            game=await _state(row), player_move=MoveRecord(**player_rec), bot_move=bot_rec,
+            bot_says=says, eval_cp=eval_cp, eval_text=eval_text,
+        )
 
 
 @router.post("/games/{game_id}/resign", response_model=GameState)
 async def resign(game_id: str) -> GameState:
-    row = await store.read_game(game_id)
-    if not row:
-        raise HTTPException(404, "no such game")
-    if row["status"] != "active":
-        raise HTTPException(409, "game is finished")
-    row["status"] = "finished"
-    row["result"] = "0-1" if row["player_color"] == "white" else "1-0"
-    row["termination"] = "resignation"
-    await _persist(row, _board_of(row))
-    return await _state(row)
+    async with _GAME_LOCKS[game_id]:
+        row = await store.read_game(game_id)
+        if not row:
+            raise HTTPException(404, "no such game")
+        if row["status"] != "active":
+            raise HTTPException(409, "game is finished")
+        row["status"] = "finished"
+        row["result"] = "0-1" if row["player_color"] == "white" else "1-0"
+        row["termination"] = "resignation"
+        await _persist(row, _board_of(row))
+        return await _state(row)
 
 
 @router.post("/games/{game_id}/flag", response_model=GameState)
 async def flag(game_id: str) -> GameState:
     """The player's clock ran out. The browser keeps the clock; the server records the result."""
-    row = await store.read_game(game_id)
-    if not row:
-        raise HTTPException(404, "no such game")
-    if row["status"] != "active":
-        raise HTTPException(409, "game is finished")
-    if not row.get("time_control"):
-        raise HTTPException(409, "this game has no clock")
-    row["status"] = "finished"
-    row["result"] = "0-1" if row["player_color"] == "white" else "1-0"
-    row["termination"] = "timeout"
-    await _persist(row, _board_of(row))
-    return await _state(row)
+    async with _GAME_LOCKS[game_id]:
+        row = await store.read_game(game_id)
+        if not row:
+            raise HTTPException(404, "no such game")
+        if row["status"] != "active":
+            raise HTTPException(409, "game is finished")
+        if not row.get("time_control"):
+            raise HTTPException(409, "this game has no clock")
+        board = _board_of(row)
+        row["status"] = "finished"
+        if board.has_insufficient_material(chess.BLACK if row["player_color"] == "white" else chess.WHITE):
+            row["result"], row["termination"] = "1/2-1/2", "timeout vs insufficient material"
+        else:
+            row["result"] = "0-1" if row["player_color"] == "white" else "1-0"
+            row["termination"] = "timeout"
+        await _persist(row, board)
+        return await _state(row)
 
 
 @router.post("/games/{game_id}/takeback", response_model=GameState)
 async def takeback(game_id: str) -> GameState:
     """Undo the player's last move and the bot's reply to it."""
-    row = await store.read_game(game_id)
-    if not row:
-        raise HTTPException(404, "no such game")
-    if row["status"] != "active":
-        raise HTTPException(409, "game is finished")
-    moves = row["moves"]
-    if not any(m["by"] == "player" for m in moves):
-        raise HTTPException(409, "nothing to take back yet")
-    while moves and moves[-1]["by"] == "bot":
-        moves.pop()
-    if moves and moves[-1]["by"] == "player":
-        moves.pop()
-    await _persist(row, _board_of(row))
-    return await _state(row)
+    async with _GAME_LOCKS[game_id]:
+        row = await store.read_game(game_id)
+        if not row:
+            raise HTTPException(404, "no such game")
+        if row["status"] != "active":
+            raise HTTPException(409, "game is finished")
+        moves = row["moves"]
+        if not any(m["by"] == "player" for m in moves):
+            raise HTTPException(409, "nothing to take back yet")
+        while moves and moves[-1]["by"] == "bot":
+            moves.pop()
+        if moves and moves[-1]["by"] == "player":
+            moves.pop()
+        await _persist(row, _board_of(row))
+        return await _state(row)
 
 
 @router.get("/games/{game_id}/hint", response_model=HintResponse)
@@ -334,7 +346,7 @@ async def hint(game_id: str) -> HintResponse:
     if not row:
         raise HTTPException(404, "no such game")
     board = _board_of(row)
-    if board.is_game_over(claim_draw=True):
+    if row["status"] != "active" or _termination(board):
         raise HTTPException(409, "game is finished")
     infos = await pool.analyse(board, depth=HINT_DEPTH)
     pv = infos[0]["pv"]
@@ -345,7 +357,7 @@ async def hint(game_id: str) -> HintResponse:
         line_san.append(b.san(mv))
         b.push(mv)
     return HintResponse(
-        move_uci=best.uci(), move_san=board.san(best), eval_text=describe_score(infos[0]["score"], board.turn),
+        move_uci=best.uci(), move_san=board.san(best), eval_text=describe_score(infos[0]["score"], chess.WHITE),
         line_san=line_san, threats=threat_sans(board),
     )
 

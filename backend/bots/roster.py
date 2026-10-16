@@ -39,6 +39,9 @@ class Personality:
     solidity: float = 0.0
     trade_when_ahead: float = 0.0
     favourite_openings: tuple[str, ...] = ()
+    # a favourite opening's book move is played when it costs at most this much against the bot's
+    # best line at its own depth; a trap-setter accepts more
+    favourite_max_loss_cp: int = 60
 
 
 @dataclass(frozen=True)
@@ -148,7 +151,8 @@ BOTS: list[Bot] = [
          description="Coach adapts its strength to how you are doing: harder when you are ahead, gentler when you are behind. Takebacks, threats and hints are on.",
          greeting="Let's play and learn. Ask me for a hint any time."),
     _bot("trickster", "Trickster", 1500, TIER_SPECIAL, "Sets traps every game", "🎭", 5, 45, multipv=4,
-         personality=Personality(aggression=0.9, favourite_openings=("Stafford", "Englund", "Budapest", "Blackmar-Diemer", "Fried Liver", "Scholar's Mate")),
+         personality=Personality(aggression=0.9, favourite_openings=("Stafford", "Englund", "Budapest", "Blackmar-Diemer", "Fried Liver", "Scholar's Mate"),
+                                 favourite_max_loss_cp=150),
          description="Trickster goes for cheap tricks and opening traps. Great for learning what not to fall for."),
     _bot("wall", "The Wall", 1700, TIER_SPECIAL, "Defends everything", "🧱", 6, 35, multipv=3,
          personality=Personality(solidity=1.0, aggression=-0.6, favourite_openings=("Caro-Kann", "French", "Berlin", "Petrov")),

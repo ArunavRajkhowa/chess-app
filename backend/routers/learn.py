@@ -131,7 +131,7 @@ async def drill_move(req: DrillMove) -> dict:
     board.push(move)
     outcome = drill_outcome(board, learner, req.goal, move, start_balance)
     reply = None
-    if outcome is None and not board.is_game_over(claim_draw=True):
+    if outcome is None and not board.is_game_over():
         infos = await pool.analyse(board, depth=req.depth, slot="play")
         rm = infos[0]["pv"][0]
         reply = {"san": board.san(rm), "uci": rm.uci()}
