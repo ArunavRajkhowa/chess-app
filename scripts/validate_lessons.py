@@ -53,7 +53,7 @@ async def engine_checks(sections: list[dict]) -> list[str]:
     try:
         for s in sections:
             tag = f"lesson {s['_lesson']} section {s['_index']}"
-            if s["type"] == "challenge" and not s.get("accept_any_legal"):
+            if s["type"] == "challenge" and not s.get("accept_any_legal") and not s.get("accept_any_check"):
                 board = chess.Board(s["fen"])
                 infos = await pool.analyse(board, depth=CHALLENGE_DEPTH, multipv=2)
                 best = infos[0]["pv"][0]

@@ -125,12 +125,12 @@ function Challenge({ section, onResult, onNext, nextLabel }: { section: Extract<
     if (!mv) return;
     const uci = from + to + (promotion ?? "");
     const expected = section.solution[index];
-    const ok = section.accept_any_legal || uci === expected || (c.isCheckmate() && expected.slice(0, 4) === uci.slice(0, 4)) || c.isCheckmate();
+    const ok = section.accept_any_legal || (section.accept_any_check && c.inCheck()) || uci === expected || c.isCheckmate();
     if (ok) {
       playSound(soundForMove(mv, c));
       setLast([from, to]);
       const i = index + 1;
-      if (i >= section.solution.length || c.isCheckmate() || section.accept_any_legal) {
+      if (i >= section.solution.length || c.isCheckmate() || section.accept_any_legal || section.accept_any_check) {
         setFen(c.fen()); setIndex(i); setState({ ...state, status: "done", text: section.explanation ?? "Correct." });
         playSound("correct");
         onResult(state.attempts === 0);

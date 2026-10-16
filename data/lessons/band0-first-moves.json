@@ -14,11 +14,57 @@
           "objective": "Recognise check and use the three escapes: move, block, capture.",
           "minutes": 6,
           "sections": [
-            {"type": "text", "md": "A king is **in check** when an enemy piece attacks it. You must deal with it at once. There are exactly three ways out:\n\n1. **Move** the king to a safe square.\n2. **Block** the line of attack with another piece (not against a knight or a pawn).\n3. **Capture** the piece that gives check.\n\nIf none of the three works, it is checkmate and the game is over."},
-            {"type": "position", "fen": "4k3/8/8/8/8/8/8/4R1K1 b - - 0 1", "orientation": "black", "arrows": [{"from": "e1", "to": "e8", "brush": "red"}], "caption": "The rook on e1 gives check along the e-file. Black's king must leave the file: Kd8, Kd7, Kf8 or Kf7."},
-            {"type": "challenge", "fen": "4k3/8/8/8/8/8/8/4R1K1 b - - 0 1", "prompt": "Black to play. Get out of check with any legal king move.", "solution": ["e8d7"], "accept_any_legal": true, "hint": "The king must step off the e-file.", "explanation": "Any king move to d8, d7, f8 or f7 escapes. Nothing can block or capture the rook."},
-            {"type": "challenge", "fen": "6k1/5ppp/8/8/8/8/5PPP/1Q4K1 w - - 0 1", "prompt": "White to play. Give check with the queen.", "solution": ["b1b3"], "hint": "The queen can reach the long diagonal pointing at g8.", "explanation": "Qb3+ hits the king along the a2–g8 diagonal. Black must move the king or block with ...Kh8 or ...Kf8 (the king can also step to h8)."},
-            {"type": "quiz", "fen": "4k3/8/8/8/8/8/4n3/4R1K1 b - - 0 1", "question": "Black is in check from the rook on e1. Which escape is available?", "options": ["Block with the knight", "Capture the rook with the knight", "Move the king only"], "answer": 2, "explanation": "The knight on e2 cannot reach e1 or any square between e1 and e8, so only a king move helps."}
+            {
+              "type": "text",
+              "md": "A king is **in check** when an enemy piece attacks it. You must deal with it at once. There are exactly three ways out:\n\n1. **Move** the king to a safe square.\n2. **Block** the line of attack with another piece (not against a knight or a pawn).\n3. **Capture** the piece that gives check.\n\nIf none of the three works, it is checkmate and the game is over."
+            },
+            {
+              "type": "position",
+              "fen": "4k3/8/8/8/8/8/8/4R1K1 b - - 0 1",
+              "orientation": "black",
+              "arrows": [
+                {
+                  "from": "e1",
+                  "to": "e8",
+                  "brush": "red"
+                }
+              ],
+              "caption": "The rook on e1 gives check along the e-file. Black's king must leave the file: Kd8, Kd7, Kf8 or Kf7."
+            },
+            {
+              "type": "challenge",
+              "fen": "4k3/8/8/8/8/8/8/4R1K1 b - - 0 1",
+              "prompt": "Black to play. Get out of check with any legal king move.",
+              "solution": [
+                "e8d7"
+              ],
+              "accept_any_legal": true,
+              "hint": "The king must step off the e-file.",
+              "explanation": "Any king move to d8, d7, f8 or f7 escapes. Nothing can block or capture the rook."
+            },
+            {
+              "type": "challenge",
+              "fen": "6k1/5pp1/7p/8/8/8/5PPP/3Q2K1 w - - 0 1",
+              "prompt": "White to play. Give check with the queen.",
+              "solution": [
+                "d1d8"
+              ],
+              "accept_any_check": true,
+              "hint": "The queen can reach the back rank or the a2–g8 diagonal.",
+              "explanation": "Qd8+ or Qb3+ both give check. The king has an escape square on h7 because Black played ...h6 earlier, so neither check is mate."
+            },
+            {
+              "type": "quiz",
+              "fen": "4k3/n7/8/8/8/8/8/4R1K1 b - - 0 1",
+              "question": "Black is in check from the rook on e1. Which escape is available?",
+              "options": [
+                "Block with the knight",
+                "Capture the rook with the knight",
+                "Move the king only"
+              ],
+              "answer": 2,
+              "explanation": "The knight on a7 cannot reach e1 or any square between e1 and e8, so only a king move helps."
+            }
           ]
         },
         {
@@ -27,11 +73,52 @@
           "objective": "Find a mate in one and check the four questions: in check? can it move? can it block? can it capture?",
           "minutes": 8,
           "sections": [
-            {"type": "text", "md": "Checkmate is check with no escape. Before you announce mate, run Fischer's four questions:\n\n1. Is the king in check?\n2. Can the king move to a safe square?\n3. Can a piece block the check?\n4. Can the checking piece be captured?\n\nIf the answers are *yes, no, no, no*, it is mate."},
-            {"type": "challenge", "fen": "6k1/5ppp/8/8/8/8/5PPP/R5K1 w - - 0 1", "prompt": "White to play. Mate in one.", "solution": ["a1a8"], "hint": "The black pawns on f7, g7 and h7 trap their own king on the back rank.", "explanation": "Ra8# is the classic back-rank mate: the king cannot step forward because its own pawns are in the way."},
-            {"type": "challenge", "fen": "r1bqkb1r/pppp1ppp/2n2n2/4p2Q/2B1P3/8/PPPP1PPP/RNB1K1NR w KQkq - 4 4", "prompt": "White to play. Mate in one.", "solution": ["h5f7"], "hint": "Two white pieces aim at f7.", "explanation": "Qxf7# is Scholar's mate. The queen is protected by the bishop on c4, so the king cannot take it."},
-            {"type": "challenge", "fen": "3rkr2/8/8/8/8/8/8/3QK3 w - - 0 1", "prompt": "White to play. Mate in one.", "solution": ["d1d8"], "hint": "The king is boxed in by its own rooks.", "explanation": "Qxd8# — the rooks on d8 and f8 take away the king's escape squares. This is an epaulette-style mate."},
-            {"type": "quiz", "fen": "7k/5Q2/6K1/8/8/8/8/8 w - - 0 1", "question": "White to move. Which move wins at once?", "options": ["Kh6", "Qg7#", "Qf8+"], "answer": 1, "explanation": "Qg7# is mate because the king on g6 protects the queen. Kh6?? would be stalemate: Black would have no legal move and not be in check."}
+            {
+              "type": "text",
+              "md": "Checkmate is check with no escape. Before you announce mate, run Fischer's four questions:\n\n1. Is the king in check?\n2. Can the king move to a safe square?\n3. Can a piece block the check?\n4. Can the checking piece be captured?\n\nIf the answers are *yes, no, no, no*, it is mate."
+            },
+            {
+              "type": "challenge",
+              "fen": "6k1/5ppp/8/8/8/8/5PPP/R5K1 w - - 0 1",
+              "prompt": "White to play. Mate in one.",
+              "solution": [
+                "a1a8"
+              ],
+              "hint": "The black pawns on f7, g7 and h7 trap their own king on the back rank.",
+              "explanation": "Ra8# is the classic back-rank mate: the king cannot step forward because its own pawns are in the way."
+            },
+            {
+              "type": "challenge",
+              "fen": "r1bqkb1r/pppp1ppp/2n2n2/4p2Q/2B1P3/8/PPPP1PPP/RNB1K1NR w KQkq - 4 4",
+              "prompt": "White to play. Mate in one.",
+              "solution": [
+                "h5f7"
+              ],
+              "hint": "Two white pieces aim at f7.",
+              "explanation": "Qxf7# is Scholar's mate. The queen is protected by the bishop on c4, so the king cannot take it."
+            },
+            {
+              "type": "challenge",
+              "fen": "3rkr2/8/8/8/8/8/Q7/4K3 w - - 0 1",
+              "prompt": "White to play. Mate in one.",
+              "solution": [
+                "a2e6"
+              ],
+              "hint": "The king is boxed in by its own rooks. Find the check it cannot escape.",
+              "explanation": "Qe6# — the rooks on d8 and f8 take away the king's own escape squares, and the queen on e6 covers d7, e7 and f7. This is the epaulette mate."
+            },
+            {
+              "type": "quiz",
+              "fen": "7k/5Q2/6K1/8/8/8/8/8 w - - 0 1",
+              "question": "White to move. Which move wins at once?",
+              "options": [
+                "Kh6",
+                "Qg7#",
+                "Qf8+"
+              ],
+              "answer": 1,
+              "explanation": "Qg7# is mate because the king on g6 protects the queen. Kh6?? would be stalemate: Black would have no legal move and not be in check."
+            }
           ]
         },
         {
@@ -40,11 +127,55 @@
           "objective": "Tell mate from stalemate, and know the four other ways a game is drawn.",
           "minutes": 7,
           "sections": [
-            {"type": "text", "md": "**Stalemate** is when the side to move has no legal move but is *not* in check. The game is a draw, however much material you have. It is the most common way beginners throw away a won game.\n\nOther draws: **insufficient material** (for example king against king, or king and bishop against king), **threefold repetition** of the same position, the **fifty-move rule** (no capture or pawn move for fifty moves each) and **agreement**."},
-            {"type": "position", "fen": "7k/5Q2/6K1/8/8/8/8/8 b - - 0 1", "orientation": "white", "highlights": [{"square": "h8", "brush": "yellow"}], "caption": "Black to move: stalemate. The king on h8 has no legal square and is not in check. White had mate with Qg7 one move ago."},
-            {"type": "quiz", "fen": "k7/2Q5/1K6/8/8/8/8/8 b - - 0 1", "question": "Black to move. What is this position?", "options": ["Checkmate", "Stalemate", "Black can still move"], "answer": 1, "explanation": "The king on a8 is not in check (the queen is on c7, not on the a-file or the long diagonal), but every square it could go to is covered. Stalemate."},
-            {"type": "quiz", "fen": "k7/1Q6/1K6/8/8/8/8/8 b - - 0 1", "question": "Black to move. What is this position?", "options": ["Checkmate", "Stalemate", "Black can still move"], "answer": 0, "explanation": "The queen on b7 gives check and is protected by the king on b6. No escape: checkmate."},
-            {"type": "drill", "fen": "8/8/8/3k4/8/8/8/4QK2 w - - 0 1", "orientation": "white", "goal": "mate", "max_moves": 14, "prompt": "Mate with king and queen within 14 moves. Do not stalemate.", "tip": "Use the queen a knight's move away from the king to shrink the box, then bring your king up. Never take the last square away unless it is mate."}
+            {
+              "type": "text",
+              "md": "**Stalemate** is when the side to move has no legal move but is *not* in check. The game is a draw, however much material you have. It is the most common way beginners throw away a won game.\n\nOther draws: **insufficient material** (for example king against king, or king and bishop against king), **threefold repetition** of the same position, the **fifty-move rule** (no capture or pawn move for fifty moves each) and **agreement**."
+            },
+            {
+              "type": "position",
+              "fen": "7k/5Q2/6K1/8/8/8/8/8 b - - 0 1",
+              "orientation": "white",
+              "highlights": [
+                {
+                  "square": "h8",
+                  "brush": "yellow"
+                }
+              ],
+              "caption": "Black to move: stalemate. The king on h8 has no legal square and is not in check. White had mate with Qg7 one move ago."
+            },
+            {
+              "type": "quiz",
+              "fen": "k7/2Q5/1K6/8/8/8/8/8 b - - 0 1",
+              "question": "Black to move. What is this position?",
+              "options": [
+                "Checkmate",
+                "Stalemate",
+                "Black can still move"
+              ],
+              "answer": 1,
+              "explanation": "The king on a8 is not in check (the queen is on c7, not on the a-file or the long diagonal), but every square it could go to is covered. Stalemate."
+            },
+            {
+              "type": "quiz",
+              "fen": "k7/1Q6/1K6/8/8/8/8/8 b - - 0 1",
+              "question": "Black to move. What is this position?",
+              "options": [
+                "Checkmate",
+                "Stalemate",
+                "Black can still move"
+              ],
+              "answer": 0,
+              "explanation": "The queen on b7 gives check and is protected by the king on b6. No escape: checkmate."
+            },
+            {
+              "type": "drill",
+              "fen": "8/8/8/3k4/8/8/8/4QK2 w - - 0 1",
+              "orientation": "white",
+              "goal": "mate",
+              "max_moves": 14,
+              "prompt": "Mate with king and queen within 14 moves. Do not stalemate.",
+              "tip": "Use the queen a knight's move away from the king to shrink the box, then bring your king up. Never take the last square away unless it is mate."
+            }
           ]
         }
       ]
@@ -63,9 +194,32 @@
           "objective": "Force mate with two rooks by cutting the king off rank by rank.",
           "minutes": 6,
           "sections": [
-            {"type": "text", "md": "Two rooks mate without the king's help. One rook cuts the king off on a rank; the other gives check on the next rank; they leapfrog until the king is on the edge. If the king attacks a rook, move that rook to the far side of the board on the same rank."},
-            {"type": "position", "fen": "8/8/8/3k4/8/8/8/R1R3K1 w - - 0 1", "orientation": "white", "arrows": [{"from": "c1", "to": "c4", "brush": "green"}], "caption": "1.Rc4 cuts the king off from the 4th rank. Next comes Ra5+, pushing it to the 6th, and so on."},
-            {"type": "drill", "fen": "8/8/8/3k4/8/8/8/R1R3K1 w - - 0 1", "orientation": "white", "goal": "mate", "max_moves": 10, "prompt": "Mate within 10 moves using the ladder.", "tip": "Check, cut off, check, cut off. If the king approaches a rook, swing it to the other side."}
+            {
+              "type": "text",
+              "md": "Two rooks mate without the king's help. One rook cuts the king off on a rank; the other gives check on the next rank; they leapfrog until the king is on the edge. If the king attacks a rook, move that rook to the far side of the board on the same rank."
+            },
+            {
+              "type": "position",
+              "fen": "8/8/8/3k4/8/8/8/R1R3K1 w - - 0 1",
+              "orientation": "white",
+              "arrows": [
+                {
+                  "from": "c1",
+                  "to": "c4",
+                  "brush": "green"
+                }
+              ],
+              "caption": "1.Rc4 cuts the king off from the 4th rank. Next comes Ra5+, pushing it to the 6th, and so on."
+            },
+            {
+              "type": "drill",
+              "fen": "8/8/8/3k4/8/8/8/R1R3K1 w - - 0 1",
+              "orientation": "white",
+              "goal": "mate",
+              "max_moves": 10,
+              "prompt": "Mate within 10 moves using the ladder.",
+              "tip": "Check, cut off, check, cut off. If the king approaches a rook, swing it to the other side."
+            }
           ]
         },
         {
@@ -74,10 +228,44 @@
           "objective": "Force mate with king and queen in under 12 moves without stalemating.",
           "minutes": 8,
           "sections": [
-            {"type": "text", "md": "The queen alone cannot mate; it needs the king. Method:\n\n1. Put the queen a knight's move away from the enemy king. It now controls a box the king cannot leave.\n2. Each time the king moves, copy it with the queen to keep the knight's-move distance. The box shrinks.\n3. Stop when the king is on the edge with two squares left. Now bring your own king up.\n4. Mate on the edge with the queen protected by your king.\n\n**Danger:** when the king has only one square left, do not take it away unless the move is mate."},
-            {"type": "position", "fen": "8/8/8/3k4/8/8/8/4QK2 w - - 0 1", "orientation": "white", "arrows": [{"from": "e1", "to": "c3", "brush": "green"}], "caption": "1.Qc3 is a knight's move from the king on d5. The king is confined to d4–h8 region squares beyond c-file and 3rd rank? No: to d-h files and ranks 4-8. Keep copying its moves."},
-            {"type": "drill", "fen": "8/8/8/3k4/8/8/8/4QK2 w - - 0 1", "orientation": "white", "goal": "mate", "max_moves": 12, "prompt": "Mate within 12 moves.", "tip": "Knight's-move distance, shrink the box, bring the king, mate on the edge."},
-            {"type": "quiz", "fen": "7k/8/5QK1/8/8/8/8/8 w - - 0 1", "question": "White to move. Which move is correct?", "options": ["Qf7 (shrink the box)", "Qg7#", "Kh6"], "answer": 1, "explanation": "Qg7 is mate: the queen is protected by the king on g6. Qf7?? would be stalemate — the king on h8 would have no legal move."}
+            {
+              "type": "text",
+              "md": "The queen alone cannot mate; it needs the king. Method:\n\n1. Put the queen a knight's move away from the enemy king. It now controls a box the king cannot leave.\n2. Each time the king moves, copy it with the queen to keep the knight's-move distance. The box shrinks.\n3. Stop when the king is on the edge with two squares left. Now bring your own king up.\n4. Mate on the edge with the queen protected by your king.\n\n**Danger:** when the king has only one square left, do not take it away unless the move is mate."
+            },
+            {
+              "type": "position",
+              "fen": "8/8/8/3k4/8/8/8/4QK2 w - - 0 1",
+              "orientation": "white",
+              "arrows": [
+                {
+                  "from": "e1",
+                  "to": "c3",
+                  "brush": "green"
+                }
+              ],
+              "caption": "1.Qc3 is a knight's move from the king on d5. The king is confined to d4–h8 region squares beyond c-file and 3rd rank? No: to d-h files and ranks 4-8. Keep copying its moves."
+            },
+            {
+              "type": "drill",
+              "fen": "8/8/8/3k4/8/8/8/4QK2 w - - 0 1",
+              "orientation": "white",
+              "goal": "mate",
+              "max_moves": 12,
+              "prompt": "Mate within 12 moves.",
+              "tip": "Knight's-move distance, shrink the box, bring the king, mate on the edge."
+            },
+            {
+              "type": "quiz",
+              "fen": "7k/3Q4/6K1/8/8/8/8/8 w - - 0 1",
+              "question": "White to move. Which move is correct?",
+              "options": [
+                "Qf7 (shrink the box)",
+                "Qg7#",
+                "Kh6"
+              ],
+              "answer": 1,
+              "explanation": "Qg7 is mate: the queen is protected by the king on g6. Qf7?? would be stalemate — the king on h8 would have no legal move and would not be in check."
+            }
           ]
         },
         {
@@ -86,9 +274,32 @@
           "objective": "Force mate with king and rook using the box method and the opposition.",
           "minutes": 10,
           "sections": [
-            {"type": "text", "md": "The rook cuts the king into a box; your king walks up to take the opposition (kings facing each other with one square between); then the rook checks on the edge.\n\nWhen the kings face each other and it is your move, make a **waiting move** with the rook along the cutting rank so that the enemy king has to step aside — then check and shrink the box again."},
-            {"type": "position", "fen": "8/8/8/3k4/8/8/8/R3K3 w - - 0 1", "orientation": "white", "arrows": [{"from": "a1", "to": "a4", "brush": "green"}], "caption": "1.Ra4 cuts the king off from the lower half. Next the white king walks up: Ke2, Ke3, Kd3..."},
-            {"type": "drill", "fen": "8/8/8/3k4/8/8/8/R3K3 w - - 0 1", "orientation": "white", "goal": "mate", "max_moves": 16, "prompt": "Mate within 16 moves.", "tip": "Box, king up, opposition, check. Use a rook waiting move when the kings face each other on your turn."}
+            {
+              "type": "text",
+              "md": "The rook cuts the king into a box; your king walks up to take the opposition (kings facing each other with one square between); then the rook checks on the edge.\n\nWhen the kings face each other and it is your move, make a **waiting move** with the rook along the cutting rank so that the enemy king has to step aside — then check and shrink the box again."
+            },
+            {
+              "type": "position",
+              "fen": "8/8/8/3k4/8/8/8/R3K3 w - - 0 1",
+              "orientation": "white",
+              "arrows": [
+                {
+                  "from": "a1",
+                  "to": "a4",
+                  "brush": "green"
+                }
+              ],
+              "caption": "1.Ra4 cuts the king off from the lower half. Next the white king walks up: Ke2, Ke3, Kd3..."
+            },
+            {
+              "type": "drill",
+              "fen": "8/8/8/3k4/8/8/8/R3K3 w - - 0 1",
+              "orientation": "white",
+              "goal": "mate",
+              "max_moves": 16,
+              "prompt": "Mate within 16 moves.",
+              "tip": "Box, king up, opposition, check. Use a rook waiting move when the kings face each other on your turn."
+            }
           ]
         },
         {
@@ -97,11 +308,54 @@
           "objective": "Spot the back-rank weakness and mate with a rook or queen.",
           "minutes": 7,
           "sections": [
-            {"type": "text", "md": "A king that castled and still has its three pawns in front of it has no *luft* (air). A rook or queen on the back rank is then mate. Always ask: who controls the back rank, and does the king have an escape square?"},
-            {"type": "challenge", "fen": "6k1/5ppp/8/8/8/8/5PPP/R5K1 w - - 0 1", "prompt": "White to play. Mate in one.", "solution": ["a1a8"], "hint": "The king has no air.", "explanation": "Ra8#."},
-            {"type": "challenge", "fen": "2r3k1/5ppp/8/8/8/8/5PPP/2R3K1 b - - 0 1", "prompt": "Black to play. Mate in one.", "solution": ["c8c1"], "hint": "White's back rank is just as weak.", "explanation": "...Rxc1#. Whoever gets to the back rank first wins; the side to move matters."},
-            {"type": "challenge", "fen": "5rk1/5ppp/8/8/8/8/5PPP/3QR1K1 w - - 0 1", "prompt": "White to play. Mate in two.", "solution": ["d1d8", "f8d8", "e1e8"], "hint": "Deflect the defender of the back rank, then mate.", "explanation": "Qd8! Rxd8 Re8# — the rook on f8 was the only defender; the queen sacrifice drags it away (a deflection)."},
-            {"type": "quiz", "fen": "6k1/5pp1/7p/8/8/8/5PPP/R5K1 w - - 0 1", "question": "White to move. Is Ra8 mate?", "options": ["Yes, mate", "No: the king escapes to h7", "No: Black blocks on f8"], "answer": 1, "explanation": "Black played ...h6 earlier, so the king has an escape square on h7. Ra8+ is only check."}
+            {
+              "type": "text",
+              "md": "A king that castled and still has its three pawns in front of it has no *luft* (air). A rook or queen on the back rank is then mate. Always ask: who controls the back rank, and does the king have an escape square?"
+            },
+            {
+              "type": "challenge",
+              "fen": "6k1/5ppp/8/8/8/8/5PPP/R5K1 w - - 0 1",
+              "prompt": "White to play. Mate in one.",
+              "solution": [
+                "a1a8"
+              ],
+              "hint": "The king has no air.",
+              "explanation": "Ra8#."
+            },
+            {
+              "type": "challenge",
+              "fen": "2r3k1/5ppp/8/8/8/8/5PPP/2R3K1 b - - 0 1",
+              "prompt": "Black to play. Mate in one.",
+              "solution": [
+                "c8c1"
+              ],
+              "hint": "White's back rank is just as weak.",
+              "explanation": "...Rxc1#. Whoever gets to the back rank first wins; the side to move matters."
+            },
+            {
+              "type": "challenge",
+              "fen": "4r1k1/3q1ppp/8/8/8/8/4QPPP/4R1K1 w - - 0 1",
+              "prompt": "White to play. Mate in two.",
+              "solution": [
+                "e2e8",
+                "d7e8",
+                "e1e8"
+              ],
+              "hint": "Count the attackers and defenders of e8. The queen and rook form a battery on the e-file.",
+              "explanation": "Qxe8+! Qxe8 Rxe8# — two white pieces attack e8 and only the queen defends it. The queen is given up to remove the last defender of the back rank."
+            },
+            {
+              "type": "quiz",
+              "fen": "6k1/5pp1/7p/8/8/8/5PPP/R5K1 w - - 0 1",
+              "question": "White to move. Is Ra8 mate?",
+              "options": [
+                "Yes, mate",
+                "No: the king escapes to h7",
+                "No: Black blocks on f8"
+              ],
+              "answer": 1,
+              "explanation": "Black played ...h6 earlier, so the king has an escape square on h7. Ra8+ is only check."
+            }
           ]
         }
       ]
