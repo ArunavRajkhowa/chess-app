@@ -1,7 +1,7 @@
 import { Chess } from "chess.js";
 import { useMemo, useState } from "react";
 import { Board } from "../components/board/Board";
-import { checkSquare, destsFor, soundForMove } from "../lib/chess/game";
+import { checkSquare, destsFor, safeMove, soundForMove } from "../lib/chess/game";
 import { play as playSound } from "../lib/sound";
 import type { PromotionPiece, Square } from "../lib/chess/types";
 
@@ -14,7 +14,7 @@ export function BoardDemo() {
   const dests = useMemo(() => destsFor(chess), [fen]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const onMove = (from: Square, to: Square, promotion?: PromotionPiece) => {
-    const mv = chess.move({ from, to, promotion });
+    const mv = safeMove(chess, { from, to, promotion });
     if (!mv) { playSound("illegal"); return; }
     playSound(soundForMove(mv, chess));
     setLast([from, to]);

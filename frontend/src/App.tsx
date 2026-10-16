@@ -12,6 +12,8 @@ import { LessonPage } from "./pages/LessonPage";
 import { GamesPage } from "./pages/GamesPage";
 import { InsightsPage } from "./pages/InsightsPage";
 import { EndgamesPage } from "./pages/EndgamesPage";
+import { VisionPage } from "./pages/VisionPage";
+import { AnalysisPage } from "./pages/AnalysisPage";
 import { ReviewGamePage } from "./pages/ReviewGamePage";
 import { ReviewPage } from "./pages/ReviewPage";
 import "./styles/base.css";
@@ -34,6 +36,8 @@ export default function App() {
           <Route path="/games/:gameId" element={<GamesPage />} />
           <Route path="/insights" element={<InsightsPage />} />
           <Route path="/endgames" element={<EndgamesPage />} />
+          <Route path="/vision" element={<VisionPage />} />
+          <Route path="/analysis" element={<AnalysisPage />} />
           <Route path="/review" element={<ReviewPage />} />
           <Route path="/review/:gameId" element={<ReviewGamePage />} />
           <Route path="/coach" element={<CoachPage />} />

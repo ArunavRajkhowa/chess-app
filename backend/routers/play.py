@@ -136,6 +136,45 @@ async def _bot_reply(row: dict, board: chess.Board) -> MoveRecord | None:
     return MoveRecord(**rec)
 
 
+CHAT_CHANCE = 0.45
+LONG_GAME_PLY = 60
+
+
+def _chat_line(row: dict, before: chess.Board, player_move: chess.Move, bot_move: chess.Move | None, rng: random.Random) -> str | None:
+    """One line from the bot about what just happened, sometimes. Priority: material swings, checks, captures."""
+    bot = get_bot(row["bot_id"])
+    b = before.copy()
+    player_captured = b.is_capture(player_move)
+    b.push(player_move)
+    player_checked = b.is_check()
+    bot_captured = bot_move is not None and b.is_capture(bot_move)
+    if bot_move is not None:
+        b.push(bot_move)
+    bot_checked = bot_move is not None and b.is_check()
+    bot_color = not before.turn
+    values = {chess.PAWN: 1, chess.KNIGHT: 3, chess.BISHOP: 3, chess.ROOK: 5, chess.QUEEN: 9}
+    balance = sum(v * (len(b.pieces(pt, bot_color)) - len(b.pieces(pt, not bot_color))) for pt, v in values.items())
+    events: list[str] = []
+    if b.ply() == LONG_GAME_PLY:
+        events.append("long_game")
+    if balance >= 3:
+        events.append("bot_winning")
+    elif balance <= -3:
+        events.append("bot_losing")
+    if bot_checked:
+        events.append("check_given")
+    if player_checked:
+        events.append("check_received")
+    if bot_captured:
+        events.append("capture_yours")
+    if player_captured:
+        events.append("capture_mine")
+    if not events or rng.random() > CHAT_CHANCE:
+        return None
+    lines = bot.chat.get(events[0]) or ()
+    return rng.choice(lines) if lines else None
+
+
 def _bot_comment(row: dict) -> str | None:
     bot = get_bot(row["bot_id"])
     if row["status"] != "finished":
@@ -215,6 +254,7 @@ async def make_move(game_id: str, req: MoveRequest) -> MoveResponse:
     if move not in board.legal_moves:
         raise HTTPException(400, f"illegal move {req.move!r} in {board.fen()}")
 
+    before = board.copy()
     san = board.san(move)
     board.push(move)
     player_rec = {"ply": board.ply(), "san": san, "uci": move.uci(), "fen": board.fen(), "by": "player", "source": None, "eval_cp": None}
@@ -224,6 +264,7 @@ async def make_move(game_id: str, req: MoveRequest) -> MoveResponse:
     if not _termination(board):
         bot_rec = await _bot_reply(row, board)
     await _persist(row, board)
+    says = _bot_comment(row) or _chat_line(row, before, move, chess.Move.from_uci(bot_rec.uci) if bot_rec else None, random.Random())
 
     eval_cp = None
     eval_text = None
@@ -233,7 +274,7 @@ async def make_move(game_id: str, req: MoveRequest) -> MoveResponse:
         eval_text = describe_score(infos[0]["score"], chess.WHITE)
     return MoveResponse(
         game=await _state(row), player_move=MoveRecord(**player_rec), bot_move=bot_rec,
-        bot_says=_bot_comment(row), eval_cp=eval_cp, eval_text=eval_text,
+        bot_says=says, eval_cp=eval_cp, eval_text=eval_text,
     )
 
 

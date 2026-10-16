@@ -4,13 +4,13 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Board } from "../components/board/Board";
 import type { Shape } from "../components/board/shapes";
-import { checkSquare, destsFor, soundForMove } from "../lib/chess/game";
+import { checkSquare, destsFor, safeMove, soundForMove } from "../lib/chess/game";
 import type { PromotionPiece, Square } from "../lib/chess/types";
 import { play as playSound } from "../lib/sound";
 import { puzzleApi, type Puzzle, type PuzzleTheme } from "../lib/puzzleApi";
 import "./Puzzles.css";
 
-type Mode = "rated" | "custom" | "rush" | "daily";
+type Mode = "rated" | "custom" | "rush" | "daily" | "mistakes";
 type Phase = "intro" | "solving" | "solved" | "failed";
 
 interface Solver {
@@ -46,6 +46,7 @@ export function PuzzlesPage() {
   const startedAt = useRef<number>(Date.now());
   const [params] = useSearchParams();
   const [hearts, setHearts] = useState(5);
+  const [mistakes, setMistakes] = useState<{ queue: Puzzle[]; i: number; total: number } | null>(null);
 
   useEffect(() => {
     puzzleApi.themes().then((r) => setThemes(r.themes)).catch(() => undefined);
@@ -86,12 +87,16 @@ export function PuzzlesPage() {
     const s = startSolver(p);
     setSolver(s);
     if (rating !== undefined) setPlayerRating(rating);
+    if (p.solver_first) {
+      setSolver({ ...s, phase: "solving" });
+      return;
+    }
     // play the opponent's first move after a beat
     setTimeout(() => {
       setSolver((cur) => {
         if (!cur || cur.phase !== "intro") return cur;
         const c = new Chess(cur.fen);
-        const mv = c.move(p.moves[0]);
+        const mv = safeMove(c, p.moves[0]);
         if (mv) playSound(soundForMove(mv, c));
         return { ...cur, chess: c, fen: c.fen(), index: 1, lastMove: [p.moves[0].slice(0, 2), p.moves[0].slice(2, 4)], phase: "solving" };
       });
@@ -100,6 +105,15 @@ export function PuzzlesPage() {
 
   const nextPuzzle = useCallback(async () => {
     try {
+      if (mode === "mistakes") {
+        const q = mistakes ?? { queue: (await puzzleApi.mistakes()).puzzles, i: -1, total: 0 };
+        const i = q.i + 1;
+        if (!q.queue.length) { setError("No mistakes yet. Play and review a few games first."); return; }
+        if (i >= q.queue.length) { setError("You have been through all your mistakes. Play more games."); return; }
+        setMistakes({ ...q, i, total: q.queue.length });
+        await load(q.queue[i]);
+        return;
+      }
       if (mode === "rush" && rush) {
         const i = rush.i + 1;
         if (i >= rush.queue.length) { await finishRush(rush); return; }
@@ -114,7 +128,7 @@ export function PuzzlesPage() {
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
     }
-  }, [mode, rush, selectedThemes, range, load, finishRush]);
+  }, [mode, rush, selectedThemes, range, load, finishRush, mistakes]);
 
   const startRush = async (m: "3m" | "5m" | "survival") => {
     try {
@@ -141,7 +155,7 @@ export function PuzzlesPage() {
       return;
     }
     try {
-      const r = await puzzleApi.attempt(puzzle.id, solved, (Date.now() - startedAt.current) / 1000, mode === "rated" ? "rated" : mode === "daily" ? "daily" : "custom");
+      const r = await puzzleApi.attempt(puzzle.id, solved, (Date.now() - startedAt.current) / 1000, mode === "rated" ? "rated" : mode === "daily" ? "daily" : mode === "mistakes" ? "mistakes" : "custom");
       setResult({ delta: r.delta, rating_after: r.rating_after, puzzle_rating: r.puzzle_rating });
       setPlayerRating(r.rating_after);
       setStats((s) => (s ? { ...s, rating: r.rating_after, attempts: s.attempts + 1, solved: s.solved + (solved ? 1 : 0) } : s));
@@ -160,7 +174,7 @@ export function PuzzlesPage() {
   const onMove = (from: Square, to: Square, promotion?: PromotionPiece) => {
     if (!solver || !puzzle || solver.phase !== "solving") return;
     const c = new Chess(solver.fen);
-    const mv = c.move({ from, to, promotion });
+    const mv = safeMove(c, { from, to, promotion });
     if (!mv) return;
     const expected = puzzle.moves[solver.index];
     const played = from + to + (promotion ?? "");
@@ -173,6 +187,7 @@ export function PuzzlesPage() {
         setStreak((s) => s + 1);
         playSound("correct");
         void record(true);
+        if (mode === "daily") puzzleApi.dailySolved().catch(() => undefined);
         return;
       }
       // opponent replies
@@ -180,7 +195,7 @@ export function PuzzlesPage() {
       setSolver({ ...solver, chess: c, fen: c.fen(), index, lastMove: [from, to] });
       setTimeout(() => {
         const c2 = new Chess(c.fen());
-        const rm = c2.move(reply);
+        const rm = safeMove(c2, reply);
         if (rm) playSound(soundForMove(rm, c2));
         setSolver((cur) => (cur ? { ...cur, chess: c2, fen: c2.fen(), index: index + 1, lastMove: [reply.slice(0, 2), reply.slice(2, 4)] } : cur));
       }, 350);
@@ -217,8 +232,8 @@ export function PuzzlesPage() {
       <div>
         <div className="row" style={{ justifyContent: "space-between", marginBottom: 8 }}>
           <div className="row">
-            {(["rated", "custom", "rush"] as Mode[]).map((m) => (
-              <button key={m} className={`btn btn-sm ${mode === m ? "btn-primary" : ""}`} onClick={() => { setMode(m); if (m !== "rush") setRush(null); }} data-testid={`mode-${m}`}>{m === "rush" ? "Puzzle Rush" : m[0].toUpperCase() + m.slice(1)}</button>
+            {(["rated", "custom", "rush", "mistakes"] as Mode[]).map((m) => (
+              <button key={m} className={`btn btn-sm ${mode === m ? "btn-primary" : ""}`} onClick={() => { setMode(m); setError(null); if (m !== "rush") setRush(null); if (m !== "mistakes") setMistakes(null); }} data-testid={`mode-${m}`}>{m === "rush" ? "Puzzle Rush" : m === "mistakes" ? "My mistakes" : m[0].toUpperCase() + m.slice(1)}</button>
             ))}
           </div>
           {streak > 1 && <span className="chip chip-ok"><Flame size={12} /> {streak} in a row</span>}
@@ -237,8 +252,8 @@ export function PuzzlesPage() {
           />
         ) : (
           <div className="puzzles-empty card">
-            <h2>{mode === "rush" ? "Puzzle Rush" : mode === "custom" ? "Custom puzzles" : "Rated puzzles"}</h2>
-            <p className="muted">{mode === "rush" ? "Solve as many as you can. Three mistakes end the run." : mode === "custom" ? "Pick themes and a rating range. These do not change your rating." : "Puzzles near your rating. Solve the whole line to earn points."}</p>
+            <h2>{mode === "rush" ? "Puzzle Rush" : mode === "custom" ? "Custom puzzles" : mode === "mistakes" ? "My mistakes" : "Rated puzzles"}</h2>
+            <p className="muted">{mode === "rush" ? "Solve as many as you can. Three mistakes end the run." : mode === "custom" ? "Pick themes and a rating range. These do not change your rating." : mode === "mistakes" ? "Positions from your reviewed games where you went wrong. Find the move you missed." : "Puzzles near your rating. Solve the whole line to earn points."}</p>
             {mode === "rush" ? (
               <div className="row">
                 <button className="btn btn-primary" onClick={() => startRush("3m")} data-testid="rush-3m"><Timer size={14} /> 3 minutes</button>
@@ -277,7 +292,7 @@ export function PuzzlesPage() {
             {solver.phase === "failed" && (
               <div className="row" style={{ marginTop: 8 }}>
                 <button className="btn btn-sm" onClick={retry} data-testid="puzzle-retry"><RotateCcw size={14} /> Retry</button>
-                <button className="btn btn-sm" onClick={() => { const c = new Chess(solver.fen); const exp = puzzle.moves[solver.index]; c.move(exp); setSolver({ ...solver, chess: c, fen: c.fen(), lastMove: [exp.slice(0, 2), exp.slice(2, 4)], phase: "solved" }); }}>Show solution</button>
+                <button className="btn btn-sm" onClick={() => { const c = new Chess(solver.fen); const exp = puzzle.moves[solver.index]; safeMove(c, exp); setSolver({ ...solver, chess: c, fen: c.fen(), lastMove: [exp.slice(0, 2), exp.slice(2, 4)], phase: "solved" }); }}>Show solution</button>
                 {mode !== "rush" && <button className="btn btn-sm btn-primary" onClick={nextPuzzle} data-testid="puzzle-next">Next</button>}
               </div>
             )}
@@ -291,7 +306,8 @@ export function PuzzlesPage() {
                 {puzzle.themes.map((t) => <span key={t} className="chip">{themes.find((x) => x.key === t)?.name ?? t}</span>)}
               </div>
             )}
-            {puzzle.source?.white && <div className="faint" style={{ marginTop: 8 }}>From {puzzle.source.white} vs {puzzle.source.black}{puzzle.source.year ? `, ${puzzle.source.year}` : ""}</div>}
+            {puzzle.source?.white && <div className="faint" style={{ marginTop: 8 }}>From {puzzle.source.white} vs {puzzle.source.black}{puzzle.source.year ? `, ${puzzle.source.year}` : ""}{(puzzle.source as { played?: string }).played ? ` · you played ${(puzzle.source as { played?: string }).played}` : ""}</div>}
+            {mode === "mistakes" && mistakes && <div className="faint">mistake {mistakes.i + 1} of {mistakes.total}</div>}
           </div>
         )}
         {mode === "custom" && (

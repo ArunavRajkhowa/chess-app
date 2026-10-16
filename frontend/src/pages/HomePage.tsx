@@ -7,11 +7,13 @@ import { puzzleApi, type Puzzle } from "../lib/puzzleApi";
 export function HomePage() {
   const [games, setGames] = useState<GameSummary[]>([]);
   const [health, setHealth] = useState<{ engine: { name: string; kind: string }; coach: { llm: boolean; model: string } } | null>(null);
-  const [daily, setDaily] = useState<{ date: string; puzzle: Puzzle } | null>(null);
+  const [daily, setDaily] = useState<{ date: string; puzzle: Puzzle; solved_today: boolean; streak: number } | null>(null);
+  const [awards, setAwards] = useState<{ awards: { key: string; name: string; how: string; earned: boolean }[]; earned: number; total: number } | null>(null);
   useEffect(() => {
     api.games().then((r) => setGames(r.games.slice(0, 8))).catch(() => undefined);
     api.health().then(setHealth).catch(() => undefined);
     puzzleApi.daily().then(setDaily).catch(() => undefined);
+    fetch("/api/awards").then((r) => r.json()).then(setAwards).catch(() => undefined);
   }, []);
   return (
     <div className="stack">
@@ -36,12 +38,12 @@ export function HomePage() {
       <div className="home-two">
         {daily && (
           <section className="card home-daily" data-testid="daily-card">
-            <div className="card-title"><h3>Daily puzzle</h3><span className="faint">{daily.date} · rating {daily.puzzle.rating}</span></div>
+            <div className="card-title"><h3>Daily puzzle</h3><span className="faint">{daily.date} · rating {daily.puzzle.rating}{daily.streak > 0 ? ` · 🔥 ${daily.streak} day streak` : ""}</span></div>
             <div className="home-daily-body">
               <div style={{ width: 220 }}><Board fen={daily.puzzle.fen} orientation={daily.puzzle.solver_color} showCoordinates={false} /></div>
               <div className="col">
                 <p className="muted">{daily.puzzle.solver_color === "white" ? "White" : "Black"} to play after the opponent's move. One puzzle a day, five hearts.</p>
-                <Link to="/puzzles?daily=1" className="btn btn-primary" style={{ width: "fit-content" }}>Solve today's puzzle</Link>
+                {daily.solved_today ? <span className="chip chip-ok">Solved today</span> : <Link to="/puzzles?daily=1" className="btn btn-primary" style={{ width: "fit-content" }}>Solve today's puzzle</Link>}
               </div>
             </div>
           </section>
@@ -63,6 +65,19 @@ export function HomePage() {
         )}
       </section>
       </div>
+      {awards && (
+        <section className="card" data-testid="awards">
+          <div className="card-title"><h3>Awards</h3><span className="faint">{awards.earned} of {awards.total}</span></div>
+          <div className="awards-grid">
+            {awards.awards.map((a) => (
+              <div key={a.key} className={`award ${a.earned ? "earned" : ""}`} title={a.how}>
+                <span className="award-icon" aria-hidden="true">{a.earned ? "🏅" : "○"}</span>
+                <span><b>{a.name}</b><div className="faint">{a.how}</div></span>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   );
 }

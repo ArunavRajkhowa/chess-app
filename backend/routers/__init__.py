@@ -3,9 +3,9 @@ from __future__ import annotations
 
 from fastapi import FastAPI
 
-from . import bots, coach, endgames, games, health, insights, learn, openings, play, puzzles, review
+from . import awards, bots, coach, endgames, games, health, insights, learn, openings, play, puzzles, review, vision
 
 
 def register_routers(app: FastAPI) -> None:
-    for module in (health, bots, play, review, puzzles, coach, openings, learn, games, insights, endgames):
+    for module in (health, bots, play, review, puzzles, coach, openings, learn, games, insights, endgames, vision, awards):
         app.include_router(module.router)

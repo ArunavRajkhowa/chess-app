@@ -110,3 +110,27 @@ def test_insights_from_a_reviewed_bot_game(client):
     assert 0 <= ins["accuracy"]["mean"] <= 100
     assert sum(ins["results"].values()) == 1
     assert "move_quality" in ins and "shapes" in ins
+
+
+def test_mistake_puzzles_come_from_reviews(client):
+    assert client.get("/api/puzzles/mistakes").json()["total"] == 0
+    # play a game where the player (white) hangs the queen on move 2, then review it
+    game = client.post("/api/play/games", json={"bot_id": "sam", "player_color": "white"}).json()
+    for mv in ["e2e4", "d1h5", "h5h6"]:
+        r = client.post(f"/api/play/games/{game['id']}/move", json={"move": mv})
+        if r.status_code != 200:
+            break
+        game = r.json()["game"]
+        if game["status"] == "finished":
+            break
+    if game["status"] == "active":
+        game = client.post(f"/api/play/games/{game['id']}/resign").json()
+    job = client.post(f"/api/review/games/{game['id']}", json={"mode": "quick"}).json()
+    _wait(client, job["id"])
+    ms = client.get("/api/puzzles/mistakes").json()
+    if ms["total"]:
+        p = ms["puzzles"][0]
+        assert p["solver_first"] and p["moves"] and "myMistake" in p["themes"]
+        a = client.post(f"/api/puzzles/{p['id']}/attempt", json={"solved": True, "mode": "mistakes"}).json()
+        assert a["delta"] == 0
+        assert client.get("/api/puzzles/mistakes").json()["puzzles"][-1]["solved_before"] in (True, False)

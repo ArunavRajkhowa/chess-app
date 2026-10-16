@@ -2,7 +2,7 @@ import { Chess } from "chess.js";
 import { Send } from "lucide-react";
 import { useMemo, useRef, useState } from "react";
 import { Board } from "../components/board/Board";
-import { checkSquare, destsFor, soundForMove } from "../lib/chess/game";
+import { checkSquare, destsFor, safeMove, soundForMove } from "../lib/chess/game";
 import { START_FEN, type PromotionPiece, type Square } from "../lib/chess/types";
 import { streamCoach } from "../lib/coach";
 import { play as playSound } from "../lib/sound";
@@ -25,7 +25,7 @@ export function CoachPage() {
   const dests = useMemo(() => destsFor(boardChess), [boardChess]);
 
   const onMove = (from: Square, to: Square, promotion?: PromotionPiece) => {
-    const mv = chess.move({ from, to, promotion });
+    const mv = safeMove(chess, { from, to, promotion });
     if (!mv) return;
     playSound(soundForMove(mv, chess));
     setFen(chess.fen());

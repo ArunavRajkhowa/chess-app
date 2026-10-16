@@ -122,3 +122,23 @@ def test_timed_game_from_a_position_and_flag(client):
     untimed = client.post("/api/play/games", json={"bot_id": "pip", "player_color": "white"}).json()
     assert client.post(f"/api/play/games/{untimed['id']}/flag").status_code == 409
     assert client.post("/api/content/reload").json()["lessons"] >= 7
+
+
+def test_bot_chat_and_adaptive_coach(client):
+    from backend.bots.selector import _adaptive
+    coach = get_bot("coach")
+    assert _adaptive(coach, chess.Board())[0] == coach.selection.temperature_cp
+    behind = chess.Board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKB1R w Qkq - 0 1")  # white (bot) is a rook down
+    assert _adaptive(coach, behind)[0] < coach.selection.temperature_cp
+    ahead = chess.Board("rnbqkb1r/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")  # black is a rook down
+    t, r = _adaptive(coach, ahead)
+    assert t > coach.selection.temperature_cp and r > 0
+    assert _adaptive(get_bot("pip"), behind)[0] == get_bot("pip").selection.temperature_cp
+    assert all(get_bot("max").chat[k] for k in ("capture_yours", "check_given", "bot_losing"))
+    # a chat line can appear on a capture; run a few captures and expect at least one line
+    from backend.routers.play import _chat_line
+    import random as _random
+    row = {"bot_id": "max", "status": "active"}
+    b = chess.Board("rnbqkbnr/ppp1pppp/8/3p4/4P3/8/PPPP1PPP/RNBQKBNR w KQkq d6 0 2")
+    lines = {_chat_line(row, b, chess.Move.from_uci("e4d5"), chess.Move.from_uci("d8d5"), _random.Random(i)) for i in range(30)}
+    assert any(line for line in lines)

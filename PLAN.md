@@ -11,14 +11,18 @@ A single-user chess trainer that runs on one machine. It gives, without a paywal
 
 | Area | What you get | chess.com equivalent |
 |---|---|---|
-| Play | 20 bots from 250 to 3200 with personalities, coach mode (threat arrows, move feedback, hints, takebacks), eval bar, sounds, confetti | Bots, Play Coach |
+| Play | 20 bots from 250 to 3200 with personalities and in-game chat, an adaptive Coach bot, clocks with increments, coach mode (threat arrows, move feedback, hints, takebacks), eval bar, sounds, confetti | Bots, Play Coach |
 | Game review | Accuracy per side, 11 move labels, key moments walkthrough, retry a mistake with "your accuracy would have been", eval graph, phase grades, estimated performance rating, coach explanations | Game Review (Diamond) |
-| Puzzles | Rated puzzles with Glicko-2, themes, custom range, Puzzle Rush (3 min / 5 min / survival, three strikes), daily puzzle, stats and weakest themes | Puzzles, Puzzle Rush |
+| Puzzles | Rated puzzles with Glicko-2, themes, custom range, Puzzle Rush (3 min / 5 min / survival, three strikes), daily puzzle with hearts and a streak, "my mistakes" from your own reviewed games, stats and weakest themes | Puzzles, Puzzle Rush, Daily Puzzle |
+| Endgames | 24 engine-verified positions in five themes, practice or a timed five-in-a-row challenge, best results kept | Endgames trainer |
+| Analysis | Free board with three engine lines, eval bar, best-move arrow, FEN/PGN import, one click to a full review | Analysis board |
+| Vision | Find-the-square and name-the-square drills, thirty seconds a round, best scores | Vision trainer |
 | Learn | A nine-band spiral curriculum: text, positions with arrows, challenges, quizzes, drills against the engine, model games | Lessons |
 | Openings | Explorer over 3,865 named lines, search, families, step through any line | Opening Explorer |
 | Master games | Curated games by theme with every key move explained; guess-the-move scored by the engine | Master games, Practice |
 | Coach | Chat about any position, explain any reviewed move, hints in three levels, a review narrative; grounded in engine facts | Coach |
 | Insights | Accuracy over time and by phase, results and endings, move quality per game, openings table, game shapes, worst moves, what to work on | Insights (Diamond) |
+| Awards | 22 achievements computed from the store (wins per tier, puzzles, rush, streaks, lessons, reviews, endgames) | Awards |
 
 ## 2. Architecture
 
@@ -122,10 +126,10 @@ Next, in order:
 2. Curated master games (80+) with move-by-move explanations and theme tags.
 3. Puzzle library to several thousand from master games and self-play; theme detection for
    deflection and attraction.
-4. Endgame drills as a dedicated trainer (timed five-position sets, like chess.com Endgames).
-5. Bot Elo calibration by self-play against fixed `UCI_Elo` opponents; adaptive bot.
-6. Clocks for bot games; practice-from-here in review; daily puzzle streak and awards.
-7. Spaced repetition of missed puzzles and lesson challenges (SM-2 ladder).
+4. Bot Elo calibration by self-play against fixed `UCI_Elo` opponents (`scripts/calibrate_bots.py`).
+5. More endgame positions (de la Villa's hundred) and a knight-and-bishop mate walkthrough.
+6. Spaced repetition of missed puzzles and lesson challenges (SM-2 ladder).
+7. Opening ideas per family (plans, traps, model games) once the openings research lands.
 
 ## 5. Risks
 

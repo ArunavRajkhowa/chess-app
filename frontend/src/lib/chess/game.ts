@@ -1,6 +1,15 @@
 import { Chess, type Move } from "chess.js";
 import type { Color, Square } from "./types";
 
+/** chess.js 1.x throws on an illegal move; most callers want null instead. */
+export function safeMove(chess: Chess, move: string | { from: string; to: string; promotion?: string }): Move | null {
+  try {
+    return chess.move(move);
+  } catch {
+    return null;
+  }
+}
+
 /** Legal destinations per origin, in the shape the Board wants. */
 export function destsFor(chess: Chess): Map<Square, Square[]> {
   const m = new Map<Square, Square[]>();
