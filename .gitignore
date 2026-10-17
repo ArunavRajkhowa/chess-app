@@ -5,6 +5,9 @@
 **/.env.*
 !.env.example
 !**/.env.example
+*.pem
+*.key
+secrets/
 
 # ── Python ──
 __pycache__/
