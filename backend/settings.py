@@ -28,11 +28,17 @@ class Settings(BaseSettings):
     ENGINE_THREADS: int = 1
     ENGINE_HASH_MB: int = 64
 
-    # Coach. The key is optional: without it the coach falls back to rule-based explanations.
+    # Coach. Every model is optional: with none set the coach answers from rules. Two ways to set one:
+    # an OpenAI-compatible server (local Ollama / LM Studio / llama.cpp, or a free hosted API), which
+    # needs COACH_BASE_URL and COACH_MODEL; or Anthropic, which needs ANTHROPIC_API_KEY. The
+    # OpenAI-compatible server wins when both are set.
+    COACH_BASE_URL: str = ""
+    COACH_MODEL: str = ""
+    COACH_API_KEY: str = ""  # blank for a local server
     ANTHROPIC_API_KEY: str = ""
     ANTHROPIC_MODEL: str = "claude-fable-5-1"
     COACH_MAX_TOKENS: int = 2048
-    COACH_EFFORT: str = "medium"
+    COACH_EFFORT: str = "medium"  # Anthropic only
 
     # Storage. SQLite file for games, reviews, puzzle attempts and lesson progress.
     DB_PATH: str = str(REPO_ROOT / "data" / "chess.sqlite3")

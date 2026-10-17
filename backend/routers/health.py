@@ -3,13 +3,13 @@ from __future__ import annotations
 
 from fastapi import APIRouter
 
+from ..coach.client import llm_enabled, llm_model, llm_problem, llm_provider
 from ..content.endgames import load_endgames
 from ..content.games import load_games
 from ..content.lessons import load_curriculum
 from ..engine.pool import pool
 from ..openings.book import load_book
 from ..puzzles.store import load_library
-from ..settings import settings
 
 router = APIRouter(prefix="/api", tags=["health"])
 
@@ -20,7 +20,7 @@ async def health() -> dict:
         "ok": pool.ready,
         "engine": {"name": pool.id_name, "kind": pool.kind, "command": pool.command},
         "openings": len(load_book().all),
-        "coach": {"llm": bool(settings.ANTHROPIC_API_KEY), "model": settings.ANTHROPIC_MODEL},
+        "coach": {"llm": llm_enabled(), "provider": llm_provider(), "model": llm_model(), "problem": llm_problem()},
     }
 
 
