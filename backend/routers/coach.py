@@ -14,12 +14,11 @@ from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 
 from ..coach import fallback
-from ..coach.client import CoachDeclined, llm_enabled, prompt, stream_text
+from ..coach.client import CoachDeclined, llm_enabled, llm_model, prompt, stream_text
 from ..coach.facts import position_facts
 from ..engine.pool import pool
 from ..review import jobs
 from ..review.classify import BLUNDER, MISS, MISTAKE
-from ..settings import settings
 from ..storage import games as store
 
 LOGGER = logging.getLogger("chess.coach.api")
@@ -95,7 +94,7 @@ async def _respond(system: str, user: str, purpose: str, rules_text: str, boards
                 collected.append(chunk)
                 yield _sse({"type": "text", "text": chunk})
             text = "".join(collected)
-            yield _sse({"type": "done", "source": "llm", "model": settings.ANTHROPIC_MODEL, "unverified_moves": _unverified_moves(text, boards)})
+            yield _sse({"type": "done", "source": "llm", "model": llm_model(), "unverified_moves": _unverified_moves(text, boards)})
             return
         except CoachDeclined:
             LOGGER.warning("coach declined %s; using rules", purpose)
@@ -103,7 +102,7 @@ async def _respond(system: str, user: str, purpose: str, rules_text: str, boards
             LOGGER.error("coach model call failed for %s; using rules", purpose, exc_info=True)
             if collected:
                 yield _sse({"type": "text", "text": "\n\n(The coach stopped early.)"})
-                yield _sse({"type": "done", "source": "llm", "model": settings.ANTHROPIC_MODEL})
+                yield _sse({"type": "done", "source": "llm", "model": llm_model()})
                 return
     yield _sse({"type": "text", "text": rules_text})
     yield _sse({"type": "done", "source": "rules"})

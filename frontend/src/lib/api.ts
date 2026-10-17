@@ -164,7 +164,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 const post = <T,>(path: string, body?: unknown) => request<T>(path, { method: "POST", body: body === undefined ? undefined : JSON.stringify(body) });
 
 export const api = {
-  health: () => request<{ ok: boolean; engine: { name: string; kind: string }; openings: number; coach: { llm: boolean; model: string } }>("/api/health"),
+  health: () => request<{ ok: boolean; engine: { name: string; kind: string }; openings: number; coach: { llm: boolean; provider: string | null; model: string; problem: string | null } }>("/api/health"),
   bots: () => request<{ bots: BotPublic[] }>("/api/bots"),
   newGame: (bot_id: string, player_color: "white" | "black" | "random", coach_mode = false, time_control: string | null = null, fen: string | null = null) =>
     post<GameState>("/api/play/games", { bot_id, player_color, coach_mode, time_control, fen }),

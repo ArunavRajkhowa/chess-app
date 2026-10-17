@@ -53,9 +53,12 @@ When two approaches both work, take the one a new developer follows in one read.
    `extra="ignore"`, so a new env var needs a field **and** a line in `.env.example`. Anything
    that decides what the chess logic does (depths, thresholds, bot profiles, prompts) is code
    or a prompt file, version-controlled, never an env var.
-6. **The Anthropic key is optional and metered.** Every model call logs its tokens to
-   `coach_cost`; the model id comes from `ANTHROPIC_MODEL`, never from code. No loop calls the
-   model; one request answers one question.
+6. **The coach model is optional.** It is an OpenAI-compatible server (`COACH_BASE_URL`,
+   `COACH_MODEL`, `COACH_API_KEY`: local Ollama or LM Studio, or a free hosted API) or Anthropic
+   (`ANTHROPIC_*`). Every call logs its tokens to `coach_cost` (`usage_reported = 0` when the
+   server sent none: the zeros then mean "unknown"); the model id comes from `.env`, never from
+   code. No loop calls the model; one request answers one question. Keys live only in `.env`,
+   which is gitignored.
 7. **Absence is data.** A stat with no games is `null` or a message, never a zero. An opening
    not in the book is `None`, not "Unknown Opening" invented in code.
 8. **Only `frontend/dist` is web-served** and the static mount stays last in `app.py` so

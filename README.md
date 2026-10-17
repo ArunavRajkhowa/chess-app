@@ -6,8 +6,8 @@ with accuracy, key moments, retry and practice-from-here; a puzzle trainer with 
 Rush, a daily puzzle with streaks and puzzles made from your own mistakes; an endgame trainer; a
 board vision trainer; an analysis board with engine lines; a spiral curriculum from the rules to
 master level; an opening explorer; annotated master games with guess-the-move; Insights and
-awards over your games; and a coach powered by Claude that only talks about facts the engine
-verified.
+awards over your games; and a coach that works from rules or from any local or hosted language
+model, and only talks about facts the engine verified.
 
 No paywall, no account. Everything is stored in one SQLite file under `data/`.
 
@@ -45,12 +45,37 @@ cp .env.example .env
 docker compose up --build   # → http://127.0.0.1:8765
 ```
 
-### The coach
+### The coach and its model
 
-Copy `.env.example` to `.env` and set `ANTHROPIC_API_KEY` to turn on model-written explanations,
-hints, chat and review narratives (`ANTHROPIC_MODEL` defaults to `claude-fable-5-1`). Without a key
-the coach still works from rules: every answer is grounded in the engine's lines and the position
-facts, it is just terser.
+The coach works without a model: it answers from rules, using the engine's lines and the position
+facts. A language model words the answers better. You do not need an Anthropic key. Any
+OpenAI-compatible server works, and some are free.
+
+1. Copy `.env.example` to `.env`. `.env` is gitignored, so your keys stay on your machine.
+2. Set `COACH_BASE_URL` and `COACH_MODEL`. For a hosted service, also set `COACH_API_KEY`.
+3. Run `python -m scripts.check_coach`. It sends one question and prints the answer, the time and
+   the token counts.
+
+Only the position, the engine lines and your question go to the model.
+
+| Where the model runs | Cost and limits (checked 2026-10-17) | Notes |
+|---|---|---|
+| Ollama or LM Studio on your computer | Free, private, no limits. Needs memory. | `gpt-oss:20b` is a 14 GB download. A smaller computer needs a 4B to 8B model. |
+| Ollama Cloud, for example `gpt-oss:120b-cloud` | Free plan: starter usage, one request at a time, monthly reset. | You call your local Ollama; the model runs on Ollama's servers. The free model list is not published: check while signed in. |
+| Groq | Free tier with a key. Third-party sources list 1,000 requests and 200,000 tokens a day for gpt-oss models. | Fast. Read your own limits in the Groq console. |
+| OpenRouter, models that end in `:free` | 20 requests a minute and 50 a day. 1,000 a day after you buy $10 of credit once. | A failed call still counts. A free provider may log prompts. |
+
+One coach question uses about 900 input tokens (measured on a real fact sheet) and a short
+answer, so 200,000 tokens cover roughly 150 questions.
+
+Not recommended as the default: the Gemini free tier (its limits were cut several times and Google
+may use free-tier prompts), Cerebras (no permanent free tier: $5 of credit for 30 days) and NVIDIA
+build (trial credits).
+
+The client was tested against simulated and local fake servers, not a live model. Coaching quality
+differs between models. Start with `gpt-oss:20b`: the same model runs locally, on Ollama Cloud, on
+Groq and on OpenRouter, so you can switch without a change in behaviour. A thinking model spends
+tokens on thought first. If answers come back empty, raise `COACH_MAX_TOKENS`.
 
 ## Layout
 

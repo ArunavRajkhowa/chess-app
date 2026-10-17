@@ -6,7 +6,7 @@ import { puzzleApi, type Puzzle } from "../lib/puzzleApi";
 
 export function HomePage() {
   const [games, setGames] = useState<GameSummary[]>([]);
-  const [health, setHealth] = useState<{ engine: { name: string; kind: string }; coach: { llm: boolean; model: string } } | null>(null);
+  const [health, setHealth] = useState<{ engine: { name: string; kind: string }; coach: { llm: boolean; model: string; problem: string | null } } | null>(null);
   const [daily, setDaily] = useState<{ date: string; puzzle: Puzzle; solved_today: boolean; streak: number } | null>(null);
   const [awards, setAwards] = useState<{ awards: { key: string; name: string; how: string; earned: boolean }[]; earned: number; total: number } | null>(null);
   useEffect(() => {
@@ -25,7 +25,7 @@ export function HomePage() {
         {health && (
           <div className="row">
             <span className="chip chip-ok">{health.engine.name}</span>
-            <span className={`chip ${health.coach.llm ? "chip-ok" : "chip-warn"}`}>{health.coach.llm ? `Coach: ${health.coach.model}` : "Coach: offline mode"}</span>
+            <span className={`chip ${health.coach.llm ? "chip-ok" : "chip-warn"}`} title={health.coach.problem ?? undefined}>{health.coach.llm ? `Coach: ${health.coach.model}` : "Coach: offline mode"}</span>
           </div>
         )}
       </div>

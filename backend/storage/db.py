@@ -79,6 +79,8 @@ _ADDED_COLUMNS = (
     ("games", "source", "TEXT NOT NULL DEFAULT 'bot'"),
     ("games", "coach_mode", "INTEGER NOT NULL DEFAULT 0"),
     ("games", "start_fen", "TEXT"),
+    # 0 when the model server sent no token counts: the zeros then mean "not reported", not "free".
+    ("coach_cost", "usage_reported", "INTEGER NOT NULL DEFAULT 1"),
 )
 
 

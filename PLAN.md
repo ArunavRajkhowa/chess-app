@@ -81,8 +81,34 @@ The coach never sees a bare FEN. It sees a fact sheet: material, king safety, pa
 hanging and pinned pieces, mobility, the opening name, the phase, rule-based threats, and three
 engine lines with evaluations. The prompt (`backend/coach/prompts/*.md`) forbids naming any move
 not in the facts, and the API reports SAN tokens that are legal in none of the positions as
-`unverified_moves`. Without an API key the rule-based fallback answers from the same facts, so
-every feature works offline. Model id and effort come from `.env`; every call logs tokens.
+`unverified_moves`. Without a model the rule-based fallback answers from the same facts, so
+every feature works offline. Model ids come from `.env`; every call logs tokens.
+
+The model is any OpenAI-compatible server (`COACH_BASE_URL`, `COACH_MODEL`, `COACH_API_KEY`) or
+Anthropic. The owner cannot use an Anthropic organisation key, so the default route is a local or
+free open-weight model. The client (`backend/coach/client.py`) streams server-sent events with
+`httpx` and has no SDK dependency. It sends `stream_options.include_usage` (most servers send no
+token counts without it), drops `reasoning` fields and `<think>` blocks, and raises when the model
+sends no answer text so the router falls back to rules.
+
+Provider research, 2026-10-17 (limits change often; the sources are search results, and the
+documentation hosts were not reachable from the build machine):
+
+| Provider | Finding | Source |
+|---|---|---|
+| Groq | OpenAI-compatible. The rate-limit page lists gpt-oss-120b at 30 requests a minute, 1,000 a day, 200,000 tokens a day for the Developer plan; free-plan numbers were not shown. | [Groq rate limits](https://console.groq.com/docs/rate-limits) |
+| OpenRouter | `:free` models: 20 requests a minute, 50 a day; 1,000 a day after $10 of credit. Failed calls count. | [OpenRouter limits](https://openrouter.ai/docs/api_reference/limits) |
+| Cerebras | Current docs: $5 trial credit for 30 days, no renewing free tier. Older sources say 1M tokens a day. | [Cerebras rate limits](https://inference-docs.cerebras.ai/support/rate-limits) |
+| Gemini API | Free-tier limits changed often; forum reports of 20 to 250 requests a day. Not open weights. | [Google AI forum](https://discuss.ai.google.dev/t/gemini-rate-limit-20-rpd/111274) |
+| Ollama Cloud | Free plan with starter usage, one concurrent request, monthly reset. Both gpt-oss sizes have `-cloud` tags. | [Ollama pricing](https://ollama.com/pricing) |
+| Ollama local | `/v1/chat/completions`. Streamed usage only with `stream_options.include_usage`. | [Ollama compatibility](https://docs.ollama.com/api/openai-compatibility) |
+| LM Studio | `/v1/chat/completions` on port 1234. Streamed usage not confirmed. | [LM Studio docs](https://lmstudio.ai/docs/developer/openai-compat/chat-completions) |
+| NVIDIA build | 1,000 sign-up credits (up to 5,000), 40 requests a minute; forum posts only. | [NVIDIA forum](https://forums.developer.nvidia.com/t/api-credits-for-build-nvidia-com/306633) |
+| Mistral | Free mode with the lowest limits; numbers shown only in the admin panel. | [Mistral limits](https://docs.mistral.ai/admin/billing-usage/usage-limits) |
+
+Model sizes from the Ollama library: gpt-oss 20b about 14 GB, 120b about 65 GB (128K context);
+Gemma 4 in sizes e2b, e4b, 12b, 26b and 31b; Qwen 3.6 in 27b and 35b. Not verified: how well any
+of them coaches chess. One question measures about 900 input tokens.
 
 ### 2.5 Content
 
@@ -122,7 +148,7 @@ accuracy by phase, blunder rate, puzzle rating by theme.
 
 ## 4. What is built and what is next
 
-Built and tested (83 backend tests, 21 Playwright flows): everything in section 1, with the
+Built and tested (91 backend tests, 21 Playwright flows): everything in section 1, with the
 content in the README table (185 lessons in all nine bands, 125 annotated master games, 558
 puzzles, 24 endgame positions).
 
