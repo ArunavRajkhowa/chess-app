@@ -1,6 +1,6 @@
 import { Chess } from "chess.js";
 import { Lightbulb } from "lucide-react";
-import { useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Board } from "../board/Board";
 import type { Shape } from "../board/shapes";
 import { ExplorePanel, useExplore } from "../explore/Explore";
@@ -10,12 +10,29 @@ import type { PromotionPiece, Square } from "../../lib/chess/types";
 import type { Section } from "../../lib/learnApi";
 import { CLASS_LABEL } from "../../lib/review/classify";
 import { play as playSound } from "../../lib/sound";
+import { speak, stopSpeech } from "../../lib/speech";
 
 export type ChallengeSection = Extract<Section, { type: "challenge" }>;
 export type QuizSection = Extract<Section, { type: "quiz" }>;
 export interface StepProps { header: ReactNode; onNext: () => void; nextLabel: string }
 
 export const sideOf = (fen: string): "white" | "black" => (new Chess(fen).turn() === "w" ? "white" : "black");
+
+/** The moment the video stops and the learner must act: said out loud and shown large, with the side to move. */
+export function YourTurn({ fen, prompt, kind }: { fen: string; prompt: string; kind: "challenge" | "quiz" | "drill" }) {
+  const side = sideOf(fen);
+  const lead = kind === "quiz" ? "Your turn. A question." : kind === "drill" ? `Your turn. Play it out as ${side}.` : `Your turn. ${side[0].toUpperCase() + side.slice(1)} to play.`;
+  useEffect(() => {
+    void speak(`${lead} ${prompt}`);
+    return () => stopSpeech();
+  }, [lead, prompt]);
+  return (
+    <div className="your-turn" data-testid="your-turn">
+      <span className="your-turn-lead">{lead}</span>
+      <strong data-testid={kind === "quiz" ? "quiz-question" : kind === "drill" ? "drill-prompt" : "challenge-prompt"}>{prompt}</strong>
+    </div>
+  );
+}
 
 /** Board on the left, the lesson and the current step on the right, on every step. */
 export function Stage({ board, header, children }: { board: ReactNode; header: ReactNode; children: ReactNode }) {
@@ -133,7 +150,7 @@ export function Challenge({ section, onResult, header, onNext, nextLabel }: Step
     : <Board fen={fen} orientation={orientation} movable={{ color: chess.turn(), dests }} lastMove={last} check={checkSquare(chess)} shapes={shapes} highlights={highlights} onMove={onMove} />;
   return (
     <Stage board={board} header={header}>
-      <strong data-testid="challenge-prompt">{section.prompt}</strong>
+      <YourTurn fen={section.fen} prompt={section.prompt} kind="challenge" />
       {status === "bad" && (
         <div className="task-banner bad" data-testid="task-bad">
           {text}
@@ -166,7 +183,7 @@ export function Quiz({ section, fen, onResult, header, onNext, nextLabel }: Step
   const right = picked === section.answer;
   return (
     <Stage board={<Board fen={fen} orientation={sideOf(fen)} />} header={header}>
-      <strong data-testid="quiz-question">{section.question}</strong>
+      <YourTurn fen={fen} prompt={section.question} kind="quiz" />
       <div className="quiz-options">
         {section.options.map((o, i) => (
           <button key={i} className={`btn ${picked !== null && i === section.answer ? "right" : picked === i ? "wrong" : ""}`} disabled={picked !== null} onClick={() => { setPicked(i); onResult(i === section.answer); playSound(i === section.answer ? "correct" : "wrong"); }} data-testid={`quiz-option-${i}`}>{o}</button>

@@ -167,7 +167,9 @@ Nine bands, named after pieces so progress feels like promotion:
 The lesson shape copies what a good coach does at the board, and each step rests on a finding
 from learning research or from how chess skill is built:
 
-1. **Show it first, from first principles, with the pieces moving.** A `lecture` section plays
+1. **Show it first, from first principles, with the pieces moving.** The teaching sections of a
+   lesson (text, positions, lectures, model games) run together as one narrated video that stops
+   only at a task, which it announces ("Your turn. White to play. Mate in one."). A `lecture` section plays
    moves on the board while a narration explains them, starting from the rule underneath
    (one move per turn; a check must be answered; a king may not be captured) and only then
    naming the pattern (fork, pin, opposition). Narrated animation beats text beside a diagram
@@ -210,6 +212,9 @@ from learning research or from how chess skill is built:
    under every watched game.
 8. **Puzzles come back too.** A missed library puzzle returns on the same ladder as a missed lesson
    task, computed from the attempt history alone (every solve since the last miss climbs a rung).
+9. **Ratings mean what they say.** A puzzle's rating comes from its shape (one home:
+   `backend/puzzles/difficulty.py`), the player's puzzle rating moves at most 80 points on one
+   result, and a game review estimates strength only from twenty judged moves or more.
 
 Section types: `lecture` (narrated frames: a position or a move, arrows and highlights, one
 spoken sentence or two), `text`, `position` (arrows and highlights, read aloud on demand),

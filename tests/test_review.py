@@ -197,6 +197,6 @@ def test_a_side_with_no_moves_has_no_accuracy(client):
     game = client.post(f"/api/play/games/{game['id']}/resign").json()
     rep = _wait(client, client.post(f"/api/review/games/{game['id']}", json={"mode": "quick"}).json()["id"])["report"]
     assert rep["black"]["accuracy"] is None and rep["black"]["acpl"] is None and rep["black"]["estimated_rating"] is None
-    assert rep["white"]["accuracy"] is not None and rep["white"]["estimated_rating"] is not None
+    assert rep["white"]["accuracy"] is not None and rep["white"]["estimated_rating"] is None  # one move is no measure of strength
     ins = client.get("/api/insights/me").json()
     assert ins["games"] == 1 and ins["accuracy"] is None and ins["results"] == {"loss": 1}

@@ -11,6 +11,7 @@ from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel, Field
 
 from ..content.lessons import lesson_for_theme
+from ..puzzles.difficulty import difficulty
 from ..puzzles.glicko import Rating, update
 from ..puzzles.store import load_library
 from ..storage.db import database
@@ -103,7 +104,8 @@ async def _mistake_puzzles(player: str) -> list[dict]:
             pid = f"mistake-{r['game_id']}-{m['ply']}"
             out.append({
                 "id": pid, "fen": m["fen_before"], "moves": line, "solver_first": True,
-                "rating": min(2400, 800 + m["cp_loss"] // 2), "themes": ["myMistake", m["phase"], m["classification"]], "goal": "Find the move you missed",
+                "rating": difficulty(m["fen_before"], line, ["myMistake", m["phase"], m["classification"]], solver_first=True),
+                "themes": ["myMistake", m["phase"], m["classification"]], "goal": "Find the move you missed",
                 "source": {"white": "You" if r["player_color"] == "white" else r["bot_id"], "black": "You" if r["player_color"] == "black" else r["bot_id"], "game_id": r["game_id"], "ply": m["ply"], "played": m["san"]},
                 "solver_color": r["player_color"], "solved_before": pid in solved_ids,
             })

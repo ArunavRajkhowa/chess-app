@@ -10,6 +10,7 @@ import pytest
 
 for _name in ("ANTHROPIC_API_KEY", "COACH_BASE_URL", "COACH_MODEL", "COACH_API_KEY", "TURSO_DATABASE_URL", "TURSO_AUTH_TOKEN", "GOOGLE_CLIENT_ID"):
     os.environ[_name] = ""
+os.environ["NARRATION_TTS"] = "false"  # the neural voice is an online service: tests never reach it
 
 
 @pytest.fixture(scope="session")

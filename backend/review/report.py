@@ -246,7 +246,8 @@ async def review_moves(
         for ph in (OPENING, MIDDLEGAME, ENDGAME):
             xs = [m.accuracy for m in mine if m.phase == ph]
             phase_acc[ph] = round(sum(xs) / len(xs), 1) if xs else None
-        return SideSummary(accuracy=acc, acpl=round(acpl, 1), estimated_rating=C.estimate_rating(acpl), counts=counts, phase_accuracy=phase_acc)
+        estimate = C.estimate_rating(acpl) if len(mine) >= C.MIN_MOVES_FOR_ESTIMATE else None  # a few moves say nothing about strength
+        return SideSummary(accuracy=acc, acpl=round(acpl, 1), estimated_rating=estimate, counts=counts, phase_accuracy=phase_acc)
 
     boundaries = {MIDDLEGAME: next((i for i, p in enumerate(phases) if p == MIDDLEGAME), None),
                   ENDGAME: next((i for i, p in enumerate(phases) if p == ENDGAME), None)}

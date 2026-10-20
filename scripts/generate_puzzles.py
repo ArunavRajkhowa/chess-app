@@ -14,6 +14,7 @@ import chess.engine
 import chess.pgn
 
 from backend.engine.pool import EnginePool
+from backend.puzzles.difficulty import difficulty
 from backend.engine.score import MATE_CP, cp_from_score
 from backend.review.phases import ENDGAME, OPENING, phase_of
 
@@ -206,23 +207,8 @@ def themes_for(board: chess.Board, moves: list[chess.Move], final_cp: int) -> li
 
 
 def rating_for(themes: list[str], moves: list[chess.Move], board: chess.Board) -> int:
-    n_solver = (len(moves) + 1) // 2
-    r = 900 + 180 * (n_solver - 1)
-    if "mateIn1" in themes:
-        r = 500 + (150 if "quietMove" in themes else 0)
-    if "sacrifice" in themes:
-        r += 250
-    if "quietMove" in themes and "mateIn1" not in themes:
-        r += 200
-    if "hangingPiece" in themes:
-        r -= 200
-    if "discoveredAttack" in themes or "skewer" in themes:
-        r += 100
-    if "endgame" in themes:
-        r += 100
-    if board.is_capture(moves[0]) and "sacrifice" not in themes:
-        r -= 80
-    return max(400, min(2600, r))
+    """The puzzle's rating from its shape (backend/puzzles/difficulty.py): the solver moves first here."""
+    return difficulty(board.fen(), [m.uci() for m in moves], themes, solver_first=True)
 
 
 async def scan_game(pool: EnginePool, game: chess.pgn.Game, source: dict, seen: set[str]) -> list[dict]:

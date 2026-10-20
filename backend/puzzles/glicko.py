@@ -8,8 +8,9 @@ from dataclasses import dataclass
 TAU = 0.5
 SCALE = 173.7178
 DEFAULT_RATING = 1200.0
-DEFAULT_RD = 350.0
+DEFAULT_RD = 250.0
 DEFAULT_VOLATILITY = 0.06
+MAX_STEP = 80.0  # the most one puzzle may move the rating; Glicko's first results would otherwise swing 200
 
 
 @dataclass
@@ -67,7 +68,9 @@ def update(player: Rating, opponent: Rating, score: float) -> Rating:
     phi_star = math.sqrt(phi * phi + sigma * sigma)
     phi_new = 1.0 / math.sqrt(1.0 / (phi_star * phi_star) + 1.0 / v)
     mu_new = mu + phi_new * phi_new * g * (score - e)
-    return Rating(rating=mu_new * SCALE + 1500.0, rd=max(30.0, phi_new * SCALE), volatility=sigma)
+    new = Rating(rating=mu_new * SCALE + 1500.0, rd=max(30.0, phi_new * SCALE), volatility=sigma)
+    new.rating = player.rating + max(-MAX_STEP, min(MAX_STEP, new.rating - player.rating))
+    return new
 
 
 def expected_score(player: Rating, opponent: Rating) -> float:

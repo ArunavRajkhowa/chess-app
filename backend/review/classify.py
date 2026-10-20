@@ -147,6 +147,9 @@ _ACPL_TO_ELO = [(5, 2800), (10, 2600), (15, 2400), (20, 2250), (25, 2100), (30, 
                 (50, 1600), (60, 1450), (70, 1300), (85, 1150), (100, 1000), (130, 800), (170, 600), (250, 400)]
 
 
+MIN_MOVES_FOR_ESTIMATE = 20  # fewer judged moves than this and the estimate is noise: say nothing
+
+
 def estimate_rating(acpl: float) -> int:
     """A rough performance estimate from average centipawn loss; a table, not a model."""
     if acpl <= _ACPL_TO_ELO[0][0]:
