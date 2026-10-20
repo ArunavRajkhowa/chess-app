@@ -127,3 +127,13 @@ def test_a_challenge_may_accept_alternative_first_moves(tmp_path, monkeypatch):
         assert len(sections) == 1 and sections[0]["also_san"] == ["Rd8#"]  # the illegal alternative drops its section
     finally:
         L.load_curriculum.cache_clear()
+
+
+def test_lessons_name_the_puzzle_themes_they_teach(client, caplog):
+    L.load_curriculum.cache_clear()
+    with caplog.at_level("WARNING", logger="chess.lessons"):
+        L.load_curriculum()
+    assert not [r for r in caplog.records if "practice theme" in r.getMessage()]
+    assert L.lesson_for_theme("fork").id == "b1m1l2"
+    practice = client.get("/api/learn/lessons/b2m1l2").json()["practice"]
+    assert [p["key"] for p in practice] == ["fork"] and practice[0]["count"] > 0

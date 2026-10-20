@@ -26,6 +26,7 @@ STATUS_FAILED = "failed"
 class ReviewJob:
     id: str
     game_id: str
+    player_id: str = field(repr=False)
     status: str = STATUS_QUEUED
     done_positions: int = 0
     total_positions: int = 0
@@ -45,20 +46,24 @@ _jobs: dict[str, ReviewJob] = {}
 _by_game: dict[str, str] = {}
 
 
-def get_job(job_id: str) -> ReviewJob | None:
-    return _jobs.get(job_id)
+def get_job(player_id: str, job_id: str) -> ReviewJob | None:
+    job = _jobs.get(job_id)
+    return job if job and job.player_id == player_id else None
 
 
-async def stored_report(game_id: str) -> dict | None:
-    row = await database.fetch_one("SELECT report_json FROM reviews WHERE game_id = ?", (game_id,))
+async def stored_report(player_id: str, game_id: str) -> dict | None:
+    row = await database.fetch_one(
+        "SELECT r.report_json FROM reviews r JOIN games g ON g.id = r.game_id WHERE r.game_id = ? AND g.player_id = ?",
+        (game_id, player_id),
+    )
     return json.loads(row["report_json"]) if row else None
 
 
-def start_review(game_id: str, moves: list[chess.Move], *, depth: int, result: str | None, start_fen: str | None = None) -> ReviewJob:
+def start_review(player_id: str, game_id: str, moves: list[chess.Move], *, depth: int, result: str | None, start_fen: str | None = None) -> ReviewJob:
     existing = _by_game.get(game_id)
     if existing and _jobs[existing].status in (STATUS_QUEUED, STATUS_RUNNING):
         return _jobs[existing]
-    job = ReviewJob(id=uuid.uuid4().hex[:10], game_id=game_id, total_positions=len(moves) + 1)
+    job = ReviewJob(id=uuid.uuid4().hex[:10], game_id=game_id, player_id=player_id, total_positions=len(moves) + 1)
     _jobs[job.id] = job
     _by_game[game_id] = job.id
     job.task = asyncio.create_task(_run(job, moves, depth, result, start_fen))

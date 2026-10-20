@@ -7,7 +7,8 @@ the lichess practice sets. The sweep lives outside the repo; the decisions it su
 
 ## 1. What the app is
 
-A single-user chess trainer that runs on one machine. It gives, without a paywall:
+A chess trainer that runs on one machine and serves browsers and phones; each visitor is a
+player with their own progress. It gives, without a paywall:
 
 | Area | What you get | chess.com equivalent |
 |---|---|---|
@@ -121,8 +122,29 @@ of them coaches chess. One question measures about 900 input tokens.
 
 ### 2.6 Storage
 
-SQLite, one file. Tables: games, reviews, puzzle_attempts, lesson_progress, player (key-value:
-puzzle rating, rush bests), coach_cost. Migrations are additive (`_ADDED_COLUMNS`).
+SQLite through `libsql`: one local file, or a Turso database when `TURSO_DATABASE_URL` is set.
+Turso was chosen (2026-10-19) over Supabase and Neon because it speaks the same SQLite dialect, so
+tests keep running on a file and no query changes; its free plan holds 5 GB. Tables: players (id,
+email, Google subject), games, reviews, puzzle_attempts, player_lessons, player_values (key-value:
+puzzle rating, rush bests, trainer stats), events, coach_cost. Every per-player row carries
+`player_id`. Migrations are additive (`_ADDED_COLUMNS`); the single-player `player` and
+`lesson_progress` tables are left in old files and no longer read.
+
+### 2.7 Players and analytics
+
+Every visitor is a player from the first page load: a random 128-bit id in an httpOnly,
+SameSite=Lax cookie. Google sign-in (Google Identity Services button, token checked by Google's
+tokeninfo endpoint) attaches a verified email; signing in on a second device moves that guest's
+rows to the account, and the account's value wins where both have one. Delete-my-data removes
+every row. Analytics come from the stored games, reviews, attempts and progress, plus three
+browser events (app opened, page viewed, app installed) whose properties are declared per event
+and must be short identifiers, so no free text or personal data enters the table.
+
+### 2.8 Phones
+
+An installable web app (manifest and icons; Chrome needs no service worker for its install menu
+since version 108 on Android and 112 on desktop). No store apps: Capacitor can wrap the same build
+later. A phone reaches the server on the owner's computer through a tunnel (README).
 
 ## 3. The learning design
 
@@ -140,11 +162,61 @@ Nine bands, named after pieces so progress feels like promotion:
 | 7 | Candidate | 2200-2400 | Aagaard GM Preparation, Watson, Marin |
 | 8 | Master | 2400+ | process and depth: own-game analysis, preparation workflows |
 
-Each lesson is the proven unit: a five-minute concept, then interactive positions, then a scored
-checkpoint. Section types: `text`, `position` (arrows and highlights), `challenge` (find the
-move or line), `quiz`, `drill` (play the position against the engine to a goal), `game`
-(model game walkthrough). Every band ends with exit criteria the Insights page can check:
-accuracy by phase, blunder rate, puzzle rating by theme.
+### 3.1 How the app teaches (the principles behind every lesson)
+
+The lesson shape copies what a good coach does at the board, and each step rests on a finding
+from learning research or from how chess skill is built:
+
+1. **Show it first, from first principles, with the pieces moving.** A `lecture` section plays
+   moves on the board while a narration explains them, starting from the rule underneath
+   (one move per turn; a check must be answered; a king may not be captured) and only then
+   naming the pattern (fork, pin, opposition). Narrated animation beats text beside a diagram
+   (Mayer's modality and temporal contiguity principles); arrows and highlights point at what
+   the words name (signalling); frames are short and learner-paced (segmenting); the caption
+   shows only the sentence being spoken, never the whole text (redundancy). The narration is
+   the browser's own speech synthesis: no audio assets, no server, no rate limit.
+2. **Then the learner finds it.** Challenges are retrieval, not recognition: the move has to be
+   played. A wrong move is not just "wrong": the engine shows the reply that punishes it, the
+   way a coach would ("after Nf3, Black takes on e4"). Hints climb a ladder, words first, then
+   the piece, then the square, so the learner keeps thinking as long as possible. "Why not this
+   move?" is answered on every teaching board (try a move, engine verdict) and by the coach.
+3. **Then play it out.** Drills put the idea against engine resistance, because chess skill is
+   a stock of patterns (de Groot, Chase and Simon) tied to the positions where they apply.
+4. **Then come back to it.** A challenge or quiz missed in a lesson returns the next day in
+   Review, then on a growing ladder (1, 3, 7, 16, 35, 90 days), the spaced-retrieval schedule
+   Chessable's MoveTrainer and SM-2 use. A miss at review restarts the ladder.
+5. **Start where the player is.** The puzzle rating, once settled, places a new player in a band
+   (a 1,180 puzzle rating starts at Rook, not at "The board"); until then the page says so
+   instead of guessing. Themes are interleaved across bands rather than finished one at a time,
+   as Yusupov's course does, and the thinking rituals (Heisman's "is it safe?", checks-captures-
+   threats, five steps) are taught as lessons because most games below 1400 are lost by a move
+   that was never checked.
+6. **Model games are watched, not read, and every move answers "why, and why not".** A master
+   game or lesson model game opens as a narrated walkthrough. The study
+   ([backend/study/annotate.py](backend/study/annotate.py)) gives every move the engine's three
+   candidates at depth 14, says what the played move does in board words
+   ([backend/study/reasons.py](backend/study/reasons.py): develops, forks, pins, parries the threat of,
+   takes for free), what the opponent threatened (a free-move search), and for each alternative
+   why not: the engine's reply to it, told the same way ("much worse: Nd4 forks the pawn on c2 and
+   the queen on f3"). A mistake gets its problem and the better move. Every alternative plays out
+   on the board on a click, spoken. Studies are computed once (`scripts/annotate_games.py`, all
+   games, cached under `data/study/`) or on first sight, polled while the engine works. The
+   player's own reviewed games get the same study on the Game Review page: every move of yours,
+   why it was fine or what it ran into, and the engine's choices played out.
+7. **Assess like a grandmaster.** Any position can be assessed ([backend/study/assess.py](backend/study/assess.py)):
+   the imbalances (material, bishop pair, king in the centre, development, isolated and doubled
+   pawns, passed pawns, outposts, open files, space, activity, king activity) and the plan each
+   side gets from each, with the engine's eval anchoring the verdict. On the Analysis board and
+   under every watched game.
+8. **Puzzles come back too.** A missed library puzzle returns on the same ladder as a missed lesson
+   task, computed from the attempt history alone (every solve since the last miss climbs a rung).
+
+Section types: `lecture` (narrated frames: a position or a move, arrows and highlights, one
+spoken sentence or two), `text`, `position` (arrows and highlights, read aloud on demand),
+`challenge` (find the move or line), `quiz`, `drill` (play the position against the engine to a
+goal), `game` (model game, played as a narrated walkthrough). Every module in bands 0 to 3 opens
+with a lecture; bands 4 to 8 open with narrated model games. Every band ends with exit criteria
+the Insights page can check: accuracy by phase, blunder rate, puzzle rating by theme.
 
 ## 4. What is built and what is next
 
@@ -158,9 +230,15 @@ a static path that served files outside `frontend/dist`, a kingless FEN that cra
 for good, puzzle and endgame results taken from the browser's word, 136 puzzles that could not be
 solved, draws declared one move early, and review accuracy weighted by the wrong ply.
 
+Built since (2026-10-20): narrated lectures with the browser's speech synthesis (20 scripts,
+bands 0 to 3), master games as narrated walkthroughs, engine refutations and a hint ladder in
+challenges, spaced review of missed lesson tasks and puzzles, placement by puzzle rating, the
+why-and-why-not study of every master and lesson game with playable variations, and the
+grandmaster assessment (imbalances and plans) of any position.
+
 Next, in order:
 1. Measure bot strength against people (the calibration is four games per bot against Stockfish).
-2. Spaced repetition of missed puzzles and lesson challenges (SM-2 ladder).
+2. Lecture scripts for the module openers of bands 4 to 8, and spaced review of missed puzzles.
 3. A larger puzzle library: more source games; the generator keeps one solution per solver move.
 4. More endgame positions (de la Villa's hundred) and a knight-and-bishop mate walkthrough.
 5. Opening ideas per family (plans, traps, model games).

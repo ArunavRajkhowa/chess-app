@@ -62,6 +62,9 @@ THEME_INFO: dict[str, tuple[str, str]] = {
     "advantage": ("Advantage", "Win a clear advantage."),
     "equality": ("Equality", "Hold a worse position."),
 }
+# Themes that say how long, where or how much, not which idea wins: a puzzle "trains" its other themes.
+CONTEXT_THEMES = frozenset({"mateIn1", "mateIn2", "mateIn3", "mateIn4", "mate", "short", "long", "middlegame", "endgame",
+                            "opening", "crushing", "advantage", "equality", "myMistake"})
 
 
 @dataclass
@@ -80,10 +83,21 @@ class Puzzle:
         side = self.fen.split(" ")[1]
         return "black" if side == "w" else "white"
 
+    @property
+    def goal(self) -> str:
+        """What the solver must achieve, read from the themes; it never names the tactic."""
+        mate = next((t for t in self.themes if t.startswith("mateIn")), None)
+        if mate:
+            return "Mate in 4 or more" if mate == "mateIn4" else f"Mate in {mate[6:]}"
+        for key, goal in (("mate", "Checkmate"), ("crushing", "Win decisive material"), ("advantage", "Win a clear advantage"), ("equality", "Hold the balance")):
+            if key in self.themes:
+                return goal
+        return "Find the best move"
+
     def public(self) -> dict:
         return {
             "id": self.id, "fen": self.fen, "moves": self.moves, "rating": self.rating, "themes": self.themes,
-            "source": self.source, "solver_color": self.solver_color,
+            "source": self.source, "solver_color": self.solver_color, "goal": self.goal,
         }
 
 
@@ -101,7 +115,7 @@ class PuzzleLibrary:
         for key, (name, desc) in THEME_INFO.items():
             n = len(self.by_theme.get(key, []))
             if n:
-                out.append({"key": key, "name": name, "description": desc, "count": n})
+                out.append({"key": key, "name": name, "description": desc, "count": n, "motif": key not in CONTEXT_THEMES})
         return out
 
     def pick(self, *, rating: float, themes: list[str] | None, exclude: set[str], spread: int = 150,

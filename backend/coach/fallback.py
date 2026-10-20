@@ -70,16 +70,34 @@ def _lesson(classification: str, facts_after: dict, mover: str, mate_in: int | N
     return ""
 
 
+def material_words(balance: int) -> str:
+    """'material is level', 'White is 1 pawn ahead', 'Black is 3 pawns ahead' from White's balance."""
+    if balance == 0:
+        return "material is level"
+    n = abs(balance)
+    return f"{'White' if balance > 0 else 'Black'} is {n} pawn{'s' if n != 1 else ''} ahead"
+
+
 def chat_text(facts: dict, question: str, level: str) -> str:
     cands = facts.get("candidate_moves") or []
     stm = facts["side_to_move"]
     me = facts[stm]
     lines = []
+    for a in facts.get("asked_moves") or []:  # the moves the question names come first: they are what was asked
+        if a["reply_text"]:
+            answer = f" The engine's answer: {a['reply_text']}; after it {material_words(a['material_after_reply'])}."
+        else:
+            answer = " The game is over."
+        lines.append(a["explanation"] + answer + (f" That is the {a['opening']['name']}." if a["opening"] else ""))
     if cands:
         top = cands[0]
         lines.append(f"The engine prefers {top['move']} ({top['eval']}). Line: {' '.join(top['line'])}.")
         if len(cands) > 1:
             lines.append(f"An alternative is {cands[1]['move']} ({cands[1]['eval']}).")
+    if facts.get("assessment"):
+        a = facts["assessment"]
+        side = "White" if stm == "white" else "Black"
+        lines.append(a["verdict"] + " " + f"Plan for {side}: " + "; ".join(a["plans"][side]) + ".")
     threats = facts.get("threats_against_side_to_move") or []
     if threats:
         lines.append(f"Watch out for {threats[0]['san']}.")

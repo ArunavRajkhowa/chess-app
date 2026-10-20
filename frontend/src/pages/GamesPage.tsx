@@ -2,12 +2,34 @@ import { Chess } from "chess.js";
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Board } from "../components/board/Board";
+import { AskCoach, ExplorePanel, useExplore } from "../components/explore/Explore";
+import { LecturePlayer, type Frame } from "../components/learn/LecturePlayer";
 import { MoveList } from "../components/play/MoveList";
 import { checkSquare, destsFor, safeMove, soundForMove } from "../lib/chess/game";
 import { START_FEN, type PromotionPiece, type Square } from "../lib/chess/types";
 import { Markdown } from "../lib/markdown";
 import { play as playSound } from "../lib/sound";
+import { spokenMove } from "../lib/speech";
+import { studyApi, useStudy, type StudyPly } from "../lib/studyApi";
 import "./Games.css";
+import "./Learn.css";
+
+type Mode = "watch" | "replay" | "guess";
+
+/** The game as a narrated walkthrough: every move spoken, the annotated moves in the annotator's words,
+ * the rest in the study's words (why the move was played, what was better). */
+function watchFrames(game: GameDetail, study: StudyPly[] | undefined): Frame[] {
+  const say = (m: GameDetail["moves"][number], i: number) => {
+    const note = m.comment?.replace(/^!+\s*/, "").replace(/^key:\s*/i, "");
+    const move = m.ply % 2 ? `${Math.ceil(m.ply / 2)}. ${spokenMove(m.san)}` : spokenMove(m.san);
+    const why = study?.[i]?.say;
+    return note || (why ? `${move}. ${why}` : move);
+  };
+  return [{ fen: START_FEN, say: `${game.white} against ${game.black}, ${game.event}${game.year ? ` ${game.year}` : ""}. ${game.why}` }, ...game.moves.map((m, i) => ({ fen: m.fen, uci: m.uci, say: say(m, i) }))];
+}
+
+const studyNote = (r: ReturnType<typeof useStudy>) =>
+  !r ? "Loading the engine's study of this game…" : r.status === "running" ? `The engine is studying this game: move ${r.progress.done} of ${r.progress.total}. Why and why-not notes appear when it is done.` : r.status === "failed" ? `The study failed: ${r.error ?? "unknown error"}` : null;
 
 interface GameSummary { id: string; white: string; black: string; event: string; year: string; result: string; eco: string; opening: string; themes: string[]; why: string; level: number; plies: number }
 interface GameDetail extends GameSummary { moves: { ply: number; san: string; uci: string; fen: string; comment: string | null }[]; key_moments: { ply: number; note: string }[]; pgn: string }
@@ -34,7 +56,7 @@ function GamesIndex() {
   }, [theme]);
   return (
     <div className="stack" data-testid="games">
-      <div className="page-head"><div><h1>Master games</h1><p>Model games chosen for what they teach, with every key move explained. Replay them or guess the moves.</p></div></div>
+      <div className="page-head"><div><h1>Master games</h1><p>Model games chosen for what they teach, with every key move explained. Watch them with commentary, replay them, or guess the moves.</p></div></div>
       <div className="row" style={{ flexWrap: "wrap" }}>
         <button className={`theme-chip ${theme === null ? "on" : ""}`} onClick={() => setTheme(null)}>All</button>
         {themes.map((t) => <button key={t.key} className={`theme-chip ${theme === t.key ? "on" : ""}`} onClick={() => setTheme(t.key)}>{t.name} <span className="faint num">{t.count}</span></button>)}
@@ -58,12 +80,14 @@ function GameStudy({ gameId }: { gameId: string }) {
   const navigate = useNavigate();
   const [game, setGame] = useState<GameDetail | null>(null);
   const [ply, setPly] = useState(0);
-  const [mode, setMode] = useState<"replay" | "guess">("replay");
+  const [mode, setMode] = useState<Mode>("watch");
   const [guessColor, setGuessColor] = useState<"w" | "b">("w");
   const [score, setScore] = useState({ points: 0, guesses: 0 });
   const [feedback, setFeedback] = useState<string | null>(null);
   const [orientation, setOrientation] = useState<"white" | "black">("white");
   useEffect(() => { get<GameDetail>(`/api/games/${gameId}`).then(setGame).catch(() => navigate("/games")); }, [gameId, navigate]);
+  const studyRes = useStudy(() => studyApi.game(gameId), gameId);
+  const study = studyRes?.study?.plies;
 
   const fen = ply === 0 ? START_FEN : game?.moves[ply - 1]?.fen ?? START_FEN;
   const chess = useMemo(() => new Chess(fen), [fen]);
@@ -71,6 +95,9 @@ function GameStudy({ gameId }: { gameId: string }) {
   const total = game?.moves.length ?? 0;
   const guessTurn = mode === "guess" && ply < total && chess.turn() === guessColor;
   const dests = useMemo(() => (guessTurn ? destsFor(chess) : new Map()), [chess, guessTurn]);
+  // in replay, any move tried on the board is judged against the move the master played here
+  const explore = useExplore(fen, mode === "replay" ? game?.moves[ply]?.uci : undefined);
+  const exploring = mode === "replay" && explore.active;
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -98,7 +125,12 @@ function GameStudy({ gameId }: { gameId: string }) {
     const res = await fetch("/api/games/guess", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ game_id: game.id, ply: ply + 1, move: from + to + (promotion ?? "") }) });
     const r = await res.json();
     setScore((s) => ({ points: s.points + (r.points ?? 0), guesses: s.guesses + 1 }));
-    setFeedback(`${r.your_san}: ${r.verdict === "master" ? "the master's move!" : `${r.note} Game move: ${r.master_san}.`}`);
+    // the study says why the master's move, and why not the guess when it is one of the engine's candidates
+    const sp = study?.[ply];
+    const whyMaster = sp?.reasons.length ? ` ${sp.san} ${sp.reasons[0]}.` : "";
+    const guessed = sp?.candidates.find((c) => c.uci === from + to + (promotion ?? ""));
+    const whyNot = guessed?.why_not ? ` ${r.your_san}: ${guessed.why_not}.` : "";
+    setFeedback(`${r.your_san}: ${r.verdict === "master" ? `the master's move!${whyMaster}` : `${r.note} Game move: ${r.master_san}.${whyMaster}${whyNot}`}`);
     playSound(r.points >= 2 ? "correct" : "wrong");
     const master = new Chess(fen);
     const mm = safeMove(master, game.moves[ply].uci);
@@ -108,14 +140,41 @@ function GameStudy({ gameId }: { gameId: string }) {
 
   if (!game) return <p className="faint">Loading game…</p>;
   const lastMove: [Square, Square] | null = current ? [current.uci.slice(0, 2), current.uci.slice(2, 4)] : null;
+  const modes = (
+    <div className="row" style={{ flexWrap: "wrap" }}>
+      <button className={`btn btn-sm ${mode === "watch" ? "btn-primary" : ""}`} onClick={() => { setMode("watch"); setFeedback(null); }} data-testid="watch-mode">Watch</button>
+      <button className={`btn btn-sm ${mode === "replay" ? "btn-primary" : ""}`} onClick={() => { setMode("replay"); setFeedback(null); }} data-testid="replay-mode">Replay</button>
+      <button className={`btn btn-sm ${mode === "guess" ? "btn-primary" : ""}`} onClick={() => { setMode("guess"); setPly(0); setScore({ points: 0, guesses: 0 }); setFeedback(null); }} data-testid="guess-mode">Guess the move</button>
+      {mode === "guess" && (
+        <select className="select" style={{ width: 110 }} value={guessColor} onChange={(e) => { setGuessColor(e.target.value as "w" | "b"); setPly(0); }}>
+          <option value="w">as White</option><option value="b">as Black</option>
+        </select>
+      )}
+    </div>
+  );
+  const title = <div><h2>{game.white} – {game.black}</h2><div className="faint">{game.event}{game.event && game.year ? ", " : ""}{game.year} · {game.eco} {game.opening} · {game.result}</div></div>;
+  if (mode === "watch") {
+    return (
+      <div data-testid="gamestudy">
+        <LecturePlayer frames={watchFrames(game, study)} study={study} studyNote={studyNote(studyRes)} orientation={orientation} header={<div className="lesson-head"><Link to="/games" className="muted">← All games</Link>{title}</div>}>
+          {modes}
+          <button className="btn btn-sm" style={{ width: "fit-content" }} onClick={() => setOrientation((o) => (o === "white" ? "black" : "white"))}>Flip</button>
+        </LecturePlayer>
+      </div>
+    );
+  }
   return (
     <div className="gamestudy" data-testid="gamestudy">
       <div>
         <div className="row" style={{ justifyContent: "space-between", marginBottom: 8 }}>
-          <div><h2>{game.white} – {game.black}</h2><div className="faint">{game.event}{game.event && game.year ? ", " : ""}{game.year} · {game.eco} {game.opening} · {game.result}</div></div>
+          {title}
           <button className="btn btn-sm" onClick={() => setOrientation((o) => (o === "white" ? "black" : "white"))}>Flip</button>
         </div>
-        <Board fen={fen} orientation={orientation} movable={{ color: guessTurn ? guessColor : "none", dests }} lastMove={lastMove} check={checkSquare(chess)} onMove={onGuess} />
+        {mode === "replay" ? (
+          <Board fen={explore.fen} orientation={orientation} movable={{ color: "both", dests: explore.dests }} lastMove={exploring ? explore.lastMove : lastMove} check={explore.check} onMove={explore.onMove} />
+        ) : (
+          <Board fen={fen} orientation={orientation} movable={{ color: guessTurn ? guessColor : "none", dests }} lastMove={lastMove} check={checkSquare(chess)} onMove={onGuess} />
+        )}
         <div className="row" style={{ marginTop: 8 }}>
           <button className="btn btn-sm" onClick={() => setPly(0)}>⏮</button>
           <button className="btn btn-sm" onClick={() => setPly(Math.max(0, ply - 1))}>◀</button>
@@ -126,19 +185,15 @@ function GameStudy({ gameId }: { gameId: string }) {
       </div>
       <aside className="games-side">
         <div className="card stack">
-          <div className="row">
-            <button className={`btn btn-sm ${mode === "replay" ? "btn-primary" : ""}`} onClick={() => { setMode("replay"); setFeedback(null); }}>Replay</button>
-            <button className={`btn btn-sm ${mode === "guess" ? "btn-primary" : ""}`} onClick={() => { setMode("guess"); setPly(0); setScore({ points: 0, guesses: 0 }); setFeedback(null); }} data-testid="guess-mode">Guess the move</button>
-            {mode === "guess" && (
-              <select className="select" style={{ width: 110 }} value={guessColor} onChange={(e) => { setGuessColor(e.target.value as "w" | "b"); setPly(0); }}>
-                <option value="w">as White</option><option value="b">as Black</option>
-              </select>
-            )}
-          </div>
+          {modes}
           {mode === "guess" && <div className="row"><span className="chip chip-ok">score {score.points} / {score.guesses * 3}</span>{guessTurn && <span className="chip chip-info">your guess</span>}</div>}
           {feedback && <div className="task-banner" data-testid="guess-feedback">{feedback}</div>}
           <p className="muted">{game.why}</p>
-          {current?.comment && <div className="comment" data-testid="comment"><Markdown md={current.comment.replace(/^!+\s*/, "")} /></div>}
+          {current?.comment && !exploring && <div className="comment" data-testid="comment"><Markdown md={current.comment.replace(/^!+\s*/, "")} /></div>}
+          {mode === "replay" && (
+            <ExplorePanel explore={explore} compareLabel="Played in the game" idle={<p className="faint">Wonder why a move was not played? Play it on the board and the engine answers.</p>} />
+          )}
+          {mode === "replay" && <AskCoach fen={explore.fen} />}
         </div>
         <div className="card" style={{ padding: 0 }}>
           <MoveList moves={game.moves.map((m) => ({ ply: m.ply, san: m.san }))} currentPly={ply} onSelect={(p) => !guessTurn && setPly(p)} opening={game.opening} />

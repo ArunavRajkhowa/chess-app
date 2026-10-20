@@ -1,4 +1,5 @@
 /* Server-sent events from the coach endpoints. The body is JSON; each event is `data: {...}`. */
+import type { Classification } from "./api";
 export interface CoachDone {
   source: "llm" | "rules";
   unverified_moves?: string[];
@@ -29,4 +30,31 @@ export async function streamCoach(path: string, body: unknown, onText: (chunk: s
     }
   }
   return done;
+}
+
+/** One move judged by the engine as the review judges it (POST /api/coach/try). */
+export interface JudgedMove {
+  san: string;
+  uci: string;
+  classification: Classification;
+  eval_after: string;
+  win_before: number;
+  win_after: number;
+  best_san: string;
+  best_uci: string;
+  best_eval: string;
+  /** The engine's best answer to the move, SAN from the position after it. */
+  reply_line: string[];
+  /** The same answer with move numbers: "6.d4 b5 7.Bb3". */
+  reply_text: string;
+  /** White's material minus Black's, in pawns, at the end of the answer. */
+  material_after_reply: number;
+  opening: { eco: string; name: string } | null;
+  explanation: string;
+}
+
+export async function tryMove(fen: string, move: string, compare?: string): Promise<{ tried: JudgedMove; compare: JudgedMove | null }> {
+  const res = await fetch("/api/coach/try", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ fen, move, compare }) });
+  if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+  return (await res.json()) as { tried: JudgedMove; compare: JudgedMove | null };
 }

@@ -13,7 +13,65 @@
      "title": "Double attack with the queen",
      "objective": "Use the queen's eight directions to attack a loose piece together with the king or a mating square.",
      "minutes": 10,
+     "practice": [
+      "fork"
+     ],
      "sections": [
+      {
+       "type": "lecture",
+       "title": "Double attack with the queen",
+       "frames": [
+        {
+         "say": "First principle of every tactic: each side gets one move per turn. Make two threats with one move, and the opponent can answer only one of them.",
+         "fen": "rn1qkbnr/ppp2ppp/4p3/8/6b1/2P1PN2/PP3PPP/RNBQKB1R w KQkq - 0 1"
+        },
+        {
+         "say": "The queen moves like a rook and a bishop together, in eight directions. From a4 it would check the king on e8 along the diagonal, and attack the bishop on g4 along the fourth rank.",
+         "arrows": [
+          {
+           "from": "d1",
+           "to": "a4",
+           "brush": "green"
+          },
+          {
+           "from": "a4",
+           "to": "e8",
+           "brush": "red"
+          },
+          {
+           "from": "a4",
+           "to": "g4",
+           "brush": "red"
+          }
+         ],
+         "highlights": [
+          {
+           "square": "e8",
+           "brush": "yellow"
+          },
+          {
+           "square": "g4",
+           "brush": "yellow"
+          }
+         ]
+        },
+        {
+         "say": "Queen to a4, check. The check must be answered first.",
+         "move": "Qa4+"
+        },
+        {
+         "say": "Black blocks with the knight. But no block also guards g4.",
+         "move": "Nc6"
+        },
+        {
+         "say": "Queen takes g4. A bishop for nothing.",
+         "move": "Qxg4"
+        },
+        {
+         "say": "Three queen double attacks to look for: a check plus a loose piece; a mate threat plus a loose piece; two loose pieces. The targets must be undefended, because the queen is too valuable to trade. And always ask one more thing: can a single reply meet both threats?"
+        }
+       ]
+      },
       {
        "type": "text",
        "md": "In band 1 you met the twofold attack. Now look at the piece that makes it most often: the queen.\n\nThe queen moves like a rook and a bishop together. From one square it looks in eight directions, so it can often hit two things at once.\n\nThree queen double attacks to look for:\n\n1. **Check and a loose piece.** The check must be answered first. Then you take the piece.\n2. **A mate threat and a loose piece.** The opponent must stop the mate. Then you take the piece.\n3. **Two loose pieces.** The opponent can save only one.\n\nThe targets must be loose (undefended). The queen is worth 9, so if a target is defended you usually cannot take it.\n\nBefore you play a queen double attack, ask one more question: can the opponent answer both threats with one move? A block that also defends, or a counter-attack on your queen, can spoil it."
@@ -103,6 +161,9 @@
      "title": "Knight forks",
      "objective": "Find knight forks by their colour and shape, including forks of the king and queen set up by a sacrifice.",
      "minutes": 12,
+     "practice": [
+      "fork"
+     ],
      "sections": [
       {
        "type": "text",
@@ -205,6 +266,9 @@
      "title": "Discovered attack",
      "objective": "Move a front piece off a line so that the piece behind it attacks, and let the moving piece make a second threat.",
      "minutes": 12,
+     "practice": [
+      "discoveredAttack"
+     ],
      "sections": [
       {
        "type": "text",
@@ -301,6 +365,9 @@
      "title": "Double check",
      "objective": "Give check with two pieces at once, so that the only legal reply is a king move.",
      "minutes": 10,
+     "practice": [
+      "doubleCheck"
+     ],
      "sections": [
       {
        "type": "text",
@@ -414,7 +481,76 @@
      "title": "The pin",
      "objective": "Pin a piece to the king or the queen and win it while it cannot move away.",
      "minutes": 10,
+     "practice": [
+      "pin"
+     ],
      "sections": [
+      {
+       "type": "lecture",
+       "title": "The pin",
+       "frames": [
+        {
+         "say": "A pin is an attack on a piece that cannot move away, because something more valuable stands behind it on the same line. Only the three line pieces can pin: the queen, the rook and the bishop.",
+         "fen": "rnbqk2r/pppp1ppp/4pn2/6B1/1bPP4/2N5/PP2PPPP/R2QKBNR b KQkq - 3 4",
+         "arrows": [
+          {
+           "from": "b4",
+           "to": "e1",
+           "brush": "red"
+          },
+          {
+           "from": "g5",
+           "to": "d8",
+           "brush": "red"
+          }
+         ]
+        },
+        {
+         "say": "The bishop on b4 pins the knight on c3 to the king. That knight may not move at all: it would expose the king, and the rules forbid that. Players call this an absolute pin.",
+         "highlights": [
+          {
+           "square": "c3",
+           "brush": "yellow"
+          }
+         ]
+        },
+        {
+         "say": "The bishop on g5 pins the knight on f6 to the queen. That knight may move, legally, but then the bishop takes the queen. A relative pin.",
+         "highlights": [
+          {
+           "square": "f6",
+           "brush": "yellow"
+          }
+         ]
+        },
+        {
+         "say": "A pin wins material when the pinned piece cannot be defended in time. Here the black knight on e5 is loose, and the king is far away.",
+         "fen": "7k/8/8/4n3/4P3/8/8/6BK w - - 0 1"
+        },
+        {
+         "say": "Bishop to d4 pins the knight to the king on h8. The knight cannot move.",
+         "move": "Bd4",
+         "arrows": [
+          {
+           "from": "d4",
+           "to": "h8",
+           "brush": "red"
+          }
+         ]
+        },
+        {
+         "say": "The king comes to help, but it needs two moves.",
+         "move": "Kg7"
+        },
+        {
+         "say": "Bishop takes e5, check. A whole knight.",
+         "move": "Bxe5+"
+        },
+        {
+         "say": "To find a pin, look for two enemy pieces on one line with the more valuable one behind: a king behind a knight, a queen behind a rook."
+        }
+       ]
+      },
       {
        "type": "text",
        "md": "A pin is an attack on a piece that cannot move away, because a more valuable piece stands behind it on the same line. Only the queen, rook and bishop can pin: they attack along lines.\n\nThere are two kinds:\n\n1. **Absolute pin.** The piece behind is the king. Moving the pinned piece is illegal.\n2. **Relative pin.** The piece behind is the queen or a rook. Moving the pinned piece is legal, but it loses the piece behind.\n\nA pin wins material when you can attack the pinned piece more times than it is defended, or when it is worth more than the piece that attacks it. A bishop that pins a rook usually wins it. A bishop that pins a knight usually does not, at once: then attack the knight again, best of all with a pawn.\n\nTo find a pin, look for two enemy pieces on one line with the more valuable one behind: king behind a knight, queen behind a rook."
@@ -497,6 +633,9 @@
      "title": "Attack the pinned piece",
      "objective": "Win a pinned piece by attacking it again, and do not count a pinned piece as a defender.",
      "minutes": 10,
+     "practice": [
+      "pin"
+     ],
      "sections": [
       {
        "type": "text",
@@ -578,6 +717,9 @@
      "title": "The skewer",
      "objective": "Attack a valuable piece that must move away and win the piece behind it.",
      "minutes": 10,
+     "practice": [
+      "skewer"
+     ],
      "sections": [
       {
        "type": "text",
@@ -675,6 +817,9 @@
      "title": "Eliminating the defence",
      "objective": "Win a piece or mate by capturing, chasing or overloading the piece that defends it.",
      "minutes": 12,
+     "practice": [
+      "capturingDefender"
+     ],
      "sections": [
       {
        "type": "text",
@@ -773,7 +918,62 @@
      "title": "The back rank in two moves",
      "objective": "Remove the last defender of the back rank with a sacrifice, and make luft for your own king in time.",
      "minutes": 10,
+     "practice": [
+      "backRankMate",
+      "mateIn2"
+     ],
      "sections": [
+      {
+       "type": "lecture",
+       "title": "The back rank in two moves",
+       "frames": [
+        {
+         "say": "A king on its first rank behind three unmoved pawns has no escape squares. Any rook or queen that reaches that rank with check gives mate. Usually one piece guards the rank, so the mate takes two moves.",
+         "fen": "3r2k1/5ppp/8/8/8/8/4QPPP/4R1K1 w - - 0 1",
+         "arrows": [
+          {
+           "from": "e2",
+           "to": "e8",
+           "brush": "green"
+          },
+          {
+           "from": "e1",
+           "to": "e8",
+           "brush": "green"
+          },
+          {
+           "from": "d8",
+           "to": "e8",
+           "brush": "red"
+          }
+         ]
+        },
+        {
+         "say": "Count on the mating square, e8. Two white attackers: the queen and the rook. One black defender: the rook on d8. Two against one wins the square.",
+         "highlights": [
+          {
+           "square": "e8",
+           "brush": "yellow"
+          }
+         ]
+        },
+        {
+         "say": "Queen to e8, check. A sacrifice that removes the guard.",
+         "move": "Qe8+"
+        },
+        {
+         "say": "The rook must take.",
+         "move": "Rxe8"
+        },
+        {
+         "say": "Rook takes e8. Checkmate: the pawns on f7, g7 and h7 box in their own king.",
+         "move": "Rxe8#"
+        },
+        {
+         "say": "The defence is luft: a pawn step in front of the king, h6 or g6, played with a quiet move before the threat arrives. Not after."
+        }
+       ]
+      },
       {
        "type": "text",
        "md": "In band 1 you mated on the back rank in one move. Usually the opponent has one piece guarding the back rank, so it takes two moves.\n\nThe plan: **sacrifice on the mating square to remove the guard.** If a rook guards e8 and you have two pieces aimed at e8, give up the first one. The rook takes it, and the second piece mates. Count attackers and defenders of the mating square, as you count before any capture: two attackers against one defender win.\n\nThe defence is **luft**: a pawn move in front of the king (h3 or h6, g3 or g6) that gives the king an escape square. Make luft when you have a quiet move to spare, before the enemy pieces arrive. Do not wait until the threat is on the board."
@@ -954,6 +1154,9 @@
      "title": "Smothered mate",
      "objective": "Mate a king boxed in by its own pieces with a knight, including Philidor's legacy with a queen sacrifice.",
      "minutes": 12,
+     "practice": [
+      "smotheredMate"
+     ],
      "sections": [
       {
        "type": "text",
@@ -1052,6 +1255,9 @@
      "title": "Mate in two",
      "objective": "Solve mates in two by trying checks and captures first, and find the quiet move when no check works.",
      "minutes": 12,
+     "practice": [
+      "mateIn2"
+     ],
      "sections": [
       {
        "type": "text",
@@ -1159,7 +1365,77 @@
      "title": "The opposition",
      "objective": "Take the opposition so that your king, not the defender's, gets the squares in front of the pawn.",
      "minutes": 12,
+     "practice": [
+      "pawnEndgame"
+     ],
      "sections": [
+      {
+       "type": "lecture",
+       "title": "The opposition",
+       "frames": [
+        {
+         "say": "In king and pawn against king, the pawn cannot win alone. The kings fight for the squares in front of it. The rule underneath: two kings may never stand next to each other, so a king one square away blocks the other.",
+         "fen": "8/4k3/8/4K3/4P3/8/8/8 b - - 0 1",
+         "highlights": [
+          {
+           "square": "d6",
+           "brush": "yellow"
+          },
+          {
+           "square": "e6",
+           "brush": "yellow"
+          },
+          {
+           "square": "f6",
+           "brush": "yellow"
+          }
+         ]
+        },
+        {
+         "say": "Kings on the same file with one square between them. That is the opposition. The side that does not have to move has it. Here Black must move, so White has it."
+        },
+        {
+         "say": "Black steps aside.",
+         "move": "Kd7"
+        },
+        {
+         "say": "And White's king goes through on the other side.",
+         "move": "Kf6"
+        },
+        {
+         "say": "Black comes back in front of the pawn.",
+         "move": "Ke8"
+        },
+        {
+         "say": "The pawn advances with the king in front of it.",
+         "move": "e5"
+        },
+        {
+         "say": "Black takes the opposition for a moment.",
+         "move": "Kf8"
+        },
+        {
+         "say": "But a pawn move changes whose turn it is. Pawn to e6, and Black must give way again.",
+         "move": "e6"
+        },
+        {
+         "say": "The king retreats.",
+         "move": "Ke8"
+        },
+        {
+         "say": "Pawn to e7. The king cannot stay in front of it.",
+         "move": "e7"
+        },
+        {
+         "say": "King to d7.",
+         "move": "Kd7"
+        },
+        {
+         "say": "King to f7 guards the queening square. Next move the pawn promotes. The rule for every pawn except a rook pawn: the attacking king in front of its pawn with the opposition wins; the defending king in front of the pawn with the opposition draws.",
+         "move": "Kf7"
+        }
+       ]
+      },
       {
        "type": "text",
        "md": "In king and pawn against king, the kings fight for the squares in front of the pawn. The pawn cannot win alone.\n\n**The opposition:** the two kings stand on the same file or rank with one square between them. The side that does **not** have to move has the opposition. The other king must step aside and let the enemy king through.\n\nFor the attacker: walk your king in front of the pawn, then take the opposition. For the defender: stand in front of the pawn and take the opposition back every time.\n\nA spare pawn move changes who has the opposition. So the attacker usually moves the king first and keeps the pawn back.\n\nRule of thumb, for every pawn except a rook pawn: attacking king in front of its pawn with the opposition wins; defending king in front of the pawn with the opposition draws."
@@ -1248,6 +1524,9 @@
      "title": "Key squares",
      "objective": "Know the key squares of a pawn and walk your king onto one of them, by any route.",
      "minutes": 12,
+     "practice": [
+      "pawnEndgame"
+     ],
      "sections": [
       {
        "type": "text",
@@ -1409,6 +1688,133 @@
      "objective": "Judge a piece by the squares it controls, and improve the worst one.",
      "minutes": 8,
      "sections": [
+      {
+       "type": "lecture",
+       "title": "Active pieces",
+       "frames": [
+        {
+         "say": "A knight is worth three points. But the price tag says nothing about what the piece is doing. Activity is how many useful squares a piece controls.",
+         "fen": "6k1/5ppp/8/8/3N4/8/5PPP/N5K1 w - - 0 1"
+        },
+        {
+         "say": "The knight on d4 attacks eight squares.",
+         "arrows": [
+          {
+           "from": "d4",
+           "to": "b3",
+           "brush": "green"
+          },
+          {
+           "from": "d4",
+           "to": "b5",
+           "brush": "green"
+          },
+          {
+           "from": "d4",
+           "to": "c2",
+           "brush": "green"
+          },
+          {
+           "from": "d4",
+           "to": "c6",
+           "brush": "green"
+          },
+          {
+           "from": "d4",
+           "to": "e2",
+           "brush": "green"
+          },
+          {
+           "from": "d4",
+           "to": "e6",
+           "brush": "green"
+          },
+          {
+           "from": "d4",
+           "to": "f3",
+           "brush": "green"
+          },
+          {
+           "from": "d4",
+           "to": "f5",
+           "brush": "green"
+          }
+         ]
+        },
+        {
+         "say": "The same knight on a1 attacks two. A knight on the rim is dim.",
+         "arrows": [
+          {
+           "from": "a1",
+           "to": "b3",
+           "brush": "red"
+          },
+          {
+           "from": "a1",
+           "to": "c2",
+           "brush": "red"
+          }
+         ]
+        },
+        {
+         "say": "So the habit when there is no tactic: find your worst piece and improve it. Knight to b3.",
+         "move": "Nab3"
+        },
+        {
+         "say": "Black waits.",
+         "move": "Kf8"
+        },
+        {
+         "say": "Knight to c5. From here it attacks eight squares again, and four of them are in Black's half of the board.",
+         "move": "Nc5",
+         "arrows": [
+          {
+           "from": "c5",
+           "to": "a4",
+           "brush": "green"
+          },
+          {
+           "from": "c5",
+           "to": "a6",
+           "brush": "green"
+          },
+          {
+           "from": "c5",
+           "to": "b3",
+           "brush": "green"
+          },
+          {
+           "from": "c5",
+           "to": "b7",
+           "brush": "green"
+          },
+          {
+           "from": "c5",
+           "to": "d3",
+           "brush": "green"
+          },
+          {
+           "from": "c5",
+           "to": "d7",
+           "brush": "green"
+          },
+          {
+           "from": "c5",
+           "to": "e4",
+           "brush": "green"
+          },
+          {
+           "from": "c5",
+           "to": "e6",
+           "brush": "green"
+          }
+         ]
+        },
+        {
+         "say": "Ask of every piece: how many squares does it control, and where would it control more? Then take it there, one step at a time."
+        }
+       ]
+      },
       {
        "type": "text",
        "md": "Pieces have values: knight 3, bishop 3, rook 5. But a piece that controls no useful squares does not play. Activity means how many squares a piece attacks, and whether those squares matter.\n\n- A knight in the centre attacks 8 squares. On the edge it attacks 4 or fewer, in the corner only 2.\n- A bishop on an open diagonal sees across the board. Behind its own pawns it sees almost nothing.\n- A rook needs an open file, with no pawns on it.\n\nA strong square for a knight is an outpost: a square in the centre or in enemy territory that enemy pawns cannot attack.\n\nThe habit: when there is no tactic, find your worst piece and improve it. Ask of each piece: how many squares does it control? Where would it control more? Then move it there, step by step."
@@ -1863,6 +2269,56 @@
      "objective": "Before choosing a move, list every check, capture and threat for your side, in that order.",
      "minutes": 12,
      "sections": [
+      {
+       "type": "lecture",
+       "title": "Checks, captures, threats",
+       "frames": [
+        {
+         "say": "Most tactics begin with a forcing move: a move the opponent must answer. Forcing moves come in three kinds: checks, captures and threats. Look at them in that order, every move, because a forced reply is one you can calculate.",
+         "fen": "rnbqkb1r/pppp1ppp/5n2/4N3/8/8/PPPPQPPP/RNB1KB1R w KQkq - 2 5"
+        },
+        {
+         "say": "Black has just retreated the knight to f6. Checks first. White's queen on e2 looks up the e-file at the black king, and only White's own knight on e5 stands in the way.",
+         "arrows": [
+          {
+           "from": "e2",
+           "to": "e8",
+           "brush": "red"
+          }
+         ]
+        },
+        {
+         "say": "Any knight move uncovers check. Which knight move also makes a threat of its own? Knight to c6 attacks the queen on d8.",
+         "arrows": [
+          {
+           "from": "e5",
+           "to": "c6",
+           "brush": "green"
+          },
+          {
+           "from": "c6",
+           "to": "d8",
+           "brush": "red"
+          }
+         ]
+        },
+        {
+         "say": "Knight to c6, discovered check. The king must deal with the check, and the queen is attacked at the same time.",
+         "move": "Nc6+"
+        },
+        {
+         "say": "Black blocks the check.",
+         "move": "Be7"
+        },
+        {
+         "say": "Knight takes the queen.",
+         "move": "Nxd8"
+        },
+        {
+         "say": "Checks, captures, threats. Name every one, even the ones that look silly, before you settle for a quiet move."
+        }
+       ]
+      },
       {
        "type": "text",
        "md": "Most tactics start with a forcing move. A forcing move limits the opponent's answers, so you can calculate it. There are three kinds, in this order:\n\n1. **Checks.** The opponent must answer. Look at every check, even the ones that seem to lose a piece.\n2. **Captures.** Every capture, including the ones that look bad. Count what happens after the recapture.\n3. **Threats.** Moves that attack something: a loose piece, a piece worth more than the attacker, or a mating square.\n\nThis is the CCT scan. Do it every move, before you think about plans. Once it is a habit it takes seconds.\n\nIn band 1 you asked \"is it safe?\" about your own move. CCT is the next step: you search the opponent's position for weak points with the same care. Name each check, capture and threat. Then pick the forcing move that works. If none works, play a normal developing or improving move."

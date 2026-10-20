@@ -9,8 +9,10 @@ export interface Puzzle {
   /** True for mistake puzzles: the solver moves first, there is no opponent intro move. */
   solver_first?: boolean;
   solved_before?: boolean;
+  /** What the solver must achieve ("Mate in 2", "Win decisive material"); it never names the tactic. */
+  goal: string;
 }
-export interface PuzzleTheme { key: string; name: string; description: string; count: number }
+export interface PuzzleTheme { key: string; name: string; description: string; count: number; motif: boolean; lesson: { id: string; title: string } | null }
 
 async function req<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(path, { headers: { "Content-Type": "application/json" }, ...init });
@@ -32,11 +34,13 @@ export const puzzleApi = {
     return req<{ puzzle: Puzzle; player_rating: number }>(`/api/puzzles/next?${q}`);
   },
   /** The server replays the moves and decides whether the puzzle was solved. */
-  attempt: (id: string, moves: string[], seconds: number, mode: "rated" | "custom" | "rush" | "daily" | "mistakes", hinted = false) =>
+  attempt: (id: string, moves: string[], seconds: number, mode: "rated" | "custom" | "rush" | "daily" | "mistakes" | "review", hinted = false) =>
     req<{ solved: boolean; delta: number; rating_after: number; puzzle_rating: number | null; streak: number | null }>(`/api/puzzles/${id}/attempt`, { method: "POST", body: JSON.stringify({ moves, seconds, mode, hinted }) }),
   rushStart: (mode: "3m" | "5m" | "survival") => req<{ mode: string; seconds: number | null; strikes: number; puzzles: Puzzle[] }>(`/api/puzzles/rush/start?mode=${mode}`),
   rushFinish: (mode: string, score: number, wrong: number, seconds: number) => req<{ best: number; new_best: boolean }>("/api/puzzles/rush/finish", { method: "POST", body: JSON.stringify({ mode, score, wrong, seconds }) }),
   stats: () => req<{ rating: number; attempts: number; solved: number; accuracy: number | null; rush_best: Record<string, number> }>("/api/puzzles/stats/me"),
   daily: () => req<{ date: string; puzzle: Puzzle; solved_today: boolean; streak: number }>("/api/puzzles/daily"),
   mistakes: () => req<{ puzzles: Puzzle[]; total: number }>("/api/puzzles/mistakes"),
+  /** Puzzles missed before and due again on the spaced ladder. */
+  review: () => req<{ puzzles: Puzzle[]; due: number; later: number }>("/api/puzzles/review"),
 };

@@ -327,6 +327,7 @@
           "title": "Imagination: the quiet move",
           "objective": "Look past the end of the forcing sequence for the quiet move that cuts a defence, takes a square or brings one more piece.",
           "minutes": 14,
+          "practice": ["quietMove"],
           "sections": [
             {
               "type": "text",
@@ -1174,6 +1175,7 @@
           "title": "Material in defence: give it, or take it",
           "objective": "Give material back when it destroys the attacker's main asset, and accept a sacrifice when you have calculated that the attack is not decisive.",
           "minutes": 15,
+          "practice": ["sacrifice", "defensiveMove"],
           "sections": [
             {
               "type": "text",
@@ -1308,6 +1310,7 @@
           "title": "Knight endings",
           "objective": "Play knight endings like pawn endings: activate the king, value the outside passed pawn, and know the knight check that stops a pawn on the seventh.",
           "minutes": 13,
+          "practice": ["knightEndgame"],
           "sections": [
             {
               "type": "text",
@@ -1460,6 +1463,7 @@
           "title": "Queen endings",
           "objective": "Win queen endings with the cross-check and the passed pawn, and save them with perpetual check.",
           "minutes": 14,
+          "practice": ["queenEndgame"],
           "sections": [
             {
               "type": "text",

@@ -13,6 +13,7 @@ from pydantic import BaseModel, Field
 from ..review import jobs
 from ..storage import games as store
 from ..storage.db import database
+from .account import Player
 
 router = APIRouter(prefix="/api/review", tags=["review"])
 
@@ -36,18 +37,18 @@ def _moves_of(row: dict) -> list[chess.Move]:
 
 
 @router.post("/games/{game_id}")
-async def start(game_id: str, req: StartReviewRequest) -> dict:
-    row = await store.read_game(game_id)
+async def start(game_id: str, req: StartReviewRequest, player: Player) -> dict:
+    row = await store.read_game(player, game_id)
     if not row:
         raise HTTPException(404, "no such game")
     if not row["moves"]:
         raise HTTPException(400, "the game has no moves")
-    job = jobs.start_review(game_id, _moves_of(row), depth=DEPTHS[req.mode], result=row.get("result"), start_fen=row.get("start_fen"))
+    job = jobs.start_review(player, game_id, _moves_of(row), depth=DEPTHS[req.mode], result=row.get("result"), start_fen=row.get("start_fen"))
     return job.public()
 
 
 @router.post("/import")
-async def import_pgn(req: ImportPgnRequest) -> dict:
+async def import_pgn(req: ImportPgnRequest, player: Player) -> dict:
     game = chess.pgn.read_game(io.StringIO(req.pgn))
     if game is None or game.errors:
         raise HTTPException(400, "could not parse PGN" + (f": {game.errors[0]}" if game and game.errors else ""))
@@ -68,27 +69,27 @@ async def import_pgn(req: ImportPgnRequest) -> dict:
     white = game.headers.get("White") if game.headers.get("White", "?") != "?" else "White"
     black = game.headers.get("Black") if game.headers.get("Black", "?") != "?" else "Black"
     await database.execute(
-        "INSERT INTO games(id, player_color, bot_id, time_control, status, result, termination, pgn, moves_json, "
-        "opening_eco, opening_name, white_name, black_name, source, start_fen) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
-        (game_id, "white", None, "import", "finished", result, "imported", str(game), __import__("json").dumps(recs),
+        "INSERT INTO games(id, player_id, player_color, bot_id, time_control, status, result, termination, pgn, moves_json, "
+        "opening_eco, opening_name, white_name, black_name, source, start_fen) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+        (game_id, player, "white", None, "import", "finished", result, "imported", str(game), __import__("json").dumps(recs),
          game.headers.get("ECO"), game.headers.get("Opening"), white, black, "import", start_fen),
     )
-    job = jobs.start_review(game_id, moves, depth=DEPTHS[req.mode], result=result, start_fen=start_fen)
+    job = jobs.start_review(player, game_id, moves, depth=DEPTHS[req.mode], result=result, start_fen=start_fen)
     return {"game_id": game_id, "job": job.public(), "white": white, "black": black}
 
 
 @router.get("/jobs/{job_id}")
-async def job_status(job_id: str) -> dict:
-    job = jobs.get_job(job_id)
+async def job_status(job_id: str, player: Player) -> dict:
+    job = jobs.get_job(player, job_id)
     if not job:
         raise HTTPException(404, "no such job")
     return job.public()
 
 
 @router.get("/games/{game_id}")
-async def get_report(game_id: str) -> dict:
-    report = await jobs.stored_report(game_id)
+async def get_report(game_id: str, player: Player) -> dict:
+    report = await jobs.stored_report(player, game_id)
     if report is None:
         raise HTTPException(404, "no review for this game yet")
-    row = await store.read_game(game_id)
+    row = await store.read_game(player, game_id)
     return {"game_id": game_id, "report": report, "game": row}

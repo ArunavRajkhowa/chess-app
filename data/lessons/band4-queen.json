@@ -13,6 +13,7 @@
      "title": "Luring: bring the target to the square",
      "objective": "Use a check or a capture that forces an enemy piece onto the square where your fork or mate works.",
      "minutes": 12,
+     "practice": ["attraction"],
      "sections": [
       {
        "type": "text",
@@ -129,6 +130,7 @@
      "title": "Chasing: drive the piece where you want it",
      "objective": "Attack a defender or the king with tempo so it must move to a square where it is lost, or leave a square it guards.",
      "minutes": 11,
+     "practice": ["deflection"],
      "sections": [
       {
        "type": "text",
@@ -216,6 +218,7 @@
      "title": "Clearing: get your own piece out of the way",
      "objective": "Move your own piece off a square or a line with tempo so another piece can use it.",
      "minutes": 10,
+     "practice": ["clearance"],
      "sections": [
       {
        "type": "text",
@@ -288,6 +291,7 @@
      "title": "Interfering and blocking",
      "objective": "Cut the line between a defender and what it guards, or force a piece onto its own king's last flight square.",
      "minutes": 12,
+     "practice": ["interference"],
      "sections": [
       {
        "type": "text",
@@ -399,6 +403,7 @@
      "title": "Count the attackers, then open a line",
      "objective": "Before you sacrifice near the king, count attackers against defenders and find the pawn move or sacrifice that opens a line to him.",
      "minutes": 14,
+     "practice": ["kingsideAttack"],
      "sections": [
       {
        "type": "text",
@@ -489,6 +494,7 @@
      "title": "The Greek gift: Bxh7+",
      "objective": "Recognise when the bishop sacrifice on h7 works and play its standard follow-up Ng5+ and a queen move to the h-file.",
      "minutes": 15,
+     "practice": ["sacrifice", "kingsideAttack"],
      "sections": [
       {
        "type": "text",
@@ -699,6 +705,7 @@
      "title": "Smothered mate sequences",
      "objective": "Use knight checks and a queen sacrifice on g8 to make the king's own pieces fill every flight square, then mate with the knight.",
      "minutes": 12,
+     "practice": ["smotheredMate"],
      "sections": [
       {
        "type": "text",
@@ -798,6 +805,7 @@
      "title": "Pawn endings: king first, then the pawns",
      "objective": "In a pawn ending, use the king to stop enemy passed pawns and to escort your own, and count every tempo before you push.",
      "minutes": 14,
+     "practice": ["pawnEndgame"],
      "sections": [
       {
        "type": "text",
@@ -1053,6 +1061,7 @@
      "title": "Rook endings: activity first",
      "objective": "Put your rook behind passed pawns and on the seventh rank, and use your king as a fighting piece.",
      "minutes": 15,
+     "practice": ["rookEndgame"],
      "sections": [
       {
        "type": "text",

@@ -89,6 +89,7 @@
      "title": "The breakthrough",
      "objective": "Use a pawn sacrifice to make a passed pawn against an equal number of pawns, and stop the same trick when you defend.",
      "minutes": 12,
+     "practice": ["advancedPawn"],
      "sections": [
       {
        "type": "text",
@@ -177,6 +178,7 @@
      "title": "Draws and defending",
      "objective": "When you are worse, look first for the forcing draws (perpetual check and stalemate), then for activity, before you defend passively.",
      "minutes": 14,
+     "practice": ["defensiveMove"],
      "sections": [
       {
        "type": "text",
@@ -565,6 +567,7 @@
      "title": "Rook against pawn",
      "objective": "Win with the rook against a lone pawn by cutting the enemy king off or attacking the pawn from behind.",
      "minutes": 14,
+     "practice": ["rookEndgame"],
      "sections": [
       {
        "type": "text",
@@ -840,6 +843,7 @@
      "title": "Knight against pawn",
      "objective": "Stop a passed pawn with the knight by reaching a square on its path with tempo, and know why the rook's pawn is the knight's worst enemy.",
      "minutes": 12,
+     "practice": ["knightEndgame"],
      "sections": [
       {
        "type": "text",
@@ -912,6 +916,7 @@
      "title": "Bishops of the same colour",
      "objective": "Hold bishop and pawn against bishop with the king in front of the pawn, and win it by blocking the defending bishop's diagonal.",
      "minutes": 12,
+     "practice": ["bishopEndgame"],
      "sections": [
       {
        "type": "text",
@@ -972,6 +977,7 @@
      "title": "Opposite-coloured bishops",
      "objective": "Know when opposite-coloured bishops draw (one extra pawn, a blockade on the right colour) and when they win (pawns far apart, or an attack in the middlegame).",
      "minutes": 14,
+     "practice": ["bishopEndgame"],
      "sections": [
       {
        "type": "text",

@@ -6,21 +6,24 @@ from fastapi import APIRouter
 
 from ..bots.roster import BOTS_BY_ID
 from ..storage.db import database
+from .account import Player
 
 router = APIRouter(prefix="/api/awards", tags=["awards"])
 
 
-async def _facts() -> dict:
-    games = await database.fetch_all("SELECT bot_id, player_color, result, status FROM games WHERE source = 'bot' AND status = 'finished'")
+async def _facts(player: str) -> dict:
+    games = await database.fetch_all(
+        "SELECT bot_id, player_color, result, status FROM games WHERE player_id = ? AND source = 'bot' AND status = 'finished'", (player,)
+    )
     wins = [g for g in games if g["result"] in ("1-0", "0-1") and (g["result"] == "1-0") == (g["player_color"] == "white")]
     tiers_beaten = {BOTS_BY_ID[g["bot_id"]].tier for g in wins if g["bot_id"] in BOTS_BY_ID}
-    puzzles = await database.fetch_one("SELECT COUNT(*) AS n, SUM(solved) AS s FROM puzzle_attempts WHERE mode = 'rated'")
-    lessons = await database.fetch_one("SELECT COUNT(*) AS n FROM lesson_progress WHERE completed_at IS NOT NULL")
-    reviews = await database.fetch_one("SELECT COUNT(*) AS n FROM reviews")
-    rush = max([await database.get_player_value(f"rush_best_{m}", 0) for m in ("3m", "5m", "survival")] or [0])
-    dates = await database.get_player_value("daily_solved_dates", [])
-    rating = await database.get_player_value("puzzle_rating", None)
-    endgames = await database.get_player_value("endgame_stats", {})
+    puzzles = await database.fetch_one("SELECT COUNT(*) AS n, SUM(solved) AS s FROM puzzle_attempts WHERE player_id = ? AND mode = 'rated'", (player,))
+    lessons = await database.fetch_one("SELECT COUNT(*) AS n FROM player_lessons WHERE player_id = ? AND completed_at IS NOT NULL", (player,))
+    reviews = await database.fetch_one("SELECT COUNT(*) AS n FROM reviews r JOIN games g ON g.id = r.game_id WHERE g.player_id = ?", (player,))
+    rush = max([await database.get_player_value(player, f"rush_best_{m}", 0) for m in ("3m", "5m", "survival")] or [0])
+    dates = await database.get_player_value(player, "daily_solved_dates", [])
+    rating = await database.get_player_value(player, "puzzle_rating", None)
+    endgames = await database.get_player_value(player, "endgame_stats", {})
     return {
         "games": len(games), "wins": len(wins), "tiers_beaten": tiers_beaten,
         "puzzles_solved": int(puzzles["s"] or 0), "puzzles_tried": int(puzzles["n"] or 0),
@@ -57,7 +60,7 @@ AWARDS = [
 
 
 @router.get("")
-async def awards() -> dict:
-    f = await _facts()
+async def awards(player: Player) -> dict:
+    f = await _facts(player)
     out = [{"key": k, "name": n, "how": h, "earned": bool(test(f))} for k, n, h, test in AWARDS]
     return {"awards": out, "earned": sum(1 for a in out if a["earned"]), "total": len(out), "facts": {k: (sorted(v) if isinstance(v, set) else v) for k, v in f.items()}}

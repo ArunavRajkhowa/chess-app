@@ -4,7 +4,7 @@
 .engine-lines button { display: flex; gap: var(--s-2); align-items: baseline; width: 100%; text-align: left; background: var(--bg-elev-2); border: 0; color: var(--ink); padding: 6px 8px; border-radius: var(--r-sm); cursor: pointer; font-size: var(--fs-sm); }
 .engine-lines button:hover { background: var(--bg-hover); }
 .engine-lines .eval { min-width: 52px; padding: 1px 6px; border-radius: 4px; text-align: center; }
-.engine-lines .eval.white { background: #f0f0f0; color: #1b1a18; }
-.engine-lines .eval.black { background: #1b1a18; color: #f0f0f0; }
+.engine-lines .eval.white { background: var(--side-white); color: var(--side-black); }
+.engine-lines .eval.black { background: var(--side-black); color: var(--side-white); }
 .analysis .movelist { max-height: 40vh; }
 @media (max-width: 900px) { .analysis { grid-template-columns: 1fr; } .analysis-side { position: static; } }

@@ -8,7 +8,7 @@ import os
 
 import pytest
 
-for _name in ("ANTHROPIC_API_KEY", "COACH_BASE_URL", "COACH_MODEL", "COACH_API_KEY"):
+for _name in ("ANTHROPIC_API_KEY", "COACH_BASE_URL", "COACH_MODEL", "COACH_API_KEY", "TURSO_DATABASE_URL", "TURSO_AUTH_TOKEN", "GOOGLE_CLIENT_ID"):
     os.environ[_name] = ""
 
 

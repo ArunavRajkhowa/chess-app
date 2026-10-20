@@ -67,3 +67,16 @@ export function resultText(chess: Chess): { result: "1-0" | "0-1" | "1/2-1/2"; r
   if (chess.isDrawByFiftyMoves()) return { result: "1/2-1/2", reason: "fifty-move rule" };
   return { result: "1/2-1/2", reason: "draw" };
 }
+
+/** SAN moves from a position with move numbers, the way a book prints them: "5...Nxe4 6.d4 b5". */
+export function numberedSan(fen: string, sans: string[]): string {
+  const [, turn, , , , full] = fen.split(" ");
+  let n = Number(full) || 1;
+  let white = turn === "w";
+  return sans.map((san, i) => {
+    const text = white ? `${n}.${san}` : i === 0 ? `${n}...${san}` : san;
+    if (!white) n += 1;
+    white = !white;
+    return text;
+  }).join(" ");
+}

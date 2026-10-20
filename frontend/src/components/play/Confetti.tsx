@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "./Confetti.css";
 
-const COLORS = ["#81b64c", "#f5c242", "#5c8bb0", "#ff7769", "#1baca6", "#f0f0f0"];
+const COLORS = ["var(--brand)", "var(--side-white)", "var(--c-brilliant)", "var(--c-great)", "var(--c-best)", "var(--accent)"];
 
 /** A short burst of CSS confetti for a win. Respects reduced motion through the --anim token. */
 export function Confetti({ show }: { show: boolean }) {

@@ -9,6 +9,7 @@ from fastapi import APIRouter
 
 from ..review import classify as C
 from ..storage.db import database
+from .account import Player
 
 router = APIRouter(prefix="/api/insights", tags=["insights"])
 
@@ -43,10 +44,11 @@ def _shape(graph: list[float]) -> str:
 
 
 @router.get("/me")
-async def me() -> dict:
+async def me(player: Player) -> dict:
     rows = await database.fetch_all(
         "SELECT r.game_id, r.report_json, g.player_color, g.result, g.termination, g.opening_name, g.opening_eco, g.bot_id, g.source, g.created_at "
-        "FROM reviews r JOIN games g ON g.id = r.game_id WHERE g.source = 'bot' ORDER BY r.created_at DESC LIMIT 200"
+        "FROM reviews r JOIN games g ON g.id = r.game_id WHERE g.player_id = ? AND g.source = 'bot' ORDER BY r.created_at DESC LIMIT 200",
+        (player,),
     )
     if not rows:
         return {"games": 0, "message": "Play and review a few games to see your patterns."}

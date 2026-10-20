@@ -5,6 +5,7 @@ from fastapi import APIRouter
 from pydantic import BaseModel, Field
 
 from ..storage.db import database
+from .account import Player
 
 router = APIRouter(prefix="/api/vision", tags=["vision"])
 MODES = ("find", "name")
@@ -17,15 +18,15 @@ class VisionScore(BaseModel):
 
 
 @router.get("")
-async def best() -> dict:
-    return {"best": await database.get_player_value("vision_best", {m: 0 for m in MODES})}
+async def best(player: Player) -> dict:
+    return {"best": await database.get_player_value(player, "vision_best", {m: 0 for m in MODES})}
 
 
 @router.post("/score")
-async def record(req: VisionScore) -> dict:
-    best = await database.get_player_value("vision_best", {m: 0 for m in MODES})
+async def record(req: VisionScore, player: Player) -> dict:
+    best = await database.get_player_value(player, "vision_best", {m: 0 for m in MODES})
     new_best = req.score > best.get(req.mode, 0)
     if new_best:
         best[req.mode] = req.score
-        await database.set_player_value("vision_best", best)
+        await database.set_player_value(player, "vision_best", best)
     return {"best": best, "new_best": new_best}

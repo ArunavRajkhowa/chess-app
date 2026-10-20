@@ -40,8 +40,15 @@ class Settings(BaseSettings):
     COACH_MAX_TOKENS: int = 2048
     COACH_EFFORT: str = "medium"  # Anthropic only
 
-    # Storage. SQLite file for games, reviews, puzzle attempts and lesson progress.
+    # Storage. A local SQLite file, or a Turso database when TURSO_DATABASE_URL is set
+    # (libsql://<db>-<org>.turso.io, with a token from `turso db tokens create <db>`).
     DB_PATH: str = str(REPO_ROOT / "data" / "chess.sqlite3")
+    TURSO_DATABASE_URL: str = ""
+    TURSO_AUTH_TOKEN: str = ""
+
+    # Accounts. Everyone plays as a guest. With a Google OAuth client id, Settings offers
+    # "Sign in with Google", which keeps a player's progress across devices.
+    GOOGLE_CLIENT_ID: str = ""
 
     @property
     def origins_list(self) -> list[str]:

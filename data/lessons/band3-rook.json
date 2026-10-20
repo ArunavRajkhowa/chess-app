@@ -13,7 +13,64 @@
      "title": "Discovered and double check",
      "objective": "Use a discovered check to win material, and a double check to force the king to move.",
      "minutes": 12,
+     "practice": [
+      "discoveredAttack",
+      "doubleCheck"
+     ],
      "sections": [
+      {
+       "type": "lecture",
+       "title": "Discovered and double check",
+       "frames": [
+        {
+         "say": "Two principles. A check must be answered. And when a piece moves off a line, the piece behind it starts to act. Put them together and you get the discovered check.",
+         "fen": "r1bq2r1/1p1p3k/p1n1pP1p/3n4/4N3/1N1Bb3/PPP3PP/R4R1K w - - 0 2",
+         "arrows": [
+          {
+           "from": "d3",
+           "to": "h7",
+           "brush": "red"
+          }
+         ],
+         "highlights": [
+          {
+           "square": "e4",
+           "brush": "yellow"
+          }
+         ]
+        },
+        {
+         "say": "The bishop on d3 aims at the king on h7, but White's own knight on e4 blocks it. Whatever the knight does, it uncovers check. And the knight is free to make a threat of its own."
+        },
+        {
+         "say": "Knight to g5. Double check: the bishop checks along the diagonal and the knight checks from g5. A block stops only one line, a capture removes only one piece. So only the king may move.",
+         "move": "Ng5+",
+         "arrows": [
+          {
+           "from": "g5",
+           "to": "h7",
+           "brush": "red"
+          },
+          {
+           "from": "d3",
+           "to": "h7",
+           "brush": "red"
+          }
+         ]
+        },
+        {
+         "say": "The king retreats to the only square it has.",
+         "move": "Kh8"
+        },
+        {
+         "say": "Knight to f7, checkmate. The pawn on f6 covers g7, and the rook on g8 stands in its own king's way.",
+         "move": "Nf7#"
+        },
+        {
+         "say": "How to find them: a queen, rook or bishop of yours aimed at the enemy king, with one of your own pieces in between. That front piece is loaded. Ask where it can go with a threat of its own."
+        }
+       ]
+      },
       {
        "type": "text",
        "md": "A **discovered check** happens when one piece moves out of the way and uncovers a check from the piece behind it. The piece that moves is free. It can go anywhere, even to a square where it can be taken, because your opponent must deal with the check first. Use that free move to capture something or to attack something big.\n\nA **double check** is a discovered check where the moving piece also gives check. Two pieces check at once. A block stops only one line, and a capture removes only one checker. So the only legal answer to a double check is a king move. Often the king has no good square and the game ends.\n\nHow to find them: look for your queen, rook or bishop aimed at the enemy king with one of your own pieces in between. That front piece is loaded. Ask where it can go with a threat of its own."
@@ -133,6 +190,9 @@
      "title": "A pinned piece is a poor defender",
      "objective": "Attack a pinned piece again to win it, and take what a pinned piece only seems to defend.",
      "minutes": 12,
+     "practice": [
+      "pin"
+     ],
      "sections": [
       {
        "type": "text",
@@ -211,6 +271,9 @@
      "title": "Removing the defender",
      "objective": "Find the piece that holds the position together and remove it: capture it, chase it away or overload it.",
      "minutes": 14,
+     "practice": [
+      "capturingDefender"
+     ],
      "sections": [
       {
        "type": "text",
@@ -275,7 +338,12 @@
        "prompt": "White to play. Black's rook on d8 guards the knight on d5. It also has a second job. Take the knight.",
        "solution": [
         "d1d5"
-       ], "also": ["e1e5", "d1d2", "d1d3"],
+       ],
+       "also": [
+        "e1e5",
+        "d1d2",
+        "d1d3"
+       ],
        "hint": "What does the rook on d8 guard besides the knight?",
        "explanation": "1.Rxd5! If 1...Rxd5, then 2.Re8 is mate: the rook on d8 also guarded the back rank and cannot do both jobs. So White simply wins the knight. The rook is overloaded."
       },
@@ -375,6 +443,9 @@
      "title": "Trapping pieces",
      "objective": "Take away every safe square from an enemy piece, then attack it.",
      "minutes": 12,
+     "practice": [
+      "trappedPiece"
+     ],
      "sections": [
       {
        "type": "text",
@@ -544,6 +615,9 @@
      "title": "Access to the king: open the lines",
      "objective": "Before you can mate, open a file or a diagonal to the king, and pay material for it only when enough attackers can follow.",
      "minutes": 12,
+     "practice": [
+      "exposedKing"
+     ],
      "sections": [
       {
        "type": "text",
@@ -642,7 +716,78 @@
      "title": "Mates with bishops and rooks",
      "objective": "Recognise the Boden, Opera, Morphy, Pillsbury and Réti mates, and find them in one and two moves.",
      "minutes": 12,
+     "practice": [
+      "mate"
+     ],
      "sections": [
+      {
+       "type": "lecture",
+       "title": "Mates with bishops and rooks",
+       "frames": [
+        {
+         "say": "A mating pattern is a picture. Learn the picture, and in your own games you will see the mate before you calculate it. Under every pattern lies one principle: count the king's flight squares, and take the last one away.",
+         "fen": "2kr1b1r/p2npppp/B1p1bn2/7q/5B2/2N4P/PPP1N1P1/2KR3R b - - 1 2"
+        },
+        {
+         "say": "Boden's mate: two bishops on crossing diagonals. The bishop on a6 gives check, the bishop on f4 covers b8 and c7, and the king's own rook on d8 and knight on d7 block the rest.",
+         "arrows": [
+          {
+           "from": "a6",
+           "to": "c8",
+           "brush": "red"
+          },
+          {
+           "from": "f4",
+           "to": "b8",
+           "brush": "red"
+          }
+         ]
+        },
+        {
+         "say": "The Opera mate: a rook mates on the back rank and a bishop guards it. Here the king on e8 has f7 blocked by its own pawn, and the bishop on g5 watches e7 and d8.",
+         "fen": "4k3/5p2/8/6B1/8/8/8/3R2K1 w - - 0 1",
+         "arrows": [
+          {
+           "from": "g5",
+           "to": "d8",
+           "brush": "green"
+          },
+          {
+           "from": "g5",
+           "to": "e7",
+           "brush": "green"
+          }
+         ]
+        },
+        {
+         "say": "Rook to d8. Checkmate: the bishop protects the rook, the pawn blocks f7.",
+         "move": "Rd8#"
+        },
+        {
+         "say": "Réti's mate: a bishop checks a king boxed in by its own pieces, and a rook guards the bishop.",
+         "fen": "1nb5/1pk5/2p5/8/7B/8/8/3R3K w - - 0 1",
+         "arrows": [
+          {
+           "from": "h4",
+           "to": "d8",
+           "brush": "green"
+          },
+          {
+           "from": "d1",
+           "to": "d8",
+           "brush": "green"
+          }
+         ]
+        },
+        {
+         "say": "Bishop to d8, mate. The rook on d1 protects it and covers d7 and d6, the bishop covers b6, and the king's own pieces block everything else.",
+         "move": "Bd8#"
+        },
+        {
+         "say": "Five pictures in this lesson: Boden, Opera, Morphy, Pillsbury and Réti. In every one of them, your pieces take the last flight squares and the enemy king's own men do the rest."
+        }
+       ]
+      },
       {
        "type": "text",
        "md": "A named mate is a picture you can recognise in one look. Learn the picture, and in your games you will see the mate before you calculate it.\n\n- **Boden's mate**: two bishops on crossing diagonals mate a king on c8 (often after long castling). The king's own pieces on d7 and d8 block it.\n- **Opera mate**: a rook mates on the back rank or the open file, and a bishop guards the rook or the last flight square. Morphy finished his Opera game with it.\n- **Morphy's mate**: a bishop checks a king in the corner along the long diagonal, and a rook on the g-file takes away g8 or g7.\n- **Pillsbury's mate**: the same team with the roles reversed. The rook gives check on the g-file, and the bishop on the long diagonal guards h8.\n- **Réti's mate**: a bishop checks a king boxed in by its own pieces, and a rook guards the bishop and the last free square.\n\nIn every pattern, count the king's flight squares. Each one must be covered by a piece or blocked by the king's own men."
@@ -741,6 +886,9 @@
      "title": "Queen mates",
      "objective": "Recognise the Damiano, Lolli, dovetail, epaulette, swallow's tail and Greco mates, and find them in one and two moves.",
      "minutes": 12,
+     "practice": [
+      "mate"
+     ],
      "sections": [
       {
        "type": "text",
@@ -837,6 +985,9 @@
      "title": "Knight mates",
      "objective": "Recognise the Arabian, suffocation, Blackburne, Légal and Vukovic mates, and find them in one and two moves.",
      "minutes": 12,
+     "practice": [
+      "mate"
+     ],
      "sections": [
       {
        "type": "text",
@@ -946,7 +1097,64 @@
      "title": "Races, the outside passed pawn and the breakthrough",
      "objective": "Count pawn races with the square, use an outside passed pawn as a decoy, and break through with pawns.",
      "minutes": 14,
+     "practice": [
+      "advancedPawn",
+      "pawnEndgame"
+     ],
      "sections": [
+      {
+       "type": "lecture",
+       "title": "The outside passed pawn",
+       "frames": [
+        {
+         "say": "A passed pawn far from the other pawns is a decoy. The principle: the enemy king can be in only one place. Send it to one side of the board, and let your own king eat on the other.",
+         "fen": "8/8/3k2p1/P6p/4K2P/6P1/8/8 w - - 0 1",
+         "arrows": [
+          {
+           "from": "a5",
+           "to": "a8",
+           "brush": "green"
+          },
+          {
+           "from": "e4",
+           "to": "g5",
+           "brush": "blue"
+          }
+         ]
+        },
+        {
+         "say": "Pawn to a6. The black king must deal with it.",
+         "move": "a6"
+        },
+        {
+         "say": "It turns towards the a-pawn.",
+         "move": "Kc6"
+        },
+        {
+         "say": "And White's king goes the other way, towards g6 and h5.",
+         "move": "Ke5"
+        },
+        {
+         "say": "Black closes in on the pawn.",
+         "move": "Kb6"
+        },
+        {
+         "say": "White's king arrives.",
+         "move": "Kf6"
+        },
+        {
+         "say": "King takes a6. The decoy has done its job.",
+         "move": "Kxa6"
+        },
+        {
+         "say": "King takes g6. Now h5 falls too, and the h-pawn runs home while the black king is stuck on the far side of the board.",
+         "move": "Kxg6"
+        },
+        {
+         "say": "Before you believe a race, count it. The rule of the square tells you whether a king can catch a pawn. Here it cannot."
+        }
+       ]
+      },
       {
        "type": "text",
        "md": "You know the **rule of the square**: draw a square from the pawn to its queening rank. If the defending king can step into it, the king catches the pawn. This lesson uses that count in real endings.\n\n**The outside passed pawn.** A passed pawn far away from the other pawns is a decoy. The enemy king must walk over to stop it. While it does, your king eats the pawns it left behind. One extra pawn on the far wing often wins a king and pawn ending.\n\n**Kings walk on diagonals.** A king move on a diagonal can serve two goals at once: chase one pawn and support another. Réti's famous study shows a king that seems hopelessly slow and still draws.\n\n**The breakthrough.** With three pawns against three on one wing, you can sometimes give two pawns to make the third one a queen. It works when the enemy king is too far away."
@@ -1228,6 +1436,9 @@
      "title": "Philidor's defence",
      "objective": "Hold rook and pawn against rook with Philidor's method: rook on the sixth rank until the pawn advances, then checks from behind.",
      "minutes": 12,
+     "practice": [
+      "rookEndgame"
+     ],
      "sections": [
       {
        "type": "text",
@@ -1265,7 +1476,12 @@
        "prompt": "Black to play and draw with Philidor's method. Put the rook on the right rank.",
        "solution": [
         "a1a6"
-       ], "also": ["a1a2", "a1a3", "a1a5"],
+       ],
+       "also": [
+        "a1a2",
+        "a1a3",
+        "a1a5"
+       ],
        "hint": "Which rank must the white king reach to win? Guard it with your rook.",
        "explanation": "1...Ra6! The white king cannot step onto the sixth rank. If White waits, Black waits too, with the rook along the sixth rank. White's only try is 2.e6, and that takes away the king's shelter."
       },
@@ -1275,7 +1491,12 @@
        "prompt": "White has pushed the pawn to e6. Black to play: the rook leaves the sixth rank. Drop it to the first rank, far behind the white king.",
        "solution": [
         "a6a1"
-       ], "also": ["a6a4", "a6a5", "a6a3"],
+       ],
+       "also": [
+        "a6a4",
+        "a6a5",
+        "a6a3"
+       ],
        "hint": "Checks from behind need distance.",
        "explanation": "2...Ra1! Now come checks from behind: 3.Kd6 Rd1+ 4.Ke5 Re1+ and so on. The pawn on e6 cannot shield its own king, and the black king on e8 stops the pawn. Draw."
       },
@@ -1326,6 +1547,9 @@
      "title": "Lucena: building a bridge",
      "objective": "Win rook and pawn against rook with the Lucena method: cut the king off, bring the rook to the fourth rank, walk the king out and block the checks.",
      "minutes": 12,
+     "practice": [
+      "rookEndgame"
+     ],
      "sections": [
       {
        "type": "text",
@@ -1364,7 +1588,12 @@
        "prompt": "White to play. Step one: cut the black king off by one more file.",
        "solution": [
         "d1e1"
-       ], "also": ["d1d4", "d1d7", "d1d5"],
+       ],
+       "also": [
+        "d1d4",
+        "d1d7",
+        "d1d5"
+       ],
        "hint": "A check on the e-file.",
        "explanation": "1.Re1+! The king must go to the f-file (1...Kf7). Now the rook on the e-file keeps it away from d7 and d8, the squares next to the pawn."
       },
@@ -1374,7 +1603,12 @@
        "prompt": "Step two: build the bridge. Put your rook where it can block checks later.",
        "solution": [
         "e1e4"
-       ], "also": ["c8d7", "c8d8", "e1e5"],
+       ],
+       "also": [
+        "c8d7",
+        "c8d8",
+        "e1e5"
+       ],
        "hint": "The fourth rank.",
        "explanation": "2.Re4! After 2...Rb1 3.Kd7 Rd1+ 4.Kc6 Rc1+ 5.Kd6 Rd1+ 6.Kc5 Rc1+ 7.Rc4 the checks are over and the pawn queens. Other rook moves can also win here, but the fourth rank is the method that always works."
       },
@@ -1595,6 +1829,62 @@
      "objective": "Check that your opening is finished (minor pieces out, king castled, rooks connected) and punish an opponent whose king is still in the centre.",
      "minutes": 14,
      "sections": [
+      {
+       "type": "lecture",
+       "title": "When is the opening over?",
+       "frames": [
+        {
+         "say": "The opening is over when three jobs are done: the minor pieces are out, the king has castled, and the rooks are connected. Count here. White: everything done, rooks on c1 and e1. Black: king on e8, both rooks at home.",
+         "fen": "r3k2r/pp1qn1pp/2p2p2/8/3P4/5N2/PP2QPPP/2R1R1K1 w kq - 0 17",
+         "arrows": [
+          {
+           "from": "e1",
+           "to": "e8",
+           "brush": "red"
+          }
+         ]
+        },
+        {
+         "say": "The principle: a king in an open centre is a target, and a lead in time melts away if you wait. The side that is ahead must open the position now, before the king escapes.",
+         "highlights": [
+          {
+           "square": "e8",
+           "brush": "yellow"
+          }
+         ]
+        },
+        {
+         "say": "Steinitz plays pawn to d5. A pawn given to open the files.",
+         "move": "d5"
+        },
+        {
+         "say": "Black takes.",
+         "move": "cxd5"
+        },
+        {
+         "say": "Knight to d4. It heads for e6, the square in front of the king, and White's rooks already own the c-file and the e-file.",
+         "move": "Nd4",
+         "arrows": [
+          {
+           "from": "d4",
+           "to": "e6",
+           "brush": "green"
+          }
+         ]
+        },
+        {
+         "say": "The king tries to leave the file.",
+         "move": "Kf7"
+        },
+        {
+         "say": "Knight to e6. Black's king will not find a safe square, and the game is decided within ten moves: Steinitz against von Bardeleben, Hastings 1895.",
+         "move": "Ne6"
+        },
+        {
+         "say": "Finish your own development first. Then, if the opponent's king is still in the centre, open the centre and bring every piece."
+        }
+       ]
+      },
       {
        "type": "text",
        "md": "The opening is over when three jobs are done: the minor pieces are developed, the king has castled, and the rooks are connected, with nothing left between them on the back rank. Then the rooks go to open or half-open files.\n\nA quick count helps. Count the pieces each side has brought into play and add one for a castled king. If you lead by two or three moves, you are ahead in time. Use it at once: open the position before the opponent catches up. If you are behind, keep the position closed and finish your development.\n\nThe biggest prize is a king still in the centre. Open the centre with a pawn break, put a rook on the open file in front of the king, and bring every piece.\n\nSteinitz vs von Bardeleben (Hastings 1895) is the model: Black never castled, and Steinitz opened the centre and finished with a famous rook offer."
@@ -1844,7 +2134,13 @@
        "prompt": "White to play. Mini-plan two: load the c-file. Which rook move starts the gun?",
        "solution": [
         "c2c3"
-       ], "also": ["e3b3", "b5f1", "b5d3", "b5e2"],
+       ],
+       "also": [
+        "e3b3",
+        "b5f1",
+        "b5d3",
+        "b5e2"
+       ],
        "hint": "The queen will go behind the rooks later; first make room on c2.",
        "explanation": "24.Rc3! frees c2 for the other rook. After 24...Qd7 25.R1c2 and 26.Qc1, two rooks and the queen stand on the c-file. Black can only defend c6."
       },
@@ -1898,6 +2194,104 @@
      "objective": "Judge a position by four elements (material, development, space and pawn structure) and play for the one you lead in.",
      "minutes": 14,
      "sections": [
+      {
+       "type": "lecture",
+       "title": "Force, time, space and pawn structure",
+       "frames": [
+        {
+         "say": "Four things decide a position: force, which is material; time, which is development; space; and the pawn structure. They trade against each other, and a player who leads in one must use it before it fades.",
+         "fen": "r1b3k1/p1p2ppp/2p1r3/1pb5/8/2Pq1B2/PP1P1PPP/R1BQ1RK1 w - - 1 13"
+        },
+        {
+         "say": "Paulsen against Morphy, New York 1857. Material is level. But Morphy's queen on d3 stops the pawn on d2, so the bishop on c1 and the rook on a1 cannot come out. Black's rook, bishop and queen are already in play. Black leads in time.",
+         "arrows": [
+          {
+           "from": "d3",
+           "to": "d2",
+           "brush": "red"
+          },
+          {
+           "from": "c5",
+           "to": "f2",
+           "brush": "red"
+          },
+          {
+           "from": "e6",
+           "to": "e1",
+           "brush": "red"
+          }
+         ]
+        },
+        {
+         "say": "Paulsen spends a move on the queenside.",
+         "move": "b4"
+        },
+        {
+         "say": "The bishop keeps the diagonal.",
+         "move": "Bb6"
+        },
+        {
+         "say": "Another queenside move.",
+         "move": "a4"
+        },
+        {
+         "say": "Black takes.",
+         "move": "bxa4"
+        },
+        {
+         "say": "The queen goes to the edge of the board, far from its king.",
+         "move": "Qxa4"
+        },
+        {
+         "say": "Black develops the last minor piece.",
+         "move": "Bd7"
+        },
+        {
+         "say": "Rook to a2.",
+         "move": "Ra2"
+        },
+        {
+         "say": "And the last black rook joins the e-file. Every black piece now points at the white king. White has used four moves on the queenside.",
+         "move": "Rae8"
+        },
+        {
+         "say": "Queen to a6, the fourth move away from the king.",
+         "move": "Qa6"
+        },
+        {
+         "say": "Queen takes f3. Morphy gives force to cash in time: the queen for a bishop, so that all his pieces arrive at once.",
+         "move": "Qxf3"
+        },
+        {
+         "say": "The pawn takes back and the king's shelter is gone.",
+         "move": "gxf3"
+        },
+        {
+         "say": "Rook to g6, check.",
+         "move": "Rg6+"
+        },
+        {
+         "say": "The king hides in the corner.",
+         "move": "Kh1"
+        },
+        {
+         "say": "Bishop to h3. The threat is bishop to g2 with check, then bishop takes f3, mate. White's extra queen cannot help: time has beaten force.",
+         "move": "Bh3",
+         "arrows": [
+          {
+           "from": "h3",
+           "to": "g2",
+           "brush": "red"
+          },
+          {
+           "from": "g6",
+           "to": "g1",
+           "brush": "red"
+          }
+         ]
+        }
+       ]
+      },
       {
        "type": "text",
        "md": "Yasser Seirawan teaches four elements to judge any position:\n\n- **Force**: material. Count with pawn 1, knight and bishop 3, rook 5, queen 9.\n- **Time**: development. Count the pieces in play. A lead in time must be used quickly, before the opponent catches up: open lines and attack.\n- **Space**: the squares you control in the opponent's half. More space gives your pieces room; the cramped side should trade pieces.\n- **Pawn structure**: the skeleton of the position. It changes slowly and decides where the pieces belong.\n\nThe elements trade against each other. A gambit gives force for time. A pawn advance gains space but can leave weak squares behind it.\n\nPaulsen vs Morphy (New York 1857) is the classic lesson in time against force. Paulsen spent moves on the queenside; Morphy's pieces all pointed at the king, and he gave his queen to break through."
@@ -2045,7 +2439,12 @@
        "prompt": "Black to play. Use the kingside pawns to gain space and push the bishop on f4 back.",
        "solution": [
         "g6g5"
-       ], "also": ["d8d1", "h7h6", "g7f8"],
+       ],
+       "also": [
+        "d8d1",
+        "h7h6",
+        "g7f8"
+       ],
        "hint": "Attack the bishop with a pawn.",
        "explanation": "22...g5! The bishop must retreat, and the black pawns take squares on the kingside. Later ...h6 and ...f5 follow, and the white pieces have fewer and fewer good squares."
       },
@@ -2055,7 +2454,10 @@
        "prompt": "Black to play. The white knight on b3 is the weakest white piece. Take its squares away.",
        "solution": [
         "a7a5"
-       ], "also": ["d8d7"],
+       ],
+       "also": [
+        "d8d7"
+       ],
        "hint": "Push the a-pawn towards a4.",
        "explanation": "27...a5! threatens ...a4, driving the knight from b3. After 28.Nc1 a4 the knight on c1 has no good square, and the bishops rule both wings."
       },
@@ -2153,7 +2555,12 @@
        "prompt": "Black to play. Put a knight on the square in front of the isolated pawn.",
        "solution": [
         "b6d5"
-       ], "also": ["c8d7", "a7a5", "f6d5"],
+       ],
+       "also": [
+        "c8d7",
+        "a7a5",
+        "f6d5"
+       ],
        "hint": "Which square can no white pawn ever attack?",
        "explanation": "11...Nbd5! The knight blockades d5, the square in front of the isolated pawn. No white pawn can drive it away, and from d5 it also attacks the bishop on f4 and the knight on c3."
       },
@@ -2217,6 +2624,74 @@
      "objective": "Use five steps on every move: what his move does, what you want, which candidates, whether each is safe, and which is best.",
      "minutes": 14,
      "sections": [
+      {
+       "type": "lecture",
+       "title": "Five steps before every move",
+       "frames": [
+        {
+         "say": "Five steps before every move. Step one: what does my opponent's last move do? Black has just played knight to g4. The knight and the queen both aim at h2, and only the king defends it. The threat is queen takes h2, checkmate.",
+         "fen": "r1b2rk1/ppp2ppp/8/8/2B3nq/2NP4/PPP2PPP/R2Q1RK1 w - - 0 1",
+         "arrows": [
+          {
+           "from": "h4",
+           "to": "h2",
+           "brush": "red"
+          },
+          {
+           "from": "g4",
+           "to": "h2",
+           "brush": "red"
+          }
+         ]
+        },
+        {
+         "say": "Step two: what do I want? Stop the mate without giving anything away. Step three: candidates. Queen takes g4, bishop takes f7 with check, pawn to h3.",
+         "arrows": [
+          {
+           "from": "d1",
+           "to": "g4",
+           "brush": "green"
+          },
+          {
+           "from": "c4",
+           "to": "f7",
+           "brush": "green"
+          },
+          {
+           "from": "h2",
+           "to": "h3",
+           "brush": "green"
+          }
+         ]
+        },
+        {
+         "say": "Step four: safety. For each candidate, look at the reply. Queen takes g4? The bishop on c8 takes the queen. Bishop takes f7 with check? The rook takes it, and White has given a bishop for a pawn.",
+         "arrows": [
+          {
+           "from": "c8",
+           "to": "g4",
+           "brush": "red"
+          },
+          {
+           "from": "f8",
+           "to": "f7",
+           "brush": "red"
+          }
+         ]
+        },
+        {
+         "say": "Pawn to h3. It stands between the queen and h2, and it attacks the knight. Step five: choose. This one is safe and it meets the threat.",
+         "move": "h3"
+        },
+        {
+         "say": "The knight retreats, and White keeps the extra pawn.",
+         "move": "Ne5"
+        },
+        {
+         "say": "Below fourteen hundred, most games are lost in step one or step four: a threat that was not seen, or a move played without looking at the reply. Do the five steps on every move, even the easy ones."
+        }
+       ]
+      },
       {
        "type": "text",
        "md": "Dan Heisman teaches five steps for every move:\n\n1. **What does my opponent's last move do?** What does it attack, what does it threaten, what did it stop defending?\n2. **What do I want?** Meet a threat, attack a weakness, improve a piece.\n3. **Candidates.** List the moves that serve that goal. Look at checks, captures and threats first.\n4. **Safety.** For each candidate, look at his checks, captures and threats in reply. Throw out any candidate that loses to one of them.\n5. **Choose** the best of the safe candidates.\n\nBelow 1400, most games are lost in step 1 or step 4: a threat that was not seen, or a move played without looking at the reply. Heisman calls the second habit Hope Chess. Do the steps on every move, even the easy ones. Purdy said it in one line: look for threats first, and look again last."

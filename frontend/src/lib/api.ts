@@ -138,6 +138,19 @@ export interface GameSummary {
   plies: number;
 }
 
+export interface Account {
+  email: string | null; // null while the player is a guest
+  google_client_id: string | null; // null when this server has no Google sign-in
+}
+
+/* Analytics events and the properties each may carry: mirrors EVENT_PROPS in backend/routers/events.py. */
+export interface EventProps {
+  "app.opened": { display: "standalone" | "browser" };
+  "page.viewed": { page: string };
+  "app.installed": Record<string, never>;
+}
+export type EventName = keyof EventProps;
+
 export class ApiError extends Error {
   status: number;
   constructor(status: number, message: string) {
@@ -164,7 +177,11 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 const post = <T,>(path: string, body?: unknown) => request<T>(path, { method: "POST", body: body === undefined ? undefined : JSON.stringify(body) });
 
 export const api = {
-  health: () => request<{ ok: boolean; engine: { name: string; kind: string }; openings: number; coach: { llm: boolean; provider: string | null; model: string; problem: string | null } }>("/api/health"),
+  account: () => request<Account>("/api/account"),
+  signInWithGoogle: (credential: string) => post<{ email: string }>("/api/account/google", { credential }),
+  signOut: () => post<{ ok: boolean }>("/api/account/signout"),
+  deleteAccount: () => request<{ deleted: boolean }>("/api/account", { method: "DELETE" }),
+  health:() => request<{ ok: boolean; engine: { name: string; kind: string }; openings: number; coach: { llm: boolean; provider: string | null; model: string; problem: string | null } }>("/api/health"),
   bots: () => request<{ bots: BotPublic[] }>("/api/bots"),
   newGame: (bot_id: string, player_color: "white" | "black" | "random", coach_mode = false, time_control: string | null = null, fen: string | null = null) =>
     post<GameState>("/api/play/games", { bot_id, player_color, coach_mode, time_control, fen }),

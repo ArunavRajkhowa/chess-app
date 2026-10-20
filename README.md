@@ -5,18 +5,25 @@ Play, review and learn chess in one app that runs on your own machine. Twenty bo
 with accuracy, key moments, retry and practice-from-here; a puzzle trainer with ratings, Puzzle
 Rush, a daily puzzle with streaks and puzzles made from your own mistakes; an endgame trainer; a
 board vision trainer; an analysis board with engine lines; a spiral curriculum from the rules to
-master level; an opening explorer; annotated master games with guess-the-move; Insights and
-awards over your games; and a coach that works from rules or from any local or hosted language
-model, and only talks about facts the engine verified.
+master level with narrated lectures that play the moves while a voice explains them, engine
+feedback on every wrong move and spaced review of what you missed; an opening explorer;
+annotated master games watched with commentary, where every move says why it was played and why
+not the alternatives, each one playable on the board, or played guess-the-move; the same
+why-and-why-not study of your own reviewed games; a grandmaster's assessment of any position
+(imbalances and plans); Insights and awards over your games; and a
+coach that works from rules or from any local or hosted language model, and only talks about
+facts the engine verified.
 
-No paywall, no account. Everything is stored in one SQLite file under `data/`.
+No paywall. Everyone plays as a guest from the first visit; Google sign-in keeps progress across
+devices. Data lives in one SQLite file under `data/`, or in a free Turso database. It installs on
+Android, iPhone and desktop Chrome as an app.
 
 ## What is inside
 
 | Content | Count | How it is checked |
 |---|---|---|
-| Lessons | 185 lessons in 49 modules, bands 0 (rules) to 8 (master), 1,017 sections | `scripts/validate_lessons.py --engine`: every challenge is the engine's best move or as good |
-| Master games | 125 games in 27 themes, 561 key-moment notes | replayed at load; a test replays every move line in every note |
+| Lessons | 185 lessons in 49 modules, bands 0 (rules) to 8 (master), 1,037 sections, 20 narrated lectures | `scripts/validate_lessons.py --engine`: every challenge is the engine's best move or as good; every lecture move is replayed |
+| Master games | 125 games in 27 themes, 561 key-moment notes, every move studied by the engine (three candidates at depth 14, reasons, threats, why-not lines) | replayed at load; a test replays every move line in every note; `scripts/annotate_games.py` caches the studies under `data/study/` |
 | Puzzles | 558, rated 400-2000 | replayed at load; every solver move has one solution at depth 16 |
 | Endgames | 24 positions in five themes | engine goal check; no piece hangs at the start |
 | Openings | 3,865 named lines (lichess, CC0) | parsed at load |
@@ -77,12 +84,59 @@ differs between models. Start with `gpt-oss:20b`: the same model runs locally, o
 Groq and on OpenRouter, so you can switch without a change in behaviour. A thinking model spends
 tokens on thought first. If answers come back empty, raise `COACH_MAX_TOKENS`.
 
+### Narration
+
+Lectures, model games and master games are read aloud by the browser's own speech synthesis
+(the Web Speech API): nothing is downloaded and nothing is sent anywhere. Settings → Narration
+turns it off, sets the speed and picks a voice; the best English voice the browser has is used
+by default (Edge's "Natural" voices and Chrome's Google voices sound best). Without voices, a
+lecture still plays on a reading timer with captions.
+
+## On your phone
+
+The app installs like a native one: Android Chrome menu → "Install app"; iPhone Safari → Share →
+"Add to Home Screen"; desktop Chrome → the install icon in the address bar. Run the built app
+(`./run-local.sh`, not `dev`): the server then sets the player cookie on the page itself.
+
+A phone needs an HTTPS address that reaches your computer:
+
+| Way | Cost | Limits (checked 2026-10-19) |
+|---|---|---|
+| Cloudflare quick tunnel: `cloudflared tunnel --url http://localhost:8765` (Windows: `winget install Cloudflare.cloudflared`) | Free, no account | A new address every run, so Google sign-in cannot be registered for it. No server-sent events, so coach answers do not stream. A first look only. |
+| Cloudflare named tunnel on a domain you own | Free tunnel, plus the domain | Needs a Cloudflare account. A fixed address: register it once with Google. |
+| Tailscale Funnel: `tailscale funnel 8765` | Free on all plans (beta) | A fixed `https://<machine>.<tailnet>.ts.net` address. Bandwidth limits are not published. |
+
+Sources: [Cloudflare quick tunnels](https://developers.cloudflare.com/cloudflare-one/networks/connectors/cloudflare-tunnel/do-more-with-tunnels/trycloudflare/), [Tailscale Funnel](https://tailscale.com/kb/1223/funnel).
+
+## Accounts, the database and analytics
+
+- **Guests.** The first visit makes a player: a random id in an httpOnly cookie. Settings → Account
+  offers Google sign-in, sign-out and "Delete my data", which removes every row of the player.
+- **Google sign-in.** Google Cloud Console → APIs & Services → Credentials → OAuth client ID, type
+  "Web application". Add every address the app opens from (`http://localhost:8765`, your tunnel's
+  address) as an authorised JavaScript origin, and put the client id in `GOOGLE_CLIENT_ID`. While
+  the consent screen is in "Testing", only the test users you list can sign in. Signing in on a
+  second device moves that device's guest games to the account.
+- **Turso.** `turso db create chess-coach`, then `turso db show chess-coach --url` and
+  `turso db tokens create chess-coach` into `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN`. Free plan:
+  5 GB, 500 million rows read and 10 million rows written a month ([pricing](https://turso.tech/pricing),
+  checked 2026-10-19). Without them the app uses `DB_PATH`.
+- **What is stored, per player.** Every game move by move, every review judged move by move, every
+  puzzle attempt with its time and rating, lesson progress, ratings and trainer bests, and three
+  events: app opened (installed app or browser), page viewed, app installed, each with the
+  operating system family. Personal data: the email, after sign-in. Not stored: IP addresses, the
+  user agent string, location. Player names appear only in the headers of PGNs you import.
+- **Questions over the data:** the `player-analytics` skill, or `turso db shell chess-coach "<sql>"`.
+
+Games and puzzle attempts saved before accounts existed have no player; they stay in the file and
+no one sees them.
+
 ## Layout
 
 ```
 backend/        FastAPI app: engine pool, bots, review, puzzles, coach, content loaders, routers
 frontend/       React + TypeScript + Vite; the board, pages, the WASM engine worker
-data/           openings (lichess TSV, CC0), lessons (JSON), puzzles (JSONL), games (PGN), the SQLite file
+data/           openings (lichess TSV, CC0), lessons (JSON), puzzles (JSONL), games (PGN), study (the engine's why/why-not of every game), the SQLite file
 scripts/        self-play, puzzle generation, lesson validation, bot calibration (calibrate_bots.py)
 tests/          pytest; frontend/e2e holds the Playwright tests
 ```
@@ -102,6 +156,7 @@ curl localhost:8765/api/bots          # the roster
 python -m scripts.selfplay --games 40                       # bot games as puzzle material
 python -m scripts.generate_puzzles data/selfplay/*.pgn      # tactics puzzles with themes and ratings
 python -m scripts.validate_lessons data/lessons/*.json --engine   # must pass before committing lessons
+python -m scripts.annotate_games --workers 4                 # the why/why-not study of every master and lesson game (cached; skips what is done)
 ```
 
 ## Credits

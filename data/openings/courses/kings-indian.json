@@ -1,0 +1,134 @@
+{
+  "id": "kings-indian",
+  "name": "King's Indian Defence",
+  "side": "black",
+  "openings": ["King's Indian Defense"],
+  "summary": "1.d4 Nf6 2.c4 g6 3.Nc3 Bg7 4.e4 d6: Black lets White build a big centre, then strikes at it with ...e5 or ...c5. When the centre closes, the game becomes a race: White on the queenside, Black with ...f5 and ...f4 against the king.",
+  "ideas": {
+    "black": [
+      "Fianchetto, castle, then strike the centre with ...e5 (or ...c5).",
+      "When White closes the centre with d5, attack where your pawns point: ...Nd7 or ...Ne8, then ...f5, ...f4 and ...g5.",
+      "Do not let e4 tempt you: the c3 knight guards it, and ...Nxe4 tricks usually fail.",
+      "When the centre opens with ...exd4, aim ...Re8 and the g7 bishop at e4."
+    ],
+    "white": [
+      "Use the space: c4 and c5 and a queenside pawn advance when the centre is closed.",
+      "Keep e4 safe with f3 when Black's pieces pile up on it.",
+      "In the Sämisch, play Be3 and Qd2, and sometimes castle long and attack with g4 and h4."
+    ]
+  },
+  "structures": [
+    {"name": "Closed centre: d5 and e4 against d6 and e5", "text": "The pawn chains point to the wings. White attacks on the queenside with c5; Black attacks on the kingside with ...f5, ...f4 and ...g5. Whoever arrives first usually wins."},
+    {"name": "Open centre after ...exd4", "text": "Black gives up the e5 point for piece play: ...Re8 and the g7 bishop hit e4, and ...Nc6 or ...Nbd7 add pressure. White's centre becomes a target."}
+  ],
+  "pieces": {
+    "black": [
+      "g7 bishop: blocked by e5 in the closed lines, but it comes alive when the kingside or the centre opens.",
+      "f6 knight: retreats to d7 or e8 so the f-pawn can advance.",
+      "e7 knight: goes to g6 to support ...f4 and the attack.",
+      "f8 rook: f7 or f6 to join the attack on the f-file."
+    ],
+    "white": [
+      "c3 knight: guards e4 and d5.",
+      "e2 bishop: quiet, but it defends the king when Black attacks.",
+      "Queenside pawns: b4 and c5 to open the c-file.",
+      "f3 pawn: guards e4 and stops ...Ng4."
+    ]
+  },
+  "lines": [
+    {
+      "id": "classical",
+      "name": "Classical, 9.Ne1: the race begins",
+      "moves": "1. d4 Nf6 2. c4 g6 3. Nc3 Bg7 4. e4 d6 5. Nf3 O-O 6. Be2 e5 7. O-O Nc6 8. d5 Ne7 9. Ne1 Nd7 10. Nd3 f5 11. Bd2 Nf6 12. f3 f4",
+      "notes": {
+        "1...Nf6": "Controls e4 and keeps the choice of set-up open.",
+        "2...g6": "Prepares the fianchetto.",
+        "4...d6": "Stops e5 and prepares ...e5.",
+        "5...O-O": "King safety first; the strike comes next.",
+        "6...e5": "The King's Indian break: Black claims a share of the centre.",
+        "7...Nc6": "Adds pressure on d4.",
+        "8.d5": "White closes the centre and gains space.",
+        "8...Ne7": "The knight goes towards the kingside, where Black will attack.",
+        "9.Ne1": "The knight heads for d3 to support c5.",
+        "9...Nd7": "Clears the f-pawn: ...f5 is next.",
+        "10...f5": "The kingside attack starts.",
+        "12...f4": "Gains more space; ...g5 and ...g4 follow."
+      }
+    },
+    {
+      "id": "samisch",
+      "name": "Sämisch, 5.f3: ...e5 and ...c6",
+      "moves": "1. d4 Nf6 2. c4 g6 3. Nc3 Bg7 4. e4 d6 5. f3 O-O 6. Be3 e5 7. Nge2 c6 8. Qd2 Nbd7 9. d5 cxd5 10. cxd5 a6",
+      "notes": {
+        "5.f3": "The Sämisch: e4 is rock solid and ...Ng4 is ruled out.",
+        "6...e5": "Black strikes even here.",
+        "7...c6": "Prepares ...cxd5 to open the c-file.",
+        "9...cxd5": "Opens the c-file before White can castle long in peace.",
+        "10...a6": "Prepares ...b5 to gain space on the queenside."
+      }
+    },
+    {
+      "id": "fianchetto",
+      "name": "Fianchetto Variation: ...e5 against g3",
+      "moves": "1. d4 Nf6 2. c4 g6 3. Nf3 Bg7 4. g3 O-O 5. Bg2 d6 6. O-O Nbd7 7. Nc3 e5 8. e4 c6 9. h3 Qb6",
+      "notes": {
+        "4.g3": "White mirrors: a quiet set-up with the bishop on g2.",
+        "6...Nbd7": "Supports ...e5.",
+        "7...e5": "The usual strike.",
+        "8...c6": "Controls d5 and prepares ...Qb6.",
+        "9...Qb6": "Pressure on d4 and b2."
+      }
+    },
+    {
+      "id": "averbakh",
+      "name": "Averbakh, 6.Bg5: hit back with ...c5",
+      "moves": "1. d4 Nf6 2. c4 g6 3. Nc3 Bg7 4. e4 d6 5. Be2 O-O 6. Bg5 c5 7. d5 e6 8. Qd2 exd5 9. exd5 Re8 10. Nf3 Bf5",
+      "notes": {
+        "6.Bg5": "Pins the knight and makes ...e5 harder.",
+        "6...c5": "Hits d4 instead: the bishop on g5 has left the queenside.",
+        "7...e6": "Opens the e-file.",
+        "9...Re8": "The rook takes the open file.",
+        "10...Bf5": "Develops actively; Black's pieces are free."
+      }
+    },
+    {
+      "id": "exchange",
+      "name": "Exchange Variation: no fear of the queen trade",
+      "moves": "1. d4 Nf6 2. c4 g6 3. Nc3 Bg7 4. e4 d6 5. Nf3 O-O 6. Be2 e5 7. dxe5 dxe5 8. Qxd8 Rxd8 9. Bg5 Re8 10. Nd5 Nxd5 11. cxd5 c6 12. Bc4 cxd5 13. Bxd5 Nd7",
+      "notes": {
+        "7.dxe5": "White trades queens, hoping for a dull endgame.",
+        "8...Rxd8": "The rook takes back; Black's king is already safe.",
+        "9.Bg5": "Pins the f6 knight against the d8 rook.",
+        "9...Re8": "Breaks the pin.",
+        "10.Nd5": "Hits f6 and c7.",
+        "11...c6": "Challenges the d5 pawn.",
+        "13...Nd7": "Heads for c5 or f6; the endgame is level."
+      }
+    }
+  ],
+  "traps": [
+    {
+      "id": "ne1-nxe4",
+      "name": "9...Nxe4?: e4 is not loose",
+      "moves": "1. d4 Nf6 2. c4 g6 3. Nc3 Bg7 4. e4 d6 5. Nf3 O-O 6. Be2 e5 7. O-O Nc6 8. d5 Ne7 9. Ne1 Nxe4 10. Nxe4 f5 11. Nc3",
+      "notes": {
+        "9.Ne1": "The f3 knight leaves, and e4 looks short of defenders.",
+        "9...Nxe4": "The mistake: Black hopes ...f5 will win the piece back."
+      },
+      "mistake": "9...Nxe4",
+      "punishment": "10.Nxe4 f5 11.Nc3: the knight simply retreats and nothing is forked. Black is a piece for a pawn down. The c3 knight guards e4; play 9...Nd7 or 9...Ne8 and attack with ...f5 instead."
+    },
+    {
+      "id": "qc2-nxe4",
+      "name": "9.Qc2?: the e4 pawn needs f3",
+      "moves": "1. d4 Nf6 2. c4 g6 3. Nc3 Bg7 4. e4 d6 5. Nf3 O-O 6. Be2 e5 7. O-O exd4 8. Nxd4 Re8 9. Qc2 Nxe4 10. Nxe4 Bxd4",
+      "notes": {
+        "7...exd4": "Black opens the centre to aim at e4.",
+        "8...Re8": "The rook and the f6 knight now hit e4.",
+        "9.Qc2": "The mistake: the queen leaves d1, and the d4 knight loses its guard."
+      },
+      "mistake": "9.Qc2",
+      "punishment": "9...Nxe4 10.Nxe4 Bxd4: Black wins a clean pawn, and the e4 knight is pinned against the e2 bishop. White had to play 9.f3, guarding e4 with a pawn."
+    }
+  ]
+}

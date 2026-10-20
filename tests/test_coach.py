@@ -137,3 +137,32 @@ def test_summary_fallback_invents_nothing_for_an_absent_opening_or_accuracy():
     bot = {"accuracy": 91.0, "phase_accuracy": {}}
     text = _rules_summary({"white": me, "black": bot, "opening": None, "moves": []}, "white")
     assert "None" not in text and "unnamed" not in text.lower() and "unknown" not in text.lower()
+
+
+RUY_AFTER_CASTLING = "r1bqkb1r/1ppp1ppp/p1n2n2/4p3/B3P3/5N2/PPPP1PPP/RNBQ1RK1 b kq - 5 5"  # 5.O-O, Black to move
+
+
+def test_a_tried_move_is_judged_with_the_engines_answer_and_the_book_name(client):
+    r = client.post("/api/coach/try", json={"fen": RUY_AFTER_CASTLING, "move": "f6e4", "compare": "f8e7"})
+    assert r.status_code == 200
+    tried, compare = r.json()["tried"], r.json()["compare"]
+    assert tried["san"] == "Nxe4" and tried["opening"]["name"] == "Ruy Lopez: Open"
+    assert tried["classification"] in ("best", "great", "excellent", "good") and tried["reply_line"]
+    assert tried["explanation"].startswith("Nxe4 is ")
+    assert tried["reply_text"].startswith("6.") and isinstance(tried["material_after_reply"], int)
+    assert compare["san"] == "Be7" and compare["opening"]["name"].startswith("Ruy Lopez")
+    assert client.post("/api/coach/try", json={"fen": RUY_AFTER_CASTLING, "move": "e2e4"}).status_code == 400
+
+
+def test_a_question_names_moves_by_san_or_by_piece_and_square():
+    board = chess.Board(RUY_AFTER_CASTLING)
+    from backend.routers.coach import asked_moves
+    assert [board.san(m) for m in asked_moves(board, "why didn't the knight take e4?")] == ["Nxe4"]
+    assert [board.san(m) for m in asked_moves(board, "Why not Nxe4 here?")] == ["Nxe4"]
+    assert asked_moves(board, "what is the plan?") == []
+
+
+def test_chat_answers_a_why_not_question_from_the_judged_move(client):
+    r = client.post("/api/coach/chat", json={"fen": RUY_AFTER_CASTLING, "question": "why didn't the knight take e4?"})
+    text = "".join(e.get("text", "") for e in _events(r.text) if e["type"] == "text")
+    assert text.startswith("Nxe4 is ") and "Ruy Lopez: Open" in text

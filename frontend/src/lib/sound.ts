@@ -1,11 +1,16 @@
 /* Synthesised board sounds (no audio assets, no licences). The context is created on the first
-   user gesture because browsers refuse autoplay. */
+   user gesture because browsers refuse autoplay. Pieces are a soft wooden "tock"; notices are
+   mallet tones (marimba-like: fundamental plus a quiet fourth partial). No square or saw waves. */
 
 export type SoundName =
   | "move" | "capture" | "check" | "castle" | "promote" | "illegal"
   | "win" | "lose" | "draw" | "notify" | "lowTime" | "correct" | "wrong";
 
+const MASTER_GAIN = 0.35; // the loudest sound at volume 1 stays well below a notification ping
+const MASTER_LOWPASS_HZ = 5200; // takes the edge off every transient
+
 let ctx: AudioContext | null = null;
+let out: AudioNode | null = null;
 let enabled = true;
 let volume = 0.8;
 
@@ -14,58 +19,85 @@ export function setSoundVolume(v: number): void { volume = Math.max(0, Math.min(
 
 function context(): AudioContext | null {
   if (typeof window === "undefined" || !("AudioContext" in window)) return null;
-  if (!ctx) ctx = new AudioContext();
+  if (!ctx) {
+    ctx = new AudioContext();
+    const master = ctx.createGain();
+    master.gain.value = MASTER_GAIN;
+    const soften = ctx.createBiquadFilter();
+    soften.type = "lowpass";
+    soften.frequency.value = MASTER_LOWPASS_HZ;
+    master.connect(soften).connect(ctx.destination);
+    out = master;
+  }
   if (ctx.state === "suspended") void ctx.resume();
   return ctx;
 }
 
-function tone(c: AudioContext, freq: number, start: number, dur: number, type: OscillatorType, gain: number) {
+const jitter = () => 1 + (Math.random() - 0.5) * 0.06;
+
+/** A sine voice with a soft attack and an exponential tail; `drop` glides the pitch down. */
+function voice(c: AudioContext, freq: number, start: number, dur: number, gain: number, drop = 1, attack = 0.004) {
   const o = c.createOscillator();
   const g = c.createGain();
-  o.type = type;
+  o.type = "sine";
   o.frequency.setValueAtTime(freq, start);
+  if (drop !== 1) o.frequency.exponentialRampToValueAtTime(freq * drop, start + dur);
   g.gain.setValueAtTime(0, start);
-  g.gain.linearRampToValueAtTime(gain * volume, start + 0.004);
+  g.gain.linearRampToValueAtTime(gain * volume, start + attack);
   g.gain.exponentialRampToValueAtTime(0.0001, start + dur);
-  o.connect(g).connect(c.destination);
+  o.connect(g).connect(out!);
   o.start(start);
   o.stop(start + dur + 0.02);
 }
 
-function knock(c: AudioContext, start: number, dur: number, cutoff: number, gain: number) {
+/** The felt-on-wood touch: a very short band-passed noise burst. */
+function touch(c: AudioContext, start: number, centre: number, gain: number) {
+  const dur = 0.03;
   const n = Math.floor(c.sampleRate * dur);
   const buf = c.createBuffer(1, n, c.sampleRate);
   const d = buf.getChannelData(0);
-  for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / n, 3);
+  for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / n, 4);
   const src = c.createBufferSource();
   src.buffer = buf;
   const f = c.createBiquadFilter();
-  f.type = "lowpass";
-  f.frequency.value = cutoff;
+  f.type = "bandpass";
+  f.frequency.value = centre;
+  f.Q.value = 1.4;
   const g = c.createGain();
   g.gain.value = gain * volume;
-  src.connect(f).connect(g).connect(c.destination);
+  src.connect(f).connect(g).connect(out!);
   src.start(start);
+}
+
+function tock(c: AudioContext, start: number, pitch: number, weight: number) {
+  const j = jitter();
+  touch(c, start, 1300 * j, 0.5 * weight);
+  voice(c, pitch * j, start, 0.09, 0.55 * weight, 0.6);
+}
+
+function mallet(c: AudioContext, freq: number, start: number, dur: number, gain: number) {
+  voice(c, freq, start, dur, gain, 1, 0.008);
+  voice(c, freq * 4, start, dur * 0.25, gain * 0.12, 1, 0.003);
 }
 
 export function play(name: SoundName): void {
   if (!enabled) return;
   const c = context();
   if (!c) return;
-  const t = c.currentTime;
+  const t = c.currentTime + 0.005;
   switch (name) {
-    case "move": knock(c, t, 0.07, 1800, 0.9); tone(c, 180, t, 0.05, "sine", 0.25); break;
-    case "capture": knock(c, t, 0.12, 900, 1.1); tone(c, 110, t, 0.09, "triangle", 0.35); break;
-    case "castle": knock(c, t, 0.06, 1800, 0.8); knock(c, t + 0.09, 0.06, 1500, 0.7); break;
-    case "check": knock(c, t, 0.07, 1800, 0.8); tone(c, 880, t, 0.12, "sine", 0.18); tone(c, 1320, t + 0.02, 0.1, "sine", 0.1); break;
-    case "promote": [523, 659, 784, 1047].forEach((f, i) => tone(c, f, t + i * 0.06, 0.18, "sine", 0.2)); break;
-    case "illegal": tone(c, 160, t, 0.12, "square", 0.08); tone(c, 120, t + 0.1, 0.12, "square", 0.08); break;
-    case "win": [523, 659, 784, 1047, 1319].forEach((f, i) => tone(c, f, t + i * 0.09, 0.35, "triangle", 0.22)); break;
-    case "lose": [392, 349, 311, 262].forEach((f, i) => tone(c, f, t + i * 0.14, 0.35, "triangle", 0.2)); break;
-    case "draw": [440, 440, 440].forEach((f, i) => tone(c, f, t + i * 0.16, 0.2, "sine", 0.18)); break;
-    case "notify": tone(c, 987, t, 0.1, "sine", 0.15); tone(c, 1318, t + 0.1, 0.16, "sine", 0.15); break;
-    case "lowTime": tone(c, 1200, t, 0.06, "square", 0.06); tone(c, 1200, t + 0.12, 0.06, "square", 0.06); break;
-    case "correct": tone(c, 784, t, 0.1, "sine", 0.18); tone(c, 1175, t + 0.08, 0.2, "sine", 0.18); break;
-    case "wrong": tone(c, 220, t, 0.18, "sawtooth", 0.06); break;
+    case "move": tock(c, t, 340, 1); break;
+    case "capture": tock(c, t, 250, 1.2); touch(c, t + 0.035, 900, 0.25); break;
+    case "castle": tock(c, t, 340, 0.9); tock(c, t + 0.085, 300, 0.8); break;
+    case "check": tock(c, t, 340, 1); mallet(c, 880, t + 0.03, 0.35, 0.22); break;
+    case "promote": tock(c, t, 340, 0.9); mallet(c, 659, t + 0.05, 0.3, 0.22); mallet(c, 988, t + 0.15, 0.45, 0.2); break;
+    case "illegal": voice(c, 170, t, 0.14, 0.35, 0.8); break;
+    case "win": [523, 659, 784, 1047].forEach((f, i) => mallet(c, f, t + i * 0.11, 0.7, 0.24)); break;
+    case "lose": mallet(c, 440, t, 0.5, 0.22); mallet(c, 349, t + 0.18, 0.8, 0.2); break;
+    case "draw": mallet(c, 523, t, 0.45, 0.2); mallet(c, 523, t + 0.2, 0.6, 0.18); break;
+    case "notify": mallet(c, 784, t, 0.4, 0.2); break;
+    case "lowTime": touch(c, t, 2000, 0.35); touch(c, t + 0.16, 2000, 0.3); break;
+    case "correct": mallet(c, 784, t, 0.3, 0.22); mallet(c, 1175, t + 0.09, 0.45, 0.2); break;
+    case "wrong": mallet(c, 330, t, 0.3, 0.2); mallet(c, 294, t + 0.12, 0.45, 0.18); break;
   }
 }

@@ -1,73 +1,80 @@
 /* Design tokens. Colour is state, not hierarchy: hierarchy comes from weight, size, spacing.
-   A new hex in a component rule is a defect unless it is a state with no token here. */
+   A new hex in a component rule is a defect unless it is a state with no token here.
+   Identity: an analysis room at night. Ink-slate ground, bone ink, brass for the one action
+   that matters on a screen; the board is bone on ink-teal. */
 :root {
   color-scheme: dark;
 
-  /* Surfaces: chess.com-like warm dark neutrals */
-  --bg: #262421;
-  --bg-elev: #302e2b;
-  --bg-elev-2: #3a3734;
-  --bg-hover: #45423e;
-  --line: #3f3c38;
-  --line-strong: #57534e;
+  /* Surfaces: ink-slate, cool, so the warm board and brass carry the eye */
+  --bg: #161e27;
+  --bg-elev: #1d2733;
+  --bg-elev-2: #253140;
+  --bg-hover: #2d3b4c;
+  --line: #2a3746;
+  --line-strong: #3b4b5e;
 
   /* Ink */
-  --ink: #e8e6e3;
-  --ink-2: #b9b6b1;
-  --ink-3: #8b8780;
-  --ink-inverse: #1b1a18;
+  --ink: #ece6d9;
+  --ink-2: #a8b1bb;
+  --ink-3: #7c8793;
+  --ink-inverse: #161e27;
 
-  /* Brand */
-  --brand: #81b64c;
-  --brand-strong: #95bb4a;
-  --brand-ink: #14200a;
-  --accent: #f5c242;
+  /* Brand: brass, the colour of a tournament clock's case */
+  --brand: #d3a458;
+  --brand-strong: #e0b56b;
+  --brand-ink: #1d1608;
+  --accent: #7db3c5;
 
-  /* States (also the move classification colours) */
-  --c-brilliant: #1baca6;
-  --c-great: #5c8bb0;
-  --c-best: #81b64c;
-  --c-excellent: #96bc4b;
-  --c-good: #96af8b;
-  --c-book: #a88865;
-  --c-inaccuracy: #f7c631;
-  --c-mistake: #ffa459;
-  --c-miss: #ff7769;
-  --c-blunder: #fa412d;
-  --c-forced: #96af8b;
-  --danger: #fa412d;
-  --warn: #f7c631;
-  --ok: #81b64c;
-  --info: #5c8bb0;
+  /* The two sides of the board, wherever a component paints "White" or "Black" */
+  --side-white: #f2eee6;
+  --side-black: #10161d;
 
-  /* Board themes (overridden by [data-board]) */
-  --sq-light: #eeeed2;
-  --sq-dark: #769656;
-  --sq-coord-on-light: #769656;
-  --sq-coord-on-dark: #eeeed2;
-  --sq-last: rgba(255, 255, 51, 0.5);
-  --sq-selected: rgba(255, 255, 51, 0.5);
-  --sq-dest: rgba(0, 0, 0, 0.14);
-  --sq-check: radial-gradient(circle at center, rgba(255, 0, 0, 0.95) 0%, rgba(231, 0, 0, 0.75) 25%, rgba(169, 0, 0, 0) 89%);
-  --sq-premove: rgba(20, 30, 85, 0.5);
-  --sq-hover: rgba(255, 255, 255, 0.35);
-  --arrow-green: rgba(21, 120, 27, 0.85);
-  --arrow-red: rgba(224, 32, 32, 0.85);
-  --arrow-blue: rgba(0, 48, 136, 0.85);
-  --arrow-yellow: rgba(229, 178, 0, 0.85);
+  /* States (also the move classification colours, in the order players know them) */
+  --c-brilliant: #4cc3c9;
+  --c-great: #86a9e6;
+  --c-best: #8dc07e;
+  --c-excellent: #a5c88e;
+  --c-good: #a4b3a0;
+  --c-book: #c9a97c;
+  --c-inaccuracy: #e6c35c;
+  --c-mistake: #ec964f;
+  --c-miss: #e8806f;
+  --c-blunder: #e5534b;
+  --c-forced: #a4b3a0;
+  --danger: #e5534b;
+  --warn: #e6c35c;
+  --ok: #8dc07e;
+  --info: #86a9e6;
 
-  /* Type */
-  --font: "Inter", "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
+  /* Board: "ink" is the default theme (overridden by [data-board]) */
+  --sq-light: #e7decb;
+  --sq-dark: #5a7a8c;
+  --sq-coord-on-light: #5a7a8c;
+  --sq-coord-on-dark: #e7decb;
+  --sq-last: rgba(214, 170, 84, 0.55);
+  --sq-selected: rgba(214, 170, 84, 0.7);
+  --sq-dest: rgba(16, 22, 29, 0.24);
+  --sq-check: radial-gradient(circle at center, rgba(229, 83, 75, 0.95) 0%, rgba(229, 83, 75, 0.7) 28%, rgba(229, 83, 75, 0) 88%);
+  --sq-premove: rgba(70, 120, 190, 0.5);
+  --sq-hover: rgba(255, 255, 255, 0.4);
+  --arrow-green: rgba(98, 160, 90, 0.88);
+  --arrow-red: rgba(214, 74, 66, 0.88);
+  --arrow-blue: rgba(70, 120, 190, 0.88);
+  --arrow-yellow: rgba(214, 170, 84, 0.92);
+
+  /* Type: a grotesk for the interface, a book serif for titles, numbers and annotation glyphs */
+  --font: "Schibsted Grotesk Variable", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-display: "Newsreader Variable", Georgia, "Times New Roman", serif;
   --font-mono: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
-  --fs-xs: 11px;
-  --fs-sm: 13px;
-  --fs-md: 14px;
-  --fs-lg: 16px;
-  --fs-xl: 20px;
-  --fs-2xl: 26px;
-  --fs-3xl: 34px;
+  --fs-xs: 12px;
+  --fs-sm: 13.5px;
+  --fs-md: 15px;
+  --fs-lg: 18px;
+  --fs-xl: 21px;
+  --fs-2xl: 28px;
+  --fs-3xl: 40px;
 
-  /* Space & shape */
+  /* Space & shape: tighter radii than a consumer app; this is a study */
   --s-1: 4px;
   --s-2: 8px;
   --s-3: 12px;
@@ -75,33 +82,21 @@
   --s-5: 24px;
   --s-6: 32px;
   --s-7: 48px;
-  --r-sm: 6px;
-  --r-md: 10px;
-  --r-lg: 16px;
-  --shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --r-sm: 4px;
+  --r-md: 6px;
+  --r-lg: 10px;
+  --shadow: 0 12px 32px rgba(5, 10, 16, 0.5);
+  --shadow-sm: 0 1px 3px rgba(5, 10, 16, 0.55);
 
   --anim: 180ms;
-  --nav-w: 200px;
+  --nav-w: 216px;
 }
 
-[data-board="brown"] {
-  --sq-light: #f0d9b5;
-  --sq-dark: #b58863;
-  --sq-coord-on-light: #b58863;
-  --sq-coord-on-dark: #f0d9b5;
-}
-[data-board="blue"] {
-  --sq-light: #dee3e6;
-  --sq-dark: #8ca2ad;
-  --sq-coord-on-light: #8ca2ad;
-  --sq-coord-on-dark: #dee3e6;
-}
-[data-board="purple"] {
-  --sq-light: #e6dbf0;
-  --sq-dark: #8f6fb0;
-  --sq-coord-on-light: #8f6fb0;
-  --sq-coord-on-dark: #e6dbf0;
+[data-board="boxwood"] {
+  --sq-light: #ecdcb8;
+  --sq-dark: #a77d58;
+  --sq-coord-on-light: #a77d58;
+  --sq-coord-on-dark: #ecdcb8;
 }
 [data-board="walnut"] {
   --sq-light: #c9b48a;
@@ -109,6 +104,25 @@
   --sq-coord-on-light: #8a6240;
   --sq-coord-on-dark: #c9b48a;
 }
+[data-board="slate"] {
+  --sq-light: #dde2e5;
+  --sq-dark: #7f95a3;
+  --sq-coord-on-light: #7f95a3;
+  --sq-coord-on-dark: #dde2e5;
+}
+
+/* One home for the classification colour: every badge, border and graph mark reads --cls. */
+.cls-brilliant { --cls: var(--c-brilliant); }
+.cls-great { --cls: var(--c-great); }
+.cls-best { --cls: var(--c-best); }
+.cls-excellent { --cls: var(--c-excellent); }
+.cls-good { --cls: var(--c-good); }
+.cls-book { --cls: var(--c-book); }
+.cls-inaccuracy { --cls: var(--c-inaccuracy); }
+.cls-mistake { --cls: var(--c-mistake); }
+.cls-miss { --cls: var(--c-miss); }
+.cls-blunder { --cls: var(--c-blunder); }
+.cls-forced { --cls: var(--c-forced); }
 
 @media (prefers-reduced-motion: reduce) {
   :root { --anim: 0ms; }

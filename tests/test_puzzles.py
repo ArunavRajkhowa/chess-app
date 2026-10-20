@@ -127,3 +127,11 @@ def test_loader_replays_puzzles_and_drops_broken_ones(tmp_path, monkeypatch, cap
     dropped = [r.getMessage() for r in caplog.records if "dropped puzzle" in r.getMessage()]
     assert len(dropped) == 4 and all("mixed.jsonl" in m for m in dropped)
     assert any("illegal" in m for m in dropped) and any("ends-on-reply" in m for m in dropped)
+
+
+def test_a_puzzle_says_its_goal_and_its_motif_links_a_lesson(client):
+    themes = {t["key"]: t for t in client.get("/api/puzzles/themes").json()["themes"]}
+    assert themes["backRankMate"]["motif"] and themes["backRankMate"]["lesson"]["id"] == "b1m2l4"
+    assert not themes["mateIn1"]["motif"] and not themes["short"]["motif"]
+    assert client.get("/api/puzzles/p1").json()["puzzle"]["goal"] == "Mate in 1"
+    assert client.get("/api/puzzles/p3").json()["puzzle"]["goal"] == "Find the best move"

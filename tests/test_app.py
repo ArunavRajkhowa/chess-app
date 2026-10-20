@@ -30,3 +30,6 @@ def test_static_fallback_stays_inside_the_build_and_api_misses_are_404(tmp_path,
         assert "## Credits" not in r.text  # never a file outside frontend/dist, such as the repo README
         assert c.get("/api/no-such-route").status_code == 404
         assert c.get("/learn").status_code == 200  # client-side routes still get index.html
+        c.cookies.clear()  # a first visit
+        assert "player=" in c.get("/").headers["set-cookie"]  # the page brings the guest cookie
+        assert "set-cookie" not in c.get("/api/account").headers  # so the app's first calls reuse it

@@ -1,4 +1,5 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { Analytics } from "./components/account/Analytics";
 import { Shell } from "./components/shell/Shell";
 import { BoardDemo } from "./pages/BoardDemo";
 import { HomePage } from "./pages/HomePage";
@@ -9,6 +10,7 @@ import { SettingsPage } from "./pages/SettingsPage";
 import { CoachPage } from "./pages/CoachPage";
 import { LearnPage } from "./pages/LearnPage";
 import { LessonPage } from "./pages/LessonPage";
+import { LearnReviewPage } from "./pages/LearnReviewPage";
 import { GamesPage } from "./pages/GamesPage";
 import { InsightsPage } from "./pages/InsightsPage";
 import { EndgamesPage } from "./pages/EndgamesPage";
@@ -22,6 +24,7 @@ import "./styles/pages.css";
 export default function App() {
   return (
     <BrowserRouter>
+      <Analytics />
       <Routes>
         <Route path="/dev/board" element={<BoardDemo />} />
         <Route element={<Shell />}>
@@ -30,8 +33,10 @@ export default function App() {
           <Route path="/play/:gameId" element={<PlayPage />} />
           <Route path="/puzzles" element={<PuzzlesPage />} />
           <Route path="/learn" element={<LearnPage />} />
+          <Route path="/learn/review" element={<LearnReviewPage />} />
           <Route path="/learn/:lessonId" element={<LessonPage />} />
           <Route path="/openings" element={<OpeningsPage />} />
+          <Route path="/openings/courses/:courseId" element={<OpeningsPage />} />
           <Route path="/games" element={<GamesPage />} />
           <Route path="/games/:gameId" element={<GamesPage />} />
           <Route path="/insights" element={<InsightsPage />} />
