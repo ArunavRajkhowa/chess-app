@@ -46,7 +46,9 @@ When two approaches both work, take the one a new developer follows in one read.
    frame's `move` is replayed from the previous frame, so the loader fills in `fen`, `san` and
    `uci`; a lecture's spoken claims ("wins the queen") are checked by eye against engine evals
    when the script is written.
-4. **Every threshold has one home.** Move classification and accuracy constants live in
+4. **Every threshold has one home.** A puzzle's rating is `backend/puzzles/difficulty.py` (the
+   generator, the mistake puzzles and the recalibration script all call it); the rating step cap
+   is in `glicko.py`. Move classification and accuracy constants live in
    [backend/review/classify.py](backend/review/classify.py); the browser copy in
    `frontend/src/lib/review/classify.ts` mirrors the drop ladder for live feedback and nothing more.
    Bot strength lives in [backend/bots/roster.py](backend/bots/roster.py) (depth, temperature,
@@ -116,9 +118,12 @@ React + TypeScript + Vite in `frontend/`, plain CSS with tokens (`src/styles/tok
   nothing about games, puzzles or lessons; pages decide what is movable.
 - **Motion answers a gesture**: piece moves animate through one `transform` transition under
   `--anim`, which `prefers-reduced-motion` sets to zero.
-- Sounds are synthesised (`src/lib/sound.ts`); no audio assets, no licences. Narration is the
-  browser's speech synthesis (`src/lib/speech.ts`): sentence by sentence (Chrome cuts long
-  utterances), never required (a lecture advances on a reading timer when no voice speaks).
+- Sounds are synthesised (`src/lib/sound.ts`); no audio assets, no licences. Narration
+  (`src/lib/speech.ts`) asks the server for a sentence's MP3 first (`backend/narration.py`, a free
+  neural voice cached under `data/audio/`, never reached by tests) and falls back to the browser's
+  speech synthesis sentence by sentence; nothing requires a voice (a lecture advances on a reading
+  timer). A lesson's teaching sections play as one video (`LessonPage` groups them); a task stops
+  it and `YourTurn` says what is asked.
 - **Teaching surfaces share one player.** `LecturePlayer` plays lecture frames, lesson model
   games and master games alike, with the study's "why / why not" panel and playable variations
   when a study exists; `Tasks.tsx` holds the challenge (hint ladder, engine refutation of a wrong

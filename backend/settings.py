@@ -38,6 +38,10 @@ class Settings(BaseSettings):
     ANTHROPIC_API_KEY: str = ""
     ANTHROPIC_MODEL: str = "claude-fable-5-1"
     COACH_MAX_TOKENS: int = 2048
+    # Narration audio through Microsoft Edge's free neural voices (the edge-tts client); off, or
+    # unreachable, the browser's own voices speak instead.
+    NARRATION_TTS: bool = True
+    NARRATION_VOICE: str = "en-GB-RyanNeural"
     COACH_EFFORT: str = "medium"  # Anthropic only
 
     # Storage. A local SQLite file, or a Turso database when TURSO_DATABASE_URL is set

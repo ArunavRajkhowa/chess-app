@@ -50,6 +50,15 @@
 .quiz-options button { text-align: left; }
 .quiz-options button.right { border-color: var(--ok); background: color-mix(in srgb, var(--ok) 18%, transparent); }
 .quiz-options button.wrong { border-color: var(--danger); background: color-mix(in srgb, var(--danger) 18%, transparent); }
+.your-turn { display: flex; flex-direction: column; gap: 4px; padding: 10px 12px; border-radius: var(--r-md); background: color-mix(in srgb, var(--brand) 14%, transparent); border-left: 3px solid var(--brand); }
+.your-turn-lead { color: var(--brand); text-transform: uppercase; font-size: var(--fs-xs); font-weight: 700; letter-spacing: 0.06em; }
+.your-turn strong { font-size: var(--fs-md); }
+.learn-filters { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-2); }
+.learn-search { display: flex; align-items: center; gap: 6px; flex: 1 1 240px; }
+.learn-search .input { flex: 1; }
+.learn-topic { border: 1px solid transparent; background: transparent; cursor: pointer; border-radius: var(--r-sm); padding: 2px 6px; color: inherit; font: inherit; }
+.learn-topic:hover { background: var(--bg-hover); }
+.learn-topic.on { border-color: var(--brand); background: color-mix(in srgb, var(--brand) 14%, transparent); }
 .task-banner { padding: 8px 10px; border-radius: var(--r-sm); font-size: var(--fs-sm); background: var(--bg-elev-2); }
 .task-banner.ok { background: color-mix(in srgb, var(--ok) 18%, transparent); }
 .task-banner.bad { background: color-mix(in srgb, var(--danger) 18%, transparent); }

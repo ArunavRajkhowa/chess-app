@@ -24,7 +24,7 @@ Android, iPhone and desktop Chrome as an app.
 |---|---|---|
 | Lessons | 185 lessons in 49 modules, bands 0 (rules) to 8 (master), 1,037 sections, 20 narrated lectures | `scripts/validate_lessons.py --engine`: every challenge is the engine's best move or as good; every lecture move is replayed |
 | Master games | 125 games in 27 themes, 561 key-moment notes, every move studied by the engine (three candidates at depth 14, reasons, threats, why-not lines) | replayed at load; a test replays every move line in every note; `scripts/annotate_games.py` caches the studies under `data/study/` |
-| Puzzles | 558, rated 400-2000 | replayed at load; every solver move has one solution at depth 16 |
+| Puzzles | 558, rated 400-1800 by the puzzle's shape (`backend/puzzles/difficulty.py`: a quiet first move, a sacrifice or a deflection is harder than a free capture) | replayed at load; every solver move has one solution at depth 16; `scripts/recalibrate_puzzles.py` rewrites the ratings |
 | Endgames | 24 positions in five themes | engine goal check; no piece hangs at the start |
 | Openings | 3,865 named lines (lichess, CC0) | parsed at load |
 | Bots | 20, from 250 to 3200 | `data/bot_calibration.json` (four games each against Stockfish) |
@@ -86,11 +86,14 @@ tokens on thought first. If answers come back empty, raise `COACH_MAX_TOKENS`.
 
 ### Narration
 
-Lectures, model games and master games are read aloud by the browser's own speech synthesis
-(the Web Speech API): nothing is downloaded and nothing is sent anywhere. Settings → Narration
-turns it off, sets the speed and picks a voice; the best English voice the browser has is used
-by default (Edge's "Natural" voices and Chrome's Google voices sound best). Without voices, a
-lecture still plays on a reading timer with captions.
+Every lesson plays as one narrated video: the teaching parts run on their own, the pieces move
+and the arrows appear as the voice explains, and the flow stops only when it is your move, which
+it says out loud. The voice is a free neural one (Microsoft Edge's, through the `edge-tts`
+client): each sentence is fetched once and cached as MP3 under `data/audio/`, so only the first
+listener of a sentence waits a second. `NARRATION_TTS=false`, or no internet, and the browser's
+own speech synthesis speaks instead (Edge's "Natural" voices sound best); without any voice the
+video still runs on a reading timer with captions. Settings → Narration sets the speed and the
+fallback voice.
 
 ## On your phone
 

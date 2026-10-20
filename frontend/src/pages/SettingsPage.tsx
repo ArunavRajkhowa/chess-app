@@ -22,10 +22,10 @@ function NarrationCard() {
   if (!speechAvailable()) return null;
   return (
     <div className="card stack" data-testid="narration">
-      <div className="card-title"><h3>Narration</h3><span className="faint">lessons and master games read aloud</span></div>
+      <div className="card-title"><h3>Narration</h3><span className="faint">lessons and games read aloud; the server's neural voice when it has one, else this browser's</span></div>
       <label className="row"><input type="checkbox" checked={s.narration} onChange={(e) => s.set({ narration: e.target.checked })} /> Narration on</label>
       <label className="row">Speed <input type="range" min={0.7} max={1.4} step={0.1} value={s.narrationRate} onChange={(e) => s.set({ narrationRate: Number(e.target.value) })} /> <span className="faint num">{s.narrationRate.toFixed(1)}×</span></label>
-      <label className="row">Voice
+      <label className="row">Fallback voice
         <select className="select" value={s.narrationVoice} onChange={(e) => s.set({ narrationVoice: e.target.value })}>
           <option value="">Automatic</option>
           {voices.map((v) => <option key={v.name} value={v.name}>{v.name}</option>)}

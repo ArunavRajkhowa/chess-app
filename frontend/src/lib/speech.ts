@@ -1,12 +1,14 @@
-/* Narration through the browser's own speech synthesis (Web Speech API): no audio assets, no
-   server, no rate limit. Long text is spoken sentence by sentence because Chrome cuts one long
-   utterance off after about fifteen seconds. Nothing here throws: a browser without voices
-   resolves at once, so a lecture keeps moving on its own reading timer. */
+/* Narration. A sentence is first asked from the server (a neural voice, cached as MP3); when the
+   server has no audio for it, the browser's own speech synthesis speaks it, sentence by sentence
+   because Chrome cuts one long utterance off after about fifteen seconds. Nothing here throws: a
+   browser without voices resolves at once, so a lecture keeps moving on its own reading timer. */
 
 let enabled = true;
 let rate = 1;
 let voiceName = "";
 let serial = 0; // the id of the latest speak(); an older one stops queueing sentences
+let current: HTMLAudioElement | null = null;
+const audio = new Map<string, Promise<string | null>>(); // text → object URL, or null when the server has none
 
 export function setNarration(on: boolean, speed: number, voice: string): void {
   enabled = on;
@@ -16,10 +18,10 @@ export function setNarration(on: boolean, speed: number, voice: string): void {
 }
 
 export function speechAvailable(): boolean {
-  return typeof window !== "undefined" && "speechSynthesis" in window;
+  return typeof window !== "undefined" && ("speechSynthesis" in window || "Audio" in window);
 }
 
-const synth = () => (speechAvailable() ? window.speechSynthesis : null);
+const synth = () => (typeof window !== "undefined" && "speechSynthesis" in window ? window.speechSynthesis : null);
 
 export function listVoices(): SpeechSynthesisVoice[] {
   return (synth()?.getVoices() ?? []).filter((v) => v.lang.toLowerCase().startsWith("en"));
@@ -46,20 +48,45 @@ function sentences(text: string): string[] {
   return text.replace(/\s+/g, " ").match(/[^.!?]+[.!?]+["')\]]*|[^.!?]+$/g)?.map((s) => s.trim()).filter(Boolean) ?? [text];
 }
 
-/** Speaks the text; resolves true when it was spoken, false when the browser could not speak it. */
-export function speak(text: string): Promise<boolean> {
+function fetchAudio(text: string): Promise<string | null> {
+  const key = text.trim();
+  let p = audio.get(key);
+  if (!p) {
+    p = fetch(`/api/narration?text=${encodeURIComponent(key)}`)
+      .then(async (r) => (r.status === 200 ? URL.createObjectURL(await r.blob()) : null))
+      .catch(() => null);
+    audio.set(key, p);
+  }
+  return p;
+}
+
+/** Asks the server for a sentence's audio ahead of time, so the next frame starts without a gap. */
+export function prefetch(text: string): void {
+  if (enabled && text.trim() && typeof fetch !== "undefined") void fetchAudio(text);
+}
+
+function playUrl(url: string, id: number): Promise<boolean> {
+  return new Promise((resolve) => {
+    const el = new Audio(url);
+    el.playbackRate = rate;
+    current = el;
+    el.onended = () => { if (current === el) current = null; resolve(true); };
+    el.onerror = () => { if (current === el) current = null; resolve(false); };
+    el.play().catch(() => resolve(false)); // autoplay refused before any gesture: the caller falls back to its timer
+    if (id !== serial) resolve(true);
+  });
+}
+
+function speakBrowser(text: string, id: number): Promise<boolean> {
   const s = synth();
-  if (!enabled || !s || !text.trim()) return Promise.resolve(false);
   const voice = pickVoice();
-  if (!voice) return Promise.resolve(false);
-  const id = ++serial;
+  if (!s || !voice) return Promise.resolve(false);
   s.cancel();
   return new Promise((resolve) => {
     const parts = sentences(text);
     let i = 0;
     const next = () => {
-      if (id !== serial) return resolve(true);
-      if (i >= parts.length) return resolve(true);
+      if (id !== serial || i >= parts.length) return resolve(true);
       const u = new SpeechSynthesisUtterance(parts[i++]);
       u.voice = voice;
       u.lang = voice.lang;
@@ -74,9 +101,24 @@ export function speak(text: string): Promise<boolean> {
   });
 }
 
+/** Speaks the text; resolves true when it was spoken, false when nothing could speak it. */
+export async function speak(text: string): Promise<boolean> {
+  if (!enabled || !text.trim()) return false;
+  const id = ++serial;
+  stopCurrent();
+  const url = await fetchAudio(text);
+  if (id !== serial) return true;
+  return url ? playUrl(url, id) : speakBrowser(text, id);
+}
+
+function stopCurrent(): void {
+  if (current) { current.pause(); current = null; }
+  synth()?.cancel();
+}
+
 export function stopSpeech(): void {
   serial++;
-  synth()?.cancel();
+  stopCurrent();
 }
 
 const PIECE_WORDS: Record<string, string> = { K: "king", Q: "queen", R: "rook", B: "bishop", N: "knight" };

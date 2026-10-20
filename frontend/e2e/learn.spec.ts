@@ -1,4 +1,11 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
+
+/** A lesson's teaching part plays as a video; the tests skip to its end and take the "your turn" button. */
+async function skipWatch(page: Page) {
+  await expect(page.getByTestId("lecture")).toBeVisible();
+  await page.getByTestId("lecture-end").click();
+  await page.getByTestId("continue").click();
+}
 
 test("open the curriculum, complete a lesson with a challenge, a quiz and a drill", async ({ page }) => {
   await page.goto("/learn");
@@ -8,8 +15,9 @@ test("open the curriculum, complete a lesson with a challenge, a quiz and a dril
   await page.getByTestId("band-0").click();
   await page.getByTestId("lesson-b0m3l2").click();
   await expect(page.getByTestId("lesson")).toBeVisible();
-  await page.getByTestId("continue").click(); // text section
-  // challenge: back-rank mate Ra8#
+  await skipWatch(page); // the text plays as a video
+  // challenge: back-rank mate Ra8#, announced as the learner's turn
+  await expect(page.getByTestId("your-turn")).toContainText("White to play");
   await expect(page.getByTestId("challenge-prompt")).toContainText("Mate in one");
   await page.locator('[data-square="a1"].sq').click();
   await page.locator('[data-square="a2"].sq').click(); // wrong move: the engine says what it runs into
@@ -45,10 +53,25 @@ test("open the curriculum, complete a lesson with a challenge, a quiz and a dril
   await expect(page.getByTestId("review-done")).toContainText("Nothing due");
 });
 
+test("learn filters narrow the curriculum to a flat list and sort it", async ({ page }) => {
+  await page.goto("/learn");
+  await page.getByTestId("learn-search").fill("opposition");
+  await expect(page.getByTestId("learn-results")).toContainText("lesson");
+  await expect(page.getByTestId("lesson-b2m4l1")).toBeVisible();
+  await page.getByTestId("learn-search").fill("");
+  await page.getByTestId("strand-endgames").click();
+  await page.getByTestId("learn-sort").selectOption("short");
+  const minutes = await page.getByTestId("learn-results").locator(".lesson-row .num").last().allInnerTexts();
+  expect(minutes.length).toBeGreaterThan(0);
+  await page.getByTestId("learn-clear").click();
+  await expect(page.getByTestId("band-0")).toBeVisible();
+});
+
 test("a narrated lecture plays its frames on the board and the hint ladder marks the piece", async ({ page }) => {
-  await page.goto("/learn/b1m5l1"); // "is it safe?": a four-frame lecture with two moves
+  await page.goto("/learn/b1m5l1"); // "is it safe?": a lecture with two moves, then the text, as one video
   await expect(page.getByTestId("lecture")).toBeVisible();
   await expect(page.getByTestId("lecture-caption")).toContainText("Before every move");
+  await page.getByTestId("lecture-play").click(); // pause the autoplay so the steps below are ours
   await page.getByTestId("lecture-next").click();
   await page.getByTestId("lecture-next").click();
   await expect(page.getByTestId("lecture-caption")).toContainText("Knight takes e4");
@@ -62,9 +85,8 @@ test("a narrated lecture plays its frames on the board and the hint ladder marks
   await page.locator('[data-square="d8"].sq').click(); // king takes the bishop
   await expect(page.getByTestId("explore")).toBeVisible();
   await expect(page.getByTestId("explore-verdict")).toBeVisible({ timeout: 20_000 });
-  await page.getByTestId("continue").click();
-  await page.getByTestId("continue").click(); // the text step
-  await page.getByTestId("continue").click(); // the position step
+  await skipWatch(page); // the rest of the video: text and position
+  await expect(page.getByTestId("your-turn")).toContainText("A question");
   await page.getByTestId("quiz-option-1").click();
   await page.getByTestId("continue").click();
   await expect(page.getByTestId("challenge-prompt")).toBeVisible();
@@ -75,8 +97,7 @@ test("a narrated lecture plays its frames on the board and the hint ladder marks
 
 test("a drill plays against the engine and detects stalemate", async ({ page }) => {
   await page.goto("/learn/b0m3l3");
-  await page.getByTestId("continue").click(); // text
-  await page.getByTestId("continue").click(); // position
+  await skipWatch(page); // text and position, one video
   await page.getByTestId("quiz-option-1").click();
   await page.getByTestId("continue").click();
   await page.getByTestId("quiz-option-0").click();
@@ -91,9 +112,7 @@ test("a drill plays against the engine and detects stalemate", async ({ page }) 
 
 test("show solution plays the answer without counting it; a quiz board faces the side to move", async ({ page }) => {
   await page.goto("/learn/b0m3l1");
-  await page.getByTestId("continue").click(); // lecture
-  await page.getByTestId("continue").click(); // text
-  await page.getByTestId("continue").click(); // position
+  await skipWatch(page); // lecture, text and position, one video
   await page.getByRole("button", { name: "Show solution" }).click(); // Kd7, Black to move
   await expect(page.getByTestId("task-revealed")).toContainText("The solution: Kd7");
   await expect(page.getByTestId("task-ok")).toHaveCount(0);
@@ -135,8 +154,9 @@ test("vision trainer says which side is at the bottom", async ({ page }) => {
 
 test("a model game says why each move was played and plays an alternative line on request", async ({ page }) => {
   await page.goto("/learn/b1m4l4"); // Fool's mate: four plies, so the study is quick
-  await page.getByTestId("continue").click(); // the text step
+  await skipWatch(page); // the text step
   await expect(page.getByTestId("lecture")).toBeVisible();
+  await page.getByTestId("lecture-play").click(); // pause the game's autoplay
   await page.getByTestId("lecture-next").click();
   await expect(page.getByTestId("why")).toBeVisible({ timeout: 90_000 }); // the engine studies the game on first sight
   await expect(page.getByTestId("why")).toContainText("Why f3");
