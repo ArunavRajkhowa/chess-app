@@ -1,0 +1,136 @@
+{
+  "id": "sicilian-dragon",
+  "name": "Sicilian Defence: Dragon",
+  "side": "black",
+  "openings": ["Sicilian Defense"],
+  "summary": "1.e4 c5 and ...g6: Black puts the bishop on g7, where it aims down the long diagonal at White's queenside. Black uses the half-open c-file, the c4 square and the exchange sacrifice on c3; White often castles long and storms the kingside. The course also covers the two common ways White avoids the main lines.",
+  "ideas": {
+    "black": [
+      "Fianchetto the bishop to g7 and keep it: it is the Dragon's best piece.",
+      "Use the half-open c-file: ...Rc8, ...Ne5 and ...Nc4, and the exchange sacrifice ...Rxc3 against a king castled long.",
+      "Strike the centre with ...d5 when White's pieces are not ready for it.",
+      "Against 2.c3 or 3.Bb5+, develop simply and fight for d5."
+    ],
+    "white": [
+      "Castle long and storm with h4 and h5; trade the Dragon bishop with Be3, Qd2 and Bh6.",
+      "In the Classical with Be2 and O-O, play slowly: f4, Nb3 and pressure on the centre.",
+      "Avoid the main lines with 2.c3 or 3.Bb5+ and aim for a quiet centre."
+    ]
+  },
+  "structures": [
+    {"name": "Dragon pawns: a7 b7 d6 e7 f7 g6 h7", "text": "Black has a half-open c-file and a pawn on d6 that guards e5 and c5. White's half-open d-file aims at d6, which is easy to defend. The g6 pawn is the hook that White's h-pawn attacks."},
+    {"name": "Opposite-side castling", "text": "White on the queenside, Black on the kingside: both sides race with pawns and pieces. Speed matters more than material, and ...Rxc3 is Black's standard way to slow White down."}
+  ],
+  "pieces": {
+    "black": [
+      "g7 bishop: aims at d4 and b2; never trade it cheaply.",
+      "c6 knight: hits d4, then goes to e5 and c4 to block the c4 bishop's diagonal and hit the queen on d2.",
+      "c8 rook: on the c-file, ready for ...Rxc3.",
+      "Light-squared bishop: d7 or e6 in the main lines."
+    ],
+    "white": [
+      "e3 bishop: wants Bh6 to trade the g7 bishop.",
+      "d2 queen: lines up with Bh6 and the h-file.",
+      "c4 bishop: aims at f7 and the king; Black often trades it with ...Ne5 and ...Nc4.",
+      "h-pawn: h4 and h5 to open the h-file."
+    ]
+  },
+  "lines": [
+    {
+      "id": "classical",
+      "name": "Classical, 6.Be2: a quiet fight",
+      "moves": "1. e4 c5 2. Nf3 d6 3. d4 cxd4 4. Nxd4 Nf6 5. Nc3 g6 6. Be2 Bg7 7. O-O O-O 8. Be3 Nc6 9. Nb3 Be6 10. f4 Qc8",
+      "notes": {
+        "1...c5": "The Sicilian: Black fights for d4 from the side and keeps the game unbalanced.",
+        "2...d6": "Controls e5 and prepares ...Nf6 without allowing e5.",
+        "3...cxd4": "A wing pawn for a centre pawn: Black will have two centre pawns against one.",
+        "4...Nf6": "Hits e4 before White can defend it with f3.",
+        "5...g6": "The Dragon: the bishop goes to g7.",
+        "8...Nc6": "Develops and hits the d4 knight.",
+        "9.Nb3": "The knight steps away from trades and from ...Ng4 tricks.",
+        "9...Be6": "Eyes c4 and the b3 knight; ...d5 may follow.",
+        "10.f4": "Space on the kingside and the threat f5, hitting the e6 bishop.",
+        "10...Qc8": "Prepares ...Bg4 to trade White's light-squared bishop and keeps an eye on the c-file."
+      }
+    },
+    {
+      "id": "yugoslav-bc4",
+      "name": "Yugoslav Attack, 9.Bc4: the c-file counterattack",
+      "moves": "1. e4 c5 2. Nf3 d6 3. d4 cxd4 4. Nxd4 Nf6 5. Nc3 g6 6. Be3 Bg7 7. f3 O-O 8. Qd2 Nc6 9. Bc4 Bd7 10. O-O-O Rc8 11. Bb3 Ne5 12. Kb1 Nc4 13. Bxc4 Rxc4",
+      "notes": {
+        "7.f3": "Guards e4 and stops ...Ng4 hitting the e3 bishop.",
+        "8.Qd2": "Prepares Bh6 to trade the Dragon bishop, and long castling.",
+        "9.Bc4": "Stops ...d5 and aims at f7.",
+        "10...Rc8": "The rook takes the half-open file towards White's king.",
+        "11.Bb3": "Steps out of the way before ...Ne5 hits it.",
+        "11...Ne5": "Heads for c4 to trade the strong b3 bishop.",
+        "13...Rxc4": "The rook on c4 hits c3 and d4; ...Rxc3 is in the air."
+      }
+    },
+    {
+      "id": "yugoslav-d5",
+      "name": "Yugoslav Attack, 9.O-O-O d5: strike in the centre",
+      "moves": "1. e4 c5 2. Nf3 d6 3. d4 cxd4 4. Nxd4 Nf6 5. Nc3 g6 6. Be3 Bg7 7. f3 O-O 8. Qd2 Nc6 9. O-O-O d5 10. exd5 Nxd5 11. Nxc6 bxc6 12. Bd4 Bxd4 13. Qxd4 Qb6",
+      "notes": {
+        "9.O-O-O": "White castles first and plans h4 and h5.",
+        "9...d5": "Black does not wait: a pawn offer that opens lines towards White's king.",
+        "11.Nxc6": "Trades before ...Nxd4 or ...Nxc3 tricks.",
+        "11...bxc6": "Takes towards the centre and opens the b-file for the rook.",
+        "12.Bd4": "Offers to trade the Dragon bishop.",
+        "13...Qb6": "The queen eyes b2 and offers a trade; with queens off, White's attack is gone."
+      }
+    },
+    {
+      "id": "alapin",
+      "name": "Alapin, 2.c3: hit e4 with the knight",
+      "moves": "1. e4 c5 2. c3 Nf6 3. e5 Nd5 4. d4 cxd4 5. Nf3 Nc6 6. cxd4 d6 7. Bc4 Nb6 8. Bb5 dxe5 9. Nxe5 Bd7",
+      "notes": {
+        "2.c3": "White prepares d4 and avoids the open Sicilian.",
+        "2...Nf6": "Hits e4 before White can support it with d4 and Nc3.",
+        "3.e5": "Gains space and kicks the knight.",
+        "3...Nd5": "A good square: the c3 pawn has taken it from White's knight.",
+        "6...d6": "Attacks the e5 pawn, the front of White's chain.",
+        "7.Bc4": "Hits the d5 knight.",
+        "7...Nb6": "Retreats with tempo on the bishop.",
+        "9...Bd7": "Develops and challenges the b5 bishop; Black is comfortable."
+      }
+    },
+    {
+      "id": "moscow",
+      "name": "Moscow, 3.Bb5+: trade the bishops",
+      "moves": "1. e4 c5 2. Nf3 d6 3. Bb5+ Bd7 4. Bxd7+ Qxd7 5. O-O Nc6 6. c3 Nf6 7. Re1 e6 8. d4 cxd4 9. cxd4 d5 10. e5 Ne4",
+      "notes": {
+        "3.Bb5+": "White develops with check and avoids long theory.",
+        "3...Bd7": "Blocks with the bishop and offers a trade of light-squared bishops.",
+        "6.c3": "Prepares d4 to build a centre.",
+        "7...e6": "With its light-squared bishop gone, Black puts the pawns on light squares; the f8 bishop stays free.",
+        "9...d5": "Strikes at the centre.",
+        "10...Ne4": "A strong outpost: no white pawn can chase it."
+      }
+    }
+  ],
+  "traps": [
+    {
+      "id": "ng4-check",
+      "name": "6...Ng4?: the check that removes the guard",
+      "moves": "1. e4 c5 2. Nf3 d6 3. d4 cxd4 4. Nxd4 Nf6 5. Nc3 g6 6. Be3 Ng4 7. Bb5+ Bd7 8. Qxg4 Bxb5 9. Ndxb5",
+      "notes": {
+        "6.Be3": "The Yugoslav move order: Be3 first, f3 next.",
+        "6...Ng4": "Looks active: it attacks the e3 bishop. But the only guard of g4 is the c8 bishop."
+      },
+      "mistake": "6...Ng4",
+      "punishment": "7.Bb5+ forces the c8 bishop to block on d7, and then it no longer guards g4: 8.Qxg4 wins the knight. Play 6...Bg7 first; ...Ng4 works only after White's queen has left d1."
+    },
+    {
+      "id": "fork-trick",
+      "name": "9...Nxe4?: the fork trick that fails",
+      "moves": "1. e4 c5 2. Nf3 d6 3. d4 cxd4 4. Nxd4 Nf6 5. Nc3 g6 6. Be3 Bg7 7. f3 O-O 8. Qd2 Nc6 9. Bc4 Nxe4 10. fxe4",
+      "notes": {
+        "7.f3": "The pawn guards e4.",
+        "9...Nxe4": "The mistake: Black hopes for ...Nxe4 and ...d5, forking the knight and the bishop."
+      },
+      "mistake": "9...Nxe4",
+      "punishment": "10.fxe4: the f3 pawn takes back, so there is no knight on e4 to fork. Black is a piece for a pawn down. The fork trick works only when e4 has no pawn guard; here 9...Nxd4 or 9...Bd7 are the moves."
+    }
+  ]
+}

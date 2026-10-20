@@ -13,24 +13,27 @@ from pathlib import Path
 import chess
 import chess.pgn
 
+from ..puzzles.store import THEME_INFO
 from ..settings import REPO_ROOT
 
 LOGGER = logging.getLogger("chess.lessons")
 LESSONS_DIR = REPO_ROOT / "data" / "lessons"
 
+# max_rating is the top of the band's range: a puzzle rating below it places the player here (band 0 is the rules).
 BANDS = [
-    {"band": 0, "name": "Pawn", "subtitle": "First moves", "rating": "learning the rules"},
-    {"band": 1, "name": "Knight", "subtitle": "Novice", "rating": "under 800"},
-    {"band": 2, "name": "Bishop", "subtitle": "Beginner", "rating": "800–1100"},
-    {"band": 3, "name": "Rook", "subtitle": "Improver", "rating": "1100–1400"},
-    {"band": 4, "name": "Queen", "subtitle": "Intermediate", "rating": "1400–1700"},
-    {"band": 5, "name": "King", "subtitle": "Club player", "rating": "1700–2000"},
-    {"band": 6, "name": "Super King", "subtitle": "Expert", "rating": "2000–2200"},
-    {"band": 7, "name": "Candidate", "subtitle": "CM / FM", "rating": "2200–2400"},
-    {"band": 8, "name": "Master", "subtitle": "IM / GM track", "rating": "2400+"},
+    {"band": 0, "name": "Pawn", "subtitle": "First moves", "rating": "learning the rules", "max_rating": None},
+    {"band": 1, "name": "Knight", "subtitle": "Novice", "rating": "under 800", "max_rating": 800},
+    {"band": 2, "name": "Bishop", "subtitle": "Beginner", "rating": "800–1100", "max_rating": 1100},
+    {"band": 3, "name": "Rook", "subtitle": "Improver", "rating": "1100–1400", "max_rating": 1400},
+    {"band": 4, "name": "Queen", "subtitle": "Intermediate", "rating": "1400–1700", "max_rating": 1700},
+    {"band": 5, "name": "King", "subtitle": "Club player", "rating": "1700–2000", "max_rating": 2000},
+    {"band": 6, "name": "Super King", "subtitle": "Expert", "rating": "2000–2200", "max_rating": 2200},
+    {"band": 7, "name": "Candidate", "subtitle": "CM / FM", "rating": "2200–2400", "max_rating": 2400},
+    {"band": 8, "name": "Master", "subtitle": "IM / GM track", "rating": "2400+", "max_rating": None},
 ]
 STRANDS = ("tactics", "checkmates", "endgames", "openings", "strategy", "calculation", "thinking", "rules", "model games")
-SECTION_TYPES = ("text", "position", "challenge", "quiz", "drill", "game")
+SECTION_TYPES = ("text", "position", "challenge", "quiz", "drill", "game", "lecture")
+TASK_TYPES = ("challenge", "quiz")  # the sections a missed answer brings back for spaced review
 
 
 @dataclass
@@ -43,12 +46,14 @@ class Lesson:
     sections: list[dict]
     band: int
     strand: str
+    practice: list[str] = field(default_factory=list)  # puzzle theme keys the lesson teaches
 
     def summary(self) -> dict:
         kinds = [s["type"] for s in self.sections]
         return {
             "id": self.id, "title": self.title, "objective": self.objective, "minutes": self.minutes,
             "challenges": kinds.count("challenge") + kinds.count("drill") + kinds.count("quiz"), "strand": self.strand, "band": self.band,
+            "watch": "lecture" in kinds or "game" in kinds,  # a narrated walkthrough: a lecture, or a model game read aloud
         }
 
 
@@ -68,6 +73,17 @@ def _check_fen(fen: str) -> chess.Board:
     if not board.is_valid():
         raise ValueError(f"illegal position {fen!r}: {board.status()!r}")
     return board
+
+
+def _parse_move(board: chess.Board, text: str) -> chess.Move:
+    """A move written as UCI or SAN; raises ValueError when it is illegal here."""
+    try:
+        move = chess.Move.from_uci(text)
+    except ValueError:
+        move = board.parse_san(text)
+    if move not in board.legal_moves:
+        raise ValueError(f"move {text} illegal in {board.fen()}")
+    return move
 
 
 def _validate_section(sec: dict) -> dict:
@@ -108,6 +124,30 @@ def _validate_section(sec: dict) -> dict:
         _check_fen(sec["fen"])
         if sec.get("goal") not in ("mate", "promote", "draw", "survive", "win_material"):
             raise ValueError(f"bad drill goal {sec.get('goal')!r}")
+    elif t == "lecture":
+        # A narrated walkthrough: each frame shows a position (its own fen, or a move played from the
+        # previous frame), draws arrows and highlights, and says one thing. The board animates between frames.
+        frames = sec.get("frames") or []
+        if not frames:
+            raise ValueError("lecture without frames")
+        board = None
+        for i, fr in enumerate(frames):
+            if not fr.get("say"):
+                raise ValueError(f"frame {i} has nothing to say")
+            if fr.get("fen"):
+                board = _check_fen(fr["fen"])
+            elif board is None:
+                raise ValueError("the first frame needs a fen")
+            if fr.get("move"):
+                mv = _parse_move(board, fr["move"])
+                fr["san"] = board.san(mv)
+                fr["uci"] = mv.uci()
+                board.push(mv)
+            for a in fr.get("arrows") or []:
+                chess.parse_square(a["from"]), chess.parse_square(a["to"])
+            for h in fr.get("highlights") or []:
+                chess.parse_square(h["square"])
+            fr["fen"] = board.fen()
     elif t == "game":
         game = chess.pgn.read_game(io.StringIO(sec["pgn"]))
         if game is None or game.errors or not list(game.mainline_moves()):
@@ -119,6 +159,7 @@ def _validate_section(sec: dict) -> dict:
             board.push(mv)
             plies.append({"ply": board.ply(), "san": san, "uci": mv.uci(), "fen": board.fen()})
         sec["plies"] = plies
+        sec["start_fen"] = game.board().fen()
         sec["headers"] = {k: game.headers[k] for k in ("White", "Black", "Event", "Date", "Result") if k in game.headers}
     return sec
 
@@ -157,16 +198,25 @@ def load_curriculum() -> list[Module]:
                     except (ValueError, KeyError) as exc:
                         dropped += 1
                         LOGGER.warning("dropped %s lesson %s section %d: %s", path.name, lsn.get("id"), i, exc)
+                practice = [t for t in lsn.get("practice", []) if t in THEME_INFO]
+                for t in set(lsn.get("practice", [])) - set(practice):
+                    LOGGER.warning("dropped %s lesson %s practice theme %r: not a puzzle theme key", path.name, lsn["id"], t)
                 if sections:
                     module.lessons.append(Lesson(
                         id=lsn["id"], module_id=module.id, title=lsn["title"], objective=lsn.get("objective", ""),
                         minutes=int(lsn.get("minutes", 10)), sections=sections, band=module.band, strand=module.strand,
+                        practice=practice,
                     ))
             if module.lessons:
                 modules.append(module)
     modules.sort(key=lambda m: (m.band, m.id))
     LOGGER.info("curriculum: %d modules, %d lessons, %d sections dropped", len(modules), sum(len(m.lessons) for m in modules), dropped)
     return modules
+
+
+def lesson_for_theme(theme: str) -> Lesson | None:
+    """The first lesson in curriculum order that teaches a puzzle theme."""
+    return next((lsn for m in load_curriculum() for lsn in m.lessons if theme in lsn.practice), None)
 
 
 def find_lesson(lesson_id: str) -> Lesson | None:

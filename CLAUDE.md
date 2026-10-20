@@ -42,7 +42,10 @@ When two approaches both work, take the one a new developer follows in one read.
 3. **Content is validated at load, never trusted.** Lessons, puzzles and master games are
    replayed with `python-chess` when loaded; a broken section or game is dropped with a warning
    naming the file and id. `scripts/validate_lessons.py --engine` must pass before lesson content
-   is committed: every challenge solution is the engine's best move or a fastest mate.
+   is committed: every challenge solution is the engine's best move or a fastest mate. A lecture
+   frame's `move` is replayed from the previous frame, so the loader fills in `fen`, `san` and
+   `uci`; a lecture's spoken claims ("wins the queen") are checked by eye against engine evals
+   when the script is written.
 4. **Every threshold has one home.** Move classification and accuracy constants live in
    [backend/review/classify.py](backend/review/classify.py); the browser copy in
    `frontend/src/lib/review/classify.ts` mirrors the drop ladder for live feedback and nothing more.
@@ -63,6 +66,13 @@ When two approaches both work, take the one a new developer follows in one read.
    not in the book is `None`, not "Unknown Opening" invented in code.
 8. **Only `frontend/dist` is web-served** and the static mount stays last in `app.py` so
    `/api/*` routes win. Never mount the repo root.
+9. **Player data is scoped and private.** Every visitor is a player (a random id in an httpOnly
+   cookie; Google sign-in attaches an email). Every query on a per-player table filters by the
+   `Player` dependency ([backend/routers/account.py](backend/routers/account.py)). A new table with
+   `player_id` goes into `PLAYER_TABLES` or `PLAYER_KEYED_TABLES` (a test enforces it) so sign-in
+   merge and delete-my-data reach it. No response body carries the player id. The email is the
+   only personal data stored: events ([backend/routers/events.py](backend/routers/events.py)) take
+   declared keys and identifier values only, never free text, names, IPs or the user agent.
 
 ## Mental model (data flow)
 
@@ -72,8 +82,9 @@ Browser (`fetch /api/*`, SSE for the coach) → FastAPI routers → one of:
   behind its own lock;
 - the **content loaders** (`backend/content/*`, `backend/openings/book.py`, `backend/puzzles/store.py`):
   JSON, PGN and TSV under `data/`, loaded once and cached;
-- the **store** ([backend/storage/db.py](backend/storage/db.py)): SQLite, one connection, every
-  call on a thread, additive migrations only.
+- the **store** ([backend/storage/db.py](backend/storage/db.py)): SQLite through `libsql`, a local
+  file or Turso when `TURSO_DATABASE_URL` is set; one connection, every call on a thread,
+  additive migrations only.
 
 The browser also runs its own Stockfish (WASM, single thread, `frontend/public/engine`) for
 the eval bar and live move feedback so play never waits on the server for an evaluation.
@@ -105,7 +116,19 @@ React + TypeScript + Vite in `frontend/`, plain CSS with tokens (`src/styles/tok
   nothing about games, puzzles or lessons; pages decide what is movable.
 - **Motion answers a gesture**: piece moves animate through one `transform` transition under
   `--anim`, which `prefers-reduced-motion` sets to zero.
-- Sounds are synthesised (`src/lib/sound.ts`); no audio assets, no licences.
+- Sounds are synthesised (`src/lib/sound.ts`); no audio assets, no licences. Narration is the
+  browser's speech synthesis (`src/lib/speech.ts`): sentence by sentence (Chrome cuts long
+  utterances), never required (a lecture advances on a reading timer when no voice speaks).
+- **Teaching surfaces share one player.** `LecturePlayer` plays lecture frames, lesson model
+  games and master games alike, with the study's "why / why not" panel and playable variations
+  when a study exists; `Tasks.tsx` holds the challenge (hint ladder, engine refutation of a wrong
+  move) and quiz used by lessons and by Review. The teaching principles behind the lesson shape
+  are in PLAN.md §3.1; a new section type must say which step of that shape it serves.
+- **The study never invents a reason.** Every sentence in `backend/study/reasons.py` is a board
+  fact (attack sets, pins, pawn structure); the engine supplies the candidates, evals and lines;
+  the only prose is the join. A new reason is a rule with a test position, never a template that
+  guesses. Thresholds (what counts as "just as good", a threat worth naming) reuse `classify.py`
+  or live once in `annotate.py`.
 - Keyboard: arrows navigate moves everywhere a move list exists; `f` flips in review.
 
 ## Tests
@@ -113,8 +136,12 @@ React + TypeScript + Vite in `frontend/`, plain CSS with tokens (`src/styles/tok
 - `python -m pytest -q` from the repo root: every router through `TestClient` with a real engine
   and a temp SQLite file; no network, no API key (`tests/conftest.py` blanks it).
 - `cd frontend && npx playwright test` with the backend running on :8765: board interaction,
-  a full bot game, a PGN review with retry, puzzles and Puzzle Rush, a lesson with a drill.
+  a full bot game, a PGN review with retry, puzzles and Puzzle Rush, a lesson with a drill, the
+  guest account and its events, no sideways scroll at phone width. Another server:
+  `E2E_BASE_URL=http://127.0.0.1:<port> E2E_NO_SERVER=1`.
 - `ruff check .` before a commit. The lint config catches defects only (see `ruff.toml`).
+- Before any commit: `/ponytail-review` on the diff, then `/ship-check` (project skills in
+  `.claude/skills/`; ponytail vendored without its hooks).
 - For a bug, reproduce first with a failing test, then fix.
 
 ## Gotchas (non-obvious, stable)
@@ -128,5 +155,11 @@ React + TypeScript + Vite in `frontend/`, plain CSS with tokens (`src/styles/tok
   temp file after importing the app.
 - Puzzle FENs follow lichess: the position *before* the opponent's move; `moves[0]` is that move.
 - `UCI_ShowWDL` is off in the browser engine; parsing assumes `score cp|mate` right after `score`.
+- The page response (the SPA catch-all in `app.py`) mints the guest cookie, so the app's parallel
+  first calls share one player. Under the Vite dev server the page is not ours: a first visit
+  there may mint one guest per call.
+- Turso refuses `PRAGMA journal_mode` and drops a remote stream left idle for some seconds
+  (`STREAM_EXPIRED`); `Database._run` reconnects and retries once. Embedded replicas were not
+  verified (the local libSQL server lacks the export endpoint).
 - The lichess opening book names ~3,900 positions; `classify_game` stops looking six plies after
   the last named position, so a transposition back into theory later is not credited.

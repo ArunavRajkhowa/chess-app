@@ -1,0 +1,139 @@
+{
+  "id": "queens-gambit",
+  "name": "Queen's Gambit",
+  "side": "white",
+  "openings": ["Queen's Gambit", "Slav Defense"],
+  "summary": "1.d4 d5 2.c4: White offers the c-pawn to pull Black's d-pawn away from the centre. It is not a true gambit: after 2...dxc4 White wins the pawn back. The plans are pressure on d5, a central pawn majority, and the minority attack.",
+  "ideas": {
+    "white": [
+      "Pressure d5: c4, Nc3, Bg5 to pin the f6 knight, and cxd5 at the right moment.",
+      "In the Accepted, win the pawn back calmly with e3 and Bxc4.",
+      "In the Carlsbad structure, push the b-pawn to b4 and b5 (the minority attack) to leave Black a weak c-pawn.",
+      "Keep the e4 break in reserve: when it comes, White's centre is complete."
+    ],
+    "black": [
+      "Hold d5 with ...e6 (Declined) or ...c6 (Slav), or give it with ...dxc4 and hit the centre with ...c5.",
+      "Free the cramped position with ...dxc4 and ...Nd5, or with the ...c5 and ...e5 breaks.",
+      "Solve the light-squared bishop: in the Slav it comes out to f5 before ...e6.",
+      "Look for tricks against a loose bishop on g5: the Elephant and Cambridge Springs traps."
+    ]
+  },
+  "structures": [
+    {"name": "Carlsbad: after cxd5 exd5", "text": "White has pawns on a2, b2, d4 and e3 against a7, b7, c6 and d5. White's queenside pawns are fewer, but b4 and b5 attack c6 and leave Black with a weak pawn: the minority attack. Black's counterplay is on the kingside with ...Ne4 and ...f5."},
+    {"name": "Isolated queen's pawn", "text": "A d-pawn with no neighbours is a weakness in the endgame, but in the middlegame it gives space and the e5 square for a knight. The side with the pawn attacks; the other side blockades on d5 and trades pieces."}
+  ],
+  "pieces": {
+    "white": [
+      "g5 bishop: pins the f6 knight and adds pressure on d5.",
+      "c3 knight: the third attacker of d5.",
+      "c1 rook: on the half-open c-file in the Orthodox lines and the minority attack.",
+      "Light-squared bishop: d3 aiming at h7, or c4 after it wins back the pawn."
+    ],
+    "black": [
+      "e7 bishop: breaks the pin on f6 and guards the king.",
+      "d7 knight: supports the ...c5 and ...e5 breaks and the f6 knight.",
+      "c8 bishop: the problem piece in the Declined; free it with ...dxc4 and ...e5.",
+      "Queen: a5 in the Cambridge Springs, e7 after trades on e7."
+    ]
+  },
+  "lines": [
+    {
+      "id": "orthodox",
+      "name": "Declined, Orthodox: Capablanca's freeing line",
+      "moves": "1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Be7 5. e3 O-O 6. Nf3 Nbd7 7. Rc1 c6 8. Bd3 dxc4 9. Bxc4 Nd5 10. Bxe7 Qxe7 11. O-O Nxc3 12. Rxc3 e5",
+      "notes": {
+        "1.d4": "Takes the centre with a pawn that the queen already guards.",
+        "2.c4": "Attacks d5. If Black takes, White plays e3 and wins the pawn back with a bigger centre.",
+        "2...e6": "The Declined: d5 stays, but the c8 bishop is shut in.",
+        "3.Nc3": "Another attacker of d5.",
+        "4.Bg5": "Pins the f6 knight, a defender of d5.",
+        "4...Be7": "Breaks the pin.",
+        "7.Rc1": "The rook takes the c-file before it opens.",
+        "7...c6": "Supports d5 and prepares ...dxc4 and ...Nd5.",
+        "8...dxc4": "Black waits until the bishop has moved, then takes, so the bishop moves twice.",
+        "9...Nd5": "Capablanca's freeing manoeuvre: trade pieces to ease the cramped position.",
+        "12...e5": "The freeing break: now the c8 bishop sees the kingside."
+      }
+    },
+    {
+      "id": "exchange-carlsbad",
+      "name": "Exchange Variation: the minority attack",
+      "moves": "1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. cxd5 exd5 5. Bg5 c6 6. e3 Be7 7. Bd3 Nbd7 8. Qc2 O-O 9. Nf3 Re8 10. O-O Nf8 11. Rab1",
+      "notes": {
+        "4.cxd5": "White fixes the pawn structure: the Carlsbad.",
+        "4...exd5": "Opens the c8 bishop's diagonal.",
+        "5.Bg5": "Pins the knight and develops before Black can play ...Bf5.",
+        "8.Qc2": "Controls f5 and h7, so ...Bf5 is not possible.",
+        "10...Nf8": "The knight heads for g6 or e6 to guard the kingside.",
+        "11.Rab1": "Prepares b4 and b5: the minority attack against c6."
+      }
+    },
+    {
+      "id": "accepted",
+      "name": "Queen's Gambit Accepted: win the pawn back",
+      "moves": "1. d4 d5 2. c4 dxc4 3. Nf3 Nf6 4. e3 e6 5. Bxc4 c5 6. O-O a6 7. dxc5 Qxd1 8. Rxd1 Bxc5",
+      "notes": {
+        "2...dxc4": "Black gives up the centre for a while and plans to hit d4 with ...c5.",
+        "3.Nf3": "Stops ...e5 and develops.",
+        "4.e3": "Opens the bishop's diagonal to take back on c4.",
+        "5.Bxc4": "The pawn is back. White has more central influence.",
+        "5...c5": "The counter: Black attacks d4 at once.",
+        "6...a6": "Prepares ...b5 to gain space with tempo on the bishop.",
+        "7.dxc5": "White trades queens with a small lead in development.",
+        "8...Bxc5": "Material is level; White's pieces are a little quicker into play."
+      }
+    },
+    {
+      "id": "slav",
+      "name": "Slav Defence: the bishop gets out first",
+      "moves": "1. d4 d5 2. c4 c6 3. Nf3 Nf6 4. Nc3 dxc4 5. a4 Bf5 6. e3 e6 7. Bxc4 Bb4 8. O-O O-O 9. Qe2",
+      "notes": {
+        "2...c6": "The Slav: d5 is held without blocking the c8 bishop.",
+        "4...dxc4": "Now Black takes, planning ...b5 to keep the pawn.",
+        "5.a4": "Stops ...b5 for good.",
+        "5...Bf5": "The point of the Slav: the bishop is out before ...e6.",
+        "7.Bxc4": "The pawn is back.",
+        "7...Bb4": "Pins the c3 knight and slows e4.",
+        "9.Qe2": "Prepares e4 to take the centre."
+      }
+    }
+  ],
+  "traps": [
+    {
+      "id": "elephant-trap",
+      "name": "Elephant Trap: the pin on f6 is not real",
+      "moves": "1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Nbd7 5. cxd5 exd5 6. Nxd5 Nxd5 7. Bxd8 Bb4+ 8. Qd2 Bxd2+ 9. Kxd2 Kxd8",
+      "notes": {
+        "4...Nbd7": "It looks as if d5 now has too few defenders.",
+        "6.Nxd5": "The mistake: White takes a pawn, counting on the pin of the f6 knight."
+      },
+      "mistake": "6.Nxd5",
+      "punishment": "6...Nxd5 gives up the queen: 7.Bxd8 Bb4+ 8.Qd2 Bxd2+ 9.Kxd2 Kxd8 and Black is a piece up. The f6 knight was free to take because the check on b4 wins the queen back with interest. Play 6.e3 and develop."
+    },
+    {
+      "id": "lasker-trap",
+      "name": "Lasker Trap: promoting to a knight",
+      "moves": "1. d4 d5 2. c4 e5 3. dxe5 d4 4. e3 Bb4+ 5. Bd2 dxe3 6. Bxb4 exf2+ 7. Ke2 fxg1=N+ 8. Ke1 Qh4+",
+      "notes": {
+        "2...e5": "The Albin Countergambit: Black gives a pawn to drive a wedge to d4.",
+        "4.e3": "Natural, but it lets the d4 pawn come forward with tempo.",
+        "5...dxe3": "Now the pawn hits f2.",
+        "6.Bxb4": "The mistake: White takes the bishop and forgets the pawn."
+      },
+      "mistake": "6.Bxb4",
+      "punishment": "6...exf2+ 7.Ke2 fxg1=N+ promotes to a knight with check, and after 8.Ke1 Qh4+ Black is winning. White had to take the dangerous pawn first with 6.fxe3."
+    },
+    {
+      "id": "cambridge-springs",
+      "name": "Cambridge Springs: the loose bishop on g5",
+      "moves": "1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Nbd7 5. e3 c6 6. Nf3 Qa5 7. Nd2 Bb4 8. Qc2 O-O 9. Bd3 dxc4 10. Nxc4 Qxg5",
+      "notes": {
+        "6...Qa5": "The Cambridge Springs: the queen pins the c3 knight and watches the fifth rank.",
+        "7...Bb4": "Pins the c3 knight a second time.",
+        "9.Bd3": "The mistake: it lets ...dxc4 open the fifth rank with tempo on the bishop."
+      },
+      "mistake": "9.Bd3",
+      "punishment": "9...dxc4 hits the d3 bishop and opens the fifth rank, so the queen on a5 now attacks the g5 bishop. White cannot save both: 10.Nxc4 Qxg5 wins a piece. 9.Bh4 or 9.Be2 keeps everything guarded."
+    }
+  ]
+}

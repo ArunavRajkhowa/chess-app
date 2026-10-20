@@ -11,6 +11,7 @@ from pydantic import BaseModel, Field
 
 from ..content.endgames import load_endgames
 from ..storage.db import database
+from .account import Player
 from .learn import drill_outcome, material_balance
 
 router = APIRouter(prefix="/api/endgames", tags=["endgames"])
@@ -51,9 +52,9 @@ def judge_line(position: dict, line: list[str]) -> tuple[bool, int]:
 
 
 @router.get("")
-async def index() -> dict:
+async def index(player: Player) -> dict:
     data = load_endgames()
-    stats = await database.get_player_value("endgame_stats", {})
+    stats = await database.get_player_value(player, "endgame_stats", {})
     positions = [{**p, "best": stats.get(p["key"])} for p in data["positions"]]
     return {"themes": data["themes"], "positions": positions}
 
@@ -71,12 +72,12 @@ async def challenge(theme: str = Query(...)) -> dict:
 
 
 @router.post("/attempt")
-async def attempt(req: EndgameAttempt) -> dict:
+async def attempt(req: EndgameAttempt, player: Player) -> dict:
     position = next((p for p in load_endgames()["positions"] if p["key"] == req.key), None)
     if position is None:
         raise HTTPException(404, "no such position")
     success, moves = judge_line(position, req.line)
-    stats = await database.get_player_value("endgame_stats", {})
+    stats = await database.get_player_value(player, "endgame_stats", {})
     prev = stats.get(req.key) or {"solved": 0, "tried": 0, "best_moves": None, "best_seconds": None}
     prev["tried"] += 1
     if success:
@@ -84,8 +85,8 @@ async def attempt(req: EndgameAttempt) -> dict:
         prev["best_moves"] = moves if prev["best_moves"] is None else min(prev["best_moves"], moves)
         prev["best_seconds"] = req.seconds if prev["best_seconds"] is None else min(prev["best_seconds"], req.seconds)
     stats[req.key] = prev
-    await database.set_player_value("endgame_stats", stats)
-    history = await database.get_player_value("endgame_history", [])
+    await database.set_player_value(player, "endgame_stats", stats)
+    history = await database.get_player_value(player, "endgame_history", [])
     history = (history + [{"key": req.key, "success": success, "moves": moves, "seconds": req.seconds, "mode": req.mode}])[-200:]
-    await database.set_player_value("endgame_history", history)
+    await database.set_player_value(player, "endgame_history", history)
     return {"success": success, "moves": moves, "stats": prev}

@@ -12,8 +12,8 @@
 .botpicker-hero-avatar { font-size: 44px; }
 .botpicker-colors { display: flex; gap: var(--s-2); }
 .colorbtn { width: 44px; height: 44px; border-radius: var(--r-sm); border: 2px solid var(--line-strong); cursor: pointer; font-weight: 800; font-size: 18px; }
-.colorbtn.white { background: #f0f0f0; color: #1b1a18; }
-.colorbtn.black { background: #1b1a18; color: #f0f0f0; }
-.colorbtn.random { background: linear-gradient(135deg, #f0f0f0 50%, #1b1a18 50%); color: var(--brand); }
+.colorbtn.white { background: var(--side-white); color: var(--side-black); }
+.colorbtn.black { background: var(--side-black); color: var(--side-white); }
+.colorbtn.random { background: linear-gradient(135deg, var(--side-white) 50%, var(--side-black) 50%); color: var(--brand); }
 .colorbtn.on { border-color: var(--brand); box-shadow: 0 0 0 2px color-mix(in srgb, var(--brand) 40%, transparent); }
 @media (max-width: 900px) { .botpicker { grid-template-columns: 1fr; } .botpicker-side { position: static; } }

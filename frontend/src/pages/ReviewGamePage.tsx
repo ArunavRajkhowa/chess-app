@@ -8,6 +8,8 @@ import { MoveList, CLASS_GLYPH } from "../components/play/MoveList";
 import { CoachPanel } from "../components/review/CoachPanel";
 import { EvalGraph } from "../components/review/EvalGraph";
 import { ReportTable } from "../components/review/ReportTable";
+import { useVariation, VariationBar, WhyPanel } from "../components/study/WhyPanel";
+import { studyApi, useStudy } from "../lib/studyApi";
 import { api, type GameReport, type ReviewedMove } from "../lib/api";
 import { checkSquare, destsFor, safeMove, soundForMove } from "../lib/chess/game";
 import type { PromotionPiece, Square } from "../lib/chess/types";
@@ -92,12 +94,16 @@ export function ReviewGamePage() {
   const moves = report?.moves ?? [];
   const current: ReviewedMove | null = ply > 0 ? moves[ply - 1] ?? null : null;
   const start = moves[0]?.fen_before ?? START; // a game from a FEN starts there
-  const fen = retry ? retry.fen : ply === 0 ? start : moves[ply - 1]?.fen_after ?? start;
+  // the why / why-not study of this game, computed once the review is there (one engine job at a time)
+  const studyRes = useStudy(report ? () => studyApi.mine(gameId) : null, report ? gameId : "");
+  const studyPly = studyRes?.study?.plies[ply - 1];
+  const variation = useVariation();
+  const fen = variation.fen ?? (retry ? retry.fen : ply === 0 ? start : moves[ply - 1]?.fen_after ?? start);
   const chess = useMemo(() => new Chess(fen), [fen]);
   const keyMoments = report?.key_moments ?? [];
   const nextKey = keyMoments.find((k) => k > ply) ?? null;
 
-  useEffect(() => { setShowBest(false); setExplanation(null); if (retry && retry.ply !== ply) setRetry(null); }, [ply]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { setShowBest(false); setExplanation(null); variation.stop(); if (retry && retry.ply !== ply) setRetry(null); }, [ply]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -181,7 +187,7 @@ export function ReviewGamePage() {
   const shapes: Shape[] = [];
   if (showBest && current) shapes.push({ orig: current.best_move_uci.slice(0, 2), dest: current.best_move_uci.slice(2, 4), brush: "green" });
   if (retry?.status === "wrong" && current) shapes.push({ orig: current.best_move_uci.slice(0, 2), brush: "yellow" });
-  const lastMove: [Square, Square] | null = current && !retry ? [current.uci.slice(0, 2), current.uci.slice(2, 4)] : null;
+  const lastMove: [Square, Square] | null = variation.variation ? variation.lastMove : current && !retry ? [current.uci.slice(0, 2), current.uci.slice(2, 4)] : null;
   const markers = current && !retry && current.classification !== "book" && current.classification !== "good" && current.classification !== "excellent"
     ? [{ square: current.uci.slice(2, 4), text: CLASS_GLYPH[current.classification], className: `cls-${current.classification}` }]
     : [];
@@ -204,11 +210,11 @@ export function ReviewGamePage() {
           <Board
             fen={fen}
             orientation={orientation}
-            movable={retry && retry.status !== "correct" ? { color: chess.turn(), dests: destsFor(chess) } : { color: "none", dests: new Map() }}
+            movable={retry && retry.status !== "correct" && !variation.variation ? { color: chess.turn(), dests: destsFor(chess) } : { color: "none", dests: new Map() }}
             lastMove={lastMove}
             check={checkSquare(chess)}
-            shapes={shapes}
-            markers={markers}
+            shapes={variation.variation ? [] : shapes}
+            markers={variation.variation ? [] : markers}
             onMove={onRetryMove}
           />
         </div>
@@ -256,6 +262,13 @@ export function ReviewGamePage() {
             </div>
           )}
         </div>
+        {current && (
+          <div className="card" data-testid="review-why">
+            {variation.variation && <VariationBar v={variation.variation} onStep={variation.step} onBack={variation.stop} />}
+            {studyPly && !variation.variation && <WhyPanel ply={studyPly} onVariation={(c) => { setRetry(null); variation.start(studyPly, c); }} />}
+            {!studyPly && <p className="faint">{!studyRes ? "Loading the engine's study…" : studyRes.status === "running" ? `The engine is studying every move: ${studyRes.progress.done} of ${studyRes.progress.total}. Why and why-not notes appear when it is done.` : studyRes.status === "failed" ? `The study failed: ${studyRes.error ?? "unknown error"}` : "No study for this move."}</p>}
+          </div>
+        )}
         <div className="card">
           <ReportTable white={report.white} black={report.black} whiteName={names.white} blackName={names.black} />
           <div className="phase-grades" style={{ marginTop: 10 }}>

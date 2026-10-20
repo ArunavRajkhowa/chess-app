@@ -1,0 +1,140 @@
+{
+  "id": "italian-game",
+  "name": "Italian Game",
+  "side": "white",
+  "openings": ["Italian Game"],
+  "summary": "1.e4 e5 2.Nf3 Nc6 3.Bc4: the bishop aims at f7 at once. White develops fast, castles, and builds the centre with c3 and d4, either at once for open lines or slowly after d3.",
+  "ideas": {
+    "white": [
+      "Develop the kingside fast and castle: Nf3, Bc4, O-O.",
+      "Prepare d4 with c3. Play it at once for open lines, or after d3 for a slow build-up.",
+      "In the slow lines, re-route the queen's knight: Nbd2, Nf1, Ng3, aiming at f5.",
+      "Keep the light-squared bishop: retreat it to b3 or c2 before ...Na5 or ...d5 can hit it.",
+      "Watch f7: Ng5 and Bxf7+ ideas work only while f7 has few defenders."
+    ],
+    "black": [
+      "Hit e4 with ...Nf6 and, when it is safe, strike with ...d5.",
+      "Develop the dark-squared bishop to c5 and keep it with ...a6 and ...Ba7.",
+      "Answer Ng5 with ...d5 and ...Na5, not with a recapture that leaves f7 bare.",
+      "In the slow lines, play ...h6 against Ng5 and Bg5, then ...Re8 and ...Be6 to trade White's best bishop."
+    ]
+  },
+  "structures": [
+    {"name": "Giuoco Pianissimo: c3, d3, e4 against d6, e5", "text": "A closed, slow centre. Neither side can break at once, so the game turns on piece manoeuvres: White's knight journey to g3 and a later d4, Black's ...Be6 to trade bishops and ...d5 when ready."},
+    {"name": "Open centre after c3 and d4", "text": "When Black takes on d4, White gets pawns on d4 and e4 and quick development. Black must hit that centre at once with ...d5 or with the check ...Bb4+, before e5 or d5 drives the knights back."}
+  ],
+  "pieces": {
+    "white": [
+      "c4 bishop: the soul of the opening. It points at f7; keep it with Bb3 and Bc2.",
+      "f3 knight: guards e5 and d4, and jumps to g5 against f7 when ...h6 has not been played.",
+      "Queen's knight: d2, f1, g3 in the slow lines; c3 in the open ones.",
+      "e1 rook: supports e4 and a later d4."
+    ],
+    "black": [
+      "c5 bishop: aims at f2. Give it a retreat on a7 with ...a6.",
+      "f6 knight: attacks e4 and defends h7; it makes ...d5 possible.",
+      "Light-squared bishop: e6 to trade White's bishop, or g4 to pin the f3 knight before h3.",
+      "e8 rook: backs up e5."
+    ]
+  },
+  "lines": [
+    {
+      "id": "giuoco-pianissimo",
+      "name": "Giuoco Pianissimo: the slow build-up",
+      "moves": "1. e4 e5 2. Nf3 Nc6 3. Bc4 Bc5 4. c3 Nf6 5. d3 d6 6. O-O O-O 7. Re1 a6 8. Bb3 Ba7 9. h3 h6 10. Nbd2 Re8 11. Nf1 Be6",
+      "notes": {
+        "1.e4": "Takes the centre and opens lines for the queen and the light-squared bishop.",
+        "2.Nf3": "Develops with a threat: the knight attacks e5.",
+        "2...Nc6": "Defends e5 by developing a piece.",
+        "3.Bc4": "The Italian bishop aims at f7, the square only Black's king defends.",
+        "3...Bc5": "Black mirrors: the bishop aims at f2.",
+        "4.c3": "Prepares d4 to take the whole centre, and gives the bishop a retreat on c2.",
+        "4...Nf6": "Develops with an attack on e4.",
+        "5.d3": "Defends e4 calmly. White keeps d4 in reserve and plays a long game.",
+        "6.O-O": "The king is safe and the rook can come to e1.",
+        "7.Re1": "Supports e4 and frees f1 for the queen's knight.",
+        "7...a6": "Makes room for the bishop on a7, where b4 and d4 cannot hit it.",
+        "8.Bb3": "Steps out of reach of ...d5 and ...Na5 before they come with tempo.",
+        "9.h3": "Stops ...Bg4 pinning the f3 knight, and ...Ng4 jumping at f2.",
+        "9...h6": "The same idea for Black: no Bg5 pin and no Ng5.",
+        "10.Nbd2": "The start of the knight's journey: d2, f1, then g3.",
+        "11.Nf1": "The knight goes to g3 next, eyeing f5 and h5.",
+        "11...Be6": "Offers to trade White's strongest piece, the bishop on b3."
+      }
+    },
+    {
+      "id": "two-knights-d3",
+      "name": "Two Knights with 4.d3: no early fight",
+      "moves": "1. e4 e5 2. Nf3 Nc6 3. Bc4 Nf6 4. d3 Be7 5. O-O O-O 6. Re1 d6 7. c3 Na5 8. Bb5 a6 9. Ba4 b5 10. Bc2",
+      "notes": {
+        "3...Nf6": "The Two Knights Defence: Black attacks e4 at once instead of developing the bishop first.",
+        "4.d3": "Defends e4 and avoids the sharp lines after 4.Ng5 or 4.d4. White builds with O-O, Re1 and c3.",
+        "6.Re1": "Supports e4 and prepares the slow plan with c3 and d4.",
+        "7.c3": "Gives the bishop the c2 square and prepares d4.",
+        "7...Na5": "Hunts the bishop: White's best attacking piece must not stay on c4.",
+        "8.Bb5": "The bishop avoids the trade and heads for c2 by a longer road.",
+        "9...b5": "Black gains queenside space with tempo.",
+        "10.Bc2": "The bishop is safe on c2 and still aims at the kingside. Black's advanced queenside pawns can become targets for a4 later."
+      }
+    },
+    {
+      "id": "knight-attack",
+      "name": "4.Ng5: the knight attack on f7",
+      "moves": "1. e4 e5 2. Nf3 Nc6 3. Bc4 Nf6 4. Ng5 d5 5. exd5 Na5 6. Bb5+ c6 7. dxc6 bxc6 8. Be2 h6 9. Nf3 e4 10. Ne5 Bd6",
+      "notes": {
+        "4.Ng5": "Two pieces hit f7. White moves a piece twice because the threat is concrete.",
+        "4...d5": "The right defence: block the bishop's diagonal at once.",
+        "5.exd5": "White takes and keeps the pressure on f7.",
+        "5...Na5": "Black hits the bishop. The recapture 5...Nxd5 would leave f7 open to Nxf7 or d4.",
+        "6.Bb5+": "The check keeps the extra pawn.",
+        "8.Be2": "The bishop goes home. White is a pawn up, but Black leads in development.",
+        "9...e4": "Gains space and drives the knight away.",
+        "10...Bd6": "Black develops towards the e5 knight and the white king. Active pieces are Black's payment for the pawn."
+      }
+    },
+    {
+      "id": "classical-d4",
+      "name": "4.c3 and 5.d4: the open centre",
+      "moves": "1. e4 e5 2. Nf3 Nc6 3. Bc4 Bc5 4. c3 Nf6 5. d4 exd4 6. cxd4 Bb4+ 7. Bd2 Bxd2+ 8. Nbxd2 d5 9. exd5 Nxd5 10. Qb3 Nce7 11. O-O O-O",
+      "notes": {
+        "5.d4": "The direct plan: two pawns in the centre at once.",
+        "5...exd4": "Black must take, or dxe5 hits the f6 knight.",
+        "6.cxd4": "White now has the ideal pawn centre on d4 and e4.",
+        "6...Bb4+": "A check that gains time and asks White how to block.",
+        "7.Bd2": "The safe block: trade bishops and keep the centre.",
+        "8...d5": "The key counter: Black strikes at the centre before e5 can be played.",
+        "9...Nxd5": "The knight lands on a strong central square.",
+        "10.Qb3": "Pressure on d5 and b7: two targets at once.",
+        "10...Nce7": "Defends the d5 knight a second time.",
+        "11...O-O": "White has an isolated pawn on d4: space and active pieces now, a weakness later."
+      }
+    }
+  ],
+  "traps": [
+    {
+      "id": "legal-mate",
+      "name": "Légal's mate: the pin that was not a pin",
+      "moves": "1. e4 e5 2. Nf3 Nc6 3. Bc4 d6 4. Nc3 Bg4 5. h3 Bh5 6. Nxe5 Bxd1 7. Bxf7+ Ke7 8. Nd5#",
+      "notes": {
+        "3...d6": "Solid but passive: it shuts in the f8 bishop.",
+        "4...Bg4": "Pins the f3 knight to the queen. A pin against a queen is not absolute: the knight may still move.",
+        "6.Nxe5": "The knight walks out of the pin and offers the queen.",
+        "6...Bxd1": "Greed: taking the queen allows mate."
+      },
+      "mistake": "6...Bxd1",
+      "punishment": "7.Bxf7+ Ke7 8.Nd5# is mate: Black's own pieces take the king's squares. After 6.Nxe5 Black had to play 6...Nxe5 and stay a pawn down, not a game down."
+    },
+    {
+      "id": "blackburne-shilling",
+      "name": "Blackburne Shilling Gambit: do not take on e5",
+      "moves": "1. e4 e5 2. Nf3 Nc6 3. Bc4 Nd4 4. Nxe5 Qg5 5. Nxf7 Qxg2 6. Rf1 Qxe4+ 7. Be2 Nf3#",
+      "notes": {
+        "3...Nd4": "A cheap trick: the knight leaves e5 undefended on purpose.",
+        "4.Nxe5": "The mistake: the pawn is poisoned.",
+        "5.Nxf7": "Greed again: it forks the queen and the rook, but Black's attack comes first."
+      },
+      "mistake": "4.Nxe5",
+      "punishment": "4...Qg5 attacks the e5 knight and g2 at once. After 5.Nxf7 Qxg2 6.Rf1 Qxe4+ 7.Be2 Nf3# Black mates; even the best defence 5.Bxf7+ leaves White worse. Against 3...Nd4 play 4.Nxd4 exd4 5.O-O: the knight on d4 is a loose piece, not a threat."
+    }
+  ]
+}

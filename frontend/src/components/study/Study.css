@@ -1,0 +1,29 @@
+/* The "why this move, why not the others" panel and the position assessment. */
+.why { display: flex; flex-direction: column; gap: var(--s-2); border-top: 1px solid var(--line); padding-top: var(--s-2); font-size: var(--fs-sm); }
+.why-head { display: flex; align-items: baseline; gap: var(--s-2); flex-wrap: wrap; }
+.why-head b { font-size: var(--fs-md); }
+.why-head .cls-badge { color: var(--cls); font-weight: 700; font-family: var(--font-display); }
+.why p { margin: 0; }
+.why-problem { color: var(--c-mistake); }
+.why-threat { color: var(--ink-2); }
+.why-alts { display: flex; flex-direction: column; gap: 4px; }
+.why-alts-title { color: var(--ink-3); text-transform: uppercase; font-size: var(--fs-xs); letter-spacing: 0.06em; font-weight: 600; }
+.why-alt { display: grid; grid-template-columns: auto auto 1fr; gap: 2px var(--s-2); align-items: baseline; text-align: left; padding: 6px 8px; border: 1px solid var(--line); border-radius: var(--r-sm); background: var(--bg-elev); cursor: pointer; color: var(--ink); font: inherit; }
+.why-alt:hover { border-color: var(--line-strong); background: var(--bg-hover); }
+.why-alt.better { border-color: color-mix(in srgb, var(--c-best) 50%, var(--line)); }
+.why-alt b { font-family: var(--font-display); font-size: var(--fs-md); }
+.why-alt .why-alt-text { grid-column: 1 / -1; color: var(--ink-2); }
+.why-alt .why-alt-line { grid-column: 1 / -1; color: var(--ink-3); font-family: var(--font-mono); font-size: var(--fs-xs); }
+.why-variation { display: flex; flex-direction: column; gap: var(--s-2); border-left: 3px solid var(--accent); padding-left: 10px; }
+.why-variation-line { font-family: var(--font-mono); font-size: var(--fs-sm); }
+.why-variation-line .now { color: var(--brand); font-weight: 700; }
+
+.assess { display: flex; flex-direction: column; gap: var(--s-2); font-size: var(--fs-sm); }
+.assess-verdict { margin: 0; font-family: var(--font-display); font-size: var(--fs-md); }
+.assess-items { margin: 0; padding-left: 0; list-style: none; display: flex; flex-direction: column; gap: 3px; }
+.assess-side { display: inline-block; font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-3); }
+.assess-side.white { color: var(--side-white); }
+.assess-side.black { color: var(--ink-2); }
+.assess-plans { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-3); }
+.assess-plans ul { margin: 4px 0 0; padding-left: 18px; color: var(--ink-2); }
+@media (max-width: 600px) { .assess-plans { grid-template-columns: 1fr; } }

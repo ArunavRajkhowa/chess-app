@@ -5,6 +5,7 @@ import { Board } from "../components/board/Board";
 import type { Shape } from "../components/board/shapes";
 import { EvalBar } from "../components/play/EvalBar";
 import { MoveList } from "../components/play/MoveList";
+import { Assessment } from "../components/study/Assessment";
 import { api } from "../lib/api";
 import { checkSquare, destsFor, safeMove, soundForMove } from "../lib/chess/game";
 import { START_FEN, type PromotionPiece, type Square } from "../lib/chess/types";
@@ -168,6 +169,10 @@ export function AnalysisPage() {
             ))}
             {!shownLines.length && <li className="faint" data-testid="engine-status">{result ? `${boardChess.isCheckmate() ? "Checkmate" : "Draw"} · ${result}` : engineOn ? "thinking…" : "engine off"}</li>}
           </ul>
+        </div>
+        <div className="card">
+          <div className="card-title"><h3>Assessment</h3><span className="faint">imbalances and plans</span></div>
+          <Assessment fen={fen} />
         </div>
         <div className="card" style={{ padding: 0 }}>
           <MoveList moves={history.map((m, i) => ({ ply: i + 1, san: m.san }))} currentPly={viewPly} onSelect={goTo} opening={null} />

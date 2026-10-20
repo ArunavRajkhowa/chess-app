@@ -8,7 +8,7 @@ interface Props {
   onSelect: (ply: number) => void;
 }
 
-const MARK: Partial<Record<Classification, string>> = { brilliant: "!!", great: "!", blunder: "??", mistake: "?", miss: "✖", inaccuracy: "?!" };
+const MARK: Partial<Record<Classification, string>> = { brilliant: "!!", great: "!", blunder: "??", mistake: "?", miss: "×", inaccuracy: "?!" };
 
 /** Area chart of White's winning chances; click to jump to a move. */
 export function EvalGraph({ graph, moves, currentPly, onSelect }: Props) {

@@ -7,6 +7,7 @@ import chess
 from fastapi import APIRouter, HTTPException, Query
 
 from ..openings.book import load_book
+from ..openings.courses import load_courses
 
 router = APIRouter(prefix="/api/openings", tags=["openings"])
 
@@ -80,3 +81,16 @@ async def line(pgn: str) -> dict:
         steps.append({"ply": board.ply(), "fen": board.fen(), "san": tok, "uci": mv.uci()})
     op = load_book().lookup(board)
     return {"steps": steps, "opening": {"eco": op.eco, "name": op.name} if op else None}
+
+
+@router.get("/courses")
+async def courses() -> dict:
+    return {"courses": [c.summary_dict() for c in load_courses().values()]}
+
+
+@router.get("/courses/{course_id}")
+async def course(course_id: str) -> dict:
+    c = load_courses().get(course_id)
+    if c is None:
+        raise HTTPException(404, f"no course {course_id!r}; expected one of {sorted(load_courses())}")
+    return c.detail()

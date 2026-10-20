@@ -9,6 +9,7 @@ from ..content.games import load_games
 from ..content.lessons import load_curriculum
 from ..engine.pool import pool
 from ..openings.book import load_book
+from ..openings.courses import load_courses
 from ..puzzles.store import load_library
 
 router = APIRouter(prefix="/api", tags=["health"])
@@ -26,14 +27,16 @@ async def health() -> dict:
 
 @router.post("/content/reload")
 async def reload_content() -> dict:
-    """Re-reads lessons, puzzles and master games from data/ without a restart."""
+    """Re-reads lessons, puzzles, master games and opening courses from data/ without a restart."""
     load_curriculum.cache_clear()
     load_library.cache_clear()
     load_games.cache_clear()
     load_endgames.cache_clear()
+    load_courses.cache_clear()
     return {
         "lessons": sum(len(m.lessons) for m in load_curriculum()),
         "puzzles": len(load_library().all),
         "games": len(load_games()),
         "endgames": len(load_endgames()["positions"]),
+        "courses": len(load_courses()),
     }

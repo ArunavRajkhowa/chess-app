@@ -1,0 +1,7 @@
+.explore { display: flex; flex-direction: column; gap: var(--s-2); }
+.explore-head { justify-content: space-between; }
+.explore-judged { display: inline-flex; align-items: baseline; gap: var(--s-2); }
+.explore-judged > span:not(.chip) { color: var(--cls); font-weight: 600; }
+.explore-compare { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--s-2); border-top: 1px solid var(--line); padding-top: var(--s-2); }
+.ask-coach { display: flex; flex-direction: column; gap: var(--s-2); }
+.ask-coach-answer { border-left: 3px solid var(--accent); padding-left: 10px; color: var(--ink-2); }

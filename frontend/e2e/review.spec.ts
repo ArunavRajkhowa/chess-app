@@ -14,9 +14,9 @@ async function clickMove(page: Page, uci: string) {
   await page.locator(`[data-square="${uci.slice(2, 4)}"].sq`).click();
 }
 
-test("a game from a FEN starts there, a side with no moves has no accuracy, and retry accepts another mate", async ({ page, request }) => {
+test("a game from a FEN starts there, a side with no moves has no accuracy, and retry accepts another mate", async ({ page }) => {
   const fen = "6k1/5ppp/8/8/8/8/5PPP/R2R2K1 w - - 0 1"; // Ra8# and Rd8# both mate; 1.Ra7 lets the mate go
-  const { id, report } = await reviewed(request, `[SetUp "1"]\n[FEN "${fen}"]\n\n1. Ra7 *`);
+  const { id, report } = await reviewed(page.request, `[SetUp "1"]\n[FEN "${fen}"]\n\n1. Ra7 *`);
   await page.goto(`/review/${id}`);
   await expect(page.getByTestId("review")).toBeVisible();
   await expect(page.getByTestId("board")).toHaveAttribute("data-fen", fen);
@@ -30,8 +30,8 @@ test("a game from a FEN starts there, a side with no moves has no accuracy, and 
   await expect(page.getByTestId("retry-banner")).toContainText("is checkmate");
 });
 
-test("Legal's mate: the bar names mate in 2, a correct retry stays on its move, graph marks stay inside", async ({ page, request }) => {
-  const { id, report } = await reviewed(request, "1. e4 e5 2. Nf3 d6 3. Bc4 Bg4 4. Nc3 g6 5. Nxe5 Bxd1 6. Bxf7+ Ke7 7. Nd5# 1-0");
+test("Legal's mate: the bar names mate in 2, a correct retry stays on its move, graph marks stay inside", async ({ page }) => {
+  const { id, report } = await reviewed(page.request, "1. e4 e5 2. Nf3 d6 3. Bc4 Bg4 4. Nc3 g6 5. Nxe5 Bxd1 6. Bxf7+ Ke7 7. Nd5# 1-0");
   const blunder = report.moves[9]; // 5...Bxd1?? allows Bxf7+ Ke7 Nd5#
   expect(blunder.eval_after_text).toBe("M2");
   await page.goto(`/review/${id}`);

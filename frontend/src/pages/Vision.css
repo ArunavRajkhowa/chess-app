@@ -2,7 +2,7 @@
 .vision-board { cursor: crosshair; }
 .vision-bottom { margin: var(--s-2) 0 0; text-align: center; font-size: var(--fs-lg); font-weight: 700; }
 .vision-side { display: flex; flex-direction: column; gap: var(--s-3); }
-.vision-target { font-size: var(--fs-3xl); font-weight: 800; font-family: var(--font-mono); text-align: center; }
+.vision-target { font-size: 64px; font-weight: 500; font-family: var(--font-display); text-align: center; }
 .vision-options { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-2); }
 .vision-options .btn { font-family: var(--font-mono); font-size: var(--fs-lg); }
 @media (max-width: 900px) { .vision { grid-template-columns: 1fr; } }

@@ -1,22 +1,31 @@
 .shell { display: grid; grid-template-columns: var(--nav-w) 1fr; min-height: 100vh; }
 .shell-nav {
-  position: sticky; top: 0; height: 100vh; padding: var(--s-4) var(--s-3);
-  background: var(--bg-elev); border-right: 1px solid var(--line); display: flex; flex-direction: column; gap: var(--s-4);
+  position: sticky; top: 0; height: 100vh; overflow-y: auto; padding: var(--s-4) var(--s-3);
+  background: var(--bg-elev); border-right: 1px solid var(--line); display: flex; flex-direction: column; gap: var(--s-3);
 }
-.shell-brand { display: flex; align-items: center; gap: var(--s-2); font-weight: 800; font-size: var(--fs-lg); color: var(--brand); padding: var(--s-2); }
-.shell-nav ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
-.shell-nav a { display: flex; align-items: center; gap: var(--s-3); padding: 10px 12px; border-radius: var(--r-md); color: var(--ink-2); font-weight: 600; }
+.shell-brand {
+  display: flex; align-items: center; gap: 10px; padding: 4px 10px 10px;
+  font-family: var(--font-display); font-size: var(--fs-xl); font-weight: 600; letter-spacing: -0.01em;
+}
+.shell-brand img { filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.4)); }
+.shell-group { display: flex; flex-direction: column; gap: 2px; }
+.shell-group-name { padding: 6px 12px 2px; font-size: var(--fs-xs); color: var(--ink-3); font-weight: 600; }
+.shell-nav ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 1px; }
+.shell-nav a { display: flex; align-items: center; gap: 11px; padding: 7px 12px; border-radius: var(--r-md); color: var(--ink-2); font-weight: 550; }
 .shell-nav a:hover { background: var(--bg-elev-2); color: var(--ink); }
-.shell-nav a.active { background: var(--bg-elev-2); color: var(--ink); box-shadow: inset 3px 0 0 var(--brand); }
-.shell-main { padding: var(--s-5) var(--s-6); min-width: 0; }
+.shell-nav a.active { background: var(--bg-elev-2); color: var(--ink); }
+.shell-nav a.active svg { color: var(--brand); }
+.shell-settings { margin-top: auto; }
+.shell-main { padding: var(--s-6) var(--s-6) var(--s-7); min-width: 0; max-width: 1400px; }
 .page-head { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--s-4); margin-bottom: var(--s-5); }
-.page-head p { color: var(--ink-2); margin-top: var(--s-1); }
+.page-head p { color: var(--ink-2); margin-top: 6px; max-width: 68ch; }
 
 @media (max-width: 900px) {
   .shell { grid-template-columns: 1fr; }
   .shell-nav { position: fixed; bottom: 0; top: auto; height: auto; width: 100%; flex-direction: row; padding: 6px; gap: 0; border-right: 0; border-top: 1px solid var(--line); z-index: 50; overflow-x: auto; }
-  .shell-brand { display: none; }
-  .shell-nav ul { flex-direction: row; }
+  .shell-brand, .shell-group-name { display: none; }
+  .shell-group, .shell-nav ul { flex-direction: row; }
   .shell-nav a span { display: none; }
+  .shell-settings { margin-top: 0; }
   .shell-main { padding: var(--s-4); padding-bottom: 72px; }
 }

@@ -18,8 +18,8 @@ interface Props {
 }
 
 export const CLASS_GLYPH: Record<Classification, string> = {
-  brilliant: "!!", great: "!", best: "★", excellent: "👍", good: "✓", book: "📖",
-  inaccuracy: "?!", mistake: "?", miss: "✖", blunder: "??", forced: "→",
+  brilliant: "!!", great: "!", best: "★", excellent: "✓", good: "✓", book: "≡",
+  inaccuracy: "?!", mistake: "?", miss: "×", blunder: "??", forced: "□",
 };
 
 export function MoveList({ moves, currentPly, onSelect, opening, startFen }: Props) {

@@ -18,6 +18,7 @@ from ..engine.score import cp_from_score, describe_score
 from ..openings.book import load_book
 from ..schema.play import GameState, HintResponse, MoveRecord, MoveRequest, MoveResponse, NewGameRequest
 from ..storage import games as store
+from .account import Player
 
 LOGGER = logging.getLogger("chess.play")
 router = APIRouter(prefix="/api/play", tags=["play"])
@@ -200,7 +201,7 @@ def _parse_move(board: chess.Board, text: str) -> chess.Move:
 
 
 @router.post("/games", response_model=GameState)
-async def new_game(req: NewGameRequest) -> GameState:
+async def new_game(req: NewGameRequest, player: Player) -> GameState:
     if req.bot_id not in BOTS_BY_ID:
         raise HTTPException(404, f"unknown bot {req.bot_id!r}")
     color = req.player_color if req.player_color != "random" else random.choice(["white", "black"])
@@ -213,9 +214,9 @@ async def new_game(req: NewGameRequest) -> GameState:
         if not start_board.is_valid() or start_board.is_game_over():
             raise HTTPException(400, "the start position is illegal or already finished")
         start_fen = start_board.fen()
-    game_id = await store.insert_game(player_color=color, bot_id=req.bot_id, coach_mode=req.coach_mode,
+    game_id = await store.insert_game(player, player_color=color, bot_id=req.bot_id, coach_mode=req.coach_mode,
                                       time_control=req.time_control, start_fen=start_fen)
-    row = await store.read_game(game_id)
+    row = await store.read_game(player, game_id)
     assert row is not None
     board = _board_of(row)
     bot_to_move = board.turn != (chess.WHITE if color == "white" else chess.BLACK)
@@ -226,8 +227,8 @@ async def new_game(req: NewGameRequest) -> GameState:
 
 
 @router.get("/games")
-async def games_index() -> dict:
-    rows = await store.list_games()
+async def games_index(player: Player) -> dict:
+    rows = await store.list_games(player)
     for r in rows:
         bot = BOTS_BY_ID.get(r["bot_id"])
         r["bot_name"] = bot.name if bot else (f'{r.get("white_name")} vs {r.get("black_name")}' if r.get("source") == "import" else r["bot_id"])
@@ -236,17 +237,17 @@ async def games_index() -> dict:
 
 
 @router.get("/games/{game_id}", response_model=GameState)
-async def get_game(game_id: str) -> GameState:
-    row = await store.read_game(game_id)
+async def get_game(game_id: str, player: Player) -> GameState:
+    row = await store.read_game(player, game_id)
     if not row:
         raise HTTPException(404, "no such game")
     return await _state(row)
 
 
 @router.post("/games/{game_id}/move", response_model=MoveResponse)
-async def make_move(game_id: str, req: MoveRequest) -> MoveResponse:
+async def make_move(game_id: str, req: MoveRequest, player: Player) -> MoveResponse:
     async with _GAME_LOCKS[game_id]:
-        row = await store.read_game(game_id)
+        row = await store.read_game(player, game_id)
         if not row:
             raise HTTPException(404, "no such game")
         if row["status"] != "active":
@@ -284,9 +285,9 @@ async def make_move(game_id: str, req: MoveRequest) -> MoveResponse:
 
 
 @router.post("/games/{game_id}/resign", response_model=GameState)
-async def resign(game_id: str) -> GameState:
+async def resign(game_id: str, player: Player) -> GameState:
     async with _GAME_LOCKS[game_id]:
-        row = await store.read_game(game_id)
+        row = await store.read_game(player, game_id)
         if not row:
             raise HTTPException(404, "no such game")
         if row["status"] != "active":
@@ -299,10 +300,10 @@ async def resign(game_id: str) -> GameState:
 
 
 @router.post("/games/{game_id}/flag", response_model=GameState)
-async def flag(game_id: str) -> GameState:
+async def flag(game_id: str, player: Player) -> GameState:
     """The player's clock ran out. The browser keeps the clock; the server records the result."""
     async with _GAME_LOCKS[game_id]:
-        row = await store.read_game(game_id)
+        row = await store.read_game(player, game_id)
         if not row:
             raise HTTPException(404, "no such game")
         if row["status"] != "active":
@@ -321,10 +322,10 @@ async def flag(game_id: str) -> GameState:
 
 
 @router.post("/games/{game_id}/takeback", response_model=GameState)
-async def takeback(game_id: str) -> GameState:
+async def takeback(game_id: str, player: Player) -> GameState:
     """Undo the player's last move and the bot's reply to it."""
     async with _GAME_LOCKS[game_id]:
-        row = await store.read_game(game_id)
+        row = await store.read_game(player, game_id)
         if not row:
             raise HTTPException(404, "no such game")
         if row["status"] != "active":
@@ -341,8 +342,8 @@ async def takeback(game_id: str) -> GameState:
 
 
 @router.get("/games/{game_id}/hint", response_model=HintResponse)
-async def hint(game_id: str) -> HintResponse:
-    row = await store.read_game(game_id)
+async def hint(game_id: str, player: Player) -> HintResponse:
+    row = await store.read_game(player, game_id)
     if not row:
         raise HTTPException(404, "no such game")
     board = _board_of(row)

@@ -1,16 +1,17 @@
 import { Chess } from "chess.js";
 import { Flame, Lightbulb, RotateCcw, Timer, Trophy } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { Board } from "../components/board/Board";
+import { ExplorePanel, useExplore } from "../components/explore/Explore";
 import type { Shape } from "../components/board/shapes";
 import { checkSquare, destsFor, safeMove, soundForMove } from "../lib/chess/game";
-import type { PromotionPiece, Square } from "../lib/chess/types";
+import { START_FEN, type PromotionPiece, type Square } from "../lib/chess/types";
 import { play as playSound } from "../lib/sound";
 import { puzzleApi, type Puzzle, type PuzzleTheme } from "../lib/puzzleApi";
 import "./Puzzles.css";
 
-type Mode = "rated" | "custom" | "rush" | "daily" | "mistakes";
+type Mode = "rated" | "custom" | "rush" | "daily" | "mistakes" | "review";
 type Phase = "intro" | "solving" | "solved" | "failed" | "revealed";
 
 interface Solver {
@@ -74,6 +75,24 @@ export function PuzzlesPage() {
   }, [params]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
+    if (!params.get("review")) return; // from Review: the puzzles missed before that are due again
+    setMode("review");
+    puzzleApi.review().then((r) => {
+      if (!r.puzzles.length) { setError("No puzzles due for review."); return; }
+      setMistakes({ queue: r.puzzles, i: 0, total: r.puzzles.length });
+      void load(r.puzzles[0]);
+    }).catch((e: Error) => setError(e.message));
+  }, [params]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    const theme = params.get("theme"); // from a lesson: practise what it taught
+    if (!theme) return;
+    setMode("custom");
+    setSelectedThemes([theme]);
+    puzzleApi.next({ themes: [theme] }).then((r) => load(r.puzzle, r.player_rating)).catch((e: Error) => setError(e.message));
+  }, [params]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
     if (!rush || rush.finished || rush.endsAt === null) return;
     const t = setInterval(() => setNow(Date.now()), 250);
     return () => clearInterval(t);
@@ -120,11 +139,11 @@ export function PuzzlesPage() {
 
   const nextPuzzle = useCallback(async () => {
     try {
-      if (mode === "mistakes") {
-        const q = mistakes ?? { queue: (await puzzleApi.mistakes()).puzzles, i: -1, total: 0 };
+      if (mode === "mistakes" || mode === "review") {
+        const q = mistakes ?? { queue: mode === "review" ? (await puzzleApi.review()).puzzles : (await puzzleApi.mistakes()).puzzles, i: -1, total: 0 };
         const i = q.i + 1;
-        if (!q.queue.length) { setError("No mistakes yet. Play and review a few games first."); return; }
-        if (i >= q.queue.length) { setError("You have been through all your mistakes. Play more games."); return; }
+        if (!q.queue.length) { setError(mode === "review" ? "No puzzles due for review." : "No mistakes yet. Play and review a few games first."); return; }
+        if (i >= q.queue.length) { setError(mode === "review" ? "Review done: every puzzle that was due has had its turn." : "You have been through all your mistakes. Play more games."); return; }
         setMistakes({ ...q, i, total: q.queue.length });
         await load(q.queue[i]);
         return;
@@ -172,7 +191,7 @@ export function PuzzlesPage() {
       return;
     }
     try {
-      const r = await puzzleApi.attempt(puzzle.id, moves, (Date.now() - startedAt.current) / 1000, mode === "rated" ? "rated" : mode === "daily" ? "daily" : mode === "mistakes" ? "mistakes" : "custom", hinted);
+      const r = await puzzleApi.attempt(puzzle.id, moves, (Date.now() - startedAt.current) / 1000, mode === "rated" ? "rated" : mode === "daily" ? "daily" : mode === "mistakes" ? "mistakes" : mode === "review" ? "review" : "custom", hinted);
       setResult({ delta: r.delta, rating_after: r.rating_after, puzzle_rating: r.puzzle_rating });
       setPlayerRating(r.rating_after);
       // the stats card counts rated attempts only, as the server does
@@ -188,6 +207,10 @@ export function PuzzlesPage() {
     setRush({ ...r, i });
     await load(r.queue[i]);
   };
+
+  // once the puzzle is over, any move on the board is judged by the engine; the first is measured against the solution
+  const explore = useExplore(solver?.fen ?? START_FEN, puzzle && solver ? puzzle.moves[solver.index] : undefined);
+  const over = solver !== null && (solver.phase === "solved" || solver.phase === "failed" || solver.phase === "revealed") && mode !== "rush";
 
   const onMove = (from: Square, to: Square, promotion?: PromotionPiece) => {
     if (!solver || !puzzle || solver.phase !== "solving") return;
@@ -226,11 +249,13 @@ export function PuzzlesPage() {
       setSolver({ ...solver, phase: "failed", wrongMove: [from, to] });
       setStreak(0);
       void record(false, playedSoFar);
+      if (mode !== "rush") explore.onMove(from, to, promotion); // play the miss so the engine shows why it fails
     }
   };
 
   const retry = () => {
     if (!puzzle) return;
+    explore.reset();
     void load(puzzle).then(() => { recorded.current = true; }); // practice only: the first attempt already counted
     setResult(null);
   };
@@ -244,6 +269,7 @@ export function PuzzlesPage() {
     shapes.push(solver.hintLevel >= 2 ? { orig: exp.slice(0, 2), dest: exp.slice(2, 4), brush: "green" } : { orig: exp.slice(0, 2), brush: "yellow" });
   }
   const highlights = solver?.wrongMove && (solver.phase === "failed" || mode === "daily") ? [{ square: solver.wrongMove[1], brush: "red" as const }] : [];
+  const trained = (puzzle?.themes ?? []).map((k) => themes.find((t) => t.key === k)).filter((t): t is PuzzleTheme => !!t?.motif);
   const remaining = rush && rush.endsAt !== null ? Math.max(0, Math.ceil((rush.endsAt - now) / 1000)) : null;
 
   return (
@@ -260,19 +286,19 @@ export function PuzzlesPage() {
         </div>
         {puzzle && solver ? (
           <Board
-            fen={solver.fen}
+            fen={explore.active ? explore.fen : solver.fen}
             orientation={puzzle.solver_color}
-            movable={{ color: solver.phase === "solving" ? solverColor : "none", dests }}
-            lastMove={solver.lastMove}
-            check={checkSquare(solver.chess)}
-            shapes={shapes}
-            highlights={highlights}
-            onMove={onMove}
+            movable={over ? { color: "both", dests: explore.dests } : { color: solver.phase === "solving" ? solverColor : "none", dests }}
+            lastMove={explore.active ? explore.lastMove : solver.lastMove}
+            check={explore.active ? explore.check : checkSquare(solver.chess)}
+            shapes={explore.active ? [] : shapes}
+            highlights={explore.active ? [] : highlights}
+            onMove={over ? explore.onMove : onMove}
           />
         ) : (
           <div className="puzzles-empty card">
-            <h2>{mode === "rush" ? "Puzzle Rush" : mode === "custom" ? "Custom puzzles" : mode === "mistakes" ? "My mistakes" : "Rated puzzles"}</h2>
-            <p className="muted">{mode === "rush" ? "Solve as many as you can. Three mistakes end the run." : mode === "custom" ? "Pick themes and a rating range. These do not change your rating." : mode === "mistakes" ? "Positions from your reviewed games where you went wrong. Find the move you missed." : "Puzzles near your rating. Solve the whole line to earn points."}</p>
+            <h2>{mode === "rush" ? "Puzzle Rush" : mode === "custom" ? "Custom puzzles" : mode === "mistakes" ? "My mistakes" : mode === "review" ? "Review" : "Rated puzzles"}</h2>
+            <p className="muted">{mode === "rush" ? "Solve as many as you can. Three mistakes end the run." : mode === "custom" ? "Pick themes and a rating range. These do not change your rating." : mode === "mistakes" ? "Positions from your reviewed games where you went wrong. Find the move you missed." : mode === "review" ? "Puzzles you missed before, back on the spaced ladder: a day, then three, a week, and on." : "Puzzles near your rating. Solve the whole line to earn points."}</p>
             {mode === "rush" ? (
               <div className="row">
                 <button className="btn btn-primary" onClick={() => startRush("3m")} data-testid="rush-3m"><Timer size={14} /> 3 minutes</button>
@@ -299,7 +325,10 @@ export function PuzzlesPage() {
         {puzzle && solver && (
           <div className="card">
             <div className="row" style={{ justifyContent: "space-between" }}>
+              <span className="grow">
               <strong data-testid="puzzle-turn">{solver.phase === "solved" ? "Solved!" : solver.phase === "revealed" ? "Solution shown" : solver.phase === "failed" ? "Not quite" : solver.phase === "intro" ? `${mode === "daily" ? "Daily puzzle · " : ""}Watch the opponent's move…` : `${mode === "daily" ? "Daily puzzle · " : ""}${puzzle.solver_color === "white" ? "White" : "Black"} to play`}</strong>
+              {(solver.phase === "intro" || solver.phase === "solving") && <span className="puzzle-goal" data-testid="puzzle-goal">{puzzle.goal}</span>}
+              </span>
               <span className="chip">puzzle {puzzle.rating}</span>
             </div>
             {playerRating !== null && mode === "rated" && <div className="faint">Your puzzle rating: <b className="num">{playerRating}</b>{result && <span className={result.delta >= 0 ? "ok" : "bad"}> ({result.delta >= 0 ? "+" : ""}{result.delta})</span>}</div>}
@@ -317,6 +346,7 @@ export function PuzzlesPage() {
                   const rest = puzzle.moves.slice(solver.index);
                   for (const m of rest) safeMove(c, m);
                   const last = rest[rest.length - 1];
+                  explore.reset(); // the solution plays on the puzzle board, not on the miss
                   setSolver({ ...solver, chess: c, fen: c.fen(), lastMove: last ? [last.slice(0, 2), last.slice(2, 4)] : solver.lastMove, phase: "revealed" });
                 }} data-testid="puzzle-show-solution">Show solution</button>}
                 {mode !== "rush" && <button className="btn btn-sm btn-primary" onClick={nextPuzzle} data-testid="puzzle-next">Next</button>}
@@ -327,9 +357,16 @@ export function PuzzlesPage() {
                 {mode === "daily" ? <span className="chip chip-ok">Done for today. Come back tomorrow.</span> : <button className="btn btn-sm btn-primary" onClick={nextPuzzle} data-testid="puzzle-next">Next puzzle</button>}
               </div>
             )}
-            {(solver.phase === "solved" || solver.phase === "failed" || solver.phase === "revealed") && (
-              <div className="row" style={{ marginTop: 10, flexWrap: "wrap" }}>
-                {puzzle.themes.map((t) => <span key={t} className="chip">{themes.find((x) => x.key === t)?.name ?? t}</span>)}
+            {over && <div className="puzzle-explore"><ExplorePanel explore={explore} compareLabel="The solution" idle={<p className="faint">Try other moves on the board: the engine judges each one.</p>} /></div>}
+            {over && trained.length > 0 && (
+              <div className="puzzle-trained" data-testid="puzzle-trained">
+                <span className="lesson-kicker">What this puzzle trains</span>
+                {trained.map((t) => (
+                  <div key={t.key}>
+                    <b>{t.name}</b>: <span className="muted">{t.description}</span>
+                    {t.lesson && <> <Link to={`/learn/${t.lesson.id}`} className="link">Lesson: {t.lesson.title}</Link></>}
+                  </div>
+                ))}
               </div>
             )}
             {puzzle.source?.white && <div className="faint" style={{ marginTop: 8 }}>From {puzzle.source.white} vs {puzzle.source.black}{/^\d{4}$/.test(String(puzzle.source.year ?? "")) ? `, ${puzzle.source.year}` : ""}{(puzzle.source as { played?: string }).played ? ` · you played ${(puzzle.source as { played?: string }).played}` : ""}</div>}

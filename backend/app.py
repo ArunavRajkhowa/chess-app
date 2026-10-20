@@ -15,6 +15,7 @@ from fastapi.staticfiles import StaticFiles
 from .engine.pool import IllegalPosition, pool
 from .logging_setup import configure_logging
 from .openings.book import load_book
+from .routers.account import current_player
 from .settings import REPO_ROOT, settings
 from .storage.db import database
 
@@ -75,7 +76,7 @@ def create_app() -> FastAPI:
                 app.mount(f"/{sub}", StaticFiles(directory=d), name=sub)
 
         @app.get("/{path:path}", include_in_schema=False)
-        async def spa(path: str):
+        async def spa(path: str, request: Request):
             """Every non-API path serves index.html so client-side routes survive a refresh. A file is
             served only from inside frontend/dist; an unknown /api path is a 404, not the page."""
             if path.startswith("api/"):
@@ -84,7 +85,11 @@ def create_app() -> FastAPI:
             candidate = (root / path).resolve()
             if path and candidate.is_relative_to(root) and candidate.is_file():
                 return FileResponse(candidate)
-            return FileResponse(root / "index.html")
+            page = FileResponse(root / "index.html")
+            # The page brings the player cookie, so the app's parallel first calls share one guest.
+            # shortcut: the Vite dev server serves its own page, so there a first visit may mint a guest per call.
+            await current_player(request, page)
+            return page
 
     return app
 
