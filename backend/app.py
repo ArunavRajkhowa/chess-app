@@ -2,6 +2,7 @@
 pool and the SQLite store on startup; without an engine the app refuses to start and says why."""
 from __future__ import annotations
 
+import asyncio
 import logging
 import time
 import uuid
@@ -14,7 +15,10 @@ from fastapi.staticfiles import StaticFiles
 
 from .engine.pool import IllegalPosition, pool
 from .logging_setup import configure_logging
+from .bots.specialists import specialist_bots
+from .content.lessons import load_curriculum
 from .openings.book import load_book
+from .plans import catalog
 from .routers.account import current_player
 from .settings import REPO_ROOT, settings
 from .storage.db import database
@@ -23,14 +27,29 @@ _FRONTEND_DIST = REPO_ROOT / "frontend" / "dist"
 _access_log = logging.getLogger("chess.request")
 
 
+def _warm_content() -> None:
+    """Builds the cached content once at start, so no request pays for it."""
+    started = time.monotonic()
+    load_book()
+    specialist_bots()  # the courses, the master games and the endgames
+    load_curriculum()
+    for family in catalog.families():
+        catalog.groups_of(family)
+    catalog.opening_puzzles("")  # the puzzle library and its opening tags
+    logging.getLogger("chess.app").info("content ready in %.1fs", time.monotonic() - started)
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await database.start()
-    load_book()
     await pool.start()
+    # The port opens now; on a small host the content takes a minute, and a request that needs it
+    # before then builds what it needs itself.
+    warm = asyncio.create_task(asyncio.to_thread(_warm_content))
     try:
         yield
     finally:
+        await warm
         await pool.stop()
         await database.stop()
 
@@ -87,7 +106,6 @@ def create_app() -> FastAPI:
                 return FileResponse(candidate)
             page = FileResponse(root / "index.html")
             # The page brings the player cookie, so the app's parallel first calls share one guest.
-            # shortcut: the Vite dev server serves its own page, so there a first visit may mint a guest per call.
             await current_player(request, page)
             return page
 
@@ -100,4 +118,5 @@ app = create_app()
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run("backend.app:app", host=settings.HOST, port=settings.PORT, reload=True)
+    uvicorn.run("backend.app:app", host=settings.HOST, port=settings.PORT, reload=True,
+                forwarded_allow_ips=settings.FORWARDED_ALLOW_IPS or None)

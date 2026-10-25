@@ -10,22 +10,32 @@
 .shell-brand img { filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.4)); }
 .shell-group { display: flex; flex-direction: column; gap: 2px; }
 .shell-group-name { padding: 6px 12px 2px; font-size: var(--fs-xs); color: var(--ink-3); font-weight: 600; }
-.shell-nav ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 1px; }
-.shell-nav a { display: flex; align-items: center; gap: 11px; padding: 7px 12px; border-radius: var(--r-md); color: var(--ink-2); font-weight: 550; }
-.shell-nav a:hover { background: var(--bg-elev-2); color: var(--ink); }
-.shell-nav a.active { background: var(--bg-elev-2); color: var(--ink); }
-.shell-nav a.active svg { color: var(--brand); }
+.shell-nav ul, .shell-sheet ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 1px; }
+.shell-nav a, .shell-sheet a, .shell-more { display: flex; align-items: center; gap: 11px; padding: 7px 12px; border-radius: var(--r-md); color: var(--ink-2); font-weight: 550; border: 0; background: none; cursor: pointer; }
+.shell-nav a:hover, .shell-sheet a:hover { background: var(--bg-elev-2); color: var(--ink); }
+.shell-nav a.active, .shell-sheet a.active, .shell-more.active { background: var(--bg-elev-2); color: var(--ink); }
+.shell-nav a.active svg, .shell-sheet a.active svg { color: var(--brand); }
 .shell-settings { margin-top: auto; }
+.shell-more, .shell-sheet { display: none; }
 .shell-main { padding: var(--s-6) var(--s-6) var(--s-7); min-width: 0; max-width: 1400px; }
 .page-head { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--s-4); margin-bottom: var(--s-5); }
 .page-head p { color: var(--ink-2); margin-top: 6px; max-width: 68ch; }
 
+/* Phone: a five-tab bar with labels and 44px targets; the rest opens as a sheet above it. */
 @media (max-width: 900px) {
   .shell { grid-template-columns: 1fr; }
-  .shell-nav { position: fixed; bottom: 0; top: auto; height: auto; width: 100%; flex-direction: row; padding: 6px; gap: 0; border-right: 0; border-top: 1px solid var(--line); z-index: 50; overflow-x: auto; }
-  .shell-brand, .shell-group-name { display: none; }
-  .shell-group, .shell-nav ul { flex-direction: row; }
-  .shell-nav a span { display: none; }
-  .shell-settings { margin-top: 0; }
-  .shell-main { padding: var(--s-4); padding-bottom: 72px; }
+  .shell-nav { position: fixed; bottom: 0; top: auto; height: auto; width: 100%; flex-direction: row; padding: 4px 4px calc(4px + env(safe-area-inset-bottom)); gap: 0; border-right: 0; border-top: 1px solid var(--line); z-index: 50; }
+  .shell-nav .shell-brand, .shell-group-name, .shell-nav .shell-settings { display: none; }
+  .shell-group, .shell-nav ul { display: contents; }
+  .shell-nav li { display: none; flex: 1 1 0; }
+  .shell-nav li.phone-bar { display: block; }
+  .shell-nav a, .shell-more { flex-direction: column; gap: 3px; padding: 6px 2px; min-height: 48px; font-size: 11px; font-weight: 600; justify-content: center; }
+  .shell-nav a.active, .shell-more.active { background: none; color: var(--brand); }
+  .shell-more { display: flex; flex: 1 1 0; }
+  .shell-sheet { display: block; position: fixed; left: 0; right: 0; bottom: calc(57px + env(safe-area-inset-bottom)); z-index: 49; background: var(--bg-elev); border-top: 1px solid var(--line); padding: var(--s-2) var(--s-3); box-shadow: var(--shadow); animation: sheet-up var(--anim) var(--ease); }
+  .shell-sheet ul { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
+  .shell-sheet a { min-height: 44px; }
+  .shell-main { padding: var(--s-4); padding-bottom: 80px; }
+  .page-head { flex-direction: column; align-items: stretch; }
 }
+@keyframes sheet-up { from { transform: translateY(12px); opacity: 0; } }

@@ -21,12 +21,19 @@ class Settings(BaseSettings):
     HOST: str = "127.0.0.1"
     PORT: int = 8765
     ALLOWED_ORIGINS: str = "http://localhost:5173,http://127.0.0.1:5173"
+    # Behind a host's HTTPS proxy (Render, SnapDeploy): the proxy addresses whose
+    # X-Forwarded-* headers uvicorn trusts, so cookies get Secure and sign-in rate limits see the
+    # real client. "*" trusts every proxy; blank trusts none. uvicorn reads this variable itself.
+    FORWARDED_ALLOW_IPS: str = ""
 
     # Engine. Blank = auto-detect: native `stockfish` on PATH, the Debian path, Homebrew,
     # then the WASM build under frontend/node_modules run by `node`.
     STOCKFISH_PATH: str = ""
     ENGINE_THREADS: int = 1
     ENGINE_HASH_MB: int = 64
+    # 2: bot moves and analysis each get an engine. 1: they share one, which halves the memory
+    # (each Stockfish holds about 270 MB with its network) for a 512 MB host.
+    ENGINE_PROCESSES: int = 2
 
     # Coach. Every model is optional: with none set the coach answers from rules. Two ways to set one:
     # an OpenAI-compatible server (local Ollama / LM Studio / llama.cpp, or a free hosted API), which
@@ -53,6 +60,19 @@ class Settings(BaseSettings):
     # Accounts. Everyone plays as a guest. With a Google OAuth client id, Settings offers
     # "Sign in with Google", which keeps a player's progress across devices.
     GOOGLE_CLIENT_ID: str = ""
+    # Signs password-reset links. Blank: generated once into data/secret.key next to DB_PATH
+    # (set it explicitly on a host whose disk is wiped on restart, or every restart voids open links).
+    SECRET_KEY: str = ""
+    # Password-reset mail over SMTP (Brevo and Resend free tiers both offer it). Blank SMTP_HOST:
+    # the link is written to the log instead of sent.
+    SMTP_HOST: str = ""
+    SMTP_PORT: int = 587
+    SMTP_USER: str = ""
+    SMTP_PASSWORD: str = ""
+    MAIL_FROM: str = ""
+    # The address players open the app at, e.g. https://chess.example.com; the base of reset links.
+    # Blank: links only for a request to localhost, else no mail (the Host header is the client's).
+    PUBLIC_URL: str = ""
 
     @property
     def origins_list(self) -> list[str]:

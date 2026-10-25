@@ -22,7 +22,8 @@
 .sq.last-move::after { background: var(--sq-last); }
 .sq.selected::after { background: var(--sq-selected); }
 .sq.premove::after { background: var(--sq-premove); }
-.sq.check::after { background: var(--sq-check); }
+.sq.check::after { background: var(--sq-check); animation: check-pulse calc(var(--anim-slow) * 2) var(--ease) 2; }
+@keyframes check-pulse { 50% { opacity: 0.55; } }
 .sq.drag-over::after { box-shadow: inset 0 0 0 4px var(--sq-hover); }
 .sq.dest::before {
   content: ""; position: absolute; inset: 0; margin: auto; width: 32%; height: 32%;
@@ -51,9 +52,13 @@
   position: absolute; left: 0; top: 0; width: 12.5%; height: 12.5%;
   background-size: 100% 100%; background-repeat: no-repeat; background-position: center;
   will-change: transform; z-index: 3;
-  transition: transform var(--anim) ease-out;
+  transition: transform var(--anim) var(--ease);
 }
-.board.no-anim .piece { transition: none; }
+/* The piece that just moved travels above the others and settles with a short scale. `scale` is
+   its own property, so it composes with the transform that places the piece and stays on the compositor. */
+.piece.moved { z-index: 4; animation: settle var(--anim-slow) var(--ease-settle) both; }
+@keyframes settle { 45% { scale: 1.08; } 100% { scale: 1; } }
+.board.no-anim .piece { transition: none; animation: none; }
 .piece.dragging { transition: none; z-index: 10; filter: drop-shadow(0 6px 6px rgba(0,0,0,0.35)); transform-origin: center; }
 .board.is-dragging { cursor: grabbing; }
 .board:not(.is-dragging) .piece { cursor: grab; }
@@ -92,9 +97,11 @@
 .board-promo {
   position: absolute; width: 12.5%; display: flex; flex-direction: column;
   background: var(--bg-elev); border-radius: var(--r-sm); box-shadow: var(--shadow);
+  animation: promo-in var(--anim) var(--ease-settle) both;
 }
-.board-promo.from-top { top: 0; }
-.board-promo.from-bottom { bottom: 0; flex-direction: column-reverse; }
+@keyframes promo-in { from { transform: scaleY(0.6); opacity: 0; } }
+.board-promo.from-top { top: 0; transform-origin: top; }
+.board-promo.from-bottom { bottom: 0; flex-direction: column-reverse; transform-origin: bottom; }
 .board-promo-piece {
   position: relative; width: 100%; aspect-ratio: 1; border: 0; background-color: transparent;
   background-size: 90% 90%; background-repeat: no-repeat; background-position: center; cursor: pointer;

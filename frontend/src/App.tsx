@@ -18,6 +18,7 @@ import { VisionPage } from "./pages/VisionPage";
 import { AnalysisPage } from "./pages/AnalysisPage";
 import { ReviewGamePage } from "./pages/ReviewGamePage";
 import { ReviewPage } from "./pages/ReviewPage";
+import { StudyPlanPage } from "./pages/StudyPlanPage";
 import "./styles/base.css";
 import "./styles/pages.css";
 
@@ -35,6 +36,8 @@ export default function App() {
           <Route path="/learn" element={<LearnPage />} />
           <Route path="/learn/review" element={<LearnReviewPage />} />
           <Route path="/learn/:lessonId" element={<LessonPage />} />
+          <Route path="/plan" element={<StudyPlanPage />} />
+          <Route path="/plan/:planId" element={<StudyPlanPage />} />
           <Route path="/openings" element={<OpeningsPage />} />
           <Route path="/openings/courses/:courseId" element={<OpeningsPage />} />
           <Route path="/games" element={<GamesPage />} />

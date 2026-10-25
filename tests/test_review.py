@@ -133,8 +133,8 @@ def test_insights_from_a_reviewed_bot_game(client):
     ins = client.get("/api/insights/me").json()
     assert ins["games"] == 1
     assert 0 <= ins["accuracy"]["mean"] <= 100
-    assert sum(ins["results"].values()) == 1
-    assert "move_quality" in ins and "shapes" in ins
+    assert [t["game_id"] for t in ins["accuracy"]["timeline"]] == [game["id"]]
+    assert "move_quality" in ins and "sections" in ins
 
 
 def test_mistake_puzzles_come_from_reviews(client):
@@ -199,4 +199,4 @@ def test_a_side_with_no_moves_has_no_accuracy(client):
     assert rep["black"]["accuracy"] is None and rep["black"]["acpl"] is None and rep["black"]["estimated_rating"] is None
     assert rep["white"]["accuracy"] is not None and rep["white"]["estimated_rating"] is None  # one move is no measure of strength
     ins = client.get("/api/insights/me").json()
-    assert ins["games"] == 1 and ins["accuracy"] is None and ins["results"] == {"loss": 1}
+    assert ins["games"] == 1 and ins["accuracy"] is None and ins["phase_accuracy"] == {}

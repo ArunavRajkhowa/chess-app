@@ -39,7 +39,7 @@ async def my_game_study(game_id: str, player: Player) -> dict:
     row = await store.read_game(player, game_id)
     if not row or not row["moves"]:
         raise HTTPException(404, "no such game, or no moves yet")
-    return await study_or_start([chess.Move.from_uci(m["uci"]) for m in row["moves"]], row.get("start_fen"))
+    return await study_or_start([chess.Move.from_uci(m["uci"]) for m in row["moves"]], row.get("start_fen"), mine=True)
 
 
 @router.get("/assess")

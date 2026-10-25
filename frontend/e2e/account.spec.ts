@@ -8,7 +8,9 @@ const eventSent = (page: Page, name: string) =>
 test("a first visit is one guest, and the app's opens and page views are recorded", async ({ page, context }) => {
   const opened = eventSent(page, "app.opened");
   const viewed = eventSent(page, "page.viewed");
-  await page.goto("/puzzles");
+  const pageResponse = await page.goto("/puzzles");
+  // the page itself brings the cookie, or the parallel first calls each mint a guest and the last to land wins
+  expect(await pageResponse!.headerValue("set-cookie")).toContain("player=");
   expect((await opened).status()).toBe(200);
   expect((await viewed).status()).toBe(200);
   expect((await viewed).request().postDataJSON().props).toEqual({ page: "puzzles" });

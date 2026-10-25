@@ -128,7 +128,7 @@ export function ExplorePanel({ explore, compareLabel = "The game move", idle }: 
 }
 
 /** A free question about the position on the board, answered by the coach from the engine's facts. */
-export function AskCoach({ fen }: { fen: string }) {
+export function AskCoach({ fen, lessonId }: { fen: string; lessonId?: string }) {
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState<{ fen: string; text: string; busy: boolean } | null>(null);
   const ask = async () => {
@@ -136,7 +136,7 @@ export function AskCoach({ fen }: { fen: string }) {
     if (!q || answer?.busy) return;
     setAnswer({ fen, text: "", busy: true });
     try {
-      await streamCoach("/api/coach/chat", { fen, question: q }, (chunk) => setAnswer((a) => (a ? { ...a, text: a.text + chunk } : a)));
+      await streamCoach("/api/coach/chat", { fen, question: q, lesson_id: lessonId }, (chunk) => setAnswer((a) => (a ? { ...a, text: a.text + chunk } : a)));
       setAnswer((a) => (a ? { ...a, busy: false } : a));
     } catch (e) {
       setAnswer({ fen, text: `The coach is not available: ${e instanceof Error ? e.message : String(e)}`, busy: false });

@@ -1,0 +1,163 @@
+{
+  "id": "scandinavian",
+  "name": "Scandinavian Defence",
+  "side": "black",
+  "openings": ["Scandinavian Defense"],
+  "summary": "1.e4 d5: Black hits e4 at once and decides the centre on move one. After 2.exd5 Black takes back with the queen or with the knight. The queen moves cost time, so Black answers with quick, solid development: pawns on c6 and e6, the light-squared bishop on f5 or g4 outside the chain, and the king castled early.",
+  "ideas": {
+    "black": [
+      "Take back on d5 and put the queen on a5, d6 or d8, where White's minor pieces cannot hit it again with tempo.",
+      "Develop the light-squared bishop to f5 or g4 before ...e6, then build the c6, e6 pawn shell that the bishop sits outside of.",
+      "Every queen move is a lost tempo: pay it back by developing a new piece with each move and castling early.",
+      "Against g4 and h4 lunges, keep the f5 bishop alive on g6, e4 or d5 rather than letting it be trapped.",
+      "With 2...Nf6, take back with the knight on d5 and pin the f3 knight with ...Bg4."
+    ],
+    "white": [
+      "Gain time on the black queen: Nc3, d4, Nf3, Bd2 and Nd5 tricks against a queen on a5.",
+      "Use the extra central pawn on d4 and the lead in development; castle long and attack when Black castles short.",
+      "Chase the f5 bishop with Ne5, g4 and h4 to win space on the kingside.",
+      "In the Modern line, take space with c4 and chase the d5 knight."
+    ]
+  },
+  "structures": [
+    {"name": "The Caro-Kann shell: c6 and e6 against d4", "text": "White has a pawn on d4, Black has pawns on c6 and e6 and none in the centre. The shell guards d5 and is very hard to break. White has more space; Black has no weak pawns and a good light-squared bishop outside the chain."},
+    {"name": "Modern line: knight on d5 against d4 and c4", "text": "After 2...Nf6 and ...Nxd5, White often plays c4 to chase the knight and builds a broad centre with pawns on c4 and d4. Black puts pressure on d4 with ...Nc6, ...Bg4 and ...Bf6."}
+  ],
+  "pieces": {
+    "black": [
+      "Queen: a5 pins the c3 knight to the king once the d2 pawn moves, d6 controls e5 and f4, d8 is safe from every tempo.",
+      "Light-squared bishop: f5 or g4, outside the c6, e6 shell. It is the reason ...e6 waits.",
+      "f6 knight: develops with pressure on e4 and d5 and guards the kingside.",
+      "d7 knight: comes to d7 to guard f6 and to challenge a white knight on e5."
+    ],
+    "white": [
+      "c3 knight: develops with tempo on the queen, then jumps to d5, b5 or e4.",
+      "d2 bishop: lines up with the c3 knight against a queen on a5; a knight move then becomes a discovered attack.",
+      "e5 knight: an outpost that supports g4 and h4 against the f5 bishop.",
+      "Kingside pawns: g4 and h4 chase the light-squared bishop and gain space."
+    ]
+  },
+  "lines": [
+    {
+      "id": "qa5-main",
+      "name": "Main line, 3...Qa5: the c6, e6, Bf5 shell",
+      "moves": "1. e4 d5 2. exd5 Qxd5 3. Nc3 Qa5 4. d4 Nf6 5. Nf3 c6 6. Bc4 Bf5 7. Ne5 e6 8. g4 Bg6 9. h4 Nbd7 10. Nxd7 Nxd7 11. h5 Be4 12. O-O Bd5",
+      "notes": {
+        "1...d5": "The Scandinavian: Black attacks e4 at once and does not let White build a big centre.",
+        "2...Qxd5": "Black takes back and has a central queen, but it will be hit by Nc3.",
+        "3.Nc3": "Develops and attacks the queen: White gains a tempo.",
+        "3...Qa5": "The queen leaves the centre but stays active: once the d2 pawn moves, it pins the c3 knight to the king.",
+        "4.d4": "White takes the centre: Black's d-pawn is gone, so d4 is the only centre pawn on the board.",
+        "4...Nf6": "Develops and controls e4 and d5.",
+        "5...c6": "Gives the queen a way back to c7 and d8 and guards d5 and b5 against White's knights.",
+        "6.Bc4": "Aims at f7 and keeps e2 free for the queen.",
+        "6...Bf5": "The bishop leaves before ...e6 shuts it in.",
+        "7.Ne5": "The knight takes a strong square and supports g4 against the f5 bishop.",
+        "7...e6": "Now ...e6 costs nothing: the bishop is already outside the pawn chain.",
+        "8.g4": "Attacks the bishop and gains space.",
+        "8...Bg6": "The bishop steps back on the same diagonal and stays active.",
+        "9.h4": "Threatens h5 to chase the bishop off g6 again.",
+        "9...Nbd7": "Black challenges the e5 knight; a trade takes away a key attacker.",
+        "11.h5": "Hits the bishop again.",
+        "11...Be4": "The bishop escapes to the centre with an attack on the h1 rook.",
+        "12...Bd5": "Offers to trade White's c4 bishop. Black is solid and ready to castle."
+      }
+    },
+    {
+      "id": "qa5-classical",
+      "name": "Classical, 5...Bf5: ...Bb4 against the castled-long king",
+      "moves": "1. e4 d5 2. exd5 Qxd5 3. Nc3 Qa5 4. d4 Nf6 5. Nf3 Bf5 6. Bc4 c6 7. Bd2 e6 8. Qe2 Bb4 9. O-O-O Nbd7 10. a3 Bxc3 11. Bxc3 Qc7",
+      "notes": {
+        "5...Bf5": "The bishop develops first, outside the e6 pawn it will soon have.",
+        "6...c6": "Before anything else: ...c6 takes d5 and b5 from the c3 knight and gives the queen a retreat to c7 and d8.",
+        "7.Bd2": "Unpins the c3 knight; now a knight move would uncover an attack on the queen.",
+        "7...e6": "With d5 covered by c6, the Nd5 trick does nothing, so Black completes the shell.",
+        "8.Qe2": "Prepares to castle long and puts the queen on the e-file towards e6.",
+        "8...Bb4": "Develops and adds the bishop to the queen's pressure on the c3 knight.",
+        "9...Nbd7": "Develops and keeps watch on e5 and c5.",
+        "10...Bxc3": "The a3 pawn attacks the bishop, so Black trades it for the knight. With the knight gone, no knight move can uncover the d2 bishop on the queen.",
+        "11...Qc7": "The queen goes back to c7, out of reach, and controls e5. Black castles next."
+      }
+    },
+    {
+      "id": "qd6",
+      "name": "3...Qd6: the queen on the d-file",
+      "moves": "1. e4 d5 2. exd5 Qxd5 3. Nc3 Qd6 4. d4 Nf6 5. Nf3 a6 6. Be2 Nc6 7. O-O Bf5 8. Be3 e6",
+      "notes": {
+        "3...Qd6": "The queen controls e5 and f4 and is safe from the Bd2 and Nd5 tricks, but Nb5 and Bf4 can hit it.",
+        "4...Nf6": "Develops and controls d5 and e4.",
+        "5...a6": "Takes b5 from the white knights, so the queen cannot be chased with Nb5.",
+        "6...Nc6": "Puts pressure on d4 with the queen and the knight.",
+        "7...Bf5": "The bishop develops outside the pawns before ...e6.",
+        "8.Be3": "Guards d4, which the queen and the c6 knight attack.",
+        "8...e6": "The f8 bishop is free and Black is ready to castle, often long, and to play against d4."
+      }
+    },
+    {
+      "id": "qd8",
+      "name": "3...Qd8: the safest square",
+      "moves": "1. e4 d5 2. exd5 Qxd5 3. Nc3 Qd8 4. d4 Nf6 5. Nf3 c6 6. Bc4 Bf5 7. Qe2 e6 8. Bg5 Be7 9. O-O-O Nbd7",
+      "notes": {
+        "3...Qd8": "The queen goes all the way home. White has two extra tempi, but no target to hit.",
+        "5...c6": "The same shell as in the main line: d5 and b5 are covered.",
+        "6...Bf5": "The bishop goes out before ...e6.",
+        "7.Qe2": "Prepares Bg5 and castling long.",
+        "7...e6": "Frees the f8 bishop; the f5 bishop is already outside the chain.",
+        "8.Bg5": "Pins the f6 knight.",
+        "8...Be7": "Breaks the pin and prepares to castle.",
+        "9...Nbd7": "Black guards f6 again and is one move from castling. The position is solid; White's extra space is the only trump."
+      }
+    },
+    {
+      "id": "modern",
+      "name": "Modern, 2...Nf6: take back with the knight",
+      "moves": "1. e4 d5 2. exd5 Nf6 3. d4 Nxd5 4. Nf3 Bg4 5. Be2 e6 6. O-O Nc6 7. c4 Nb6 8. Nc3 Be7",
+      "notes": {
+        "2...Nf6": "Black develops first and takes the pawn back with the knight, so the queen loses no time.",
+        "3...Nxd5": "The knight is strong on d5, but c4 can chase it.",
+        "4...Bg4": "Pins the f3 knight, which guards d4.",
+        "5...e6": "Opens the f8 bishop and guards the d5 knight.",
+        "6...Nc6": "Develops and attacks d4, which the queen and the f3 knight guard.",
+        "7.c4": "Takes space and chases the knight.",
+        "7...Nb6": "The knight steps back and keeps watching c4 and d5.",
+        "8...Be7": "Black castles next, then plays ...Bf6 against d4."
+      }
+    }
+  ],
+  "traps": [
+    {
+      "id": "nd5-discovery",
+      "name": "7...Nbd7?: the knight jump that wins the queen",
+      "moves": "1. e4 d5 2. exd5 Qxd5 3. Nc3 Qa5 4. d4 Nf6 5. Nf3 Bf5 6. Bc4 e6 7. Bd2 Nbd7 8. Nd5 Qxd5 9. Bxd5",
+      "notes": {
+        "6...e6": "Black skips ...c6, so the c7 pawn still blocks the queen's way back to c7 and d8.",
+        "7.Bd2": "The bishop lines up behind the c3 knight against the queen on a5.",
+        "7...Nbd7": "The mistake: natural development, but it does nothing about the knight jump to d5."
+      },
+      "mistake": "7...Nbd7",
+      "punishment": "8.Nd5! uncovers the d2 bishop on the queen. The queen cannot go back to d8 because the c7 pawn is in the way, and the knight also threatens Nxc7+ and Nxf6+. 8...Qxd5 9.Bxd5 exd5 gives up the queen for a knight and a bishop. Play ...c6 first, as in the main line: then ...Qd8 and ...Qc7 are open and d5 is covered."
+    },
+    {
+      "id": "qxd4-greed",
+      "name": "7...Qxd4?: the poisoned d-pawn",
+      "moves": "1. e4 d5 2. exd5 Qxd5 3. Nc3 Qd8 4. d4 Nf6 5. Nf3 Bg4 6. h3 Bxf3 7. Qxf3 Qxd4 8. Qxb7",
+      "notes": {
+        "6...Bxf3": "Black gives up the bishop; the white queen takes back and now aims at b7.",
+        "7...Qxd4": "The mistake: with the c8 bishop gone, nothing guards b7, and the queen leaves the queenside to grab a pawn."
+      },
+      "mistake": "7...Qxd4",
+      "punishment": "8.Qxb7 hits the a8 rook, and Nb5 comes next with Nxc7+ on the king and the rook. Black loses much more than the pawn. Play 7...c6 and ...e6: develop first, and take a pawn only when the queenside is safe."
+    },
+    {
+      "id": "bxf7-check",
+      "name": "7.Bxf7+?: the sacrifice that hangs the queen",
+      "moves": "1. e4 d5 2. exd5 Qxd5 3. Nc3 Qa5 4. d4 Nf6 5. Nf3 c6 6. Bc4 Bg4 7. Bxf7+ Kxf7 8. Ne5+ Qxe5+ 9. dxe5 Bxd1",
+      "notes": {
+        "6...Bg4": "Pins the f3 knight to the queen on d1.",
+        "7.Bxf7+": "White hopes for 7...Kxf7 8.Ne5+, a fork of the king and the g4 bishop."
+      },
+      "mistake": "7.Bxf7+",
+      "punishment": "7...Kxf7 8.Ne5+ Qxe5+! The queen on a5 sees e5 along the fifth rank. After 9.dxe5 Bxd1 Black takes the white queen, because the f3 knight that guarded d1 has left. Black ends a piece up for a pawn."
+    }
+  ]
+}

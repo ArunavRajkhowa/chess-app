@@ -1,7 +1,7 @@
 import { Chess } from "chess.js";
 import { Search } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { Board } from "../components/board/Board";
 import { MoveList } from "../components/play/MoveList";
 import { checkSquare, destsFor, safeMove, soundForMove } from "../lib/chess/game";
@@ -55,11 +55,13 @@ function Explorer() {
     if (latest.current === key) setExplore(r); // a later step may have asked first
   }, []);
 
+  const [params] = useSearchParams(); // a study plan links /openings?line=<pgn>
   useEffect(() => {
-    void refresh([]);
+    const pgn = params.get("line");
+    if (pgn) void loadLine(pgn); else void refresh([]);
     get<{ families: Family[] }>("/api/openings/families").then((r) => setFamilies(r.families.slice(0, 40))).catch(() => undefined);
     get<{ courses: CourseSummary[] }>("/api/openings/courses").then((r) => setCourses(r.courses)).catch(() => undefined);
-  }, [refresh]);
+  }, [refresh]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (!query.trim()) { setResults([]); return; }
     const t = setTimeout(() => get<{ results: typeof results }>(`/api/openings/search?q=${encodeURIComponent(query)}`).then((r) => setResults(r.results)).catch(() => undefined), 200);
@@ -124,7 +126,7 @@ function Explorer() {
   return (
     <div className="openings" data-testid="openings">
       <div>
-        <div className="row" style={{ justifyContent: "space-between", marginBottom: 8 }}>
+        <div className="row" style={{ justifyContent: "space-between", flexWrap: "wrap", marginBottom: 8 }}>
           <div>
             <h2 data-testid="opening-name">{explore?.opening ? `${explore.opening.eco} · ${explore.opening.name}` : viewPly ? "Out of book" : "Starting position"}</h2>
             <div className="faint">{explore?.opening?.pgn ?? "Play moves on the board or pick a line."}</div>
@@ -207,12 +209,21 @@ const moveLabel = (ply: number, san: string) => `${Math.ceil(ply / 2)}${ply % 2 
 function CourseView({ courseId }: { courseId: string }) {
   const navigate = useNavigate();
   const [course, setCourse] = useState<CourseDetail | null>(null);
+  const [params] = useSearchParams(); // a study plan links /openings/courses/<id>?line=<line or trap id>
   const [pick, setPick] = useState<{ kind: "lines" | "traps"; i: number }>({ kind: "lines", i: 0 });
   const [ply, setPly] = useState(0);
   // practice: the learner's moves found first try, the ones missed, and the last miss to explain
   const [practice, setPractice] = useState<{ right: number; wrong: number; miss: string | null } | null>(null);
   const [shaking, setShaking] = useState(false);
-  useEffect(() => { get<CourseDetail>(`/api/openings/courses/${courseId}`).then(setCourse).catch(() => navigate("/openings")); }, [courseId, navigate]);
+  useEffect(() => {
+    get<CourseDetail>(`/api/openings/courses/${courseId}`).then((c) => {
+      setCourse(c);
+      const wanted = params.get("line");
+      const i = c.lines.findIndex((l) => l.id === wanted);
+      const t = c.traps.findIndex((l) => l.id === wanted);
+      if (i >= 0) setPick({ kind: "lines", i }); else if (t >= 0) setPick({ kind: "traps", i: t });
+    }).catch(() => navigate("/openings"));
+  }, [courseId, navigate]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const line = course ? course[pick.kind][pick.i] ?? null : null;
   const moves = line?.moves ?? [];

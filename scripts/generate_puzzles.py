@@ -112,7 +112,7 @@ def themes_for(board: chess.Board, moves: list[chess.Move], final_cp: int) -> li
     n_solver = len(solver_moves)
     if end.is_checkmate():
         themes.add("mate")
-        themes.add({1: "mateIn1", 2: "mateIn2", 3: "mateIn3"}.get(n_solver, "mateIn4"))
+        themes.add({1: "mateIn1", 2: "mateIn2", 3: "mateIn3", 4: "mateIn4"}.get(n_solver, "mateIn5"))
         last = moves[-1]
         piece = end.piece_at(last.to_square)
         ksq = end.king(not solver)

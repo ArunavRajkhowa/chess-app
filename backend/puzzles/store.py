@@ -22,7 +22,8 @@ THEME_INFO: dict[str, tuple[str, str]] = {
     "mateIn1": ("Mate in 1", "Deliver checkmate in one move."),
     "mateIn2": ("Mate in 2", "Deliver checkmate in two moves against any defence."),
     "mateIn3": ("Mate in 3", "Deliver checkmate in three moves against any defence."),
-    "mateIn4": ("Mate in 4+", "A longer forced mate."),
+    "mateIn4": ("Mate in 4", "Deliver checkmate in four moves against any defence."),
+    "mateIn5": ("Mate in 5+", "A longer forced mate."),
     "mate": ("Checkmate", "The solution ends in checkmate."),
     "fork": ("Fork", "One piece attacks two or more enemy pieces at once."),
     "pin": ("Pin", "A piece cannot move because a more valuable piece sits behind it."),
@@ -31,6 +32,17 @@ THEME_INFO: dict[str, tuple[str, str]] = {
     "doubleCheck": ("Double check", "Two pieces give check at once; only a king move helps."),
     "backRankMate": ("Back-rank mate", "The king is trapped on its first rank by its own pawns."),
     "smotheredMate": ("Smothered mate", "A knight mates a king boxed in by its own pieces."),
+    "anastasiaMate": ("Anastasia's mate", "A knight and a rook trap the king against the edge of the board."),
+    "arabianMate": ("Arabian mate", "A knight and a rook mate the king in the corner."),
+    "bodenMate": ("Boden's mate", "Two bishops on crossing diagonals mate a king blocked by its own pieces."),
+    "doubleBishopMate": ("Double bishop mate", "Two bishops on neighbouring diagonals mate the king."),
+    "dovetailMate": ("Dovetail mate", "A queen next to the king mates because its own pieces take the escape squares."),
+    "hookMate": ("Hook mate", "A rook, a knight and a pawn mate the king on the edge."),
+    "killBoxMate": ("Kill box mate", "A rook checks beside the king and a queen covers the box around it."),
+    "vukovicMate": ("Vukovic mate", "A rook and a knight mate a king on the edge, the rook protected by the knight or a pawn."),
+    "xRayAttack": ("X-ray attack", "A piece attacks through an enemy piece on the same line."),
+    "intermezzo": ("In-between move", "Before the expected recapture comes a stronger move, usually a check or a threat."),
+    "attackingF2F7": ("Attacking f2 or f7", "A strike on the weakest square next to the king before castling."),
     "hangingPiece": ("Hanging piece", "Win a piece that is attacked and not defended."),
     "sacrifice": ("Sacrifice", "Give up material for a greater gain."),
     "deflection": ("Deflection", "Drag a defender away from its duty."),
@@ -39,6 +51,9 @@ THEME_INFO: dict[str, tuple[str, str]] = {
     "interference": ("Interference", "Put a piece between two enemy pieces that protect each other."),
     "zugzwang": ("Zugzwang", "Any move worsens the position."),
     "promotion": ("Promotion", "A pawn reaches the last rank."),
+    "underPromotion": ("Underpromotion", "A pawn promotes to a knight, rook or bishop because a queen would not do."),
+    "enPassant": ("En passant", "The pawn capture in passing decides."),
+    "castling": ("Castling", "Castling is the move, or the move that stops it."),
     "advancedPawn": ("Advanced pawn", "A pawn deep in enemy territory decides the game."),
     "trappedPiece": ("Trapped piece", "A piece has no safe square."),
     "capturingDefender": ("Capturing the defender", "Remove the piece that holds everything together."),
@@ -55,7 +70,10 @@ THEME_INFO: dict[str, tuple[str, str]] = {
     "queenEndgame": ("Queen endgame", "Queens and pawns."),
     "bishopEndgame": ("Bishop endgame", "Bishops and pawns."),
     "knightEndgame": ("Knight endgame", "Knights and pawns."),
+    "queenRookEndgame": ("Queen and rook endgame", "Queens, rooks and pawns."),
+    "oneMove": ("One move", "One move to solve."),
     "short": ("Short", "Two moves to solve."),
+    "veryLong": ("Very long", "Four moves or more."),
     "myMistake": ("Your mistake", "A position from your own reviewed game: find the move you missed."),
     "long": ("Long", "A longer combination."),
     "crushing": ("Crushing", "Win a decisive amount of material."),
@@ -63,8 +81,8 @@ THEME_INFO: dict[str, tuple[str, str]] = {
     "equality": ("Equality", "Hold a worse position."),
 }
 # Themes that say how long, where or how much, not which idea wins: a puzzle "trains" its other themes.
-CONTEXT_THEMES = frozenset({"mateIn1", "mateIn2", "mateIn3", "mateIn4", "mate", "short", "long", "middlegame", "endgame",
-                            "opening", "crushing", "advantage", "equality", "myMistake"})
+CONTEXT_THEMES = frozenset({"mateIn1", "mateIn2", "mateIn3", "mateIn4", "mateIn5", "mate", "oneMove", "short", "long", "veryLong",
+                            "middlegame", "endgame", "opening", "crushing", "advantage", "equality", "myMistake"})
 
 
 @dataclass
@@ -77,6 +95,7 @@ class Puzzle:
     themes: list[str]
     source: dict = field(default_factory=dict)
     popularity: int = 0
+    opening_tags: list[str] = field(default_factory=list)  # lichess opening tags of the source game
 
     @property
     def solver_color(self) -> str:
@@ -88,7 +107,7 @@ class Puzzle:
         """What the solver must achieve, read from the themes; it never names the tactic."""
         mate = next((t for t in self.themes if t.startswith("mateIn")), None)
         if mate:
-            return "Mate in 4 or more" if mate == "mateIn4" else f"Mate in {mate[6:]}"
+            return "Mate in 5 or more" if mate == "mateIn5" else f"Mate in {mate[6:]}"
         for key, goal in (("mate", "Checkmate"), ("crushing", "Win decisive material"), ("advantage", "Win a clear advantage"), ("equality", "Hold the balance")):
             if key in self.themes:
                 return goal
@@ -152,6 +171,7 @@ def _checked(d: dict) -> Puzzle:
     return Puzzle(
         id=d["id"], fen=d["fen"], moves=moves, rating=int(d.get("rating", 1200)), rd=int(d.get("rd", 80)),
         themes=list(d.get("themes", [])), source=d.get("source", {}), popularity=int(d.get("popularity", 0)),
+        opening_tags=list(d.get("opening_tags", [])),
     )
 
 

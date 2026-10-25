@@ -1,0 +1,177 @@
+{
+  "id": "english",
+  "name": "English Opening",
+  "side": "white",
+  "openings": ["English Opening"],
+  "summary": "1.c4: White takes d5 from the side with a wing pawn and keeps the centre pawns flexible. Against 1...e5 White plays a Sicilian with an extra move; against 1...c5 the game stays symmetrical until White breaks with d4 or e4; against 1...Nf6 White chooses between a kingside fianchetto and the sharp 3.e4. The course covers each Black reply and the Botvinnik setup with pawns on c4 and e4.",
+  "ideas": {
+    "white": [
+      "Control d5 first: c4, Nc3 and the bishop on g2 all aim at it.",
+      "Fianchetto the light-squared bishop: on g2 it hits d5 and the long diagonal to b7 and a8.",
+      "Against 1...e5, play the Sicilian with colours reversed: the extra move lets White expand on the queenside with a3 and b4.",
+      "Against a king's fianchetto, use the Botvinnik setup: pawns on c4 and e4, knight on e2, and f4 later.",
+      "Choose when to play d4. After 1.c4 Nf6 2.Nc3 e6 3.Nf3 d5 4.d4 the game is a Queen's Gambit Declined; keep d4 back if you want the English structures."
+    ],
+    "black": [
+      "Take the centre that White leaves: ...e5, or ...d5 when the bishop on g2 is not yet ready.",
+      "Copy White's setup with ...c5, ...Nc6, ...g6 and ...Bg7, and wait for White to commit.",
+      "Hit d5 and c4 with ...d5, ...Nb6 and ...Be6 against the reversed Dragon.",
+      "Against the Botvinnik setup, play ...f5 to attack e4."
+    ]
+  },
+  "structures": [
+    {"name": "Reversed Sicilian: c4 against e5", "text": "White has the c-pawn on the fourth rank and Black the e-pawn. White's c-file and the long diagonal point at Black's queenside; Black has more central space. White plays a3, b4 and b5 on the queenside; Black plays on the kingside or in the centre with ...d5."},
+    {"name": "Botvinnik: c4, e4, d3 against e5, d6", "text": "White's pawns on c4 and e4 keep d5 under White control. The knight goes to e2, not f3, so the f-pawn can advance to f4. Black's answers are ...f5 and ...Nd4; White's plans are f4 or the queenside push with b4."},
+    {"name": "Symmetrical: c4 against c5", "text": "Both sides have a half-open c-file after an exchange. The side that opens the centre first with d4 or ...d5 gets the more active pieces. After d4, cxd4 and Nxd4 White's pawn on c4 holds d5 and gives White more space."}
+  ],
+  "pieces": {
+    "white": [
+      "g2 bishop: the English's best piece. It hits d5 and b7; do not trade it cheaply.",
+      "c3 knight: the second attacker of d5; it often jumps to d5 when no black piece can take it.",
+      "Rook on b1 or c1: supports b4 and b5 on the queenside, or uses the half-open c-file.",
+      "e2 knight in the Botvinnik: leaves the f-pawn free to go to f4."
+    ],
+    "black": [
+      "e5 pawn against 1...e5: Black's space in the centre; it takes d4 and f4 from White's pieces.",
+      "g7 bishop: the mirror of White's g2 bishop, on the other long diagonal.",
+      "d5 knight in the reversed Dragon: active, but a target for the g2 bishop and the c3 knight.",
+      "f-pawn: ...f5 is Black's main break against the Botvinnik setup."
+    ]
+  },
+  "lines": [
+    {
+      "id": "reversed-dragon",
+      "name": "Four Knights, 4...d5: the Dragon with an extra move",
+      "moves": "1. c4 e5 2. Nc3 Nf6 3. Nf3 Nc6 4. g3 d5 5. cxd5 Nxd5 6. Bg2 Nb6 7. O-O Be7 8. d3 O-O 9. a3 Be6 10. b4",
+      "notes": {
+        "1.c4": "The English: the pawn controls d5 from the side and leaves the centre pawns free.",
+        "1...e5": "Black takes central space. This is a Sicilian with the colours reversed, and White has the extra move.",
+        "2.Nc3": "The second piece on d5.",
+        "3.Nf3": "Develops and attacks e5.",
+        "3...Nc6": "Defends e5.",
+        "4.g3": "Prepares Bg2, the bishop for the long diagonal through d5 and b7.",
+        "4...d5": "Black opens the centre at once, as White does in the Sicilian Dragon.",
+        "5.cxd5": "Trades the c-pawn for a centre pawn and opens the c-file.",
+        "6.Bg2": "The bishop stands behind the f3 knight on the long diagonal. When the knight moves, the bishop hits d5 too.",
+        "6...Nb6": "The knight leaves the long diagonal and the attack of the c3 knight, and hits c4.",
+        "7.O-O": "The king is safe before the queenside play starts.",
+        "8.d3": "Opens the c1 bishop and keeps the e4 square covered.",
+        "9.a3": "Prepares b4: White plays on the queenside, where the half-open c-file points.",
+        "9...Be6": "Develops and guards c4 and d5.",
+        "10.b4": "Space on the queenside and the threat b5, which pushes the c6 knight away from e5."
+      }
+    },
+    {
+      "id": "botvinnik-closed",
+      "name": "Closed, Botvinnik System: c4 and e4 against ...g6",
+      "moves": "1. c4 e5 2. Nc3 Nc6 3. g3 g6 4. Bg2 Bg7 5. d3 d6 6. e4 Nge7 7. Nge2 O-O 8. O-O Be6 9. Nd5",
+      "notes": {
+        "2...Nc6": "Defends e5 and prepares the closed system with ...g6.",
+        "3.g3": "The fianchetto: the bishop will control d5 from g2.",
+        "3...g6": "Black copies the plan: a Closed Sicilian with the colours reversed.",
+        "5.d3": "Opens the c1 bishop and supports a later e4.",
+        "6.e4": "The Botvinnik setup: pawns on c4 and e4 hold d5 for a white knight.",
+        "6...Nge7": "The knight keeps the f-pawn free for ...f5.",
+        "7.Nge2": "On e2, not f3: the f-pawn can go to f4 to hit e5.",
+        "8...Be6": "Aims at c4 and d5, the squares White wants.",
+        "9.Nd5": "The knight takes d5, which the c4 and e4 pawns support. The e6 bishop and the e7 knight can trade it, but no pawn can chase it: the c6 knight stands in front of the c-pawn."
+      }
+    },
+    {
+      "id": "symmetrical-d4",
+      "name": "Symmetrical, Four Knights: the d4 break",
+      "moves": "1. c4 c5 2. Nf3 Nf6 3. Nc3 Nc6 4. g3 g6 5. Bg2 Bg7 6. O-O O-O 7. d4 cxd4 8. Nxd4 Nxd4 9. Qxd4 d6 10. Qd3",
+      "notes": {
+        "1...c5": "The Symmetrical: Black copies White and also fights for d4.",
+        "2.Nf3": "Controls d4 and e5, and prepares d4.",
+        "4.g3": "The fianchetto: the g2 bishop hits the long diagonal.",
+        "4...g6": "Full symmetry: Black's bishop goes to its own long diagonal, as White's does.",
+        "6.O-O": "Castles first, then opens the centre.",
+        "7.d4": "The break: White opens the centre while the pieces are ready. The first side to break gets the initiative.",
+        "7...cxd4": "Black takes; otherwise d5 gains space with tempo on the c6 knight.",
+        "8.Nxd4": "White has a half-open d-file and a pawn on c4 that holds d5.",
+        "8...Nxd4": "A trade: the c6 knight was attacked by the d4 knight and the g2 bishop.",
+        "9.Qxd4": "The queen is central, but on the g7 bishop's diagonal, behind the f6 knight: a knight move uncovers the bishop.",
+        "9...d6": "Opens the c8 bishop and covers e5 and c5.",
+        "10.Qd3": "The queen leaves the bishop's diagonal and keeps an eye on d5 and the queenside."
+      }
+    },
+    {
+      "id": "anglo-indian-botvinnik",
+      "name": "Anglo-Indian against ...g6: the Botvinnik setup",
+      "moves": "1. c4 Nf6 2. Nc3 g6 3. g3 Bg7 4. Bg2 O-O 5. e4 d6 6. Nge2 e5 7. O-O c6 8. d3 a6 9. a4",
+      "notes": {
+        "1...Nf6": "The Anglo-Indian: Black waits to see where White's pawns go.",
+        "2.Nc3": "Controls d5 and e4.",
+        "2...g6": "A King's Indian setup.",
+        "5.e4": "White plays e4 before d4, so the d4 pawn that Black usually attacks in the King's Indian is not there.",
+        "6.Nge2": "The knight goes to e2 to keep f4 possible.",
+        "6...e5": "Black claims central space and takes d4 and f4 from White's pieces.",
+        "7...c6": "Prepares ...b5 or ...d5 to break White's hold on d5.",
+        "8.d3": "Supports c4 and e4: a solid chain on the light squares.",
+        "8...a6": "Prepares ...b5 to undermine c4.",
+        "9.a4": "Stops ...b5: White keeps the c4 pawn and with it control of d5."
+      }
+    },
+    {
+      "id": "mikenas",
+      "name": "Mikenas-Carls, 3.e4: the knight is chased at once",
+      "moves": "1. c4 Nf6 2. Nc3 e6 3. e4 d5 4. e5 d4 5. exf6 dxc3 6. bxc3 Qxf6 7. d4 e5 8. Nf3 exd4 9. Bg5 Qe6+ 10. Be2",
+      "notes": {
+        "2...e6": "Black prepares ...d5 or ...Bb4. After 3.d4 the game becomes a Nimzo-Indian; 3.e4 keeps it an English.",
+        "3.e4": "The Mikenas-Carls: White grabs the centre and threatens e5 to chase the f6 knight.",
+        "3...d5": "Black hits the e4 pawn at once.",
+        "4.e5": "Attacks the knight; the push is the point of 3.e4.",
+        "4...d4": "A counterattack on the c3 knight instead of a retreat.",
+        "5.exf6": "White takes the knight; both sides lose a minor piece.",
+        "6.bxc3": "Takes back toward the centre: the c3 pawn supports d4.",
+        "7.d4": "Builds the centre and opens the c1 bishop.",
+        "8.Nf3": "Develops, defends the d4 pawn and attacks the e5 pawn.",
+        "9.Bg5": "Develops with tempo on the queen.",
+        "10.Be2": "Blocks the check and prepares castling. White wins the d4 pawn back next and is ahead in development."
+      }
+    }
+  ],
+  "traps": [
+    {
+      "id": "smothered-f3",
+      "name": "4...Nd4 and 6.Nd3?: mate on f3",
+      "moves": "1. c4 e5 2. Nc3 Nf6 3. Nf3 Nc6 4. g3 Nd4 5. Nxe5 Qe7 6. Nd3 Nf3#",
+      "notes": {
+        "4...Nd4": "Black offers the e5 pawn; the knight eyes f3 and e2, next to White's king.",
+        "5.Nxe5": "Greedy: the knight on e5 stands on the e-file, where Black has no pawn left.",
+        "5...Qe7": "Attacks the e5 knight and lines up with the e2 pawn and the king.",
+        "6.Nd3": "The mistake: the knight leaves the e-file, so the e2 pawn is pinned to the king."
+      },
+      "mistake": "6.Nd3",
+      "punishment": "6...Nf3 is mate: the e2 pawn cannot take because the queen on e7 pins it, the g-pawn has left g2, and White's own pieces block every square around the king. After 5...Qe7 play 6.f4, which gives the king the f2 square; better still, answer 4...Nd4 with 5.Bg2 and do not take on e5."
+    },
+    {
+      "id": "anglo-grunfeld-bg7",
+      "name": "Anglo-Grünfeld, 5...Bg7?: the d5 knight falls",
+      "moves": "1. c4 Nf6 2. Nc3 d5 3. cxd5 Nxd5 4. g3 g6 5. Bg2 Bg7 6. Nxd5",
+      "notes": {
+        "3...Nxd5": "The knight takes back and stands in the centre.",
+        "4.g3": "Prepares Bg2 to add a second attacker on d5.",
+        "5.Bg2": "Now d5 is attacked twice, by the c3 knight and the g2 bishop. Only the queen defends it.",
+        "5...Bg7": "The mistake: natural development, but it does nothing for the d5 knight."
+      },
+      "mistake": "5...Bg7",
+      "punishment": "6.Nxd5 wins a piece: if 6...Qxd5 7.Bxd5. Count attackers and defenders before you develop. After 5.Bg2 play 5...Nb6 or 5...Nxc3 first, then ...Bg7."
+    },
+    {
+      "id": "kramnik-shirov-bxb4",
+      "name": "Kramnik-Shirov, 4...Bxb4?: the pawn is guarded",
+      "moves": "1. c4 e5 2. Nc3 Bb4 3. Nd5 Bc5 4. b4 Bxb4 5. Nxb4",
+      "notes": {
+        "2...Bb4": "Black plans ...Bxc3 to double White's pawns.",
+        "3.Nd5": "The knight hits the bishop and takes the central square.",
+        "3...Bc5": "The bishop goes back to the a7-g1 diagonal.",
+        "4.b4": "Gains space with tempo on the bishop. The pawn is protected by the d5 knight.",
+        "4...Bxb4": "The mistake: the bishop takes a pawn that the knight guards."
+      },
+      "mistake": "4...Bxb4",
+      "punishment": "5.Nxb4 wins a bishop for a pawn. After 4.b4 play 4...Bd4, which attacks the a1 rook and keeps the bishop safe."
+    }
+  ]
+}

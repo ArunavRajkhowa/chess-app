@@ -1,6 +1,7 @@
 """Study annotations: for every move of a game, why it was played and why the alternatives were
 not, from the engine's candidate lines and rules that read the board. Computed once per game,
-cached under data/study/<key>.json, so a watched game answers at once the second time."""
+cached under data/study/<key>.json (a player's own game under data/study/mine/, never committed),
+so a watched game answers at once the second time."""
 from __future__ import annotations
 
 import asyncio
@@ -36,18 +37,23 @@ def study_key(start_fen: str, ucis: list[str]) -> str:
     return hashlib.sha1((start_fen + " " + " ".join(ucis)).encode()).hexdigest()[:16]
 
 
-def cached(key: str) -> dict | None:
-    path = STUDY_DIR / f"{key}.json"
+def _folder(mine: bool):
+    return STUDY_DIR / "mine" if mine else STUDY_DIR
+
+
+def cached(key: str, mine: bool = False) -> dict | None:
+    path = _folder(mine) / f"{key}.json"
     if not path.exists():
         return None
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def _store(key: str, doc: dict) -> None:
-    STUDY_DIR.mkdir(parents=True, exist_ok=True)
-    tmp = STUDY_DIR / f"{key}.json.tmp"
+def _store(key: str, doc: dict, mine: bool = False) -> None:
+    folder = _folder(mine)
+    folder.mkdir(parents=True, exist_ok=True)
+    tmp = folder / f"{key}.json.tmp"
     tmp.write_text(json.dumps(doc, ensure_ascii=False), encoding="utf-8")
-    tmp.replace(STUDY_DIR / f"{key}.json")
+    tmp.replace(folder / f"{key}.json")
 
 
 @dataclass
@@ -120,6 +126,14 @@ def _reply_story(before: chess.Board, move: chess.Move, reply: chess.Move | None
         line = _sans(after, [reply, *tail], 5)
         return f"the engine answers {' '.join(line)}"
     return f"the engine answers {san}"
+
+
+def parry_reason(before: chess.Board, move: chess.Move, parry: dict | None = None) -> str | None:
+    """'parries the threat of Nxf7' or 'stops the mate threat Qxg7#' when the move takes a threat away."""
+    parry = parry if parry is not None else parried_threat(before, move)
+    if not parry:
+        return None
+    return f"stops the mate threat {parry['san']}" if parry["kind"] == "mate" else f"parries the threat of {parry['san']}"
 
 
 def _gap_words(gap: float) -> str:
@@ -203,7 +217,7 @@ async def annotate(moves: list[chess.Move], engine: EnginePool = pool, *, start_
         reasons = move_reasons(before, mv)
         parry = parried_threat(before, mv)
         if parry:
-            reasons.insert(0 if parry["kind"] == "mate" else min(1, len(reasons)), f"stops the mate threat {parry['san']}" if parry["kind"] == "mate" else f"parries the threat of {parry['san']}")
+            reasons.insert(0 if parry["kind"] == "mate" else min(1, len(reasons)), parry_reason(before, mv, parry))
         only_move = second is not None and win_before - second >= ONLY_MOVE_GAP and rank == 0
         problem = _reply_story(before, mv, nxt[0].move, nxt[0].pv[1:]) if (nxt and classification in PROBLEM_CLASSES) else None
         candidates = []
@@ -278,29 +292,30 @@ class StudyJob:
 _jobs: dict[str, StudyJob] = {}
 
 
-async def study_or_start(moves: list[chess.Move], start_fen: str | None = None) -> dict:
-    """The cached study, or the job computing it: {"status": done|running|failed, "progress", "study"}."""
+async def study_or_start(moves: list[chess.Move], start_fen: str | None = None, mine: bool = False) -> dict:
+    """The cached study, or the job computing it: {"status": done|running|failed, "progress", "study"}.
+    `mine` keeps a player's own game out of the committed content folder."""
     fen = start_fen or chess.STARTING_FEN
     key = study_key(fen, [m.uci() for m in moves])
-    doc = cached(key)
+    doc = cached(key, mine)
     if doc:
         return {"status": "done", "progress": {"done": len(doc["plies"]) + 1, "total": len(doc["plies"]) + 1}, "study": doc}
     job = _jobs.get(key)
     if job is None or (job.task and job.task.done() and job.error):
         job = StudyJob(key=key, total=len(moves) + 1)
         _jobs[key] = job
-        job.task = asyncio.create_task(_run(job, moves, fen))
+        job.task = asyncio.create_task(_run(job, moves, fen, mine))
     status = "failed" if job.error else "running"
     return {"status": status, "progress": {"done": job.done, "total": job.total}, "study": None, "error": job.error}
 
 
-async def _run(job: StudyJob, moves: list[chess.Move], start_fen: str) -> None:
+async def _run(job: StudyJob, moves: list[chess.Move], start_fen: str, mine: bool) -> None:
     async def progress(done: int, total: int) -> None:
         job.done, job.total = done, total
 
     try:
         doc = await annotate(moves, pool, start_fen=start_fen, progress=progress)
-        _store(job.key, doc)
+        _store(job.key, doc, mine)
         LOGGER.info("study done key=%s plies=%d depth=%d", job.key, len(moves), STUDY_DEPTH)
     except Exception as exc:  # boundary: the poller must learn the job failed
         job.error = f"{type(exc).__name__}: {exc}"

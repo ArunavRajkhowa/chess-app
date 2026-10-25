@@ -5,31 +5,11 @@ from __future__ import annotations
 
 import chess
 
-from ..coach.facts import NAMES, PIECE_VALUES, _passed
+from ..coach.facts import NAMES, PIECE_VALUES, _loose, _passed, _value, piece_name
 
 CENTRE = {chess.D4, chess.E4, chess.D5, chess.E5}
 CENTRE_SQUARES = {chess.D4, chess.E4, chess.D5, chess.E5, chess.C3, chess.D3, chess.E3, chess.F3, chess.C4, chess.F4, chess.C5, chess.F5, chess.C6, chess.D6, chess.E6, chess.F6}
 ENDGAME_MATERIAL = 13  # non-pawn material of both sides together, in pawns, below which the king is a fighting piece
-
-
-def piece_name(board: chess.Board, sq: chess.Square) -> str:
-    p = board.piece_at(sq)
-    return f"{NAMES[p.piece_type]} on {chess.square_name(sq)}" if p else chess.square_name(sq)
-
-
-def _value(board: chess.Board, sq: chess.Square) -> int:
-    p = board.piece_at(sq)
-    return PIECE_VALUES[p.piece_type] if p else 0
-
-
-def _loose(board: chess.Board, sq: chess.Square, owner: chess.Color) -> bool:
-    """A piece attacked and either undefended or attacked by something cheaper than itself."""
-    attackers = board.attackers(not owner, sq)
-    if not attackers:
-        return False
-    if not board.attackers(owner, sq):
-        return True
-    return min(_value(board, a) for a in attackers) < _value(board, sq)
 
 
 def _targets_of(board: chess.Board, sq: chess.Square, mover: chess.Color) -> list[chess.Square]:

@@ -1,6 +1,7 @@
 """Measures each bot's strength by playing it against Stockfish limited to a fixed Elo
-(UCI_LimitStrength) and estimating a performance rating from the score. Writes
-data/bot_calibration.json. Usage: python -m scripts.calibrate_bots --games 4 [--bots pip,max]"""
+(UCI_LimitStrength) and estimating a performance rating from the score. A specialist plays from its
+own start; each pair of games shares one start with colours swapped. Merges rows into
+data/bot_calibration.json by bot id. Usage: python -m scripts.calibrate_bots --games 4 [--bots pip,endgame-rook-1400]"""
 from __future__ import annotations
 
 import argparse
@@ -13,19 +14,21 @@ from pathlib import Path
 import chess
 import chess.engine
 
-from backend.bots.roster import BOTS, Bot
+from backend.bots.roster import Bot
 from backend.bots.selector import choose_move
+from backend.bots.specialists import all_bots
 from backend.engine.locator import find_engine_command
-from backend.engine.pool import EnginePool
+from backend.engine.pool import pool
+from backend.routers.play import specialist_start
 
 REFERENCE_MOVETIME_SECONDS = 0.1
 MIN_UCI_ELO, MAX_UCI_ELO = 1320, 3190
 MAX_PLIES = 160
 
 
-async def play_game(pool: EnginePool, ref: chess.engine.Protocol, bot: Bot, bot_is_white: bool, rng: random.Random) -> float:
-    board = chess.Board()
-    while not board.is_game_over(claim_draw=True) and board.ply() < MAX_PLIES:
+async def play_game(ref: chess.engine.Protocol, bot: Bot, bot_is_white: bool, rng: random.Random, start_fen: str | None) -> float:
+    board = chess.Board(start_fen) if start_fen else chess.Board()
+    while not board.is_game_over(claim_draw=True) and len(board.move_stack) < MAX_PLIES:
         if board.turn == (chess.WHITE if bot_is_white else chess.BLACK):
             choice = await choose_move(board, bot, pool, rng)
             board.push(choice.move)
@@ -44,24 +47,27 @@ def performance(ref_elo: int, score: float, n: int) -> int:
 
 
 async def main(games: int, only: list[str] | None, out: Path, seed: int) -> None:
-    pool = EnginePool()
     await pool.start()
     _, ref = await chess.engine.popen_uci(find_engine_command())
     rng = random.Random(seed)
-    rows: list[dict] = []
+    random.seed(seed)  # specialist_start shuffles with the module's generator
+    rows: dict[str, dict] = {r["bot"]: r for r in json.loads(out.read_text())} if out.exists() else {}
     try:
-        for bot in BOTS:
+        for bot in all_bots():
             if only and bot.id not in only:
                 continue
             ref_elo = min(max(bot.elo, MIN_UCI_ELO), MAX_UCI_ELO)
             await ref.configure({"UCI_LimitStrength": True, "UCI_Elo": ref_elo})
             score = 0.0
+            start_fen = None
             for g in range(games):
-                score += await play_game(pool, ref, bot, bot_is_white=(g % 2 == 0), rng=rng)
+                if g % 2 == 0 and bot.specialty and bot.specialty.start_fens:
+                    start_fen = await specialist_start(bot, "white")  # an endgame's task is White's
+                score += await play_game(ref, bot, bot_is_white=(g % 2 == 0), rng=rng, start_fen=start_fen)
             est = performance(ref_elo, score, games)
-            rows.append({"bot": bot.id, "label_elo": bot.elo, "reference_elo": ref_elo, "games": games, "score": score, "estimated_elo": est})
-            print(f"{bot.name:12s} label {bot.elo:5d}  vs SF@{ref_elo}: {score:.1f}/{games}  → est {est}")
-            out.write_text(json.dumps(rows, indent=2))
+            rows[bot.id] = {"bot": bot.id, "label_elo": bot.elo, "reference_elo": ref_elo, "games": games, "score": score, "estimated_elo": est}
+            print(f"{bot.id:32s} label {bot.elo:5d}  vs SF@{ref_elo}: {score:.1f}/{games}  -> est {est}")
+            out.write_text(json.dumps(list(rows.values()), indent=2))
     finally:
         await ref.quit()
         await pool.stop()

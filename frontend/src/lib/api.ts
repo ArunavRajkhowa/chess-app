@@ -4,12 +4,13 @@ export interface BotPublic {
   id: string;
   name: string;
   elo: number;
-  tier: "beginner" | "intermediate" | "advanced" | "master" | "special";
+  tier: "beginner" | "intermediate" | "advanced" | "master" | "special" | "specialist";
   tagline: string;
   avatar: string;
   description: string;
   greeting: string;
   personality: { aggression: number; solidity: number; trade_when_ahead: number; favourite_openings: string[] };
+  specialty: { kind: "opening" | "middlegame" | "endgame"; key: string; name: string } | null; // generated specialists only
 }
 
 export interface MoveRecord {
@@ -50,6 +51,7 @@ export interface MoveResponse {
   bot_says: string | null;
   eval_cp: number | null;
   eval_text: string | null;
+  guide: string | null; // Guide me: a grounded note on the move in the bot's domain
 }
 
 export interface HintResponse {
@@ -140,6 +142,7 @@ export interface GameSummary {
 
 export interface Account {
   email: string | null; // null while the player is a guest
+  has_password: boolean; // false for a guest or a Google-only account
   google_client_id: string | null; // null when this server has no Google sign-in
 }
 
@@ -179,17 +182,21 @@ const post = <T,>(path: string, body?: unknown) => request<T>(path, { method: "P
 export const api = {
   account: () => request<Account>("/api/account"),
   signInWithGoogle: (credential: string) => post<{ email: string }>("/api/account/google", { credential }),
-  signOut: () => post<{ ok: boolean }>("/api/account/signout"),
+  signUp: (email: string, password: string) => post<{ email: string }>("/api/account/signup", { email, password }),
+  signIn: (email: string, password: string) => post<{ email: string }>("/api/account/signin", { email, password }),
+  changePassword: (current: string, next: string) => post<{ ok: boolean }>("/api/account/password", { current, new: next }),
+  requestReset: (email: string) => post<{ ok: boolean }>("/api/account/reset", { email }),
+  confirmReset: (token: string, password: string) => post<{ email: string }>("/api/account/reset/confirm", { token, password }),
+  signOut: (everywhere = false) => post<{ ok: boolean }>("/api/account/signout", { everywhere }),
   deleteAccount: () => request<{ deleted: boolean }>("/api/account", { method: "DELETE" }),
-  health:() => request<{ ok: boolean; engine: { name: string; kind: string }; openings: number; coach: { llm: boolean; provider: string | null; model: string; problem: string | null } }>("/api/health"),
+  health:() => request<{ ok: boolean; engine: { name: string; kind: string }; openings: number | null; coach: { llm: boolean; provider: string | null; model: string; problem: string | null } }>("/api/health"),
   bots: () => request<{ bots: BotPublic[] }>("/api/bots"),
   newGame: (bot_id: string, player_color: "white" | "black" | "random", coach_mode = false, time_control: string | null = null, fen: string | null = null) =>
     post<GameState>("/api/play/games", { bot_id, player_color, coach_mode, time_control, fen }),
   flag: (id: string) => post<GameState>(`/api/play/games/${id}/flag`),
-  reloadContent: () => post<{ lessons: number; puzzles: number; games: number }>("/api/content/reload"),
   game: (id: string) => request<GameState>(`/api/play/games/${id}`),
   games: () => request<{ games: GameSummary[] }>("/api/play/games"),
-  move: (id: string, move: string, want_eval = false) => post<MoveResponse>(`/api/play/games/${id}/move`, { move, want_eval }),
+  move: (id: string, move: string, want_eval = false, want_guide = false) => post<MoveResponse>(`/api/play/games/${id}/move`, { move, want_eval, want_guide }),
   resign: (id: string) => post<GameState>(`/api/play/games/${id}/resign`),
   takeback: (id: string) => post<GameState>(`/api/play/games/${id}/takeback`),
   hint: (id: string) => request<HintResponse>(`/api/play/games/${id}/hint`),

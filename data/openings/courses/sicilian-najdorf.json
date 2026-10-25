@@ -1,0 +1,155 @@
+{
+  "id": "sicilian-najdorf",
+  "name": "Sicilian Defence: Najdorf",
+  "side": "black",
+  "openings": [
+    "Sicilian Defense: Najdorf Variation"
+  ],
+  "summary": "1.e4 c5 2.Nf3 d6 3.d4 cxd4 4.Nxd4 Nf6 5.Nc3 a6: one small pawn move that takes b5 from White's pieces and prepares ...e5 or ...e6, ...b5 and ...Bb7. Black chooses the centre after seeing White's sixth move. The course covers the English Attack (Be3, f3, g4), 6.Bg5, the quiet 6.Be2 and the sharp 6.Bc4, and the one square the whole opening turns on: d5.",
+  "ideas": {
+    "black": [
+      "5...a6 first: it keeps White's knights and bishop off b5 and prepares ...b5, then ...Bb7 against e4.",
+      "Choose the centre after White's sixth move: ...e5 gains space and kicks the d4 knight; ...e6 keeps d5 covered and the position flexible.",
+      "After ...e5, d5 is the hole: guard it with ...Be6, ...Nbd7-f6 and ...Rc8, and play ...d5 yourself when it is safe.",
+      "Counterattack on the queenside with ...b5-b4 and the c-file when White castles long."
+    ],
+    "white": [
+      "In the English Attack, castle long and storm with f3, g4 and g5 to chase the f6 knight away from d5.",
+      "Against ...e5, take control of d5: trade the f6 knight (Bg5xf6) and put a knight on d5.",
+      "With 6.Bg5 and f4, prepare e5 or f5 while Black's king is still in the centre.",
+      "With 6.Bc4, aim the bishop at e6 and f7 and attack with f4-f5."
+    ]
+  },
+  "structures": [
+    {
+      "name": "...e5: the d5 hole",
+      "text": "Black's pawns on d6 and e5 take d4 and f4 from White and gain space, but the d6 pawn is backward and no black pawn can cover d5 again. Whoever controls d5 decides the game: Black wants ...d5 or a piece there that can be taken back with a pawn; White wants a knight there that cannot be traded."
+    },
+    {
+      "name": "...e6: the small centre",
+      "text": "Pawns on d6 and e6 cover d5, c5, e5 and f5. Black has less space but no hole, and the breaks ...d5 and ...b5-b4 come later. Against f3 and g4 the lichess book names this setup the Scheveningen; the plans are the same."
+    },
+    {
+      "name": "Opposite-side castling",
+      "text": "White castles long and pushes the kingside pawns; Black castles short and pushes ...b5-b4 or uses the c-file. Both sides race, so a tempo spent on defence is often a tempo lost."
+    }
+  ],
+  "pieces": {
+    "black": [
+      "a6 pawn: takes b5 and supports ...b5; it is the Najdorf's signature move.",
+      "f6 knight: hits e4 and guards d5; White's g4-g5 and Bxf6 both aim at it.",
+      "Light-squared bishop: e6 to fight for d5 after ...e5, b7 to hit e4 after ...e6 and ...b5.",
+      "d7 knight: goes to c5 to hit e4 and the b3 bishop, or to f6 to guard d5 again."
+    ],
+    "white": [
+      "d4 knight: Black's ...e5 kicks it; b3 and f3 are its homes.",
+      "e3 bishop: guards d4 and b6, and supports the queenside castle.",
+      "g5 bishop: pins the f6 knight and takes it to win control of d5.",
+      "c4 bishop: goes to b3 and aims at e6 and f7; Black's ...Nc5 and ...b5 chase it."
+    ]
+  },
+  "lines": [
+    {
+      "id": "english-e5",
+      "name": "English Attack, 6...e5: the race on opposite wings",
+      "moves": "1. e4 c5 2. Nf3 d6 3. d4 cxd4 4. Nxd4 Nf6 5. Nc3 a6 6. Be3 e5 7. Nb3 Be6 8. f3 Be7 9. Qd2 O-O 10. O-O-O Nbd7 11. g4 b5 12. g5 b4 13. Ne2 Ne8",
+      "notes": {
+        "1...c5": "The Sicilian: Black fights for d4 from the side and keeps the game unbalanced.",
+        "2...d6": "Controls e5 and prepares ...Nf6 without allowing e5.",
+        "3...cxd4": "A wing pawn for a centre pawn: Black will have two centre pawns against one.",
+        "4...Nf6": "Hits e4 so White must spend a move on Nc3.",
+        "5...a6": "The Najdorf: no white piece can use b5, and ...b5 or ...e5 can follow.",
+        "6.Be3": "The English Attack: the bishop guards d4, and f3, Qd2 and g4 come next.",
+        "6...e5": "Kicks the d4 knight and gains space. The cost: d5 is now a hole.",
+        "7.Nb3": "The knight retreats; on b3 it eyes d4 and a5.",
+        "7...Be6": "The bishop guards d5 and stops White from using it.",
+        "8.f3": "Guards e4 and prepares g4 to push the f6 knight away from d5.",
+        "9.Qd2": "Connects the queen with e3 and prepares long castling.",
+        "10...Nbd7": "Ready to take back on f6 with a knight and to guard d5 again.",
+        "11.g4": "The pawn storm starts: g5 will kick the f6 knight.",
+        "11...b5": "Black's storm: ...b4 will kick the c3 knight, the other guard of d5.",
+        "13.Ne2": "The knight goes to e2, from where it can still reach d4 or f4.",
+        "13...Ne8": "The knight steps back but stays near the king; ...a5-a4 continues the attack."
+      }
+    },
+    {
+      "id": "anti-english",
+      "name": "English Attack, 6...Ng4: chase the bishop first",
+      "moves": "1. e4 c5 2. Nf3 d6 3. d4 cxd4 4. Nxd4 Nf6 5. Nc3 a6 6. Be3 Ng4 7. Bg5 h6 8. Bh4 g5 9. Bg3 Bg7 10. Be2 h5 11. Bxg4 Bxg4 12. f3 Bd7",
+      "notes": {
+        "6...Ng4": "Hits the e3 bishop before White plays f3 to take g4 away.",
+        "7.Bg5": "The bishop keeps its diagonal and makes Black spend moves with the h-pawn.",
+        "8...g5": "Gains kingside space with tempo; the bishop must go to g3.",
+        "9...Bg7": "The bishop hits the d4 knight down the long diagonal.",
+        "10...h5": "Supports the g4 knight and threatens ...h4 to trap the g3 bishop.",
+        "11.Bxg4": "White gives up the bishop pair to remove the annoying knight.",
+        "12.f3": "Kicks the bishop and guards e4.",
+        "12...Bd7": "Black has the two bishops and dark-square control; White has the lead in development."
+      }
+    },
+    {
+      "id": "bg5-main",
+      "name": "6.Bg5: pin the knight, then f4 and long castling",
+      "moves": "1. e4 c5 2. Nf3 d6 3. d4 cxd4 4. Nxd4 Nf6 5. Nc3 a6 6. Bg5 e6 7. f4 Be7 8. Qf3 Qc7 9. O-O-O Nbd7 10. g4 b5 11. Bxf6 Nxf6 12. g5 Nd7 13. f5",
+      "notes": {
+        "6.Bg5": "Attacks the f6 knight, the guard of d5. After ...e6 it pins the knight to the queen.",
+        "6...e6": "Covers d5 with a pawn, so trading on f6 gives White no outpost. After ...e5 instead, Bxf6 would remove the last guard of the d5 hole.",
+        "7.f4": "Prepares e5 to hit the pinned knight, and f5 against e6.",
+        "7...Be7": "Unpins the knight and prepares castling.",
+        "8.Qf3": "Supports e4 and lines up with the f-pawn for an attack.",
+        "8...Qc7": "Looks down the c-file and stands behind the d6 pawn: after e5 dxe5 fxe5 the queen hits e5.",
+        "10.g4": "Threatens g5 to chase the knight off f6 and away from e4.",
+        "10...b5": "Black does not defend: the queenside counterattack starts at once.",
+        "11.Bxf6": "Takes before ...b4 or ...Bb7 adds pressure on e4.",
+        "12.g5": "Chases the knight back to d7.",
+        "13.f5": "Hits e6 to open lines toward Black's king, which is still on e8."
+      }
+    },
+    {
+      "id": "opocensky",
+      "name": "6.Be2: the classical fight for d5",
+      "moves": "1. e4 c5 2. Nf3 d6 3. d4 cxd4 4. Nxd4 Nf6 5. Nc3 a6 6. Be2 e5 7. Nb3 Be7 8. O-O O-O 9. Be3 Be6 10. Qd2 Nbd7 11. a4 Rc8",
+      "notes": {
+        "6.Be2": "A quiet move: White castles short and plays for control of d5.",
+        "6...e5": "Against a slow setup, Black takes space with tempo.",
+        "7.Nb3": "The knight retreats to b3, out of the e5 pawn's reach and away from trades.",
+        "8.O-O": "Both kings go short: the game is a positional fight, not a pawn race.",
+        "9...Be6": "Covers d5 and prepares ...Nbd7 and ...Rc8.",
+        "10...Nbd7": "Ready for ...Nf6 again if the f6 knight is traded, and for ...b5.",
+        "11.a4": "Stops ...b5, so Black has no queenside expansion.",
+        "11...Rc8": "The rook takes the half-open c-file and hits c3, the knight that guards d5."
+      }
+    },
+    {
+      "id": "lipnitsky",
+      "name": "6.Bc4: the bishop aims at e6",
+      "moves": "1. e4 c5 2. Nf3 d6 3. d4 cxd4 4. Nxd4 Nf6 5. Nc3 a6 6. Bc4 e6 7. Bb3 Nbd7 8. f4 Nc5 9. f5 Be7 10. Qf3 O-O 11. Be3 e5 12. Nde2 b5",
+      "notes": {
+        "6.Bc4": "Fischer's favourite: the bishop aims at e6 and f7.",
+        "6...e6": "Blocks the bishop's diagonal with a pawn that is guarded by f7.",
+        "7.Bb3": "Steps back before ...b5 or ...d5 hits it.",
+        "7...Nbd7": "Heads for c5 to hit the b3 bishop and the e4 pawn.",
+        "8.f4": "Threatens f5 against e6, to open the bishop's diagonal.",
+        "8...Nc5": "Hits e4 and the b3 bishop.",
+        "9.f5": "Attacks e6 at once.",
+        "11...e5": "Gains space with tempo on the d4 knight. The cost is the usual one: d5 is now a hole for White's pieces.",
+        "12.Nde2": "The knight retreats toward g3 and the kingside.",
+        "12...b5": "Gains space and prepares ...b4 to kick the c3 knight away from d5."
+      }
+    }
+  ],
+  "traps": [
+    {
+      "id": "fork-trick-bc4",
+      "name": "7...Nxe4?: the fork trick against 6.Bc4",
+      "moves": "1. e4 c5 2. Nf3 d6 3. d4 cxd4 4. Nxd4 Nf6 5. Nc3 a6 6. Bc4 e5 7. Nde2 Nxe4 8. Nxe4 d5 9. Bxd5",
+      "notes": {
+        "7.Nde2": "The knight leaves d4, so the d-file is open from d1 to d5.",
+        "7...Nxe4": "The mistake: Black hopes for 8.Nxe4 d5, forking the e4 knight and the c4 bishop.",
+        "8...d5": "The fork, but it does not work."
+      },
+      "mistake": "7...Nxe4",
+      "punishment": "8.Nxe4 d5 9.Bxd5: the d-file is open, so 9...Qxd5 loses the queen to 10.Qxd5. The pawns are level and Black is a piece down. Play 7...Be7 or 7...Be6 and develop."
+    }
+  ]
+}

@@ -1,16 +1,32 @@
-/* Synthesised board sounds (no audio assets, no licences). The context is created on the first
-   user gesture because browsers refuse autoplay. Pieces are a soft wooden "tock"; notices are
-   mallet tones (marimba-like: fundamental plus a quiet fourth partial). No square or saw waves. */
+/* Synthesised board sounds (no audio assets, no licences). The context is built just after a
+   frame is painted, never inside one: after the first gesture (browsers refuse autoplay before
+   one) or the first sound. The build blocks the main thread about 40 ms, 0.3 s in a fresh
+   browser. One palette: pieces are a soft wooden "tock" on felt; everything the coach says in
+   sound is a mallet tone (marimba-like: fundamental plus a quiet fourth partial). Rising
+   intervals mean "good", falling mean "no", a bare tick means "time". No square
+   or saw waves, nothing louder than a notification ping. */
 
 export type SoundName =
   | "move" | "capture" | "check" | "castle" | "promote" | "illegal"
-  | "win" | "lose" | "draw" | "notify" | "lowTime" | "correct" | "wrong";
+  | "win" | "lose" | "draw" | "notify" | "lowTime" | "rushTick" | "correct" | "wrong"
+  | "yourTurn" | "award";
+
+/** Every sound, with the moment it answers; Settings plays them from here. A SoundName missing here fails to compile. */
+export const SOUNDS: Record<SoundName, string> = {
+  move: "A piece lands", capture: "A capture", castle: "Castling",
+  check: "Check", promote: "A promotion", illegal: "An illegal move",
+  correct: "A puzzle or task solved", wrong: "A miss", yourTurn: "A lesson hands over to you",
+  rushTick: "The last ten seconds of Puzzle Rush", lowTime: "Ten seconds on the clock",
+  win: "A win", draw: "A draw", lose: "A loss", award: "An award earned",
+  notify: "A hint or a message",
+};
 
 const MASTER_GAIN = 0.35; // the loudest sound at volume 1 stays well below a notification ping
 const MASTER_LOWPASS_HZ = 5200; // takes the edge off every transient
 
 let ctx: AudioContext | null = null;
 let out: AudioNode | null = null;
+let noise: AudioBuffer | null = null; // made with the context: filling it inside a move cost about 6 ms at 4x
 let enabled = true;
 let volume = 0.8;
 
@@ -28,9 +44,19 @@ function context(): AudioContext | null {
     soften.frequency.value = MASTER_LOWPASS_HZ;
     master.connect(soften).connect(ctx.destination);
     out = master;
+    const n = Math.floor(ctx.sampleRate * 0.03);
+    noise = ctx.createBuffer(1, n, ctx.sampleRate);
+    const d = noise.getChannelData(0);
+    for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / n, 4);
   }
   if (ctx.state === "suspended") void ctx.resume();
   return ctx;
+}
+
+const afterPaint = (f: () => void) => requestAnimationFrame(() => setTimeout(f));
+
+if (typeof window !== "undefined") {
+  for (const type of ["pointerdown", "keydown"]) window.addEventListener(type, () => afterPaint(() => { if (enabled) context(); }), { capture: true, once: true });
 }
 
 const jitter = () => 1 + (Math.random() - 0.5) * 0.06;
@@ -52,13 +78,8 @@ function voice(c: AudioContext, freq: number, start: number, dur: number, gain: 
 
 /** The felt-on-wood touch: a very short band-passed noise burst. */
 function touch(c: AudioContext, start: number, centre: number, gain: number) {
-  const dur = 0.03;
-  const n = Math.floor(c.sampleRate * dur);
-  const buf = c.createBuffer(1, n, c.sampleRate);
-  const d = buf.getChannelData(0);
-  for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / n, 4);
   const src = c.createBufferSource();
-  src.buffer = buf;
+  src.buffer = noise;
   const f = c.createBiquadFilter();
   f.type = "bandpass";
   f.frequency.value = centre;
@@ -82,6 +103,7 @@ function mallet(c: AudioContext, freq: number, start: number, dur: number, gain:
 
 export function play(name: SoundName): void {
   if (!enabled) return;
+  if (!ctx) { afterPaint(() => { if (context()) play(name); }); return; } // the first sound waits for the build
   const c = context();
   if (!c) return;
   const t = c.currentTime + 0.005;
@@ -97,7 +119,12 @@ export function play(name: SoundName): void {
     case "draw": mallet(c, 523, t, 0.45, 0.2); mallet(c, 523, t + 0.2, 0.6, 0.18); break;
     case "notify": mallet(c, 784, t, 0.4, 0.2); break;
     case "lowTime": touch(c, t, 2000, 0.35); touch(c, t + 0.16, 2000, 0.3); break;
+    case "rushTick": touch(c, t, 2400, 0.22); break;
     case "correct": mallet(c, 784, t, 0.3, 0.22); mallet(c, 1175, t + 0.09, 0.45, 0.2); break;
     case "wrong": mallet(c, 330, t, 0.3, 0.2); mallet(c, 294, t + 0.12, 0.45, 0.18); break;
+    // a fifth, held: "over to you", warmer and slower than "correct"
+    case "yourTurn": mallet(c, 523, t, 0.5, 0.18); mallet(c, 784, t + 0.14, 0.7, 0.18); break;
+    // an arpeggio with a shimmer above it: the one sound that is allowed to sparkle
+    case "award": [784, 988, 1319].forEach((f, i) => mallet(c, f, t + i * 0.1, 0.6, 0.2)); voice(c, 2637, t + 0.3, 0.5, 0.05, 1, 0.02); break;
   }
 }

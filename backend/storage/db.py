@@ -94,6 +94,13 @@ CREATE TABLE IF NOT EXISTS events (
     platform TEXT NOT NULL,
     props_json TEXT NOT NULL DEFAULT '{}'
 );
+CREATE TABLE IF NOT EXISTS player_plans (
+    id TEXT PRIMARY KEY,
+    player_id TEXT NOT NULL,
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    goal TEXT NOT NULL,
+    plan_json TEXT NOT NULL
+);
 CREATE TABLE IF NOT EXISTS coach_cost (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     created_at TEXT NOT NULL DEFAULT (datetime('now')),
@@ -103,6 +110,11 @@ CREATE TABLE IF NOT EXISTS coach_cost (
     output_tokens INTEGER NOT NULL,
     cache_read_tokens INTEGER NOT NULL DEFAULT 0
 );
+CREATE TABLE IF NOT EXISTS sessions (
+    token_hash TEXT PRIMARY KEY,
+    player_id TEXT NOT NULL,
+    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
 """
 
 # Created after the migration: an older file gets player_id from _ADDED_COLUMNS first.
@@ -110,6 +122,8 @@ _INDEXES = """
 CREATE INDEX IF NOT EXISTS games_by_player ON games(player_id, updated_at);
 CREATE INDEX IF NOT EXISTS attempts_by_player ON puzzle_attempts(player_id, id);
 CREATE INDEX IF NOT EXISTS events_by_player ON events(player_id, created_at);
+CREATE INDEX IF NOT EXISTS sessions_by_player ON sessions(player_id);
+CREATE INDEX IF NOT EXISTS players_by_email ON players(email);
 """
 
 
@@ -125,6 +139,8 @@ _ADDED_COLUMNS = (
     # Rows from the single-player version keep NULL here: no player owns them.
     ("games", "player_id", "TEXT"),
     ("puzzle_attempts", "player_id", "TEXT"),
+    # scrypt, see backend/auth.py; NULL for guests and Google-only accounts.
+    ("players", "password_hash", "TEXT"),
 )
 
 
@@ -135,6 +151,7 @@ class Database:
         self._lock = asyncio.Lock()
 
     async def start(self) -> None:
+        self._lock = asyncio.Lock()  # bound to the loop that starts the store, not to the import's
         self._conn = self._connect()  # settings read at start, not import, so tests can point at a temp file
         self._conn.executescript(_SCHEMA)
         self._migrate()

@@ -11,7 +11,8 @@ import chess
 import chess.pgn
 from fastapi import APIRouter, HTTPException
 
-from ..bots.roster import BOTS_BY_ID, bot_public, get_bot
+from ..bots.guide import guide_note
+from ..bots.roster import SPECIALTY_ENDGAME, bot_public, find_bot, get_bot
 from ..bots.selector import choose_move
 from ..engine.pool import pool
 from ..engine.score import cp_from_score, describe_score
@@ -25,6 +26,9 @@ router = APIRouter(prefix="/api/play", tags=["play"])
 
 HINT_DEPTH = 16
 LIVE_EVAL_DEPTH = 12
+START_CHECK_DEPTH = 12
+START_MAX_EDGE_CP = 150  # a specialist's middlegame start must be this close to level, in the engine's view
+_START_VERDICTS: dict[str, int] = {}  # fen -> cp (White's view), so each start position is checked once
 PIECE_VALUES = {chess.PAWN: 1, chess.KNIGHT: 3, chess.BISHOP: 3, chess.ROOK: 5, chess.QUEEN: 9, chess.KING: 0}
 # One lock per game: a move, takeback, resign or flag reads the game, changes it and stores it whole.
 _GAME_LOCKS: defaultdict[str, asyncio.Lock] = defaultdict(asyncio.Lock)
@@ -200,12 +204,35 @@ def _parse_move(board: chess.Board, text: str) -> chess.Move:
         raise HTTPException(400, f"cannot parse move {text!r}")
 
 
+async def specialist_start(bot, color: str) -> str:
+    """A start position for a specialist's game, from the player's side. An endgame position is
+    mirrored when the task's side is not the player's; a middlegame start must be roughly level."""
+    spec = bot.specialty
+    fens = list(spec.start_fens)
+    random.shuffle(fens)
+    if spec.kind == SPECIALTY_ENDGAME:
+        board = chess.Board(fens[0])
+        if (board.turn == chess.WHITE) != (color == "white"):
+            board = board.mirror()
+        return board.fen()
+    for fen in fens:
+        if fen not in _START_VERDICTS:
+            infos = await pool.analyse(chess.Board(fen), depth=START_CHECK_DEPTH)
+            _START_VERDICTS[fen] = cp_from_score(infos[0]["score"], chess.WHITE)
+        if abs(_START_VERDICTS[fen]) <= START_MAX_EDGE_CP:
+            return fen
+    raise HTTPException(503, f"none of {spec.name}'s {len(fens)} start positions is within {START_MAX_EDGE_CP} cp of level")
+
+
 @router.post("/games", response_model=GameState)
 async def new_game(req: NewGameRequest, player: Player) -> GameState:
-    if req.bot_id not in BOTS_BY_ID:
+    bot = find_bot(req.bot_id)
+    if bot is None:
         raise HTTPException(404, f"unknown bot {req.bot_id!r}")
     color = req.player_color if req.player_color != "random" else random.choice(["white", "black"])
     start_fen = None
+    if not req.fen and bot.specialty and bot.specialty.start_fens:
+        start_fen = await specialist_start(bot, color)
     if req.fen:
         try:
             start_board = chess.Board(req.fen)
@@ -230,7 +257,7 @@ async def new_game(req: NewGameRequest, player: Player) -> GameState:
 async def games_index(player: Player) -> dict:
     rows = await store.list_games(player)
     for r in rows:
-        bot = BOTS_BY_ID.get(r["bot_id"])
+        bot = find_bot(r["bot_id"])
         r["bot_name"] = bot.name if bot else (f'{r.get("white_name")} vs {r.get("black_name")}' if r.get("source") == "import" else r["bot_id"])
         r["bot_avatar"] = bot.avatar if bot else "📄"
     return {"games": rows}
@@ -278,9 +305,10 @@ async def make_move(game_id: str, req: MoveRequest, player: Player) -> MoveRespo
             infos = await pool.analyse(board, depth=LIVE_EVAL_DEPTH)
             eval_cp = cp_from_score(infos[0]["score"], chess.WHITE)
             eval_text = describe_score(infos[0]["score"], chess.WHITE)
+        guide = await guide_note(get_bot(row["bot_id"]), before, move, board, row.get("start_fen"), pool) if req.want_guide else None
         return MoveResponse(
             game=await _state(row), player_move=MoveRecord(**player_rec), bot_move=bot_rec,
-            bot_says=says, eval_cp=eval_cp, eval_text=eval_text,
+            bot_says=says, eval_cp=eval_cp, eval_text=eval_text, guide=guide,
         )
 
 

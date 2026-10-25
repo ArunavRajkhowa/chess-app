@@ -1,7 +1,17 @@
-.insights-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--s-4); }
-.spark { width: 100%; height: 100px; }
-.results-row { display: flex; gap: var(--s-3); }
-.result { flex: 1; text-align: center; background: var(--bg-elev-2); border-radius: var(--r-sm); padding: 8px; display: flex; flex-direction: column; }
-.result.win b { color: var(--ok); } .result.loss b { color: var(--danger); }
-.endings, .shapes, .workon, .worst { list-style: none; margin: var(--s-2) 0 0; padding: 0; display: flex; flex-direction: column; gap: 6px; font-size: var(--fs-sm); }
-.worst a:hover { text-decoration: underline; }
+.spark { width: 100%; height: 80px; }
+.ins-headline { display: flex; flex-direction: column; gap: var(--s-4); }
+.ins-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: var(--s-3); }
+.ins-stats b { font-size: var(--fs-lg); }
+.ins-focus h2 { margin: var(--s-1) 0; font-family: var(--font-display); }
+.ins-finding { font-size: var(--fs-md); margin: 0 0 var(--s-3); }
+.ins-actions { display: flex; flex-wrap: wrap; gap: var(--s-2); margin-top: var(--s-3); }
+.trend-up { color: var(--ok); } .trend-down { color: var(--danger); } .trend-flat { color: var(--ink-3); }
+.worked { display: flex; gap: var(--s-3); align-items: flex-start; flex-wrap: wrap; margin-top: var(--s-2); }
+.worked-board { width: 180px; flex: none; }
+.worked-text { display: flex; flex-direction: column; gap: var(--s-1); font-size: var(--fs-sm); min-width: 0; flex: 1; }
+.ins-list, .ins-plan { margin: var(--s-3) 0 0; padding: 0; display: flex; flex-direction: column; gap: var(--s-2); font-size: var(--fs-sm); }
+.ins-list { list-style: none; }
+.ins-list li { display: flex; flex-wrap: wrap; gap: var(--s-3); align-items: baseline; }
+.ins-plan { padding-left: var(--s-5); }
+.ins-plan li > div { display: inline-block; margin-right: var(--s-2); }
+.ins-section .games-table { margin-top: var(--s-3); display: block; overflow-x: auto; }

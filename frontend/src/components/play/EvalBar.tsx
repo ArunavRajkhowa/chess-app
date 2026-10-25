@@ -19,7 +19,7 @@ export function EvalBar({ cp, mate, result, orientation, loading }: Props) {
   const whiteOnTop = orientation === "black";
   return (
     <div className={`evalbar ${whiteOnTop ? "flipped" : ""} ${loading ? "loading" : ""}`} data-testid="evalbar" title={text}>
-      <div className="evalbar-white" style={{ height: `${white}%` }} />
+      <div className="evalbar-white" style={{ transform: `scaleY(${white / 100})` }} />
       <span className={`evalbar-text ${white >= 50 ? "on-white" : "on-black"}`}>{label}</span>
     </div>
   );

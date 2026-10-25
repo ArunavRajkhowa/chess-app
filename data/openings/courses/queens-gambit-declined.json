@@ -1,0 +1,182 @@
+{
+  "id": "queens-gambit-declined",
+  "name": "Queen's Gambit Declined",
+  "side": "black",
+  "openings": ["Queen's Gambit Declined"],
+  "summary": "1.d4 d5 2.c4 e6: Black holds d5 with a pawn instead of taking on c4. The position is solid but a little cramped, and the c8 bishop is shut in behind e6. Every plan in this course answers one question: how does Black free the position? By trades, by the ...e5 and ...c5 breaks, or by giving the bishop another diagonal.",
+  "ideas": {
+    "black": [
+      "Hold d5 with ...e6 and ...Nf6, and develop with ...Be7 and ...O-O before anything else.",
+      "Trade pieces to get room: ...Nd5 or ...Ne4 offers two pairs of minor pieces.",
+      "Free the c8 bishop with a break: ...e5 after the trades, or ...c5 after ...b6.",
+      "In the Exchange Variation the bishop is free at once; play on the kingside with ...Ne4 and the knight route ...Nf8-g6.",
+      "Do not take on c4 until White's light-squared bishop has moved: then Bxc4 costs White a tempo."
+    ],
+    "white": [
+      "Pressure d5 with c4, Nc3 and Bg5, which pins the f6 knight.",
+      "Keep Black cramped: avoid trades and keep the c8 bishop shut in.",
+      "In the Exchange Variation, push b4 and b5 (the minority attack) to leave Black a weak pawn on c6.",
+      "Against hanging pawns on c5 and d5, put rooks on the c- and d-files and force one pawn to advance."
+    ]
+  },
+  "structures": [
+    {"name": "Orthodox: pawns on d5 and e6 against d4 and e3", "text": "A closed centre where White has more space. Black's c8 bishop has no diagonal. Black frees the position with ...dxc4, ...Nd5 and trades, then the ...e5 or ...c5 break."},
+    {"name": "Carlsbad: after cxd5 exd5", "text": "White has pawns on a2, b2, d4 and e3 against a7, b7, c6 and d5. White's plan is the minority attack: b4 and b5 to leave Black a weak c-pawn. Black's c8 bishop is free, and Black plays on the kingside: a knight on e4, the f8 knight to g6, and sometimes ...f5."},
+    {"name": "Hanging pawns: c5 and d5", "text": "Two pawns side by side with no pawns on the files next to them. Together they control b4, c4, d4 and e4 and give Black space. When one of them is forced to advance, the other becomes a weak pawn and the square in front of the advanced pawn is a hole."}
+  ],
+  "pieces": {
+    "black": [
+      "c8 bishop: the problem piece. It gets out after ...e5, after ...b6 and ...Bb7, or at once after cxd5 exd5.",
+      "e7 bishop: breaks the pin on f6; it is often traded on e7 after ...Ne4 or ...Nd5.",
+      "d7 knight: guards f6 again and supports the ...e5 and ...c5 breaks.",
+      "Queen: e7 after trades on e7, where it supports ...e5; a5 in the Ragozin, behind the b4 bishop."
+    ],
+    "white": [
+      "g5 bishop: pins the f6 knight and adds pressure on d5.",
+      "c3 knight: attacks d5 with the c4 pawn, and it is the knight Black wants to trade.",
+      "c1 rook: on the c-file, ready for cxd5 or ...dxc4.",
+      "b-pawn: the minority attack in the Carlsbad structure."
+    ]
+  },
+  "lines": [
+    {
+      "id": "orthodox",
+      "name": "Orthodox Defence: trade, then ...e5",
+      "moves": "1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Be7 5. e3 O-O 6. Nf3 Nbd7 7. Rc1 c6 8. Bd3 dxc4 9. Bxc4 Nd5 10. Bxe7 Qxe7 11. O-O Nxc3 12. Rxc3 e5 13. dxe5 Nxe5 14. Nxe5 Qxe5 15. f4 Qe4",
+      "notes": {
+        "2...e6": "Holds d5 with a pawn. The cost: the c8 bishop is now shut in behind e6.",
+        "3...Nf6": "Develops and guards d5 a second time.",
+        "4.Bg5": "Pins the knight to the queen. The f6 knight guards d5, so the pin adds pressure on d5.",
+        "4...Be7": "Breaks the pin and prepares to castle.",
+        "6...Nbd7": "Guards f6 again and supports the ...e5 and ...c5 breaks later. It keeps c6 free for the pawn.",
+        "7.Rc1": "The rook goes to the c-file before the file opens.",
+        "7...c6": "A second pawn guards d5. Black waits: ...dxc4 is better after White's bishop moves.",
+        "8...dxc4": "Now White's bishop must move a second time to take the pawn back.",
+        "9...Nd5": "The knight offers two trades: the dark-squared bishops and then the c3 knight. Each trade gives Black's pieces more room.",
+        "10...Qxe7": "From e7 the queen supports the ...e5 break.",
+        "11...Nxc3": "The second trade. Black has fewer pieces in less space.",
+        "12...e5": "The freeing break. The e7 queen and the d7 knight support e5. When the d7 knight moves, the c8 bishop has the c8-h3 diagonal.",
+        "14...Qxe5": "The queen is in the centre and the c8 bishop is ready for f5 or g4.",
+        "15.f4": "Gains time on the queen and takes space on the kingside.",
+        "15...Qe4": "The queen stays central and attacks the c4 bishop along the open fourth rank."
+      }
+    },
+    {
+      "id": "exchange",
+      "name": "Exchange Variation: the Carlsbad structure",
+      "moves": "1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. cxd5 exd5 5. Bg5 c6 6. e3 Be7 7. Bd3 Nbd7 8. Qc2 O-O 9. Nf3 Re8 10. O-O Nf8 11. Rab1 Ne4 12. Bxe7 Qxe7",
+      "notes": {
+        "4.cxd5": "The Exchange Variation: White fixes the pawn structure at once.",
+        "4...exd5": "The pawn recaptures and the c8 bishop's diagonal opens. Black's main problem is solved.",
+        "5...c6": "Guards d5 and makes the Carlsbad structure: a2, b2, d4, e3 against a7, b7, c6, d5.",
+        "7...Nbd7": "The knight is going to f8, and from there to g6 or e6.",
+        "8.Qc2": "The queen and the d3 bishop aim at h7.",
+        "9...Re8": "The rook goes to the e-file, behind the e4 square.",
+        "10...Nf8": "The knight guards h7 and can go to g6 or e6.",
+        "11.Rab1": "The minority attack: the rook supports b4 and b5, to leave Black a weak pawn on c6.",
+        "11...Ne4": "Black's counterplay on the kingside: the knight goes to e4, guarded by the d5 pawn.",
+        "12.Bxe7": "White trades the bishop before ...Nxg5 or ...Bxg5.",
+        "12...Qxe7": "The queen joins the rook on the e-file, behind the e4 knight. After Bxe4 dxe4 the queen defends the pawn, with the rook behind it. Compare the trap 8...Ne4?, where the rook was not there yet."
+      }
+    },
+    {
+      "id": "tartakower",
+      "name": "Tartakower Defence: ...b6 and the ...c5 break",
+      "moves": "1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Be7 5. e3 O-O 6. Nf3 h6 7. Bh4 b6 8. cxd5 Nxd5 9. Bxe7 Qxe7 10. Nxd5 exd5 11. Rc1 Be6 12. Qa4 c5 13. Qa3 Rc8 14. Bb5 a6 15. dxc5 bxc5 16. O-O",
+      "notes": {
+        "6...h6": "Asks the bishop to choose between keeping the pin and taking on f6.",
+        "7.Bh4": "White keeps the pin.",
+        "7...b6": "The Tartakower idea: the c8 bishop gets a new diagonal through b7, and ...c5 is prepared.",
+        "8.cxd5": "White opens the centre before Black's queenside is ready.",
+        "8...Nxd5": "The knight recaptures to offer trades.",
+        "10...exd5": "Now the pawn recaptures. The c8-h3 diagonal is open for the bishop.",
+        "11...Be6": "The bishop develops and guards d5.",
+        "12.Qa4": "Attacks a7 and watches c6.",
+        "12...c5": "The freeing break. Black accepts hanging pawns for space and open files.",
+        "13...Rc8": "Guards c5 a third time, with the b6 pawn and the e7 queen. It is attacked three times: d4, the a3 queen and the c1 rook.",
+        "14.Bb5": "The bishop takes c6 and d7 away from Black's knight.",
+        "15.dxc5": "White makes the hanging pawns on c5 and d5.",
+        "15...bxc5": "Side by side the hanging pawns are strong. Black must keep them there: when one advances, the other is weak.",
+        "16.O-O": "White's plan: rooks to c1 and d1, pressure on c5 and d5. Black's plan: ...Nd7 and keep the pawns side by side."
+      }
+    },
+    {
+      "id": "ragozin",
+      "name": "Ragozin Defence: the pin on c3 and ...c5",
+      "moves": "1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Nf3 Bb4 5. cxd5 exd5 6. Bg5 Nbd7 7. e3 c5 8. Bd3 Qa5 9. Qc2 c4 10. Bf5 O-O",
+      "notes": {
+        "4.Nf3": "White does not play Bg5 first, so Black has another way to develop the f8 bishop.",
+        "4...Bb4": "The Ragozin: the bishop pins the c3 knight to the king, as in the Nimzo-Indian.",
+        "5.cxd5": "White fixes the structure, as in the Exchange Variation.",
+        "5...exd5": "The c8 bishop's diagonal is open.",
+        "6.Bg5": "Pins the f6 knight too.",
+        "6...Nbd7": "Guards f6 again, so the pin costs Black nothing.",
+        "7...c5": "The freeing break: Black attacks d4 at once, while the b4 bishop still pins the c3 knight.",
+        "8...Qa5": "The queen stands behind the b4 bishop on the same diagonal, so the c3 knight is attacked twice.",
+        "9.Qc2": "Guards c3 a second time.",
+        "9...c4": "Attacks the d3 bishop and takes space on the queenside.",
+        "10.Bf5": "The bishop escapes to an active square and aims at d7.",
+        "10...O-O": "Black castles. The pawns on c4 and d5 fix White's queenside, and the b4 bishop keeps the pin."
+      }
+    },
+    {
+      "id": "lasker",
+      "name": "Lasker Defence: ...Ne4 trades and the ...c5 break",
+      "moves": "1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Be7 5. e3 O-O 6. Nf3 h6 7. Bh4 Ne4 8. Bxe7 Qxe7 9. Rc1 c6 10. Be2 Nxc3 11. Rxc3 dxc4 12. Bxc4 Nd7 13. O-O b6 14. Bd3 c5 15. Be4 Rb8",
+      "notes": {
+        "7...Ne4": "Lasker's idea: the knight attacks c3 and offers to trade the dark-squared bishops. Each trade gives Black room.",
+        "8.Bxe7": "The e7 bishop attacked the h4 bishop, so White trades it.",
+        "8...Qxe7": "The queen recaptures and watches the diagonal to a3.",
+        "9.Rc1": "If Black takes on c3, the rook recaptures and the pawns stay intact.",
+        "9...c6": "Guards d5, so the e4 knight stays supported.",
+        "10...Nxc3": "The second trade.",
+        "11...dxc4": "Black gives up d5 now: White's bishop must move a second time to take back.",
+        "12...Nd7": "The knight develops and supports the ...c5 and ...e5 breaks; the c8 bishop is the last minor piece at home.",
+        "13...b6": "Prepares ...Bb7 and ...c5.",
+        "14...c5": "The freeing break: Black attacks d4 and opens the long diagonal for ...Bb7.",
+        "15.Be4": "The bishop attacks the a8 rook and stops ...Bb7 for a moment.",
+        "15...Rb8": "The rook steps off the diagonal. Next comes ...Bb7 to trade White's best piece."
+      }
+    }
+  ],
+  "traps": [
+    {
+      "id": "elephant-trap",
+      "name": "6.Nxd5?: the Elephant Trap",
+      "moves": "1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Nbd7 5. cxd5 exd5 6. Nxd5 Nxd5 7. Bxd8 Bb4+ 8. Qd2 Bxd2+ 9. Kxd2 Kxd8",
+      "notes": {
+        "4...Nbd7": "It looks as if d5 can fall: the f6 knight is pinned to the queen.",
+        "6.Nxd5": "The mistake: White thinks the f6 knight cannot take back because of the pin.",
+        "6...Nxd5": "Black takes anyway and gives up the queen.",
+        "7...Bb4+": "Check: White must give back the queen.",
+        "9...Kxd8": "Black is a knight for a pawn up."
+      },
+      "mistake": "6.Nxd5",
+      "punishment": "6...Nxd5! 7.Bxd8 Bb4+ 8.Qd2 Bxd2+ 9.Kxd2 Kxd8. The pin was not real: ...Bb4+ wins the queen back with check, and Black ends a knight for a pawn up. This is why 4...Nbd7 is safe."
+    },
+    {
+      "id": "early-e5",
+      "name": "9...e5?: the right break, too early",
+      "moves": "1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Be7 5. e3 O-O 6. Nf3 Nbd7 7. Rc1 c6 8. Bd3 dxc4 9. Bxc4 e5 10. dxe5 Ng4 11. Bf4",
+      "notes": {
+        "9...e5": "The mistake: e5 is attacked by the d4 pawn and the f3 knight and guarded only by the d7 knight.",
+        "10.dxe5": "Wins the pawn and attacks the f6 knight.",
+        "10...Ng4": "The knight must move, and it cannot win the pawn back."
+      },
+      "mistake": "9...e5",
+      "punishment": "10.dxe5 wins a pawn and attacks the f6 knight. 10...Nxe5 loses a piece to 11.Nxe5, because nothing else guards e5. Play 9...Nd5 first and trade pieces: then ...e5 is safe, as in the Orthodox main line."
+    },
+    {
+      "id": "early-ne4",
+      "name": "8...Ne4?: the knight with one defender",
+      "moves": "1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Nbd7 5. cxd5 exd5 6. e3 c6 7. Bd3 Be7 8. Qc2 Ne4 9. Bxe7 Qxe7 10. Bxe4 dxe4 11. Qxe4",
+      "notes": {
+        "8...Ne4": "The mistake: the knight is attacked by the c3 knight and the d3 bishop and guarded only by the d5 pawn.",
+        "10.Bxe4": "White trades the bishop for the knight and the d5 pawn must recapture.",
+        "11.Qxe4": "The e4 pawn had two attackers, the queen and the c3 knight, and one defender, the e7 queen."
+      },
+      "mistake": "8...Ne4",
+      "punishment": "9.Bxe7 Qxe7 10.Bxe4 dxe4 11.Qxe4 wins a pawn: after the trades the e4 pawn has two attackers and one defender. Castle and play ...Re8 first; then ...Ne4 is supported, as in the Exchange main line."
+    }
+  ]
+}

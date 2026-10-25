@@ -1,5 +1,6 @@
 import { Timer, Trophy } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { DrillBoard, type DrillGoal, type DrillOutcome } from "../components/learn/DrillBoard";
 import "./Endgames.css";
 
@@ -17,7 +18,8 @@ const GOAL_TEXT: Record<DrillGoal, string> = { mate: "Checkmate", promote: "Prom
 export function EndgamesPage() {
   const [themes, setThemes] = useState<Theme[]>([]);
   const [positions, setPositions] = useState<Position[]>([]);
-  const [theme, setTheme] = useState("checkmates");
+  const [params] = useSearchParams(); // a study plan links /endgames?theme=rook
+  const [theme, setTheme] = useState(params.get("theme") ?? "checkmates");
   const [current, setCurrent] = useState<Position | null>(null);
   const [resetToken, setResetToken] = useState(0);
   const [challenge, setChallenge] = useState<{ list: Position[]; i: number; solved: number; startedAt: number; done: boolean } | null>(null);

@@ -5,8 +5,11 @@ import { setNarration } from "../lib/speech";
 
 export const BOARD_THEMES = ["ink", "boxwood", "walnut", "slate"] as const;
 export type BoardTheme = (typeof BOARD_THEMES)[number];
+export type Theme = "dark" | "light" | "system";
 
 interface SettingsState {
+  /** Night (ink-slate) or day (paper); "system" follows the device. */
+  theme: Theme;
   boardTheme: BoardTheme;
   pieceSet: "cburnett";
   sound: boolean;
@@ -27,6 +30,7 @@ interface SettingsState {
 export const useSettings = create<SettingsState>()(
   persist(
     (set) => ({
+      theme: "dark",
       boardTheme: "ink",
       pieceSet: "cburnett",
       sound: true,

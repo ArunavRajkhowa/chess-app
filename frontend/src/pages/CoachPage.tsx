@@ -14,7 +14,7 @@ interface Turn { role: "user" | "assistant"; content: string; source?: string }
 export function CoachPage() {
   const [chess] = useState(() => new Chess());
   const [fen, setFen] = useState(START_FEN);
-  const [level, setLevel] = useState<Level>("intermediate");
+  const [level, setLevel] = useState<Level | "">("");  // "": the server picks it from the puzzle rating
   const [turns, setTurns] = useState<Turn[]>([]);
   const [question, setQuestion] = useState("");
   const [busy, setBusy] = useState(false);
@@ -40,7 +40,7 @@ export function CoachPage() {
     const history = turns.map((t) => ({ role: t.role, content: t.content }));
     setTurns((t) => [...t, { role: "user", content: q }, { role: "assistant", content: "" }]);
     try {
-      const done = await streamCoach("/api/coach/chat", { fen, question: q, level, history }, (chunk) =>
+      const done = await streamCoach("/api/coach/chat", { fen, question: q, level: level || undefined, history }, (chunk) =>
         setTurns((t) => { const n = t.slice(); n[n.length - 1] = { ...n[n.length - 1], content: n[n.length - 1].content + chunk }; return n; }),
       );
       setTurns((t) => { const n = t.slice(); n[n.length - 1] = { ...n[n.length - 1], source: done.source }; return n; });
@@ -60,7 +60,8 @@ export function CoachPage() {
         <div className="row" style={{ justifyContent: "space-between", marginBottom: 8 }}>
           <h2>Ask the coach</h2>
           <div className="row">
-            <select className="select" style={{ width: 150 }} value={level} onChange={(e) => setLevel(e.target.value as Level)} data-testid="coach-level">
+            <select className="select" style={{ width: 150 }} value={level} onChange={(e) => setLevel(e.target.value as Level | "")} data-testid="coach-level">
+              <option value="">my level</option>
               {(["beginner", "intermediate", "advanced", "master"] as Level[]).map((l) => <option key={l} value={l}>{l}</option>)}
             </select>
             <button className="btn btn-sm" onClick={() => setOrientation((o) => (o === "white" ? "black" : "white"))}>Flip</button>

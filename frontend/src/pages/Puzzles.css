@@ -9,6 +9,12 @@
 .rush-bar { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s-2); }
 .rush-score { font-family: var(--font-display); font-size: var(--fs-2xl); font-weight: 600; }
 .rush-strikes { color: var(--danger); font-weight: 800; letter-spacing: 2px; }
+.rush-time.low { color: var(--danger); font-weight: 700; }
+/* the verdict line: solved pops, a miss shakes; the colour says which */
+.puzzle-state.solved { animation: pop var(--anim-slow) var(--ease-settle) both; }
+.puzzle-state.solved strong { color: var(--ok); }
+.puzzle-state.failed { animation: shake var(--anim-slow) var(--ease) both; }
+.puzzle-state.failed strong { color: var(--danger); }
 .rush-done { grid-column: 1 / -1; display: flex; align-items: center; gap: var(--s-2); }
 .ok { color: var(--ok); } .bad { color: var(--danger); }
 @media (max-width: 900px) { .puzzles { grid-template-columns: 1fr; } }

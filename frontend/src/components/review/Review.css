@@ -19,13 +19,15 @@
 .report td:first-child, .report td:last-child { text-align: center; width: 40px; font-weight: 700; }
 .report tr.zero { opacity: 0.45; }
 .coachpanel { display: flex; gap: var(--s-3); align-items: flex-start; }
-.coachpanel-avatar { font-size: 34px; line-height: 1; }
+.coachpanel-avatar { flex: none; color: var(--ink-2); }
 .coachpanel-bubble { flex: 1; background: var(--bg-elev-2); border: 1px solid var(--line); border-radius: var(--r-md); padding: var(--s-3); display: flex; flex-direction: column; gap: var(--s-2); font-size: var(--fs-sm); }
 .coachpanel-pill { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; }
 .review-progress { display: flex; flex-direction: column; gap: var(--s-2); max-width: 520px; }
 .keymoments { display: flex; flex-wrap: wrap; gap: 4px; }
 .keymoments button { border: 0; background: var(--bg-elev-2); border-radius: var(--r-sm); padding: 2px 8px; font-size: var(--fs-xs); font-weight: 700; cursor: pointer; color: var(--ink); }
 .keymoments button.current { outline: 2px solid var(--brand); }
+.keymoments button { transition: transform var(--anim-fast) var(--ease); }
+.keymoments button:hover { transform: translateY(-1px); }
 .retry-banner { padding: 8px 10px; border-radius: var(--r-sm); background: color-mix(in srgb, var(--brand) 18%, transparent); font-size: var(--fs-sm); }
 .retry-banner.wrong { background: color-mix(in srgb, var(--danger) 18%, transparent); }
 .phase-grades { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s-2); }

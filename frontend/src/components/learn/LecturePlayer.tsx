@@ -32,6 +32,8 @@ interface Props {
   /** Why each move was played and why not the others; `study[i]` belongs to `frames[i + 1]`. */
   study?: StudyPly[];
   studyNote?: string | null;
+  /** The lesson this lecture belongs to: a question to the coach then carries it. */
+  lessonId?: string;
   /** Starts playing on its own, like a video. */
   autoplay?: boolean;
   /** Called when the last frame has finished playing: the lesson moves on by itself. */
@@ -46,7 +48,7 @@ const PAUSE_AFTER_SPEECH_MS = 500;
 /** The video of a chess lesson: the board plays the moves while the narration explains them. Pausing
  * makes the board live, so any move tried is judged by the engine, and the coach can be asked. With a
  * study, every move says why it was played and why not the others, and each alternative plays out. */
-export function LecturePlayer({ frames, orientation = "white", header, study, studyNote, autoplay = false, onEnd, endLabel = "Continue", children }: Props) {
+export function LecturePlayer({ frames, orientation = "white", header, study, studyNote, lessonId, autoplay = false, onEnd, endLabel = "Continue", children }: Props) {
   const [index, setIndex] = useState(0);
   const [playing, setPlaying] = useState(autoplay);
   const [ended, setEnded] = useState(false);
@@ -142,7 +144,7 @@ export function LecturePlayer({ frames, orientation = "white", header, study, st
         {ply && !inVariation && <WhyPanel ply={ply} onVariation={startVariation} />}
         {!ply && index > 0 && studyNote && <p className="faint" data-testid="study-note">{studyNote}</p>}
         <ExplorePanel explore={explore} compareLabel="The lecture's move" idle={<p className="faint">Wondering about another move? Pause and play it on the board: the engine answers. Or ask the coach below.</p>} />
-        <AskCoach fen={explore.fen} />
+        <AskCoach fen={explore.fen} lessonId={lessonId} />
         <Assessment fen={boardFen} />
       </div>
     </Stage>

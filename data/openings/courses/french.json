@@ -1,0 +1,160 @@
+{
+  "id": "french",
+  "name": "French Defence",
+  "side": "black",
+  "openings": ["French Defense"],
+  "summary": "1.e4 e6 2.d4 d5: Black builds a solid pawn wall and lets White take space, then attacks the centre from the side with ...c5 and ...f6. The price is the light-squared bishop, which the e6 pawn shuts in; much of the French is about freeing it or trading it.",
+  "ideas": {
+    "black": [
+      "Hit White's pawn chain at its base with ...c5, the French's main break; add ...Nc6 and ...Qb6 so d4 has more attackers than defenders.",
+      "When the base is under control, hit the head of the chain with ...f6 to open the f-file for the rooks.",
+      "Solve the light-squared bishop: trade it with ...b6 and ...Ba6, bring it out with ...Bd7, or develop it to f5 or g4 when the e-file is open.",
+      "Do not castle short too early when the f6 knight has been driven away: the h7 pawn is then guarded by the king alone."
+    ],
+    "white": [
+      "Play e5 to gain space and drive the f6 knight away from the kingside.",
+      "Defend d4 with c3, Nf3 and Be3; if d4 falls, the e5 pawn becomes weak.",
+      "Aim the pieces at the black king: Bd3 at h7, Qg4 or Qh5, Ng5. The bishop sacrifice on h7 is White's main tactic.",
+      "In the Winawer, use the bishop pair and the dark squares Black weakened by giving up the f8 bishop."
+    ]
+  },
+  "structures": [
+    {"name": "Advance chain: d4 and e5 against d5 and e6", "text": "White has space on the kingside, Black on the queenside. The chain points at the black king, so Black must attack it: ...c5 at the base, later ...f6 at the head. The c8 bishop sits behind e6 and is Black's worst piece until it is traded or freed."},
+    {"name": "Winawer: doubled c-pawns", "text": "After ...Bb4 and ...Bxc3+ White has doubled c-pawns and the two bishops, but the dark squares around the black king are weaker. Black plays on the queenside, often ...Qa5 or ...b6 and ...Ba6 to trade the bad bishop for White's good one."},
+    {"name": "Exchange: symmetrical pawns on d4 and d5", "text": "After exd5 exd5 the e-file is open and the c8 bishop is free at once. The position is level and quiet; the side that controls the e-file and the e4 and e5 squares plays for the win."},
+    {"name": "Open f-file after ...f6", "text": "When Black takes on f6 with a piece, the e6 pawn can be weak, but Black's rooks and the f6 knight press on f4 and the kingside, and the e5 square is a good post for a knight."}
+  ],
+  "pieces": {
+    "black": [
+      "Light-squared bishop: the French's problem piece. Trade it on a6 or b5, or develop it before ...e6 locks it in when the centre opens.",
+      "d7 knight: after e5 drives the f6 knight away it supports ...c5 and ...f6.",
+      "c6 knight: the second attacker of d4.",
+      "Queen: b6 hits d4 and b2 at the same time."
+    ],
+    "white": [
+      "e5 pawn: the spearhead. It takes f6 from the knight and cramps Black's kingside.",
+      "d3 bishop: aims at h7; it is the piece of the bishop sacrifice on h7.",
+      "f3 knight: defends d4 and jumps to g5 to attack h7.",
+      "Queen: g4 or h5 against g7 and h7."
+    ]
+  },
+  "lines": [
+    {
+      "id": "advance",
+      "name": "Advance Variation: three attackers on d4",
+      "moves": "1. e4 e6 2. d4 d5 3. e5 c5 4. c3 Nc6 5. Nf3 Qb6 6. Be2 cxd4 7. cxd4 Nh6 8. Nc3 Nf5 9. Na4 Qa5+ 10. Bd2 Bb4 11. Bc3 b5",
+      "notes": {
+        "1...e6": "Prepares ...d5 with a pawn behind it, but the pawn on e6 shuts in the c8 bishop.",
+        "2...d5": "Attacks e4. White must defend, exchange or advance.",
+        "3.e5": "White gains space and takes the f6 square from Black's knight.",
+        "3...c5": "Hits d4, the base of the chain. If d4 falls, e5 has no pawn support.",
+        "4.c3": "Keeps a pawn ready to retake on d4.",
+        "4...Nc6": "A second attacker of d4.",
+        "5...Qb6": "The queen lines up behind the c5 pawn as a third attacker of d4, and it hits b2.",
+        "6.Be2": "Develops and gets ready to castle; d4 is still guarded three times.",
+        "6...cxd4": "Black releases the tension now so White cannot keep the c-pawn flexible.",
+        "7...Nh6": "Heads for f5, the knight's best square against d4. It cannot go to f6 because of the e5 pawn.",
+        "8...Nf5": "Now d4 is attacked by the knights on c6 and f5 and by the queen.",
+        "9.Na4": "Attacks the queen, which has no safe square left on the b6-d4 diagonal: the knight covers c5.",
+        "9...Qa5+": "With check: White must block, and the queen stays on the a5-e1 diagonal.",
+        "10...Bb4": "Pins the d2 bishop and develops with tempo.",
+        "11...b5": "Attacks the a4 knight while the c3 bishop is pinned to the king by the b4 bishop; the engine rates the position as level."
+      }
+    },
+    {
+      "id": "winawer",
+      "name": "Winawer: trade the bad bishop with ...b6 and ...Ba6",
+      "moves": "1. e4 e6 2. d4 d5 3. Nc3 Bb4 4. e5 c5 5. a3 Bxc3+ 6. bxc3 Ne7 7. Nf3 b6 8. a4 Ba6 9. Bxa6 Nxa6 10. Qe2 Nb8",
+      "notes": {
+        "3...Bb4": "The Winawer: Black pins the c3 knight, which defends e4.",
+        "4.e5": "White closes the centre, so the pin has no target on e4 any more.",
+        "4...c5": "Hits the base of the chain at once.",
+        "5.a3": "Asks the bishop to decide.",
+        "5...Bxc3+": "Black gives the bishop pair and doubles White's c-pawns.",
+        "6...Ne7": "Goes to e7 because e5 takes f6; from e7 it can reach f5 or c6.",
+        "7...b6": "Prepares ...Ba6 to trade the light-squared bishop, Black's worst piece, for White's best.",
+        "8.a4": "Gains space and gives the bishop the a3 square.",
+        "8...Ba6": "Offers the trade. After it Black has no bad bishop left.",
+        "9...Nxa6": "The knight recaptures and will go back to c6 by way of b8.",
+        "10...Nb8": "A slow route, but the knight is heading for c6, where it hits d4."
+      }
+    },
+    {
+      "id": "steinitz",
+      "name": "Classical, Steinitz Variation: ...c5 and the bishop on c5",
+      "moves": "1. e4 e6 2. d4 d5 3. Nc3 Nf6 4. e5 Nfd7 5. f4 c5 6. Nf3 Nc6 7. Be3 cxd4 8. Nxd4 Bc5 9. Qd2 O-O 10. O-O-O a6",
+      "notes": {
+        "3...Nf6": "The Classical: the knight attacks e4 a second time.",
+        "4.e5": "The Steinitz: White gains space and drives the knight away.",
+        "4...Nfd7": "From d7 the knight supports ...c5 and ...f6.",
+        "5.f4": "Supports e5 with a pawn, so ...f6 is less effective.",
+        "5...c5": "Black hits d4 at once, before White completes development.",
+        "7.Be3": "Adds a defender of d4.",
+        "7...cxd4": "Black opens the c-file.",
+        "8...Bc5": "The bishop pins the d4 knight against the e3 bishop.",
+        "9.Qd2": "Defends and prepares to castle long.",
+        "9...O-O": "Black castles while the d4 knight is still pinned to the e3 bishop.",
+        "10.O-O-O": "Opposite-side castling: both sides race to attack.",
+        "10...a6": "Prepares ...b5, the start of Black's attack on the white king."
+      }
+    },
+    {
+      "id": "tarrasch",
+      "name": "Tarrasch, Closed: the ...c5 and ...f6 breaks",
+      "moves": "1. e4 e6 2. d4 d5 3. Nd2 Nf6 4. e5 Nfd7 5. Bd3 c5 6. c3 Nc6 7. Ne2 cxd4 8. cxd4 f6 9. exf6 Nxf6 10. Nf3 Bd6 11. O-O Qc7",
+      "notes": {
+        "3.Nd2": "The Tarrasch: the knight defends e4 but does not block the c-pawn, so ...Bb4 can be met by c3.",
+        "4.e5": "White drives the knight away and gains space.",
+        "5...c5": "The first break: Black hits the base at d4.",
+        "6.c3": "Keeps a pawn ready to retake on d4.",
+        "7.Ne2": "The knight goes to e2 so the d2 knight can go to f3; d4 stays guarded.",
+        "8...f6": "The second break: Black hits the head of the chain at e5.",
+        "9.exf6": "White trades so the e5 pawn is not lost.",
+        "9...Nxf6": "The knight is back on f6, where it guards the kingside. Black has a backward e6 pawn but free piece play.",
+        "10...Bd6": "The bishop controls e5, the square in front of the e6 pawn.",
+        "11...Qc7": "Lines up behind the d6 bishop against e5 and h2. Black is ready to castle and to push ...e5."
+      }
+    },
+    {
+      "id": "exchange",
+      "name": "Exchange Variation: the bishop is free",
+      "moves": "1. e4 e6 2. d4 d5 3. exd5 exd5 4. Bd3 Bd6 5. Nf3 Ne7 6. O-O O-O 7. Re1 Nbc6 8. c3 Bf5 9. Bxf5 Nxf5 10. Qd3 Qd7",
+      "notes": {
+        "3.exd5": "White trades the centre pawns. The pawns are symmetrical and the e-file is open.",
+        "3...exd5": "The e6 pawn leaves, so the c8 bishop is no longer shut in.",
+        "5...Ne7": "From e7 the knight does not block the f-pawn and can go to f5 or g6.",
+        "7.Re1": "White takes the open e-file.",
+        "7...Nbc6": "Develops and hits d4.",
+        "8...Bf5": "Offers to trade White's active d3 bishop.",
+        "9...Nxf5": "The knight on f5 hits d4 and guards the kingside.",
+        "10...Qd7": "Connects the rooks; ...Rae8 comes next to contest the e-file."
+      }
+    }
+  ],
+  "traps": [
+    {
+      "id": "nxd4-pin",
+      "name": "7...Nxd4?: the check on b5",
+      "moves": "1. e4 e6 2. d4 d5 3. e5 c5 4. c3 Nc6 5. Nf3 Qb6 6. Bd3 cxd4 7. cxd4 Nxd4 8. Nxd4 Qxd4 9. Bb5+",
+      "notes": {
+        "6.Bd3": "The bishop stands on the d-file between the queen on d1 and d4; later it can leave the file with check.",
+        "7...Nxd4": "The mistake: d4 is attacked twice and defended only by the f3 knight, so it looks like a free pawn, but it is a trap.",
+        "8...Qxd4": "Black takes back the piece, but the queen now stands on the line of White's queen."
+      },
+      "mistake": "7...Nxd4",
+      "punishment": "8.Nxd4 Qxd4 9.Bb5+: the bishop gives check and opens the d-file, so the queen on d1 takes the queen on d4. If Black does not take on d4 with the queen, Black has lost a knight for a pawn. In this position play 7...Bd7 first, so a later Bb5+ is blocked."
+    },
+    {
+      "id": "greek-gift",
+      "name": "8...O-O?: the bishop sacrifice on h7",
+      "moves": "1. e4 e6 2. d4 d5 3. Nc3 Nf6 4. e5 Nfd7 5. Nf3 c5 6. dxc5 Nc6 7. Bf4 Bxc5 8. Bd3 O-O 9. Bxh7+ Kxh7 10. Ng5+",
+      "notes": {
+        "4.e5": "The knight is driven from f6, the square from which it guards h7.",
+        "8.Bd3": "The bishop aims at h7; the f3 knight can jump to g5.",
+        "8...O-O": "The mistake: castling into the attack. With no knight on f6, only the king guards h7."
+      },
+      "mistake": "8...O-O",
+      "punishment": "9.Bxh7+ Kxh7 10.Ng5+. If 10...Kg8, 11.Qh5 threatens mate on h7 and Black must give the queen for the knight. If 10...Kg6, 11.Qd3+ f5 12.exf6+ and the black king is in the open. Play 8...Be7 or 8...f6 first, and castle when h7 is safe."
+    }
+  ]
+}

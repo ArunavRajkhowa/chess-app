@@ -240,7 +240,7 @@ async def review_moves(
         if not mine:
             return SideSummary(accuracy=None, acpl=None, estimated_rating=None, counts={c: 0 for c in C.ALL_CLASSES}, phase_accuracy={})
         acc = C.game_accuracy([m.accuracy for m in mine], [weights[m.ply - 1] for m in mine])
-        acpl = sum(min(m.cp_loss, 1000) for m in mine) / len(mine)
+        acpl = sum(min(m.cp_loss, C.ACPL_CP_CAP) for m in mine) / len(mine)
         counts = {c: sum(1 for m in mine if m.classification == c) for c in C.ALL_CLASSES}
         phase_acc: dict[str, float | None] = {}
         for ph in (OPENING, MIDDLEGAME, ENDGAME):

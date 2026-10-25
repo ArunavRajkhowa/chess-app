@@ -34,6 +34,7 @@ export function PuzzlesPage() {
   const [mode, setMode] = useState<Mode>("rated");
   const [themes, setThemes] = useState<PuzzleTheme[]>([]);
   const [selectedThemes, setSelectedThemes] = useState<string[]>([]);
+  const [opening, setOpening] = useState<string | null>(null); // a study plan's opening tag: kept for every puzzle until the player changes the filter
   const [range, setRange] = useState<[number, number]>([600, 2400]);
   const [puzzle, setPuzzle] = useState<Puzzle | null>(null);
   const [solver, setSolver] = useState<Solver | null>(null);
@@ -86,10 +87,12 @@ export function PuzzlesPage() {
 
   useEffect(() => {
     const theme = params.get("theme"); // from a lesson: practise what it taught
-    if (!theme) return;
+    const opening = params.get("opening"); // from a study plan: puzzles taken from games in this opening
+    if (!theme && !opening) return;
     setMode("custom");
-    setSelectedThemes([theme]);
-    puzzleApi.next({ themes: [theme] }).then((r) => load(r.puzzle, r.player_rating)).catch((e: Error) => setError(e.message));
+    setSelectedThemes(theme ? [theme] : []);
+    setOpening(opening);
+    puzzleApi.next({ themes: theme ? [theme] : undefined, opening: opening ?? undefined }).then((r) => load(r.puzzle, r.player_rating)).catch((e: Error) => setError(e.message));
   }, [params]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
@@ -112,6 +115,9 @@ export function PuzzlesPage() {
   useEffect(() => {
     if (rush && !rush.finished && rush.endsAt !== null && now >= rush.endsAt) void finishRush(rush);
   }, [now, rush, finishRush]);
+  const remaining = rush && rush.endsAt !== null ? Math.max(0, Math.ceil((rush.endsAt - now) / 1000)) : null;
+  const lastTen = remaining !== null && remaining <= 10 && remaining > 0 && !rush?.finished;
+  useEffect(() => { if (lastTen) playSound("rushTick"); }, [remaining, lastTen]); // one tick a second while the clock runs down
 
   const load = useCallback(async (p: Puzzle, rating?: number) => {
     recorded.current = false;
@@ -156,13 +162,13 @@ export function PuzzlesPage() {
         return;
       }
       const r = mode === "custom"
-        ? await puzzleApi.next({ themes: selectedThemes, min: range[0], max: range[1] })
+        ? await puzzleApi.next({ themes: selectedThemes, opening: opening ?? undefined, min: range[0], max: range[1] })
         : await puzzleApi.next({});
       await load(r.puzzle, r.player_rating);
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
     }
-  }, [mode, rush, selectedThemes, range, load, finishRush, mistakes]);
+  }, [mode, rush, selectedThemes, opening, range, load, finishRush, mistakes]);
 
   const startRush = async (m: "3m" | "5m" | "survival") => {
     try {
@@ -270,7 +276,6 @@ export function PuzzlesPage() {
   }
   const highlights = solver?.wrongMove && (solver.phase === "failed" || mode === "daily") ? [{ square: solver.wrongMove[1], brush: "red" as const }] : [];
   const trained = (puzzle?.themes ?? []).map((k) => themes.find((t) => t.key === k)).filter((t): t is PuzzleTheme => !!t?.motif);
-  const remaining = rush && rush.endsAt !== null ? Math.max(0, Math.ceil((rush.endsAt - now) / 1000)) : null;
 
   return (
     <div className="puzzles" data-testid="puzzles">
@@ -278,10 +283,10 @@ export function PuzzlesPage() {
         <div className="row" style={{ justifyContent: "space-between", marginBottom: 8 }}>
           <div className="row">
             {(["rated", "custom", "rush", "mistakes"] as Mode[]).map((m) => (
-              <button key={m} className={`btn btn-sm ${mode === m ? "btn-primary" : ""}`} onClick={() => { setMode(m); setError(null); if (m !== "rush") setRush(null); if (m !== "mistakes") setMistakes(null); }} data-testid={`mode-${m}`}>{m === "rush" ? "Puzzle Rush" : m === "mistakes" ? "My mistakes" : m[0].toUpperCase() + m.slice(1)}</button>
+              <button key={m} className={`btn btn-sm ${mode === m ? "btn-primary" : ""}`} onClick={() => { setMode(m); setOpening(null); setError(null); if (m !== "rush") setRush(null); if (m !== "mistakes") setMistakes(null); }} data-testid={`mode-${m}`}>{m === "rush" ? "Puzzle Rush" : m === "mistakes" ? "My mistakes" : m[0].toUpperCase() + m.slice(1)}</button>
             ))}
           </div>
-          {streak > 1 && <span className="chip chip-ok"><Flame size={12} /> {streak} in a row</span>}
+          {streak > 1 && <span className="chip chip-ok pop" key={streak}><Flame size={12} /> {streak} in a row</span>}
           {mode === "daily" && <span className="chip chip-danger" data-testid="hearts">{"♥".repeat(hearts)}<span className="faint">{"♥".repeat(5 - hearts)}</span></span>}
         </div>
         {puzzle && solver ? (
@@ -318,13 +323,13 @@ export function PuzzlesPage() {
           <div className="card rush-bar" data-testid="rush-bar">
             <div><div className="faint">score</div><div className="num rush-score">{rush.score}</div></div>
             <div><div className="faint">strikes</div><div className="rush-strikes">{"✖".repeat(rush.wrong)}<span className="faint">{"✖".repeat(3 - rush.wrong)}</span></div></div>
-            <div><div className="faint">time</div><div className="num">{remaining === null ? "∞" : `${Math.floor(remaining / 60)}:${String(remaining % 60).padStart(2, "0")}`}</div></div>
+            <div><div className="faint">time</div><div className={`num rush-time ${lastTen ? "low pulse" : ""}`}>{remaining === null ? "∞" : `${Math.floor(remaining / 60)}:${String(remaining % 60).padStart(2, "0")}`}</div></div>
             {rush.finished && <div className="rush-done"><Trophy size={16} /> Run over: {rush.score} solved. <button className="btn btn-sm" onClick={() => { setRush(null); setPuzzle(null); setSolver(null); }}>Back</button></div>}
           </div>
         )}
         {puzzle && solver && (
           <div className="card">
-            <div className="row" style={{ justifyContent: "space-between" }}>
+            <div className={`row puzzle-state ${solver.phase}`} style={{ justifyContent: "space-between" }} key={solver.phase}>
               <span className="grow">
               <strong data-testid="puzzle-turn">{solver.phase === "solved" ? "Solved!" : solver.phase === "revealed" ? "Solution shown" : solver.phase === "failed" ? "Not quite" : solver.phase === "intro" ? `${mode === "daily" ? "Daily puzzle · " : ""}Watch the opponent's move…` : `${mode === "daily" ? "Daily puzzle · " : ""}${puzzle.solver_color === "white" ? "White" : "Black"} to play`}</strong>
               {(solver.phase === "intro" || solver.phase === "solving") && <span className="puzzle-goal" data-testid="puzzle-goal">{puzzle.goal}</span>}
@@ -375,10 +380,10 @@ export function PuzzlesPage() {
         )}
         {mode === "custom" && (
           <div className="card">
-            <div className="card-title"><h3>Themes</h3><span className="faint">{selectedThemes.length ? `${selectedThemes.length} selected` : "any"}</span></div>
+            <div className="card-title"><h3>Themes</h3><span className="faint">{opening ? `${opening.replace(/_/g, " ")} · ` : ""}{selectedThemes.length ? `${selectedThemes.length} selected` : "any"}</span></div>
             <div className="theme-grid">
               {themes.map((t) => (
-                <button key={t.key} className={`theme-chip ${selectedThemes.includes(t.key) ? "on" : ""}`} title={t.description} onClick={() => setSelectedThemes((s) => (s.includes(t.key) ? s.filter((x) => x !== t.key) : [...s, t.key]))}>
+                <button key={t.key} className={`theme-chip ${selectedThemes.includes(t.key) ? "on" : ""}`} title={t.description} onClick={() => { setOpening(null); setSelectedThemes((s) => (s.includes(t.key) ? s.filter((x) => x !== t.key) : [...s, t.key])); }}>
                   {t.name} <span className="faint num">{t.count}</span>
                 </button>
               ))}

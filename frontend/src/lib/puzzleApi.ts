@@ -26,9 +26,10 @@ async function req<T>(path: string, init?: RequestInit): Promise<T> {
 
 export const puzzleApi = {
   themes: () => req<{ themes: PuzzleTheme[]; total: number }>("/api/puzzles/themes"),
-  next: (o: { themes?: string[]; min?: number; max?: number }) => {
+  next: (o: { themes?: string[]; min?: number; max?: number; opening?: string }) => {
     const q = new URLSearchParams();
     if (o.themes?.length) q.set("themes", o.themes.join(","));
+    if (o.opening) q.set("opening", o.opening);
     if (o.min !== undefined) q.set("min_rating", String(o.min));
     if (o.max !== undefined) q.set("max_rating", String(o.max));
     return req<{ puzzle: Puzzle; player_rating: number }>(`/api/puzzles/next?${q}`);

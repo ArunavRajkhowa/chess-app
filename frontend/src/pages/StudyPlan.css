@@ -1,0 +1,16 @@
+.plan-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: var(--s-2); }
+.plan-list li { display: grid; grid-template-columns: 1fr auto; gap: 2px var(--s-3); align-items: center; }
+.plan-list-progress { grid-column: 1 / -1; }
+.plan-points summary { cursor: pointer; font-weight: 600; margin-top: var(--s-3); }
+.plan-points ul { margin: var(--s-2) 0 0; padding-left: var(--s-4); display: flex; flex-direction: column; gap: 4px; font-size: var(--fs-sm); }
+.plan-steps { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 1px; }
+.plan-step { display: flex; gap: var(--s-3); align-items: flex-start; padding: var(--s-2) var(--s-2); border-radius: var(--r-sm); }
+.plan-step:hover { background: var(--bg-hover); }
+.plan-step.done .plan-step-title { color: var(--ink-3); text-decoration: line-through; }
+.plan-mark { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; flex: none; border-radius: 999px; border: 1px solid var(--line-strong); color: var(--ink-3); background: transparent; margin-top: 1px; }
+.plan-mark.tick { cursor: pointer; }
+.plan-mark.tick:hover { border-color: var(--brand); color: var(--brand); }
+.plan-mark.on { background: var(--ok); border-color: var(--ok); color: var(--side-white); }
+.plan-step-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.plan-step-title { font-weight: 600; display: inline-flex; align-items: center; gap: var(--s-2); }
+.plan-step-reason { font-size: var(--fs-sm); }

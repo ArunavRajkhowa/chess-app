@@ -1,10 +1,6 @@
-"""The bot roster: who the player can face, how strong each one is, and how it plays. A bot's
-strength comes from search depth plus the selector's temperature (backend/bots/selector.py), not
-from the engine's own Skill Level, so every bot's lines are honest evaluations. Depths and
-temperatures were lowered twice after scripts/calibrate_bots.py (four games per bot against
-Stockfish at the bot's labelled UCI_Elo, 0.1 s per reference move, 2026-10-16): the first run had
-the 1400-2200 bots at 4/4; the second had Mei 2/4, Leo 1.5/4, Ivy 3/4 and Omar-Viktor 4/4. The
-measured rows are in data/bot_calibration.json."""
+"""The bot roster: who the player can face, how strong each one is, and how it plays. Strength is
+search depth plus the selector's temperature (selector.py), never the engine's Skill Level, so every
+line stays an honest evaluation. scripts/calibrate_bots.py measures it into data/bot_calibration.json."""
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -14,6 +10,12 @@ TIER_INTERMEDIATE = "intermediate"
 TIER_ADVANCED = "advanced"
 TIER_MASTER = "master"
 TIER_SPECIAL = "special"
+TIER_SPECIALIST = "specialist"  # generated per opening course, middlegame theme and endgame theme (specialists.py)
+
+# Wire names for a specialist's domain; the frontend filter and the guide notes key on them.
+SPECIALTY_OPENING = "opening"
+SPECIALTY_MIDDLEGAME = "middlegame"
+SPECIALTY_ENDGAME = "endgame"
 
 
 @dataclass(frozen=True)
@@ -45,6 +47,16 @@ class Personality:
 
 
 @dataclass(frozen=True)
+class Specialty:
+    """What a specialist bot trains: kind is an opening course, a middlegame theme or an endgame theme.
+    start_fens: the bot's games open from one of these (engine-checked at game time) instead of move 1."""
+    kind: str
+    key: str
+    name: str
+    start_fens: tuple[str, ...] = ()
+
+
+@dataclass(frozen=True)
 class Bot:
     id: str
     name: str
@@ -61,6 +73,7 @@ class Bot:
     on_draw: str = "A draw. Fair result."
     description: str = ""
     chat: dict[str, tuple[str, ...]] = field(default_factory=dict)
+    specialty: Specialty | None = None
 
 
 # What a bot says when something happens. Keys are events the play API detects after each move pair.
@@ -114,9 +127,10 @@ BOTS: list[Bot] = [
     _bot("sam", "Sam", 800, TIER_BEGINNER, "Spots one-move threats", "🧢", 3, 100, multipv=5, random_move=0.03,
          description="Sam sees hanging pieces and one-move captures, but misses deeper tactics."),
     # Intermediate ------------------------------------------------------------------------------
-    _bot("nova", "Nova", 1000, TIER_INTERMEDIATE, "Club night regular", "✨", 3, 90, multipv=5,
+    # 2026-10-25, 6 games against UCI_Elo 1320: Nova at depth 3 / 90 cp scored 5.5, Rafa at depth 4 / 65 cp 6.0
+    _bot("nova", "Nova", 1000, TIER_INTERMEDIATE, "Club night regular", "✨", 2, 100, multipv=5,
          description="Nova plays sensible chess and finds two-move tactics. Your first real test."),
-    _bot("rafa", "Rafa", 1200, TIER_INTERMEDIATE, "Loves a gambit", "🎸", 4, 65, multipv=4,
+    _bot("rafa", "Rafa", 1200, TIER_INTERMEDIATE, "Loves a gambit", "🎸", 3, 80, multipv=4,
          personality=Personality(aggression=0.7, favourite_openings=("King's Gambit", "Evans Gambit", "Smith-Morra", "Scotch Gambit")),
          description="Rafa sacrifices pawns for open lines and attacks early. Keep your king safe."),
     _bot("mei", "Mei", 1400, TIER_INTERMEDIATE, "Solid and patient", "🍵", 4, 55, multipv=4,
@@ -165,11 +179,18 @@ BOTS: list[Bot] = [
 BOTS_BY_ID: dict[str, Bot] = {b.id: b for b in BOTS}
 
 
+def find_bot(bot_id: str) -> Bot | None:
+    """A classic bot or a generated specialist, or None."""
+    from .specialists import specialist_bots  # the specialists come from content loaders: resolved on first use
+
+    return BOTS_BY_ID.get(bot_id) or specialist_bots().get(bot_id)
+
+
 def get_bot(bot_id: str) -> Bot:
-    try:
-        return BOTS_BY_ID[bot_id]
-    except KeyError:
-        raise KeyError(f"unknown bot id {bot_id!r}; known: {sorted(BOTS_BY_ID)}")
+    bot = find_bot(bot_id)
+    if bot is None:
+        raise KeyError(f"unknown bot id {bot_id!r}; known: {sorted(BOTS_BY_ID)} and the specialists")
+    return bot
 
 
 def bot_public(b: Bot) -> dict:
@@ -181,4 +202,5 @@ def bot_public(b: Bot) -> dict:
             "trade_when_ahead": b.personality.trade_when_ahead,
             "favourite_openings": list(b.personality.favourite_openings),
         },
+        "specialty": {"kind": b.specialty.kind, "key": b.specialty.key, "name": b.specialty.name} if b.specialty else None,
     }

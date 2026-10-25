@@ -148,6 +148,7 @@ _ACPL_TO_ELO = [(5, 2800), (10, 2600), (15, 2400), (20, 2250), (25, 2100), (30, 
 
 
 MIN_MOVES_FOR_ESTIMATE = 20  # fewer judged moves than this and the estimate is noise: say nothing
+ACPL_CP_CAP = 1000  # one move's loss counted toward average centipawn loss
 
 
 def estimate_rating(acpl: float) -> int:
@@ -159,3 +160,13 @@ def estimate_rating(acpl: float) -> int:
             t = (acpl - a0) / (a1 - a0)
             return int(round(e0 + (e1 - e0) * t, -1))
     return 300
+
+
+def acpl_for_rating(elo: int) -> float:
+    """The same table read backwards: the average centipawn loss a rating is expected to play at."""
+    if elo >= _ACPL_TO_ELO[0][1]:
+        return float(_ACPL_TO_ELO[0][0])
+    for (a0, e0), (a1, e1) in zip(_ACPL_TO_ELO, _ACPL_TO_ELO[1:]):
+        if elo >= e1:
+            return round(a0 + (a1 - a0) * (e0 - elo) / (e0 - e1), 1)
+    return float(_ACPL_TO_ELO[-1][0])

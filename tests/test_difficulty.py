@@ -17,12 +17,19 @@ def test_a_free_capture_is_easy_and_a_quiet_deflection_is_hard():
     assert difficulty("6k1/5ppp/8/8/8/8/8/R5K1 w - - 0 1", ["a1a8"], ["mateIn1", "mate", "backRankMate"], solver_first=True) <= 700
 
 
-def test_the_library_is_spread_and_not_top_heavy():
+def test_a_measured_rating_wins_over_the_shape():
+    assert difficulty(HANGING, ["e5c6"], ["hangingPiece"], solver_first=True, measured=1873) == 1873
+
+
+def test_the_library_is_spread_across_every_band():
     from backend.puzzles.store import load_library
-    ratings = sorted(p.rating for p in load_library().all)
-    assert ratings[0] >= MIN_RATING and ratings[-1] <= MAX_RATING
-    assert 700 <= ratings[len(ratings) // 2] <= 1200
-    assert sum(1 for r in ratings if r >= 1600) <= len(ratings) // 10
+    lib = load_library().all
+    shaped = sorted(p.rating for p in lib if not p.id.startswith("lichess:"))  # rated by shape, not measured
+    assert 700 <= shaped[len(shaped) // 2] <= 1200
+    assert sum(1 for r in shaped if r >= 1600) <= len(shaped) // 10
+    bands = {lo: sum(1 for p in lib if lo <= p.rating < lo + 200) for lo in range(400, 2400, 200)}
+    assert all(n >= 300 for n in bands.values()), bands
+    assert any(p.opening_tags for p in lib)
 
 
 def test_one_puzzle_moves_the_rating_by_at_most_a_step():

@@ -1,7 +1,6 @@
-"""One home for a puzzle's rating: what makes the first move hard to find, not how long the line is.
-A forcing first move (check or capture) is easier than a quiet one; a hanging piece is easier than a
-deflection; a crushing win is easier to see than a small edge. Used by the generator, the puzzles
-made from the player's own mistakes, and the recalibration script."""
+"""One home for a puzzle's rating: a measured rating (lichess, thousands of real solves) when the puzzle
+carries one, else an estimate from its shape: a forcing first move is easier than a quiet one, a hanging
+piece easier than a deflection. Used by the importer, the generator, mistake puzzles and recalibration."""
 from __future__ import annotations
 
 import chess
@@ -34,9 +33,11 @@ def _gives_up_material(board: chess.Board, move: chess.Move) -> bool:
     return loss - gained >= 2
 
 
-def difficulty(fen: str, moves: list[str], themes: list[str], *, solver_first: bool = False) -> int:
-    """A puzzle rating from its own shape. `moves` is the lichess-shaped line (the opponent's move first
-    unless solver_first); the solver's first move is what the rating is mostly about."""
+def difficulty(fen: str, moves: list[str], themes: list[str], *, solver_first: bool = False, measured: int | None = None) -> int:
+    """The measured rating when there is one, else a rating from the puzzle's shape. `moves` is the
+    lichess-shaped line (the opponent's move first unless solver_first)."""
+    if measured is not None:
+        return measured
     board = chess.Board(fen)
     line = [chess.Move.from_uci(m) for m in moves]
     if not solver_first and line:

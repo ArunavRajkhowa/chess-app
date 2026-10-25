@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { api, type BotPublic } from "../../lib/api";
+import { BotAvatar } from "../art";
 import "./BotPicker.css";
 
 const TIERS: { key: BotPublic["tier"]; label: string; blurb: string }[] = [
@@ -8,6 +9,12 @@ const TIERS: { key: BotPublic["tier"]; label: string; blurb: string }[] = [
   { key: "advanced", label: "Advanced", blurb: "1800–2400. Serious opposition." },
   { key: "master", label: "Master", blurb: "2600–3200. Engines in disguise." },
   { key: "special", label: "Personalities", blurb: "Coach, trap setters, grinders." },
+];
+
+// The specialists are generated per course and theme (backend/bots/specialists.py); the filter keeps the list readable.
+type Filter = "classic" | "opening" | "middlegame" | "endgame";
+const FILTERS: { key: Filter; label: string }[] = [
+  { key: "classic", label: "Classic" }, { key: "opening", label: "Openings" }, { key: "middlegame", label: "Middlegame" }, { key: "endgame", label: "Endgame" },
 ];
 
 const TIME_CONTROLS: { key: string | null; label: string }[] = [
@@ -19,12 +26,14 @@ interface Props {
   onStart: (bot: BotPublic, color: "white" | "black" | "random", coachMode: boolean, timeControl: string | null) => void;
   busy?: boolean;
   initialBotId?: string;
+  initialColor?: "white" | "black";
 }
 
-export function BotPicker({ onStart, busy, initialBotId }: Props) {
+export function BotPicker({ onStart, busy, initialBotId, initialColor }: Props) {
   const [bots, setBots] = useState<BotPublic[]>([]);
   const [selected, setSelected] = useState<BotPublic | null>(null);
-  const [color, setColor] = useState<"white" | "black" | "random">("white");
+  const [color, setColor] = useState<"white" | "black" | "random">(initialColor ?? "white");
+  const [filter, setFilter] = useState<Filter>(initialBotId?.startsWith("opening-") ? "opening" : initialBotId?.startsWith("middlegame-") ? "middlegame" : initialBotId?.startsWith("endgame-") ? "endgame" : "classic");
   const [coachMode, setCoachMode] = useState(false);
   const [timeControl, setTimeControl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -43,17 +52,27 @@ export function BotPicker({ onStart, busy, initialBotId }: Props) {
     <div className="botpicker" data-testid="botpicker">
       <div className="botpicker-list">
         {error && <div className="chip chip-danger">Could not load bots: {error}</div>}
-        {TIERS.map((tier) => {
-          const list = bots.filter((b) => b.tier === tier.key);
-          if (!list.length) return null;
+        <div className="row botpicker-filters" role="radiogroup" aria-label="Kind of bot">
+          {FILTERS.map((f) => (
+            <button key={f.key} type="button" role="radio" aria-checked={filter === f.key} className={`btn btn-sm ${filter === f.key ? "btn-primary" : ""}`} onClick={() => setFilter(f.key)} data-testid={`bot-filter-${f.key}`}>{f.label}</button>
+          ))}
+        </div>
+        {(filter === "classic"
+          ? TIERS.map((tier) => ({ key: tier.key, label: tier.label, blurb: tier.blurb, list: bots.filter((b) => b.tier === tier.key) }))
+          // specialists: one section per specialty, its four ratings side by side
+          : [...new Map(bots.filter((b) => b.specialty?.kind === filter).map((b) => [b.specialty!.key, b])).values()].map((first) => ({
+            key: first.specialty!.key, label: first.specialty!.name, blurb: first.tagline, list: bots.filter((b) => b.specialty?.kind === filter && b.specialty.key === first.specialty!.key),
+          }))
+        ).map((section) => {
+          if (!section.list.length) return null;
           return (
-            <section key={tier.key} className="botpicker-tier">
+            <section key={section.key} className="botpicker-tier">
               <header>
-                <h3>{tier.label}</h3>
-                <span className="faint">{tier.blurb}</span>
+                <h3>{section.label}</h3>
+                <span className="faint">{section.blurb}</span>
               </header>
               <div className="botpicker-grid">
-                {list.map((b) => (
+                {section.list.map((b) => (
                   <button
                     key={b.id}
                     type="button"
@@ -61,9 +80,9 @@ export function BotPicker({ onStart, busy, initialBotId }: Props) {
                     onClick={() => { setSelected(b); if (b.id === "coach") setCoachMode(true); }}
                     data-testid={`bot-${b.id}`}
                   >
-                    <span className="botcard-avatar" aria-hidden="true">{b.avatar}</span>
-                    <span className="botcard-name">{b.name}</span>
-                    <span className="botcard-elo num">{b.elo}</span>
+                    <span className="botcard-avatar" aria-hidden="true"><BotAvatar id={b.id} tier={b.tier} kind={b.specialty?.kind} size={36} /></span>
+                    <span className="botcard-name">{b.specialty ? b.elo : b.name}</span>
+                    {!b.specialty && <span className="botcard-elo num">{b.elo}</span>}
                   </button>
                 ))}
               </div>
@@ -76,7 +95,7 @@ export function BotPicker({ onStart, busy, initialBotId }: Props) {
         {selected ? (
           <>
             <div className="botpicker-hero">
-              <span className="botpicker-hero-avatar" aria-hidden="true">{selected.avatar}</span>
+              <span className="botpicker-hero-avatar" aria-hidden="true"><BotAvatar id={selected.id} tier={selected.tier} size={56} /></span>
               <div>
                 <h2>{selected.name}</h2>
                 <div className="muted">{selected.tagline} · <span className="num">{selected.elo}</span></div>

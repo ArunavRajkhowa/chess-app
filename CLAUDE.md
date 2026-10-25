@@ -35,8 +35,10 @@ When two approaches both work, take the one a new developer follows in one read.
    for display and instant feedback only; a disagreement is a bug on the server side to fix.
 2. **The coach never invents a move.** Every move the coach may name comes from the position
    fact sheet ([backend/coach/facts.py](backend/coach/facts.py)): engine candidate lines, rule-based
-   threats, the played move and the review's best move. The API checks the model's answer for
-   SAN tokens that are legal in none of the positions and reports them as `unverified_moves`.
+   threats, the opponent's threat line, the book main line, the played move, the review's best
+   move and the moves already played in the game. The API checks the model's answer for SAN
+   tokens outside that set (and not legal in the asked position) and reports them as
+   `unverified_moves`. Never widen the set to "any legal move somewhere".
    The rule-based fallback ([backend/coach/fallback.py](backend/coach/fallback.py)) answers when there
    is no key or the model declines; the stream always ends with a `done` event.
 3. **Content is validated at load, never trusted.** Lessons, puzzles and master games are
@@ -69,11 +71,13 @@ When two approaches both work, take the one a new developer follows in one read.
 8. **Only `frontend/dist` is web-served** and the static mount stays last in `app.py` so
    `/api/*` routes win. Never mount the repo root.
 9. **Player data is scoped and private.** Every visitor is a player (a random id in an httpOnly
-   cookie; Google sign-in attaches an email). Every query on a per-player table filters by the
+   cookie). That cookie opens the player only while it is a guest; an account (email and password
+   hashed with scrypt, or Google) is reached only through the server-side `session` cookie
+   ([backend/auth.py](backend/auth.py)), so sign-out-everywhere really ends access. Every query on a per-player table filters by the
    `Player` dependency ([backend/routers/account.py](backend/routers/account.py)). A new table with
    `player_id` goes into `PLAYER_TABLES` or `PLAYER_KEYED_TABLES` (a test enforces it) so sign-in
-   merge and delete-my-data reach it. No response body carries the player id. The email is the
-   only personal data stored: events ([backend/routers/events.py](backend/routers/events.py)) take
+   merge and delete-my-data reach it. No response body, link or token carries the player id. The
+   email is the only personal data stored: events ([backend/routers/events.py](backend/routers/events.py)) take
    declared keys and identifier values only, never free text, names, IPs or the user agent.
 
 ## Mental model (data flow)
@@ -161,8 +165,9 @@ React + TypeScript + Vite in `frontend/`, plain CSS with tokens (`src/styles/tok
 - Puzzle FENs follow lichess: the position *before* the opponent's move; `moves[0]` is that move.
 - `UCI_ShowWDL` is off in the browser engine; parsing assumes `score cp|mate` right after `score`.
 - The page response (the SPA catch-all in `app.py`) mints the guest cookie, so the app's parallel
-  first calls share one player. Under the Vite dev server the page is not ours: a first visit
-  there may mint one guest per call.
+  first calls share one player. The Vite dev server serves its own page, so a `guest-cookie`
+  plugin in `frontend/vite.config.ts` asks the backend for the cookie on a page load; without it
+  each parallel first call mints its own guest (this was the intermittent e2e 404).
 - Turso refuses `PRAGMA journal_mode` and drops a remote stream left idle for some seconds
   (`STREAM_EXPIRED`); `Database._run` reconnects and retries once. Embedded replicas were not
   verified (the local libSQL server lacks the export endpoint).

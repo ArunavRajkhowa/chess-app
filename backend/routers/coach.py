@@ -15,13 +15,14 @@ from pydantic import BaseModel, Field
 
 from ..coach import fallback
 from ..coach.client import CoachDeclined, llm_enabled, llm_model, prompt, stream_text
+from ..coach.context import bot_brief, coach_context, player_context
 from ..coach.facts import position_facts
 from ..engine.pool import pool
 from ..openings.book import load_book
 from ..review import jobs
 from ..review.classify import BLUNDER, MISS, MISTAKE
 from ..review.report import review_moves
-from ..study.assess import assess
+from ..study.reasons import opponent_to_move, parried_threat
 from .learn import material_balance
 from ..storage import games as store
 from .account import Player
@@ -30,36 +31,54 @@ LOGGER = logging.getLogger("chess.coach.api")
 router = APIRouter(prefix="/api/coach", tags=["coach"])
 
 Level = str
+LEVELS = "^(beginner|intermediate|advanced|master)$"
+DEFAULT_LEVEL = "intermediate"
 _SAN_TOKEN = re.compile(r"\b(?:O-O(?:-O)?|[KQRBN]?[a-h]?[1-8]?x?[a-h][1-8](?:=[QRBN])?[+#]?)\b")
 TRY_DEPTH = 14
 MAX_ASKED_MOVES = 3  # a question naming more moves than this is not about particular moves
 _SQUARE = re.compile(r"\b([a-h][1-8])\b")
 _PIECE_WORDS = {"knight": chess.KNIGHT, "bishop": chess.BISHOP, "rook": chess.ROOK, "queen": chess.QUEEN, "king": chess.KING, "pawn": chess.PAWN}
-_PLAN_WORDS = re.compile(r"(plan|plans|assess|assessment|strategy|strategic|imbalance|who is better|who's better|weakness|weaknesses|idea|ideas)", re.I)
 
 
 class ExplainRequest(BaseModel):
     game_id: str
     ply: int = Field(ge=1)
-    level: Level = Field("intermediate", pattern="^(beginner|intermediate|advanced|master)$")
+    level: Level | None = Field(None, pattern=LEVELS, description="omitted: from the player's puzzle rating")
 
 
 class ChatRequest(BaseModel):
     fen: str
     question: str = Field(min_length=1, max_length=2000)
-    level: Level = Field("intermediate", pattern="^(beginner|intermediate|advanced|master)$")
+    level: Level | None = Field(None, pattern=LEVELS, description="omitted: from the player's puzzle rating")
     history: list[dict] = Field(default_factory=list, description="prior turns [{role, content}]")
+    game_id: str | None = Field(None, description="the game the position comes from: the coach then knows the moves so far")
+    lesson_id: str | None = Field(None, description="the lesson the question comes from")
 
 
 class HintRequest(BaseModel):
     fen: str
     hint_level: int = Field(1, ge=1, le=3)
-    level: Level = "intermediate"
+    level: Level | None = Field(None, pattern=LEVELS)
+    game_id: str | None = None
 
 
 class SummaryRequest(BaseModel):
     game_id: str
-    level: Level = "intermediate"
+    level: Level | None = Field(None, pattern=LEVELS)
+
+
+def level_of(requested: str | None, context: dict) -> str:
+    """The wording level: the one asked for, else the one the player's puzzle rating says, else intermediate."""
+    return requested or context["player"].get("level") or DEFAULT_LEVEL
+
+
+def _game_moves(context: dict) -> tuple[chess.Move | None, str | None, set[str]]:
+    """The game's last move, the position before it and the SAN of every move played so far, taken out
+    of the context: the facts carry the move, and a move quoted from the game counts as verified."""
+    game = context.get("game") or {}
+    uci, fens, played = game.pop("last_move_uci", None), game.pop("positions", []), game.pop("played", [])
+    previous_fen = fens[-2] if uci and len(fens) >= 2 else None
+    return (chess.Move.from_uci(uci) if uci else None), previous_fen, {san.rstrip("+#") for san in played}
 
 
 class TryRequest(BaseModel):
@@ -77,32 +96,53 @@ def _sse(obj: dict) -> str:
 _NUMBERED_PAWN_MOVE = re.compile(r"\d+\.(?:\.\.)?\s?([a-h][1-8])\b")
 
 
-def _with_lines(board: chess.Board, facts: dict) -> list[chess.Board]:
-    """The position and every position along the fact sheet's engine lines, so a move the model
-    quotes from a line counts as verified."""
-    boards = [board]
-    for c in facts.get("candidate_moves", []):
-        b = board.copy()
-        for san in c["line"]:
-            try:
-                b.push_san(san)
-            except ValueError:
-                break
-            boards.append(b.copy())
-    return boards
+def _legal_sans(board: chess.Board) -> set[str]:
+    return {board.san(mv).rstrip("+#") for mv in board.legal_moves}
 
 
-def _unverified_moves(text: str, boards: list[chess.Board]) -> list[str]:
-    """Move tokens in the text that are legal in none of the given positions."""
-    legal: set[str] = set()
-    for b in boards:
-        for mv in b.legal_moves:
-            legal.add(b.san(mv).rstrip("+#"))
+def _line_sans(start: chess.Board, line: list[str]) -> set[str]:
+    """The moves of a line that replay legally from its start position."""
+    b, out = start.copy(), set()
+    for san in line:
+        try:
+            mv = b.parse_san(san)
+        except ValueError:
+            break
+        out.add(b.san(mv).rstrip("+#"))
+        b.push(mv)
+    return out
+
+
+def _verified(board: chess.Board, facts: dict) -> set[str]:
+    """Moves the model may name: legal in the position, or in a fact sheet line."""
+    sans = _legal_sans(board)
+    lines = [(board, c["line"]) for c in facts.get("candidate_moves", [])]
+    if facts.get("book"):
+        lines.append((board, facts["book"]["main_line"]))
+    other = opponent_to_move(board)
+    if other.is_valid():  # the opponent's threats and pawn breaks are moves of the side not to move
+        if facts.get("opponent_threat"):
+            lines.append((other, facts["opponent_threat"]["line"]))
+        lines += [(other, [t["san"]]) for t in facts.get("threats_against_side_to_move", [])]
+        lines += [(other, [p]) for p in (facts.get("black" if board.turn == chess.WHITE else "white") or {}).get("pawn_breaks", [])]
+    for start, line in lines:
+        sans |= _line_sans(start, line)
+    return sans
+
+
+def _parried(previous: chess.Board | None, last_move: chess.Move | None) -> set[str]:
+    """The threat the last move parried, which the fact sheet names: the one move of the previous position allowed."""
+    threat = parried_threat(previous, last_move) if previous and last_move in previous.legal_moves else None
+    return {threat["san"].rstrip("+#")} if threat else set()
+
+
+def _unverified_moves(text: str, verified: set[str]) -> list[str]:
+    """Move tokens in the text that are not in the verified set."""
     tokens = {t for t in _SAN_TOKEN.findall(text) if len(t) >= 3} | set(_NUMBERED_PAWN_MOVE.findall(text))
-    return sorted(t for t in tokens if t.rstrip("+#") not in legal and re.search(r"[a-h][1-8]", t))
+    return sorted(t for t in tokens if t.rstrip("+#") not in verified and re.search(r"[a-h][1-8]", t))
 
 
-async def _respond(system: str, user: str, purpose: str, rules_text: str, boards: list[chess.Board]) -> AsyncIterator[str]:
+async def _respond(system: str, user: str, purpose: str, rules_text: str, verified: set[str]) -> AsyncIterator[str]:
     if llm_enabled():
         collected: list[str] = []
         try:
@@ -110,7 +150,7 @@ async def _respond(system: str, user: str, purpose: str, rules_text: str, boards
                 collected.append(chunk)
                 yield _sse({"type": "text", "text": chunk})
             text = "".join(collected)
-            yield _sse({"type": "done", "source": "llm", "model": llm_model(), "unverified_moves": _unverified_moves(text, boards)})
+            yield _sse({"type": "done", "source": "llm", "model": llm_model(), "unverified_moves": _unverified_moves(text, verified)})
             return
         except CoachDeclined:
             LOGGER.warning("coach declined %s; using rules", purpose)
@@ -194,18 +234,9 @@ def asked_moves(board: chess.Board, question: str) -> list[chess.Move]:
     return hits if len(hits) <= MAX_ASKED_MOVES else []
 
 
-def _after_lines(board: chess.Board, judged: list[dict]) -> list[chess.Board]:
-    """Every position along a judged move and the engine's answer to it, for the move check."""
-    boards = []
-    for j in judged:
-        b = board.copy()
-        for san in [j["san"], *j["reply_line"]]:
-            try:
-                b.push_san(san)
-            except ValueError:
-                break
-            boards.append(b.copy())
-    return boards
+def _after_lines(board: chess.Board, judged: list[dict]) -> set[str]:
+    """The moves of each judged move and the engine's answer to it, for the move check."""
+    return set().union(*(_line_sans(board, [j["san"], *j["reply_line"]]) for j in judged))
 
 
 def _stream(gen: AsyncIterator[str]) -> StreamingResponse:
@@ -234,11 +265,14 @@ async def explain(req: ExplainRequest, player: Player):
     rm = report["moves"][req.ply - 1]
     before = chess.Board(rm["fen_before"])
     after = chess.Board(rm["fen_after"])
+    context = await coach_context(player, before, game_id=req.game_id, ply=req.ply - 1)
+    _, _, played = _game_moves(context)
+    level = level_of(req.level, context)
     facts_before = await position_facts(before, pool)
-    facts_after = await position_facts(after, pool, last_move=chess.Move.from_uci(rm["uci"]))
+    facts_after = await position_facts(after, pool, last_move=chess.Move.from_uci(rm["uci"]), previous_fen=rm["fen_before"])
     mover = rm["color"]
     user = prompt("explain_move").format(
-        player_level=req.level, move_san=rm["san"], mover=mover, classification=rm["classification"],
+        player_level=level, context=json.dumps(context), move_san=rm["san"], mover=mover, classification=rm["classification"],
         best_san=rm["best_move_san"], best_eval=rm["best_eval_text"], best_line=" ".join(rm["best_line_san"]),
         eval_before=rm["best_eval_text"], eval_after=rm["eval_after_text"], win_before=rm["win_before"], win_after=rm["win_after"],
         facts_before=json.dumps(facts_before), facts_after=json.dumps(facts_after),
@@ -246,27 +280,39 @@ async def explain(req: ExplainRequest, player: Player):
     rules = fallback.explain_move_text(
         move_san=rm["san"], mover=mover, classification=rm["classification"], best_san=rm["best_move_san"],
         best_line=rm["best_line_san"], eval_before=rm["best_eval_text"], eval_after=rm["eval_after_text"],
-        facts_before=facts_before, facts_after=facts_after, level=req.level,
+        facts_before=facts_before, facts_after=facts_after, level=level,
     )
-    return _stream(_respond(prompt("coach_system"), user, "explain", rules, _with_lines(before, facts_before) + _with_lines(after, facts_after)))
+    move = chess.Move.from_uci(rm["uci"])
+    verified = _verified(before, facts_before) | _verified(after, facts_after) | _parried(before, move) | _line_sans(before, rm["best_line_san"]) | played
+    return _stream(_respond(prompt("coach_system"), user, "explain", rules, verified))
+
+
+async def chat_answer(board: chess.Board, question: str, *, level: str, context: dict, history: list[dict] = ()) -> tuple[str, str, set[str]]:
+    """The model's user prompt, the rule-based answer and the moves the answer may name."""
+    last_move, previous_fen, played = _game_moves(context)
+    f = await position_facts(board, pool, last_move=last_move, previous_fen=previous_fen)
+    asked = [await judge_move(board, m) for m in asked_moves(board, question)]
+    if asked:
+        f["asked_moves"] = asked
+    turns = "\n".join(f"{t.get('role', 'user')}: {t.get('content', '')}" for t in list(history)[-8:])
+    user = prompt("chat").format(player_level=level, context=json.dumps(context), facts=json.dumps(f))
+    if turns:
+        user += f"\n\nEarlier in this conversation:\n{turns}"
+    user += f"\n\nQuestion: {question}"
+    f["context"] = context
+    previous = chess.Board(previous_fen) if previous_fen else None
+    if previous and last_move in previous.legal_moves:
+        played = played | {previous.san(last_move).rstrip("+#")}  # the move just played is a fact the sheet carries
+    return user, fallback.chat_text(f, question, level), _verified(board, f) | _parried(previous, last_move) | _after_lines(board, asked) | played
 
 
 @router.post("/chat")
-async def chat(req: ChatRequest):
+async def chat(req: ChatRequest, player: Player):
     board = _position(req.fen)
-    f = await position_facts(board, pool)
-    asked = [await judge_move(board, m) for m in asked_moves(board, req.question)]
-    if asked:
-        f["asked_moves"] = asked
-    if _PLAN_WORDS.search(req.question):  # a question about plans gets the imbalances, so the answer names a plan, not a move
-        f["assessment"] = await assess(board, pool)
-    history = "\n".join(f"{t.get('role', 'user')}: {t.get('content', '')}" for t in req.history[-8:])
-    user = prompt("chat").format(player_level=req.level, facts=json.dumps(f))
-    if history:
-        user += f"\n\nEarlier in this conversation:\n{history}"
-    user += f"\n\nQuestion: {req.question}"
-    rules = fallback.chat_text(f, req.question, req.level)
-    return _stream(_respond(prompt("coach_system"), user, "chat", rules, _with_lines(board, f) + _after_lines(board, asked)))
+    context = await coach_context(player, board, game_id=req.game_id, lesson_id=req.lesson_id)
+    level = level_of(req.level, context)
+    user, rules, verified = await chat_answer(board, req.question, level=level, context=context, history=req.history)
+    return _stream(_respond(prompt("coach_system"), user, "chat", rules, verified))
 
 
 @router.post("/try")
@@ -281,17 +327,16 @@ async def try_move(req: TryRequest) -> dict:
 
 
 @router.post("/hint")
-async def hint(req: HintRequest):
-    try:
-        board = chess.Board(req.fen)
-    except ValueError:
-        raise HTTPException(400, f"bad FEN {req.fen!r}")
-    if not board.is_valid():
-        raise HTTPException(400, f"illegal position {req.fen!r}")
-    f = await position_facts(board, pool)
-    user = prompt("hint").format(player_level=req.level, hint_level=req.hint_level, facts=json.dumps(f))
+async def hint(req: HintRequest, player: Player):
+    board = _position(req.fen)
+    context = await coach_context(player, board, game_id=req.game_id)
+    last_move, previous_fen, played = _game_moves(context)
+    level = level_of(req.level, context)
+    f = await position_facts(board, pool, last_move=last_move, previous_fen=previous_fen)
+    user = prompt("hint").format(player_level=level, hint_level=req.hint_level, context=json.dumps(context), facts=json.dumps(f))
     rules = fallback.hint_text(f, req.hint_level)
-    return _stream(_respond(prompt("coach_system"), user, "hint", rules, _with_lines(board, f)))
+    previous = chess.Board(previous_fen) if previous_fen else None
+    return _stream(_respond(prompt("coach_system"), user, "hint", rules, _verified(board, f) | _parried(previous, last_move) | played))
 
 
 @router.post("/summary")
@@ -311,10 +356,12 @@ async def summary(req: SummaryRequest, player: Player):
         "result": report["result"], "opening": report["opening"], "white": report["white"], "black": report["black"],
         "key_moments": key, "player_color": row["player_color"],
     }
-    user = prompt("review_summary").format(player_level=req.level, player_color=row["player_color"], summary=json.dumps(data))
+    context = {"player": await player_context(player), "bot": bot_brief(row.get("bot_id")), "time_control": row.get("time_control")}
+    level = level_of(req.level, context)
+    user = prompt("review_summary").format(player_level=level, player_color=row["player_color"], context=json.dumps(context), summary=json.dumps(data))
     rules = _rules_summary(report, row["player_color"])
-    boards = [chess.Board(m["fen_before"]) for m in report["moves"] if m["is_key_moment"]]
-    return _stream(_respond(prompt("coach_system"), user, "summary", rules, boards))
+    verified = set().union(*(_legal_sans(chess.Board(m["fen_before"])) for m in report["moves"] if m["is_key_moment"]))
+    return _stream(_respond(prompt("coach_system"), user, "summary", rules, verified))
 
 
 def _rules_summary(report: dict, player_color: str) -> str:

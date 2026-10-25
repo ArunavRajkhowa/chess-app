@@ -1,13 +1,17 @@
-.home-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--s-4); }
-.home-tile { display: flex; flex-direction: column; gap: var(--s-1); transition: transform 80ms, border-color var(--anim); }
-.home-tile:hover { transform: translateY(-2px); border-color: var(--line-strong); }
-.home-tile-icon { font-size: 30px; }
+/* Home: a greeting with the player's own numbers, one next step, then what is theirs. */
+.home-hero { display: grid; grid-template-columns: 1fr auto; gap: var(--s-5); align-items: center; }
+.home-hero .art { color: var(--ink-3); }
+.home-hero h1 { margin-bottom: var(--s-2); }
+.home-hero p { color: var(--ink-2); max-width: 56ch; }
+.home-next { margin-top: var(--s-4); }
 .home-games { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
-.home-games li { display: flex; align-items: center; gap: var(--s-3); padding: 8px 4px; border-top: 1px solid var(--line); }
+.home-games li { display: flex; align-items: center; gap: var(--s-3); padding: 8px 4px; border-top: 1px solid var(--line); color: var(--ink-2); }
 .home-two { display: grid; grid-template-columns: minmax(300px, 1fr) minmax(300px, 1.2fr); gap: var(--s-4); align-items: start; }
 .home-daily-body { display: flex; gap: var(--s-4); align-items: flex-start; }
-@media (max-width: 900px) { .home-two { grid-template-columns: 1fr; } }
-.awards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: var(--s-2); }
-.award { display: flex; gap: var(--s-2); align-items: flex-start; padding: 8px; border-radius: var(--r-sm); background: var(--bg-elev-2); opacity: 0.55; font-size: var(--fs-sm); }
-.award.earned { opacity: 1; box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 60%, transparent); }
-.award-icon { font-size: 18px; line-height: 1; }
+/* Awards: a row of rosettes, brass when earned; the words belong to the next one to earn. */
+.awards-row { display: flex; flex-wrap: wrap; gap: 6px; }
+.awards-row .award { display: flex; flex-direction: column; align-items: center; gap: 2px; width: 76px; text-align: center; font-size: var(--fs-xs); }
+.awards-row .art { color: var(--ink-3); }
+.awards-row .earned .art { color: var(--ink); }
+.awards-row .earned.new { animation: pop var(--anim-slow) var(--ease-settle) both; }
+@media (max-width: 900px) { .home-two { grid-template-columns: 1fr; } .home-hero { grid-template-columns: 1fr; } .home-hero .art { display: none; } .home-daily-body { flex-wrap: wrap; } }

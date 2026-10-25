@@ -697,6 +697,16 @@
               "md": "Euwe and Kramer's The Middlegame is built on one division.\n\nStatic features change slowly: material, pawn structure, weak squares, the bishop pair, a passed pawn, a piece on an outpost that nothing can remove.\n\nDynamic features change every move: a lead in development, the initiative, a king caught in an open position, piece activity that depends on threats.\n\nThe division decides the plan.\n\n- If your advantages are static, you can wait. Stop counterplay, trade the right pieces, and let the weakness or the extra pawn decide later.\n- If your advantages are dynamic, act now. Open lines, make threats, and convert before the opponent completes his development or closes the position.\n\nYusupov's chapter on static advantages in Chess Evolution 3 adds the defender's view: against a dynamic advantage, survive the next few moves; against a static one, look for activity at once, because waiting only lets it grow.\n\nKasparov–Shirov, Horgen 1994, is a pure case: Kasparov gives the exchange for a static asset."
             },
             {
+              "type": "challenge",
+              "fen": "r2qk2r/1b3ppp/p2p1b2/2nNp3/1R2P3/2P5/1PN2PPP/3QKB1R w Kkq - 3 17",
+              "prompt": "White to play. Kasparov-Shirov, Horgen 1994, move 17. Give material for a static advantage.",
+              "solution": [
+                "b4b7"
+              ],
+              "hint": "Which black piece is the only one that can ever fight the knight on d5?",
+              "explanation": "17.Rxb7! Nxb7 gives a rook for the light-squared bishop. A knight on d5 can be attacked by a pawn from c6 or e6, or by a light-squared bishop. Black has no c-pawn, the e-pawn on e5 cannot move back, and the only light-squared bishop is gone, so the knight stays on d5 as long as White wants. That is static compensation: White can take his time."
+            },
+            {
               "type": "game",
               "pgn": "[Event \"Credit Suisse Masters, Horgen\"]\n[Site \"Horgen SUI\"]\n[Date \"1994.??.??\"]\n[Round \"9\"]\n[White \"Garry Kasparov\"]\n[Black \"Alexei Shirov\"]\n[Result \"1-0\"]\n[ECO \"B33\"]\n\n1. e4 c5 2. Nf3 e6 3. d4 cxd4 4. Nxd4 Nf6 5. Nc3 Nc6 6. Ndb5 d6 7. Bf4 e5 8.\nBg5 a6 9. Na3 b5 10. Nd5 Be7 11. Bxf6 Bxf6 12. c3 Bb7 13. Nc2 Nb8 14. a4 bxa4\n15. Rxa4 Nd7 16. Rb4 Nc5 17. Rxb7 Nxb7 18. b4 Bg5 19. Na3 O-O 20. Nc4 a5 21.\nBd3 axb4 22. cxb4 Qb8 23. h4 Bh6 24. Ncb6 Ra2 25. O-O Rd2 26. Qf3 Qa7 27. Nd7\nNd8 28. Nxf8 Kxf8 29. b5 Qa3 30. Qf5 Ke8 31. Bc4 Rc2 32. Qxh7 Rxc4 33. Qg8+\nKd7 34. Nb6+ Ke7 35. Nxc4 Qc5 36. Ra1 Qd4 37. Ra3 Bc1 38. Ne3 1-0",
               "title": "Kasparov vs Shirov, Horgen 1994",
@@ -991,8 +1001,99 @@
           "minutes": 15,
           "sections": [
             {
+              "type": "lecture",
+              "title": "Prophylactic thinking",
+              "frames": [
+                {
+                  "say": "Each side moves once per turn. A plan that needs three moves can be stopped by one move spent in time. So before you choose, ask what your opponent would play if it were his move, and which of your pieces does least. Karpov against Spassky, Candidates 1974, White to play.",
+                  "fen": "r2r2k1/4qp2/2p3p1/p3p2p/PnQ1P2b/2N1B2P/1PPR2P1/5RK1 w - - 6 24"
+                },
+                {
+                  "say": "The knight on c3 attacks nothing. From f3 it would attack the weak pawn on e5 and guard the king. The road there is b1, then d2.",
+                  "arrows": [
+                    {
+                      "from": "c3",
+                      "to": "b1",
+                      "brush": "green"
+                    },
+                    {
+                      "from": "b1",
+                      "to": "d2",
+                      "brush": "green"
+                    },
+                    {
+                      "from": "d2",
+                      "to": "f3",
+                      "brush": "green"
+                    }
+                  ],
+                  "highlights": [
+                    {
+                      "square": "e5",
+                      "brush": "red"
+                    }
+                  ]
+                },
+                {
+                  "say": "Knight back to b1. The engine prefers this retreat to every other move by about half a pawn.",
+                  "move": "Nb1"
+                },
+                {
+                  "say": "Black's queen goes to b7; there is no target for it.",
+                  "move": "Qb7"
+                },
+                {
+                  "say": "King to h2, off the diagonal from a7 to g1: a quiet move that takes away future checks before the knight travels.",
+                  "move": "Kh2",
+                  "arrows": [
+                    {
+                      "from": "a7",
+                      "to": "g1",
+                      "brush": "red"
+                    }
+                  ]
+                },
+                {
+                  "say": "Black waits.",
+                  "move": "Kg7"
+                },
+                {
+                  "say": "The rook leaves d2 to make room for the knight.",
+                  "move": "Rxd8"
+                },
+                {
+                  "say": "Bishop takes.",
+                  "move": "Bxd8"
+                },
+                {
+                  "say": "Knight to d2, on its way to f3. The engine's verdict stays above a pawn for White, and now every white piece has a job while Black's have none.",
+                  "move": "Nd2",
+                  "arrows": [
+                    {
+                      "from": "d2",
+                      "to": "f3",
+                      "brush": "green"
+                    }
+                  ]
+                },
+                {
+                  "say": "Prophylaxis is not defence: Black had no threat. It is spending your move on the square his plan needs before he gets there, and improving your worst piece while you do it."
+                }
+              ]
+            },
+            {
               "type": "text",
               "md": "Dvoretsky's prophylactic thinking is one habit: before you choose your move, ask what your opponent wants to do, and how you can stop it. Nimzowitsch called the result prophylaxis; Petrosian and Karpov built careers on it.\n\nAsk the question in two forms:\n\n1. What is his threat? That is defence, and every player does it.\n2. What is his plan, if he had a free move? That is prophylaxis: you stop the plan before it becomes a threat.\n\nAagaard turns this into three training questions for quiet positions:\n\n- Where are the weaknesses, his and mine?\n- Which is my worst piece?\n- What is my opponent's idea?\n\nThe answers point to the move: improve the worst piece to a square where it also stops his idea, or attack a weakness in a way that leaves him nothing useful to do. A player without useful moves soon makes harmful ones.\n\nKarpov–Unzicker, Nice Olympiad 1974, is the purest example. Most of Karpov's moves take something away from Black rather than threaten something."
+            },
+            {
+              "type": "challenge",
+              "fen": "r1rnb1k1/B1n1q1bp/3p1pp1/1p1Pp3/1Pp1PP2/2P4P/R2QN1PN/RB4K1 w - - 0 31",
+              "prompt": "White to play. Karpov-Unzicker, Nice 1974, move 31. First ask what Black wants. Then take it away.",
+              "solution": [
+                "f4f5"
+              ],
+              "hint": "Black is cramped. Which pawn capture or pawn advance could free his kingside?",
+              "explanation": "31.f5! Black's freeing ideas are ...exf4, which opens e5 and the e-file, and ...f6-f5 against e4. After 31.f5 there is no pawn on f4 to take, and the f6 pawn cannot advance. The kingside is closed, and Black's pieces stay behind his own pawns. If 31...gxf5 32.exf5, no black pawn can attack e4, and White's knights get that square. The engine rates 31.f5 best."
             },
             {
               "type": "game",
@@ -1382,7 +1483,7 @@
           "sections": [
             {
               "type": "text",
-              "md": "With bishops of opposite colours, the defender's king and bishop can blockade pawns on squares the attacker's bishop never controls. Even two extra pawns are often a draw. Dvoretsky's chapter on these endings and Yusupov's in Build Up Your Chess 3 give the rules:\n\n1. Connected passed pawns are stopped by the king in front of them, on the squares the defending bishop controls.\n2. Two passed pawns win when they are far apart, as a rule with at least two files between them: the king stops one, and the bishop cannot stop the other and guard everything else.\n3. The attacker needs his king. The bishop alone cannot force pawns past a blockade.\n4. The defender puts his king in front of the most dangerous pawn and uses his bishop on a long diagonal against the other.\n\nTopalov–Shirov, Linares 1998, shows rule 3 in its most extreme form. Black has passed pawns on a4 and d5. To bring his king to e4 and d3, Shirov gives his bishop away."
+              "md": "A bishop stays on one colour for the whole game, so half the board is out of its reach for ever. With bishops of opposite colours, every square the attacker's bishop cannot touch is a safe square for the defender: his king and bishop can blockade pawns there, and the attacker has no piece that can drive them off. Even two extra pawns are often a draw. Dvoretsky's chapter on these endings and Yusupov's in Build Up Your Chess 3 give the rules:\n\n1. Connected passed pawns are stopped by the king in front of them, on the squares the defending bishop controls.\n2. Two passed pawns win when they are far apart, as a rule with at least two files between them: the king stops one, and the bishop cannot stop the other and guard everything else.\n3. The attacker needs his king. The bishop alone cannot force pawns past a blockade.\n4. The defender puts his king in front of the most dangerous pawn and uses his bishop on a long diagonal against the other.\n\nTopalov–Shirov, Linares 1998, shows rule 3 in its most extreme form. Black has passed pawns on a4 and d5. To bring his king to e4 and d3, Shirov gives his bishop away."
             },
             {
               "type": "game",

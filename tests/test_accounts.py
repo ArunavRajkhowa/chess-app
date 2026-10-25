@@ -1,7 +1,10 @@
-"""Players and accounts: each browser is its own player, sign-in with Google brings a guest's data to
-the account, delete-my-data leaves nothing behind, and analytics events refuse free text."""
+"""Players and accounts: each browser is its own player, signing in (email and password, or Google)
+brings a guest's data to the account, delete-my-data leaves nothing behind, and analytics events
+refuse free text."""
 from __future__ import annotations
 
+import base64
+import re
 import sqlite3
 import time
 
@@ -10,6 +13,7 @@ import pytest
 from fastapi import HTTPException
 from fastapi.testclient import TestClient
 
+from backend import auth, mail
 from backend.app import create_app
 from backend.routers import account as A
 
@@ -24,10 +28,24 @@ def db_file(tmp_path, monkeypatch):
     return path
 
 
+@pytest.fixture(autouse=True)
+def fresh_limits():
+    auth._attempts.clear()
+    A._sessions.clear()
+
+
 @pytest.fixture()
 def client(db_file):
     with TestClient(create_app()) as c:
         yield c
+
+
+ME = {"email": "me@example.com", "password": "correct horse"}
+
+
+def sign_up(client, **override) -> None:
+    r = client.post("/api/account/signup", json={**ME, **override})
+    assert r.status_code == 200, r.text
 
 
 @pytest.fixture()
@@ -70,10 +88,18 @@ def rows_of(db_file, player_id: str) -> dict[str, int]:
 
 def test_the_first_call_makes_a_guest_with_an_httponly_cookie(client):
     r = client.get("/api/account")
-    assert r.json() == {"email": None, "google_client_id": None}
+    assert r.json() == {"email": None, "has_password": False, "google_client_id": None}
     cookie = r.headers["set-cookie"]
-    assert "HttpOnly" in cookie and "SameSite=lax" in cookie and "Max-Age=34560000" in cookie
+    assert "HttpOnly" in cookie and "SameSite=lax" in cookie and "Max-Age=34560000" in cookie and "Secure" not in cookie
     assert "set-cookie" not in client.get("/api/account").headers  # the same player from now on
+
+
+def test_cookies_are_secure_behind_https(db_file):
+    with TestClient(create_app(), base_url="https://testserver") as client:
+        assert "Secure" in client.get("/api/account").headers["set-cookie"]
+        r = client.post("/api/account/signup", json=ME)
+        session = next(c for c in r.headers.get_list("set-cookie") if c.startswith("session="))
+        assert "Secure" in session and "HttpOnly" in session and "SameSite=lax" in session
 
 
 def test_a_player_never_sees_another_players_games_or_reviews(client):
@@ -103,7 +129,7 @@ def test_signing_in_on_a_second_device_brings_the_guests_games_to_the_account(cl
     first = new_game(client)
     client.post("/api/vision/score", json={"mode": "find", "score": 5})
     assert client.post("/api/account/google", json={"credential": "sub-1"}).json() == {"email": "sub-1@example.com"}
-    account_id = client.cookies["player"]
+    assert "session" in client.cookies and "player" not in client.cookies
 
     client.cookies.clear()  # a phone: a new guest
     second = new_game(client)
@@ -111,10 +137,10 @@ def test_signing_in_on_a_second_device_brings_the_guests_games_to_the_account(cl
     guest_id = client.cookies["player"]
     assert client.post("/api/account/google", json={"credential": "sub-1"}).status_code == 200
 
-    assert client.cookies["player"] == account_id
     assert {g["id"] for g in client.get("/api/play/games").json()["games"]} == {first, second}
     assert client.get("/api/vision").json()["best"]["find"] == 5  # a clash on one key: the account's value wins
-    assert client.get("/api/account").json()["email"] == "sub-1@example.com"
+    assert client.get("/api/account").json() == {"email": "sub-1@example.com", "has_password": False, "google_client_id": "app.apps.googleusercontent.com"}
+    client.cookies.clear()
     client.cookies.set("player", guest_id)
     assert client.get("/api/play/games").json()["games"] == []  # the guest is gone
 
@@ -123,10 +149,192 @@ def test_sign_out_starts_a_new_guest_and_signing_in_again_finds_the_account(clie
     game_id = new_game(client)
     client.post("/api/account/google", json={"credential": "sub-1"})
     client.post("/api/account/signout")
-    assert "player" not in client.cookies
+    assert "player" not in client.cookies and "session" not in client.cookies
     assert client.get("/api/account").json()["email"] is None
     client.post("/api/account/google", json={"credential": "sub-1"})
     assert [g["id"] for g in client.get("/api/play/games").json()["games"]] == [game_id]
+
+
+def test_sign_up_makes_an_account_that_signs_in_from_a_second_device_and_brings_its_games(client):
+    first = new_game(client)
+    sign_up(client)
+    assert client.get("/api/account").json() == {"email": "me@example.com", "has_password": True, "google_client_id": None}
+    assert "session" in client.cookies and "player" not in client.cookies
+
+    client.cookies.clear()
+    second = new_game(client)
+    r = client.post("/api/account/signin", json={"email": "ME@example.com ", "password": ME["password"]})  # case and spaces do not matter
+    assert r.json() == {"email": "me@example.com"}
+    assert {g["id"] for g in client.get("/api/play/games").json()["games"]} == {first, second}
+
+
+def test_a_wrong_password_and_an_unknown_email_get_the_same_answer(client):
+    sign_up(client)
+    client.post("/api/account/signout")
+    wrong = client.post("/api/account/signin", json={"email": ME["email"], "password": "not it, sorry"})
+    unknown = client.post("/api/account/signin", json={"email": "nobody@example.com", "password": ME["password"]})
+    assert wrong.status_code == unknown.status_code == 401 and wrong.json() == unknown.json() == {"detail": A.WRONG_SIGN_IN}
+
+
+def test_a_short_password_a_taken_email_and_a_bad_address_are_refused(client):
+    assert client.post("/api/account/signup", json={**ME, "password": "seven77"}).status_code == 422
+    assert client.post("/api/account/signup", json={**ME, "email": "not-an-address"}).status_code == 422
+    sign_up(client)
+    client.post("/api/account/signout")
+    assert client.post("/api/account/signup", json={**ME, "email": "Me@Example.com"}).status_code == 409
+
+
+def test_ten_failed_sign_ins_from_one_address_lock_it_out(client):
+    sign_up(client)
+    client.post("/api/account/signout")
+    for _ in range(auth.ATTEMPT_LIMIT):
+        assert client.post("/api/account/signin", json={**ME, "password": "wrong wrong"}).status_code == 401
+    r = client.post("/api/account/signin", json=ME)  # the right password no longer helps
+    assert r.status_code == 429 and "15 minutes" in r.json()["detail"]
+
+
+def test_sign_out_everywhere_ends_the_other_devices_session(client):
+    sign_up(client)
+    laptop = client.cookies["session"]
+    client.cookies.clear()
+    client.post("/api/account/signin", json=ME)
+    client.post("/api/account/signout", json={"everywhere": True})
+    client.cookies.set("session", laptop)
+    assert client.get("/api/account").json()["email"] is None  # the laptop is a guest again
+
+
+def test_changing_the_password_needs_the_current_one_and_keeps_only_this_session(client):
+    sign_up(client)
+    phone = client.cookies["session"]
+    client.cookies.clear()
+    client.post("/api/account/signin", json=ME)
+    assert client.post("/api/account/password", json={"current": "wrong wrong", "new": "new password"}).status_code == 401
+    assert client.post("/api/account/password", json={"current": ME["password"], "new": "new password"}).json() == {"ok": True}
+    assert client.get("/api/account").json()["email"] == ME["email"]
+    client.cookies.clear()
+    client.cookies.set("session", phone)
+    assert client.get("/api/account").json()["email"] is None
+    assert client.post("/api/account/signin", json={**ME, "password": "new password"}).status_code == 200
+
+
+def test_a_reset_link_is_logged_without_a_mail_server_and_works_once(client, caplog, monkeypatch):
+    from backend import settings as s
+    monkeypatch.setattr(s.settings, "PUBLIC_URL", "http://testserver")
+    sign_up(client)
+    client.post("/api/account/signout")
+    with caplog.at_level("WARNING", logger="chess.mail"):
+        assert client.post("/api/account/reset", json={"email": "Nobody@example.com"}).json() == {"ok": True}  # same answer
+        assert client.post("/api/account/reset", json={"email": ME["email"]}).json() == {"ok": True}
+    links = re.findall(r"http://testserver/settings\?reset=(\S+)", caplog.text)
+    assert len(links) == 1 and ME["email"] not in caplog.text
+    token = links[0]
+    assert client.post("/api/account/reset/confirm", json={"token": token, "password": "after reset"}).json() == {"email": ME["email"]}
+    assert client.get("/api/account").json()["email"] == ME["email"]
+    assert client.post("/api/account/reset/confirm", json={"token": token, "password": "once more"}).status_code == 401  # used
+    assert client.post("/api/account/reset/confirm", json={"token": "nonsense", "password": "once more"}).status_code == 401
+    client.post("/api/account/signout")
+    assert client.post("/api/account/signin", json={**ME, "password": "after reset"}).status_code == 200
+
+
+def test_an_accounts_old_guest_cookie_is_not_a_credential(client):
+    client.get("/api/account")
+    guest_id = client.cookies["player"]
+    sign_up(client)
+    client.post("/api/account/password", json={"current": ME["password"], "new": "new password"})
+    client.cookies.clear()
+    client.cookies.set("player", guest_id)
+    r = client.get("/api/account")
+    assert r.json()["email"] is None and r.cookies["player"] != guest_id  # only the session reaches the account
+
+
+def test_a_reset_link_carries_no_player_id_and_a_bad_expiry_is_refused(client, caplog, monkeypatch):
+    from backend import settings as s
+    monkeypatch.setattr(s.settings, "PUBLIC_URL", "https://chess.example.com/")
+    client.get("/api/account")
+    player_id = client.cookies["player"]
+    sign_up(client)
+    with caplog.at_level("WARNING", logger="chess.mail"):
+        client.post("/api/account/reset", json={"email": ME["email"]})
+    token = re.findall(r"https://chess\.example\.com/settings\?reset=(\S+)", caplog.text)[0]
+    assert player_id not in base64.urlsafe_b64decode(token.split(".")[0]).decode()
+    bad = base64.urlsafe_b64encode(b"me@example.com:soon").decode() + ".sig"
+    assert client.post("/api/account/reset/confirm", json={"token": bad, "password": "12345678"}).status_code == 401
+
+
+def test_a_reset_link_is_never_built_from_a_foreign_host_header(client, caplog):
+    sign_up(client)
+    with caplog.at_level("WARNING"):
+        assert client.post("/api/account/reset", json=ME, headers={"host": "evil.example"}).json() == {"ok": True}
+        assert "evil.example/settings" not in caplog.text and "PUBLIC_URL" in caplog.text
+        client.post("/api/account/reset", json=ME, headers={"host": "localhost:8765"})
+    assert "http://localhost:8765/settings?reset=" in caplog.text
+
+
+def test_the_rate_limit_keys_on_the_address_the_platform_appended(client):
+    sign_up(client)
+    client.post("/api/account/signout")
+    for i in range(auth.ATTEMPT_LIMIT):  # the client forges the leftmost entry; the proxy appends the real one
+        r = client.post("/api/account/signin", json={**ME, "password": "wrong wrong"}, headers={"x-forwarded-for": f"10.0.0.{i}, 203.0.113.7"})
+        assert r.status_code == 401
+    assert client.post("/api/account/signin", json=ME, headers={"x-forwarded-for": "10.9.9.9, 203.0.113.7"}).status_code == 429
+    assert client.post("/api/account/signin", json=ME, headers={"x-forwarded-for": "198.51.100.1"}).status_code == 200
+    auth.over_limit("signin", "192.0.2.99")
+    assert ("signin", "192.0.2.99") not in auth._attempts  # an address with no failures keeps no entry
+
+
+def test_sign_up_is_rate_limited_per_address(client):
+    sign_up(client)
+    for _ in range(auth.ATTEMPT_LIMIT - 1):
+        assert client.post("/api/account/signup", json=ME).status_code == 409
+    assert client.post("/api/account/signup", json=ME).status_code == 429
+
+
+def test_google_sign_in_is_refused_while_signed_in_to_a_password_account(client, db_file, google):
+    sign_up(client)
+    r = client.post("/api/account/google", json={"credential": "sub-9"})
+    assert r.status_code == 409 and r.json()["detail"] == "this browser is already signed in: sign out first"
+    assert sqlite3.connect(db_file).execute("SELECT COUNT(*) FROM players WHERE email = ?", (ME["email"],)).fetchone()[0] == 1
+
+
+def test_a_google_sign_in_cannot_take_over_an_unverified_password_account(client, google):
+    sign_up(client, email="sub-1@example.com")
+    client.post("/api/account/signout")
+    r = client.post("/api/account/google", json={"credential": "sub-1"})
+    assert r.status_code == 409 and "reset the password" in r.json()["detail"]
+
+
+def test_mail_goes_over_smtp_with_starttls_when_a_host_is_set(monkeypatch):
+    from backend import settings as s
+    monkeypatch.setattr(s.settings, "SMTP_HOST", "smtp.example.com")
+    monkeypatch.setattr(s.settings, "SMTP_USER", "login")
+    monkeypatch.setattr(s.settings, "SMTP_PASSWORD", "key")
+    monkeypatch.setattr(s.settings, "MAIL_FROM", "coach@example.com")
+    calls = []
+
+    class SMTP:
+        def __init__(self, host, port, timeout):
+            calls.append(("connect", host, port))
+        def __enter__(self):
+            return self
+        def __exit__(self, *exc):
+            calls.append(("quit",))
+        def starttls(self):
+            calls.append(("starttls",))
+        def login(self, user, password):
+            calls.append(("login", user, password))
+        def send_message(self, msg):
+            calls.append(("send", msg["From"], msg["To"], msg["Subject"]))
+
+    monkeypatch.setattr(mail.smtplib, "SMTP", SMTP)
+    mail.send("you@example.com", "Hello", "body")
+    assert calls == [("connect", "smtp.example.com", 587), ("starttls",), ("login", "login", "key"),
+                     ("send", "coach@example.com", "you@example.com", "Hello"), ("quit",)]
+
+
+def test_password_hashes_verify_and_a_missing_hash_never_matches():
+    stored = auth.hash_password("correct horse")
+    assert stored.startswith("scrypt$32768$8$1$") and auth.verify_password("correct horse", stored)
+    assert not auth.verify_password("wrong", stored) and not auth.verify_password("", None)
 
 
 def test_one_browser_cannot_hold_two_google_accounts(client, google):
@@ -175,14 +383,17 @@ def test_delete_my_data_leaves_no_row_of_the_player_and_spares_others(client, db
     client.post("/api/learn/progress", json={"lesson_id": lesson["id"], "completed": True, "results": {str(quiz): False}})  # a missed quiz: a review row
     client.post("/api/vision/score", json={"mode": "find", "score": 3})
     client.post("/api/events", json={"name": "app.opened", "props": {"display": "browser"}})
+    assert client.post("/api/plans", json={"goal": "rook endgames"}).json()["plan"], "a plan row"
     me = client.cookies["player"]
+    sign_up(client)  # a session row and an email
     assert all(rows_of(db_file, me).values())  # something in every table
 
     assert client.delete("/api/account").json() == {"deleted": True}
     assert not any(rows_of(db_file, me).values())
     assert sqlite3.connect(db_file).execute("SELECT COUNT(*) FROM reviews WHERE game_id = ?", (imported,)).fetchone()[0] == 0
+    assert sqlite3.connect(db_file).execute("SELECT COUNT(*) FROM players WHERE email = ?", (ME["email"],)).fetchone()[0] == 0
     assert rows_of(db_file, other)["games"] == 1
-    assert "player" not in client.cookies
+    assert "player" not in client.cookies and "session" not in client.cookies
 
 
 def test_every_table_with_a_player_id_is_merged_and_deleted(client, db_file):

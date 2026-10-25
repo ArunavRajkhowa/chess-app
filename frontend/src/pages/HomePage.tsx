@@ -1,81 +1,113 @@
+import { ArrowRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { AwardMark, BotAvatar, EmptyArt, Hero } from "../components/art";
 import { Board } from "../components/board/Board";
+import { GoalBar } from "../components/plan/GoalBar";
 import { api, type GameSummary } from "../lib/api";
+import { learnApi, nextLesson } from "../lib/learnApi";
 import { puzzleApi, type Puzzle } from "../lib/puzzleApi";
+import { play as playSound } from "../lib/sound";
+
+interface Awards { awards: { key: string; name: string; how: string; earned: boolean }[]; earned: number; total: number }
+const AWARDS_SEEN = "awards-earned-keys"; // the awards earned the last time Home was open: a new key means the award sound
 
 export function HomePage() {
   const [games, setGames] = useState<GameSummary[]>([]);
-  const [health, setHealth] = useState<{ engine: { name: string; kind: string }; coach: { llm: boolean; model: string; problem: string | null } } | null>(null);
   const [daily, setDaily] = useState<{ date: string; puzzle: Puzzle; solved_today: boolean; streak: number } | null>(null);
-  const [awards, setAwards] = useState<{ awards: { key: string; name: string; how: string; earned: boolean }[]; earned: number; total: number } | null>(null);
+  const [awards, setAwards] = useState<Awards | null>(null);
+  const [fresh, setFresh] = useState<Set<string>>(new Set());
+  const [stats, setStats] = useState<{ rating: number; attempts: number } | null>(null);
+  const [learn, setLearn] = useState<{ due: number; next: { id: string; title: string } | null } | null>(null);
+  const [puzzlesDue, setPuzzlesDue] = useState(0);
   useEffect(() => {
-    api.games().then((r) => setGames(r.games.slice(0, 8))).catch(() => undefined);
-    api.health().then(setHealth).catch(() => undefined);
+    api.games().then((r) => setGames(r.games.slice(0, 6))).catch(() => undefined);
     puzzleApi.daily().then(setDaily).catch(() => undefined);
-    fetch("/api/awards").then((r) => r.json()).then(setAwards).catch(() => undefined);
+    puzzleApi.stats().then(setStats).catch(() => undefined);
+    puzzleApi.review().then((r) => setPuzzlesDue(r.due)).catch(() => undefined);
+    learnApi.curriculum().then((r) => {
+      const next = nextLesson(r.bands.flatMap((b) => b.modules.flatMap((m) => m.lessons)), r.level);
+      setLearn({ due: r.review_due, next: next && { id: next.id, title: next.title } });
+    }).catch(() => undefined);
+    fetch("/api/awards").then((r) => r.json()).then((a: Awards) => {
+      setAwards(a);
+      const earned = a.awards.filter((x) => x.earned).map((x) => x.key);
+      let prev: string[] | null = null; // null: first visit in this browser, so nothing counts as new
+      try { const raw = localStorage.getItem(AWARDS_SEEN); prev = raw ? JSON.parse(raw) : null; localStorage.setItem(AWARDS_SEEN, JSON.stringify(earned)); } catch { /* storage off */ }
+      const seen = prev;
+      const added = seen ? earned.filter((k) => !seen.includes(k)) : [];
+      if (added.length) { setFresh(new Set(added)); playSound("award"); }
+    }).catch(() => undefined);
   }, []);
+
+  // The one next step, in the order a coach would pick: what is due, what is unfinished, today's puzzle, the next lesson.
+  const due = (learn?.due ?? 0) + puzzlesDue;
+  const active = games.find((g) => g.status === "active");
+  const next = due > 0 ? { to: "/learn/review", label: `Review ${due} position${due === 1 ? "" : "s"}` }
+    : active ? { to: `/play/${active.id}`, label: `Resume your game against ${active.bot_name}` }
+    : daily && !daily.solved_today ? { to: "/puzzles?daily=1", label: "Solve today's puzzle" }
+    : learn?.next ? { to: `/learn/${learn.next.id}`, label: `Next lesson: ${learn.next.title}` }
+    : { to: "/play", label: "Play a bot" };
+  const facts = [
+    !stats ? null : stats.attempts > 0 ? `Your puzzle rating is ${stats.rating.toLocaleString()}.` : "No rated puzzles yet.",
+    due > 0 ? `${due} position${due === 1 ? " is" : "s are"} due for review.` : null,
+    daily && daily.streak > 0 ? `Day ${daily.streak} of your daily-puzzle streak.` : null,
+  ].filter(Boolean).join(" ");
+  const nextAward = awards?.awards.find((a) => !a.earned);
+
   return (
     <div className="stack">
-      <div className="page-head">
+      <section className="home-hero">
         <div>
           <h1>Welcome back</h1>
-          <p>Play, review, and learn. Everything runs on your machine.</p>
+          <p>{facts}</p>
+          <Link to={next.to} className="btn btn-primary btn-lg home-next" data-testid="home-next">{next.label} <ArrowRight size={18} /></Link>
         </div>
-        {health && (
-          <div className="row">
-            <span className="chip chip-ok">{health.engine.name}</span>
-            <span className={`chip ${health.coach.llm ? "chip-ok" : "chip-warn"}`} title={health.coach.problem ?? undefined}>{health.coach.llm ? `Coach: ${health.coach.model}` : "Coach: offline mode"}</span>
-          </div>
-        )}
-      </div>
-      <div className="home-grid">
-        <Link to="/play" className="card home-tile"><span className="home-tile-icon">♞</span><h2>Play a bot</h2><p className="muted">From 250 to 3200. Pick a personality.</p></Link>
-        <Link to="/puzzles" className="card home-tile"><span className="home-tile-icon">🧩</span><h2>Puzzles</h2><p className="muted">Rated tactics, themes, Puzzle Rush.</p></Link>
-        <Link to="/learn" className="card home-tile"><span className="home-tile-icon">🎓</span><h2>Learn</h2><p className="muted">A structured path from the rules to mastery.</p></Link>
-        <Link to="/review" className="card home-tile"><span className="home-tile-icon">📈</span><h2>Game review</h2><p className="muted">Accuracy, key moments, coach explanations.</p></Link>
-      </div>
+        <Hero width={200} />
+      </section>
+      <GoalBar primary={false} />
       <div className="home-two">
         {daily && (
           <section className="card home-daily" data-testid="daily-card">
-            <div className="card-title"><h3>Daily puzzle</h3><span className="faint">{daily.date} · rating {daily.puzzle.rating}{daily.streak > 0 ? ` · 🔥 ${daily.streak} day streak` : ""}</span></div>
+            <div className="card-title"><h3>Daily puzzle</h3><span className="faint">rating {daily.puzzle.rating}</span></div>
             <div className="home-daily-body">
               <div style={{ width: 220 }}><Board fen={daily.puzzle.fen} orientation={daily.puzzle.solver_color} showCoordinates={false} /></div>
               <div className="col">
                 <p className="muted">{daily.puzzle.solver_color === "white" ? "White" : "Black"} to play after the opponent's move. One puzzle a day, five hearts.</p>
-                {daily.solved_today ? <span className="chip chip-ok">Solved today</span> : <Link to="/puzzles?daily=1" className="btn btn-primary" style={{ width: "fit-content" }}>Solve today's puzzle</Link>}
+                {daily.solved_today ? <span className="chip chip-ok">Solved today</span> : <Link to="/puzzles?daily=1" className="btn" style={{ width: "fit-content" }}>Solve it</Link>}
               </div>
             </div>
           </section>
         )}
-      <section className="card grow">
-        <div className="card-title"><h3>Recent games</h3><Link to="/review" className="muted">All games</Link></div>
-        {games.length === 0 ? (
-          <p className="faint">No games yet. <Link to="/play" style={{ color: "var(--brand)" }}>Play your first game</Link>.</p>
-        ) : (
-          <ul className="home-games">
-            {games.map((g) => (
-              <li key={g.id}>
-                <span aria-hidden="true">{g.bot_avatar}</span>
-                <Link to={g.status === "active" ? `/play/${g.id}` : `/review/${g.id}`} className="grow"><strong>{g.bot_name}</strong> <span className="faint">{g.opening_name ?? ""}</span></Link>
-                <span className={`chip ${g.status === "active" ? "chip-info" : ""}`}>{g.status === "active" ? "in progress" : g.result}</span>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
+        <section className="card grow">
+          <div className="card-title"><h3>Recent games</h3><Link to="/review" className="muted">All games</Link></div>
+          {games.length === 0 ? (
+            <div className="empty"><EmptyArt kind="games" size={56} /><p>No games yet. Your first one gets a full review.</p><Link to="/play" className="btn">Play a bot</Link></div>
+          ) : (
+            <ul className="home-games">
+              {games.map((g) => (
+                <li key={g.id}>
+                  {g.bot_id && <BotAvatar id={g.bot_id} size={26} />}
+                  <Link to={g.status === "active" ? `/play/${g.id}` : `/review/${g.id}`} className="grow"><strong>{g.bot_name}</strong> <span className="faint">{g.opening_name ?? ""}</span></Link>
+                  <span className={`chip ${g.status === "active" ? "chip-info" : ""}`}>{g.status === "active" ? "in progress" : g.result}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
       </div>
       {awards && (
         <section className="card" data-testid="awards">
           <div className="card-title"><h3>Awards</h3><span className="faint">{awards.earned} of {awards.total}</span></div>
-          <div className="awards-grid">
+          <div className="awards-row">
             {awards.awards.map((a) => (
-              <div key={a.key} className={`award ${a.earned ? "earned" : ""}`} title={a.how}>
-                <span className="award-icon" aria-hidden="true">{a.earned ? "🏅" : "○"}</span>
-                <span><b>{a.name}</b><div className="faint">{a.how}</div></span>
-              </div>
+              <span key={a.key} className={`award ${a.earned ? "earned" : ""} ${fresh.has(a.key) ? "new" : ""}`} title={a.how}>
+                <AwardMark earned={a.earned} size={30} />
+                <span className="faint">{a.name}{a.earned ? "" : " (not yet)"}</span>
+              </span>
             ))}
           </div>
+          {nextAward && <p className="faint" style={{ marginTop: 8 }}>Next: {nextAward.name}. {nextAward.how}.</p>}
         </section>
       )}
     </div>

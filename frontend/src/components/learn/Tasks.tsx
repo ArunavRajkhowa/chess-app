@@ -23,6 +23,7 @@ export function YourTurn({ fen, prompt, kind }: { fen: string; prompt: string; k
   const side = sideOf(fen);
   const lead = kind === "quiz" ? "Your turn. A question." : kind === "drill" ? `Your turn. Play it out as ${side}.` : `Your turn. ${side[0].toUpperCase() + side.slice(1)} to play.`;
   useEffect(() => {
+    playSound("yourTurn");
     void speak(`${lead} ${prompt}`);
     return () => stopSpeech();
   }, [lead, prompt]);

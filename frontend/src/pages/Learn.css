@@ -19,12 +19,14 @@
 .band-tab { display: flex; flex-direction: column; gap: 4px; padding: var(--s-2) var(--s-3); border: 1px solid var(--line); border-radius: var(--r-md); background: var(--bg-elev); text-align: left; cursor: pointer; font-size: var(--fs-sm); transition: border-color var(--anim), background var(--anim); }
 .band-tab:hover { border-color: var(--line-strong); }
 .band-tab.on { border-color: var(--brand); background: var(--bg-elev-2); }
-.band-tab-head { display: flex; align-items: baseline; gap: var(--s-2); }
+.band-tab-head { display: flex; align-items: center; gap: var(--s-2); }
+.band-tab .art { color: var(--ink-2); }
+.band-tab.on .art { color: var(--ink); }
 .band-num { font-family: var(--font-display); font-size: var(--fs-lg); color: var(--brand); }
 .band-tab .faint.num { font-size: var(--fs-xs); }
 
 .band-panel { display: flex; flex-direction: column; gap: var(--s-4); }
-.band-panel-head { display: flex; align-items: baseline; gap: var(--s-3); flex-wrap: wrap; }
+.band-panel-head { display: flex; align-items: center; gap: var(--s-3); flex-wrap: wrap; }
 .modules { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: var(--s-3); align-items: start; }
 .module { display: flex; flex-direction: column; gap: var(--s-2); }
 .module.complete { border-color: color-mix(in srgb, var(--ok) 40%, var(--line)); }
@@ -50,18 +52,23 @@
 .quiz-options button { text-align: left; }
 .quiz-options button.right { border-color: var(--ok); background: color-mix(in srgb, var(--ok) 18%, transparent); }
 .quiz-options button.wrong { border-color: var(--danger); background: color-mix(in srgb, var(--danger) 18%, transparent); }
-.your-turn { display: flex; flex-direction: column; gap: 4px; padding: 10px 12px; border-radius: var(--r-md); background: color-mix(in srgb, var(--brand) 14%, transparent); border-left: 3px solid var(--brand); }
+.your-turn { display: flex; flex-direction: column; gap: 4px; padding: 10px 12px; border-radius: var(--r-md); background: color-mix(in srgb, var(--brand) 14%, transparent); border-left: 3px solid var(--brand); animation: hand-off var(--anim-slow) var(--ease) both; }
+/* the hand-off: the card slides in from the board's side, like a coach turning the board to you */
+@keyframes hand-off { from { transform: translateX(-10px); opacity: 0; } }
 .your-turn-lead { color: var(--brand); text-transform: uppercase; font-size: var(--fs-xs); font-weight: 700; letter-spacing: 0.06em; }
 .your-turn strong { font-size: var(--fs-md); }
 .learn-filters { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-2); }
 .learn-search { display: flex; align-items: center; gap: 6px; flex: 1 1 240px; }
 .learn-search .input { flex: 1; }
+.learn-filters .select { width: auto; flex: 1 1 150px; }
+@media (max-width: 600px) { .learn-topics { grid-template-columns: 1fr 1fr; gap: var(--s-1) var(--s-3); } .learn-topic { grid-template-columns: 1fr 38px; } .learn-topic .progress { display: none; } }
 .learn-topic { border: 1px solid transparent; background: transparent; cursor: pointer; border-radius: var(--r-sm); padding: 2px 6px; color: inherit; font: inherit; }
 .learn-topic:hover { background: var(--bg-hover); }
 .learn-topic.on { border-color: var(--brand); background: color-mix(in srgb, var(--brand) 14%, transparent); }
 .task-banner { padding: 8px 10px; border-radius: var(--r-sm); font-size: var(--fs-sm); background: var(--bg-elev-2); }
 .task-banner.ok { background: color-mix(in srgb, var(--ok) 18%, transparent); }
 .task-banner.bad { background: color-mix(in srgb, var(--danger) 18%, transparent); }
-.lesson-done { text-align: center; padding: var(--s-5); }
+.lesson-done { text-align: center; padding: var(--s-5); animation: pop var(--anim-slow) var(--ease-settle) both; }
 .lesson-done h2 { color: var(--brand); }
+.lesson-done-art { margin: 0 auto var(--s-3); color: var(--ink-3); }
 .ok { color: var(--ok); }

@@ -399,7 +399,7 @@
      "sections": [
       {
        "type": "text",
-       "md": "The rook cuts the king into a box; your king walks up to take the opposition (kings facing each other with one square between); then the rook checks on the edge.\n\nWhen the kings face each other and it is your move, make a **waiting move** with the rook along the cutting rank so that the enemy king has to step aside — then check and shrink the box again."
+       "md": "Two rules do the work. A king may never step next to the other king, so your king takes squares away from his. And a rook controls a whole rank, so a rook on a rank is a wall the king cannot cross.\n\nThe method: the rook makes the wall and cuts the king into a box; your king walks up until the kings face each other with one square between (that is called the opposition); then the rook checks on the edge, and the king has no square left.\n\nWhen the kings face each other and it is your move, make a **waiting move** with the rook along the cutting rank so that the enemy king has to step aside — then check and shrink the box again."
       },
       {
        "type": "position",

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { BotPicker } from "../components/play/BotPicker";
 import { GameView } from "../components/play/GameView";
 import { api, type BotPublic, type GameState } from "../lib/api";
@@ -8,6 +8,8 @@ import { useEngine } from "../store/engine";
 export function PlayPage() {
   const { gameId } = useParams();
   const navigate = useNavigate();
+  const [params] = useSearchParams(); // a study plan links /play?bot=<id>&color=<side>&guide=1
+  const [guide, setGuide] = useState(params.get("guide") === "1");
   const [game, setGame] = useState<GameState | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -39,6 +41,8 @@ export function PlayPage() {
       <GameView
         key={game.id}
         initial={game}
+        guide={guide}
+        onGuide={setGuide}
         onNewGame={() => navigate("/play")}
         onRematch={() => start(game.bot, game.player_color, game.coach_mode, game.time_control)}
       />
@@ -54,7 +58,7 @@ export function PlayPage() {
         </div>
       </div>
       {error && <div className="chip chip-danger" style={{ marginBottom: 12 }}>{error}</div>}
-      <BotPicker onStart={start} busy={busy} />
+      <BotPicker onStart={start} busy={busy} initialBotId={params.get("bot") ?? undefined} initialColor={params.get("color") === "black" ? "black" : undefined} />
     </>
   );
 }

@@ -1,17 +1,18 @@
+import type { ReactNode } from "react";
 import type { PieceType } from "../../lib/chess/types";
 import "./PlayerCard.css";
 
 interface Props {
   name: string;
   subtitle?: string;
-  avatar: string;
+  avatar: ReactNode;
   color: "white" | "black";
   captured: PieceType[];
   materialEdge: number; // positive = this side is ahead
   active?: boolean;
   thinking?: boolean;
   says?: string | null;
-  clock?: React.ReactNode;
+  clock?: ReactNode;
 }
 
 export function PlayerCard({ name, subtitle, avatar, color, captured, materialEdge, active, thinking, says, clock }: Props) {
@@ -32,7 +33,7 @@ export function PlayerCard({ name, subtitle, avatar, color, captured, materialEd
           {materialEdge > 0 && <span className="playercard-edge num">+{materialEdge}</span>}
         </div>
       </div>
-      {says && <div className="playercard-bubble" role="status">{says}</div>}
+      {says && <div className="playercard-bubble reveal" role="status" key={says}>{says}</div>}
       {clock}
     </div>
   );

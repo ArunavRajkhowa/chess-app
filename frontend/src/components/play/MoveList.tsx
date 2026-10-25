@@ -24,9 +24,20 @@ export const CLASS_GLYPH: Record<Classification, string> = {
 
 export function MoveList({ moves, currentPly, onSelect, opening, startFen }: Props) {
   const ref = useRef<HTMLDivElement>(null);
+  // Scroll the list only (never the page), only when the move is out of view, and after the frame is
+  // painted: layout is clean then, so reading it costs nothing.
   useEffect(() => {
-    const el = ref.current?.querySelector<HTMLElement>(`[data-ply="${currentPly}"]`);
-    el?.scrollIntoView({ block: "nearest" });
+    let t = 0;
+    const id = requestAnimationFrame(() => { t = window.setTimeout(() => {
+      const list = ref.current;
+      const el = list?.querySelector<HTMLElement>(`[data-ply="${currentPly}"]`);
+      if (!list || !el) return;
+      const l = list.getBoundingClientRect();
+      const e = el.getBoundingClientRect();
+      if (e.top < l.top) list.scrollTop -= l.top - e.top;
+      else if (e.bottom > l.bottom) list.scrollTop += e.bottom - l.bottom;
+    }); });
+    return () => { cancelAnimationFrame(id); clearTimeout(t); };
   }, [currentPly]);
   const fields = (startFen ?? "").split(" ");
   const firstNumber = Number(fields[5]) || 1;

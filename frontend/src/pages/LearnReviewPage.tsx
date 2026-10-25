@@ -1,6 +1,7 @@
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { EmptyArt } from "../components/art";
 import { Challenge, Quiz } from "../components/learn/Tasks";
 import { learnApi, type ReviewItem } from "../lib/learnApi";
 import { puzzleApi } from "../lib/puzzleApi";
@@ -26,6 +27,7 @@ export function LearnReviewPage() {
     const done = queue.items.length;
     return (
       <div className="card lesson-done" data-testid="review-done">
+        {!done && <EmptyArt kind="puzzles" className="lesson-done-art" />}
         <h2>{done ? "Review done" : "Nothing due"}</h2>
         <p className="muted">
           {done

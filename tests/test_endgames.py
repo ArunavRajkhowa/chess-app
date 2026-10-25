@@ -6,9 +6,11 @@ import pytest
 from fastapi.testclient import TestClient
 
 from backend.app import create_app
+from backend.bots.guide import DRAW_CP, WIN_CP
 from backend.content.endgames import load_endgames
 from backend.engine.pool import EnginePool
 from backend.engine.score import cp_from_score
+from backend.routers.endgames import judge_line
 
 
 def test_goals_agree_with_the_engine(event_loop):
@@ -21,9 +23,9 @@ def test_goals_agree_with_the_engine(event_loop):
                 board = chess.Board(p["fen"])
                 infos = await pool.analyse(board, depth=18)
                 cp = cp_from_score(infos[0]["score"], board.turn)
-                if p["goal"] in ("mate", "promote", "win_material") and cp < 250:
+                if p["goal"] in ("mate", "promote", "win_material") and cp < WIN_CP:
                     bad.append((p["key"], cp))
-                if p["goal"] in ("draw", "survive") and cp < -150:
+                if p["goal"] in ("draw", "survive") and cp < -DRAW_CP:
                     bad.append((p["key"], cp))
         finally:
             await pool.stop()
@@ -55,3 +57,10 @@ def test_endgame_api(client):
     assert client.post("/api/endgames/attempt", json={"key": "mate-two-rooks", "line": ["a1a9"], "seconds": 1}).status_code == 400
     assert client.post("/api/endgames/attempt", json={"key": "mate-two-rooks", "line": [], "seconds": -5}).status_code == 422
     assert client.post("/api/endgames/attempt", json={"key": "nope", "line": [], "seconds": 1}).status_code == 404
+
+
+def test_letting_the_pawn_promote_and_taking_the_new_queen_still_wins():
+    p = next(p for p in load_endgames()["positions"] if p["key"] == "queen-vs-knight-pawn")
+    line = ["g1f2", "a2b3", "f2f5", "b2b1q", "f5b1", "b3c4", "b1b6", "c4d5", "h8g7", "d5e5", "g7g6", "e5f4", "g6f6", "f4e4",
+            "b6b5", "e4e3", "f6f5", "e3d2", "f5e4", "d2c3", "e4e3", "c3c2", "b5b4", "c2c1", "e3d3", "c1d1", "b4b1"]  # ends in mate
+    assert judge_line(p, line) == (True, 14)

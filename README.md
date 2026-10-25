@@ -1,7 +1,10 @@
 # Chess Coach
 
-Play, review and learn chess in one app that runs on your own machine. Twenty bots from 250 to
-3200 with personalities, chat and an adaptive coach bot; clocks; chess.com-style Game Review
+Play, review and learn chess in one app that runs on your own machine or on free hosting. Twenty
+bots from 250 to 3200 with personalities, chat and an adaptive coach bot, and 140 specialist bots
+(openings, middlegames, endgames at 1000 to 2200) that can guide you move by move; a goal bar
+that turns "I want to learn the Sicilian, both sides" into a study plan built only from the app's
+own lessons, courses, puzzles, master games and bots; clocks; chess.com-style Game Review
 with accuracy, key moments, retry and practice-from-here; a puzzle trainer with ratings, Puzzle
 Rush, a daily puzzle with streaks and puzzles made from your own mistakes; an endgame trainer; a
 board vision trainer; an analysis board with engine lines; a spiral curriculum from the rules to
@@ -10,24 +13,28 @@ feedback on every wrong move and spaced review of what you missed; an opening ex
 annotated master games watched with commentary, where every move says why it was played and why
 not the alternatives, each one playable on the board, or played guess-the-move; the same
 why-and-why-not study of your own reviewed games; a grandmaster's assessment of any position
-(imbalances and plans); Insights and awards over your games; and a
+(imbalances and plans); Insights that find your own patterns in openings, middlegames, endgames
+and tactics, show each one on a position from your games and link the drill that fixes it; awards;
+and a
 coach that works from rules or from any local or hosted language model, and only talks about
 facts the engine verified.
 
-No paywall. Everyone plays as a guest from the first visit; Google sign-in keeps progress across
-devices. Data lives in one SQLite file under `data/`, or in a free Turso database. It installs on
-Android, iPhone and desktop Chrome as an app.
+No paywall. Everyone plays as a guest from the first visit; an account (email and password, or
+Google) keeps progress across devices. Data lives in one SQLite file under `data/`, or in a free
+Turso database. It installs on Android, iPhone and desktop Chrome as an app, runs on free hosting
+([docs/deploy.md](docs/deploy.md)) and ships as a store app ([docs/mobile.md](docs/mobile.md)).
 
 ## What is inside
 
 | Content | Count | How it is checked |
 |---|---|---|
-| Lessons | 185 lessons in 49 modules, bands 0 (rules) to 8 (master), 1,037 sections, 20 narrated lectures | `scripts/validate_lessons.py --engine`: every challenge is the engine's best move or as good; every lecture move is replayed |
-| Master games | 125 games in 27 themes, 561 key-moment notes, every move studied by the engine (three candidates at depth 14, reasons, threats, why-not lines) | replayed at load; a test replays every move line in every note; `scripts/annotate_games.py` caches the studies under `data/study/` |
-| Puzzles | 558, rated 400-1800 by the puzzle's shape (`backend/puzzles/difficulty.py`: a quiet first move, a sacrifice or a deflection is harder than a free capture) | replayed at load; every solver move has one solution at depth 16; `scripts/recalibrate_puzzles.py` rewrites the ratings |
-| Endgames | 24 positions in five themes | engine goal check; no piece hangs at the start |
+| Lessons | 191 lessons in 52 modules, bands 0 (rules) to 8 (master), 1,095 sections, 33 narrated lectures | `scripts/validate_lessons.py --engine`: every challenge is the engine's best move or as good; every lecture move is replayed |
+| Master games | 170 games in 27 themes, 845 key-moment notes, every move studied by the engine (three candidates at depth 14, reasons, threats, why-not lines) | replayed at load; a test replays every move line in every note; `scripts/annotate_games.py` caches the studies under `data/study/` |
+| Puzzles | 5,801: 558 generated, rated by their shape (`backend/puzzles/difficulty.py`), and 5,243 from the lichess puzzle database (CC0, `scripts/import_lichess_puzzles.py`), which keep their measured lichess rating; 70 themes, opening tags | replayed at load; generated puzzles have one solution per solver move at depth 16; an engine sample of 100 lichess puzzles passed 98 |
+| Endgames | 56 positions in five themes | engine goal check; no piece hangs at the start |
 | Openings | 3,865 named lines (lichess, CC0) | parsed at load |
-| Bots | 20, from 250 to 3200 | `data/bot_calibration.json` (four games each against Stockfish) |
+| Bots | 20, from 250 to 3200, plus 140 specialists generated from the 14 opening courses, master games and endgames | `scripts/calibrate_bots.py`, 6 games each against Stockfish at the bot's label (`data/bot_calibration.json`, 2026-10-25): every classic bot and every specialist kind and rating within the 6-game noise of its label |
+| Opening courses | 14: Caro-Kann, English, French, Italian, King's Indian, London, Nimzo-Indian, Queen's Gambit, Queen's Gambit Declined, Ruy Lopez, Scandinavian, Sicilian Dragon, Sicilian Najdorf, Slav; 69 lines, 33 traps | `scripts/validate_courses.py --engine`: every trap's punishment is the engine's move; every board claim in the notes checked with python-chess |
 
 ## Run it
 
@@ -72,8 +79,10 @@ Only the position, the engine lines and your question go to the model.
 | Groq | Free tier with a key. Third-party sources list 1,000 requests and 200,000 tokens a day for gpt-oss models. | Fast. Read your own limits in the Groq console. |
 | OpenRouter, models that end in `:free` | 20 requests a minute and 50 a day. 1,000 a day after you buy $10 of credit once. | A failed call still counts. A free provider may log prompts. |
 
-One coach question uses about 900 input tokens (measured on a real fact sheet) and a short
-answer, so 200,000 tokens cover roughly 150 questions.
+One coach question uses about 2,200 input tokens (measured on Groq, 2026-10-24: the rules, who you
+are, this game so far and the fact sheet) and 600 to 900 output tokens with gpt-oss's reasoning, so
+200,000 tokens cover roughly 65 questions. Groq's free tier also caps a minute at 8,000 tokens:
+about two questions a minute.
 
 Not recommended as the default: the Gemini free tier (its limits were cut several times and Google
 may use free-tier prompts), Cerebras (no permanent free tier: $5 of credit for 30 days) and NVIDIA
@@ -101,7 +110,11 @@ The app installs like a native one: Android Chrome menu → "Install app"; iPhon
 "Add to Home Screen"; desktop Chrome → the install icon in the address bar. Run the built app
 (`./run-local.sh`, not `dev`): the server then sets the player cookie on the page itself.
 
-A phone needs an HTTPS address that reaches your computer:
+The simplest phone setup is the hosted app ("Deploy it" below): one https address that is up when
+your computer is off. An Android APK and the iOS story (a Mac and a $99 developer account; the home
+screen install is the free path) are in [docs/mobile.md](docs/mobile.md).
+
+To use the app on your own computer from a phone instead, it needs an HTTPS address that reaches it:
 
 | Way | Cost | Limits (checked 2026-10-19) |
 |---|---|---|
@@ -111,10 +124,26 @@ A phone needs an HTTPS address that reaches your computer:
 
 Sources: [Cloudflare quick tunnels](https://developers.cloudflare.com/cloudflare-one/networks/connectors/cloudflare-tunnel/do-more-with-tunnels/trycloudflare/), [Tailscale Funnel](https://tailscale.com/kb/1223/funnel).
 
+## Deploy it
+
+The Docker image runs on free hosting with a Turso database (the hosts' disks are wiped on restart).
+Checked 2026-10-25, counting only hosts that never ask for a card: Render's free web service runs
+it (`render.yaml`: New, then Blueprint, then this repo), SnapDeploy is the fallback. Both sleep after
+15 idle minutes and give the engine a fraction of a CPU, so a review is slow. Cloud Run, Oracle,
+Koyeb and Fly.io need a card; Hugging Face Docker Spaces are paid since July 2026. The table, limits
+and sources: [docs/deploy.md](docs/deploy.md).
+
 ## Accounts, the database and analytics
 
 - **Guests.** The first visit makes a player: a random id in an httpOnly cookie. Settings → Account
-  offers Google sign-in, sign-out and "Delete my data", which removes every row of the player.
+  offers sign-in, sign-out (this device or everywhere) and "Delete my data", which removes every row
+  of the player.
+- **Email and password.** No setup: Settings → Account → "Create an account". Passwords are at least
+  8 characters, hashed with scrypt; a signed-in device holds a session token, so "Sign out everywhere"
+  works. Ten failed sign-ins from one address in 15 minutes lock that address out for the window.
+  "Forgot password?" mails a link that is valid for two hours and once; without an SMTP server
+  (`SMTP_HOST`, see `.env.example` for Brevo's and Resend's free relays) the link is printed in the
+  server log instead.
 - **Google sign-in.** Google Cloud Console → APIs & Services → Credentials → OAuth client ID, type
   "Web application". Add every address the app opens from (`http://localhost:8765`, your tunnel's
   address) as an authorised JavaScript origin, and put the client id in `GOOGLE_CLIENT_ID`. While

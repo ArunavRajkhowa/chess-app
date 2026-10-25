@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { BotAvatar, EmptyArt } from "../components/art";
 import { api, type GameSummary } from "../lib/api";
 import "../components/review/Review.css";
 
@@ -42,13 +43,15 @@ export function ReviewPage() {
       </div>
       <div className="card">
         <div className="card-title"><h3>Your games</h3><span className="faint">{games.length} games</span></div>
-        {games.length === 0 ? <p className="faint">No games yet.</p> : (
+        {games.length === 0 ? (
+          <div className="empty"><EmptyArt kind="games" /><p>No games yet. Play a bot, or paste a PGN above: every game gets the same review.</p><Link to="/play" className="btn btn-primary">Play a bot</Link></div>
+        ) : (
           <table className="games-table" data-testid="games-table">
             <thead><tr><th>Opponent</th><th>Opening</th><th>Result</th><th>Moves</th><th /></tr></thead>
             <tbody>
               {games.map((g) => (
                 <tr key={g.id}>
-                  <td>{g.bot_avatar} {g.bot_name} <span className="faint">({g.player_color})</span></td>
+                  <td><span className="row">{g.bot_id && <BotAvatar id={g.bot_id} size={24} />} {g.bot_name} <span className="faint">({g.player_color})</span></span></td>
                   <td className="faint">{g.opening_name ?? "—"}</td>
                   <td className="num">{g.status === "active" ? <span className="chip chip-info">in progress</span> : g.result}</td>
                   <td className="num">{Math.ceil(g.plies / 2)}</td>

@@ -341,8 +341,7 @@
        ],
        "also": [
         "e1e5",
-        "d1d2",
-        "d1d3"
+        "d1d2"
        ],
        "hint": "What does the rook on d8 guard besides the knight?",
        "explanation": "1.Rxd5! If 1...Rxd5, then 2.Re8 is mate: the rook on d8 also guarded the back rank and cannot do both jobs. So White simply wins the knight. The rook is overloaded."
@@ -535,7 +534,7 @@
      "sections": [
       {
        "type": "text",
-       "md": "A **zwischenzug** (German for in-between move) interrupts an expected sequence. Your opponent captures and waits for your recapture. Instead, you first play a check or a threat that must be answered. Only then do you recapture, under better conditions.\n\nIt works when two things are true:\n\n- Your recapture will still be there after the in-between move.\n- The in-between move forces a reply: a check, a mate threat, or an attack on the queen.\n\nIt is also a defensive weapon. When your piece is attacked, you do not always have to move it at once. A counter-attack on something bigger can come first.\n\nThe habit: before every automatic recapture, take one second and look for checks and big threats. Players at every level lose games because they skip that second."
+       "md": "Only a check must be answered at once. A capture can wait: the piece that was taken does not run away, and your recapture is still there one move later. So when your opponent captures and waits for your recapture, you may first play a check or a threat he must answer, and recapture afterwards under better conditions. That in-between move is a **zwischenzug** (German for in-between move).\n\nIt works when two things are true:\n\n- Your recapture will still be there after the in-between move.\n- The in-between move forces a reply: a check, a mate threat, or an attack on the queen.\n\nIt is also a defensive weapon. When your piece is attacked, you do not always have to move it at once. A counter-attack on something bigger can come first.\n\nThe habit: before every automatic recapture, take one second and look for checks and big threats. Players at every level lose games because they skip that second."
       },
       {
        "type": "position",
@@ -1238,7 +1237,7 @@
      "sections": [
       {
        "type": "text",
-       "md": "**Opposition.** The kings stand on the same file (or rank) with one square between them. The side that does **not** have to move has the opposition. The other king must give way.\n\n**Distant opposition.** The same idea with three or five squares between the kings. If the number of squares between them is odd, the side not to move has the opposition. Take it early, and you can keep it as the kings come closer.\n\nOpposition is a tool, not the goal. The attacker wants a **key square** in front of the pawn; the defender wants to keep the attacker out.\n\n**Triangulation.** Sometimes you want the position as it is, but with your opponent to move. If your king has three squares in a triangle near the target and his king has only two good squares, walk the triangle. After three king moves the position comes back, and now he must move."
+       "md": "A king may never step next to the other king. Put the kings on the same file (or rank) with one square between them: the three squares between them are forbidden to both, so whoever has to move must step back or sideways and let the other king through. The side that does **not** have to move is said to have the **opposition**.\n\n**Distant opposition.** The same idea with three or five squares between the kings. If the number of squares between them is odd, the side not to move has the opposition. Take it early, and you can keep it as the kings come closer.\n\nOpposition is a tool, not the goal. The attacker wants a **key square** in front of the pawn; the defender wants to keep the attacker out.\n\n**Triangulation.** Sometimes you want the position as it is, but with your opponent to move. If your king has three squares in a triangle near the target and his king has only two good squares, walk the triangle. After three king moves the position comes back, and now he must move."
       },
       {
        "type": "position",
@@ -1553,7 +1552,7 @@
      "sections": [
       {
        "type": "text",
-       "md": "The **Lucena position** is the winning side of rook and pawn against rook. Your pawn stands on the seventh rank, your king on the queening square in front of it, and the enemy king is cut off on another file. The enemy rook checks from the side whenever your king steps out.\n\nThe winning method is called **building a bridge**:\n\n1. Check the enemy king one more file away, so it cannot come back to the pawn.\n2. Put your rook on the fourth rank. That rook is the bridge.\n3. Walk your king out of the corner and down the board towards your rook. When the rook checks again, block the check with your rook on the fourth rank.\n\nAfter the block the checks are over, and the pawn queens."
+       "md": "A pawn on the seventh rank with its own king on the queening square cannot promote: the king blocks its square. The king must step out, and the moment it does, the enemy rook checks it from the side, again and again, because the king has no shelter. That is the problem of the **Lucena position**: your pawn on the seventh, your king in front of it, the enemy king cut off on another file, and the enemy rook waiting to check.\n\nThe winning method is called **building a bridge**:\n\n1. Check the enemy king one more file away, so it cannot come back to the pawn.\n2. Put your rook on the fourth rank. That rook is the bridge.\n3. Walk your king out of the corner and down the board towards your rook. When the rook checks again, block the check with your rook on the fourth rank.\n\nAfter the block the checks are over, and the pawn queens."
       },
       {
        "type": "position",
@@ -1736,7 +1735,7 @@
      "sections": [
       {
        "type": "text",
-       "md": "**Two bishops.** Side by side, on neighbouring diagonals, the bishops form a wall the enemy king cannot cross. Push the wall forward one step at a time and bring your king up to take the squares in front of the enemy king. Drive it to the edge and then into any corner. Watch for stalemate when the king is in the corner: always leave it one move.\n\n**Bishop and knight.** This is the hardest basic mate. It can only be forced in a corner of the **bishop's colour**: a light-squared bishop mates on a8 or h1, a dark-squared bishop on a1 or h8. The knight covers the squares of the other colour. In the final phase the king, bishop and knight work together a knight's jump from the corner.\n\nPractise the two-bishop mate in full. For bishop and knight, learn the final phase here; the full method is in a later band."
+       "md": "**Two bishops.** Side by side, on neighbouring diagonals, the bishops form a wall the enemy king cannot cross. Push the wall forward one step at a time and bring your king up to take the squares in front of the enemy king. Drive it to the edge and then into any corner. Watch for stalemate when the king is in the corner: always leave it one move.\n\n**Bishop and knight.** This is the hardest basic mate. It can only be forced in a corner of the **bishop's colour**: a light-squared bishop mates on a8 or h1, a dark-squared bishop on a1 or h8. The knight covers the squares of the other colour. In the final phase the king, bishop and knight work together a knight's jump from the corner.\n\nPractise the two-bishop mate from the edge: the king is already driven there. For bishop and knight, learn the final phase here; the full method is in a later band."
       },
       {
        "type": "position",
@@ -1775,11 +1774,11 @@
       },
       {
        "type": "drill",
-       "fen": "8/8/8/3k4/8/8/8/2B1KB2 w - - 0 1",
+       "fen": "3k4/8/3K4/8/8/3BB3/8/8 w - - 0 1",
        "goal": "mate",
-       "max_moves": 30,
-       "prompt": "Mate with two bishops within 30 moves. Do not stalemate.",
-       "tip": "Put the bishops side by side, bring the king up, and push the black king to the edge, then to a corner. In the corner, give it a spare move before the final check."
+       "max_moves": 15,
+       "prompt": "The black king is already on the edge. Mate with two bishops within 15 moves. Do not stalemate.",
+       "tip": "Keep your king in front of the black king and use the bishops to drive it along the edge into a corner. In the corner, give it a spare move before the final check."
       },
       {
        "type": "quiz",

@@ -1,7 +1,8 @@
 /* Design tokens. Colour is state, not hierarchy: hierarchy comes from weight, size, spacing.
    A new hex in a component rule is a defect unless it is a state with no token here.
-   Identity: an analysis room at night. Ink-slate ground, bone ink, brass for the one action
-   that matters on a screen; the board is bone on ink-teal. */
+   Identity: a coach's study. By night, ink-slate ground, bone ink, brass for the one action
+   that matters on a screen; by day, warm paper and the same brass. The board is bone on
+   ink-teal in both. docs/design.md says why. */
 :root {
   color-scheme: dark;
 
@@ -16,7 +17,7 @@
   /* Ink */
   --ink: #ece6d9;
   --ink-2: #a8b1bb;
-  --ink-3: #7c8793;
+  --ink-3: #8894a1;
   --ink-inverse: #161e27;
 
   /* Brand: brass, the colour of a tournament clock's case */
@@ -39,9 +40,9 @@
   --c-inaccuracy: #e6c35c;
   --c-mistake: #ec964f;
   --c-miss: #e8806f;
-  --c-blunder: #e5534b;
+  --c-blunder: #eb6058;
   --c-forced: #a4b3a0;
-  --danger: #e5534b;
+  --danger: #eb6058;
   --warn: #e6c35c;
   --ok: #8dc07e;
   --info: #86a9e6;
@@ -88,8 +89,51 @@
   --shadow: 0 12px 32px rgba(5, 10, 16, 0.5);
   --shadow-sm: 0 1px 3px rgba(5, 10, 16, 0.55);
 
+  /* Motion: one vocabulary. fast = a state flips, anim = a piece moves, slow = a reveal.
+     Every transition is transform or opacity; prefers-reduced-motion zeroes all three. */
+  --anim-fast: 110ms;
   --anim: 180ms;
+  --anim-slow: 320ms;
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --ease-settle: cubic-bezier(0.34, 1.4, 0.64, 1);
   --nav-w: 216px;
+}
+
+/* Daylight: warm paper, the same brass. The Shell sets data-theme from Settings. */
+[data-theme="light"] {
+  color-scheme: light;
+  --bg: #f1ece2;
+  --bg-elev: #faf7f1;
+  --bg-elev-2: #e9e3d6;
+  --bg-hover: #e0d8c8;
+  --line: #d9d1c1;
+  --line-strong: #bdb29c;
+  --ink: #1b232c;
+  --ink-2: #4a5461;
+  --ink-3: #5e6976;
+  --ink-inverse: #faf7f1;
+  --brand: #8d6522;
+  --brand-strong: #74511a;
+  --brand-ink: #fbf4e4;
+  --accent: #27758f;
+  --c-brilliant: #0f8a92;
+  --c-great: #3463c4;
+  --c-best: #357a30;
+  --c-excellent: #4f8a3f;
+  --c-good: #5f6e5c;
+  --c-book: #7c5f30;
+  --c-inaccuracy: #8c6d00;
+  --c-mistake: #b24f0b;
+  --c-miss: #b8442c;
+  --c-blunder: #b82f28;
+  --c-forced: #5f6e5c;
+  --danger: #b82f28;
+  --warn: #8c6d00;
+  --ok: #357a30;
+  --info: #3463c4;
+  --sq-dest: rgba(16, 22, 29, 0.2);
+  --shadow: 0 12px 32px rgba(60, 45, 20, 0.18);
+  --shadow-sm: 0 1px 3px rgba(60, 45, 20, 0.2);
 }
 
 [data-board="boxwood"] {
@@ -125,5 +169,5 @@
 .cls-forced { --cls: var(--c-forced); }
 
 @media (prefers-reduced-motion: reduce) {
-  :root { --anim: 0ms; }
+  :root { --anim: 0ms; --anim-fast: 0ms; --anim-slow: 0ms; }
 }

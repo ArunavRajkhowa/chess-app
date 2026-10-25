@@ -12,7 +12,7 @@ from fastapi.testclient import TestClient
 
 from backend.app import create_app
 from backend.study import annotate as A
-from backend.study.assess import imbalances, verdict
+from backend.study.assess import imbalances, plans_from, verdict
 from backend.study.reasons import forcing_gains, move_reasons, parried_threat
 from backend.storage.db import database
 
@@ -121,5 +121,37 @@ def test_my_own_game_is_studied_for_me_only(client):
     r = client.post("/api/review/import", json={"pgn": "1. e4 e5 2. Qh5 Nc6 3. Bc4 Nf6 4. Qxf7# 1-0", "mode": "quick"})
     game_id = r.json()["game_id"]
     assert _study(client, f"/api/study/mine/{game_id}")["plies"][5]["classification"] == "blunder"
+    assert list((A.STUDY_DIR / "mine").glob("*.json")) and not list(A.STUDY_DIR.glob("*.json"))  # never the committed folder
     client.cookies.clear()  # another player cannot study it
     assert client.get(f"/api/study/mine/{game_id}").status_code == 404
+
+
+def test_the_side_behind_gets_no_plan_that_needs_pieces_it_does_not_have():
+    def plan_of_black(fen: str) -> str:
+        return next(i["plan_against"] for i in imbalances(chess.Board(fen)) if i["kind"] == "material")
+    assert plan_of_black("8/5k2/8/8/4K2P/3B4/8/8 b - - 0 1") == "put your king in front of White's pawns"  # a bare king
+    assert plan_of_black("8/4k3/8/3KP3/2B5/8/5b2/8 b - - 0 1") == "put your king in front of White's pawns and trade pawns, not pieces"
+    assert plan_of_black("7k/8/8/8/8/8/8/3QK3 b - - 0 1") == "keep your king off the edge, where mates happen"
+    assert "make threats" in plan_of_black("6k1/R4ppp/R7/1P6/P7/7P/5PPK/2q5 b - - 0 1")  # the queen can check
+
+
+def test_no_plan_names_a_piece_the_side_does_not_have():
+    for fen in ("8/5k2/8/8/4K2P/3B4/8/8 b - - 0 1", "8/8/8/4k3/8/8/4P3/4K3 w - - 0 1"):  # wrong bishop; K+P v K
+        plans = plans_from(imbalances(chess.Board(fen)), "endgame")
+        black = " ".join(plans["Black"])  # a bare king: no knight, bishop, rook, queen or piece to name
+        assert not any(w in black for w in ("knight", "bishop", "rook", "queen", "with a piece", "pieces")), plans["Black"]
+        assert "put your king on the square in front of it" in plans["Black"]
+    assert not any(i["kind"] == "open file" for i in imbalances(chess.Board("7k/5Q2/6KP/8/8/8/8/r7 b - - 0 1")))  # an endgame
+
+
+def test_plans_name_only_pieces_the_side_has():
+    from backend.study.assess import imbalances
+
+    def plans(fen, kind):
+        return [(i["plan_for"], i["plan_against"]) for i in imbalances(chess.Board(fen)) if i["kind"] == kind]
+    # White has one rook: no "double rooks"
+    assert all("double" not in p for p, _ in plans("2Q2bk1/5p1p/p5p1/2p3P1/2r1B3/7P/qPQ2P2/2K4R b - - 0 1", "open file"))
+    # Black has no queen: no "keep the queens on"
+    assert all("queens" not in a for _, a in plans("1k1r3r/1b1p1p2/p3p3/1p2Pn2/3n2Np/P1Q5/1P3PPP/1B2NRK1 w - - 0 1", "weak king cover"))
+    # White has only king and pawns: the answer to the knight outpost names the king
+    assert plans("8/8/7K/P4k2/8/6p1/5nP1/8 b - - 0 1", "outpost") == [("build around it: it ties the opponent down", "keep your king off the squares it attacks")]

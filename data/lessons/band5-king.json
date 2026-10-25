@@ -15,6 +15,79 @@
      "minutes": 14,
      "sections": [
       {
+       "type": "lecture",
+       "title": "Status examination",
+       "frames": [
+        {
+         "say": "A piece with two jobs can do only one of them when both are called at once. Before you look for a combination, give every piece a status: what it attacks, what it guards, whether it is loose, overloaded or pinned. Zukertort against Steinitz, 1886, Black to play.",
+         "fen": "2rr4/pp4pk/3qp1Rp/2P2p2/3Pb3/1Q2N3/P2R1PPP/6K1 b - - 0 33"
+        },
+        {
+         "say": "The pawn on d4 guards c5. It is also the only thing between the queen on d6 and the rook on d2. Two jobs.",
+         "arrows": [
+          {
+           "from": "d4",
+           "to": "c5",
+           "brush": "green"
+          },
+          {
+           "from": "d6",
+           "to": "d2",
+           "brush": "red"
+          }
+         ],
+         "highlights": [
+          {
+           "square": "d4",
+           "brush": "yellow"
+          }
+         ]
+        },
+        {
+         "say": "And White's king has no luft. Once the rook on d2 is gone, the only guard of the first rank is the knight on e3.",
+         "highlights": [
+          {
+           "square": "d1",
+           "brush": "red"
+          },
+          {
+           "square": "g1",
+           "brush": "yellow"
+          }
+         ],
+         "arrows": [
+          {
+           "from": "e3",
+           "to": "d1",
+           "brush": "green"
+          }
+         ]
+        },
+        {
+         "say": "Rook takes c5. If the pawn recaptures, it leaves the d-file.",
+         "move": "Rxc5"
+        },
+        {
+         "say": "White should decline, but is lost either way: the engine gives Black close to three pawns after the best defence.",
+         "move": "dxc5"
+        },
+        {
+         "say": "Queen takes the rook on d2. A pawn up with a crushing attack: queen d1 check comes next, and the knight alone cannot hold the first rank.",
+         "move": "Qxd2",
+         "arrows": [
+          {
+           "from": "d2",
+           "to": "d1",
+           "brush": "red"
+          }
+         ]
+        },
+        {
+         "say": "The status examination found both defects, an overloaded pawn and an unguarded first rank. The combination only connected them."
+        }
+       ]
+      },
+      {
        "type": "text",
        "md": "Weteschnik calls it the status examination. Before you hunt for a combination, take stock of the pieces. For every piece, yours and your opponent's, ask four questions:\n\n1. What does it attack, and what does it defend?\n2. Is it loose? A loose piece has no defender.\n3. Is it overloaded? An overloaded piece has two jobs and can do only one of them.\n4. Is it pinned, or is it the only thing that blocks a line?\n\nThen look at both kings. Has a pawn in front of the castled king moved, or is the back rank shut in? Which squares around the king are covered?\n\nName the defects in short sentences: \"the pawn on d4 guards c5 and blocks the d-file\", \"the queen is the only guard of the first rank\". A combination needs defects. When two defects sit close together, the candidate moves name themselves: a double attack on two loose pieces, a deflection of an overloaded guard, a check on the back rank.\n\nWhen you find no defects, stop looking for tactics and improve a piece instead."
       },
@@ -152,12 +225,12 @@
       },
       {
        "type": "drill",
-       "fen": "8/5ppp/8/5PPP/8/8/8/K6k w - - 0 1",
+       "fen": "8/5ppp/8/5PPP/8/8/8/k6K w - - 0 1",
        "orientation": "white",
        "goal": "promote",
        "max_moves": 8,
-       "prompt": "Promote a pawn within 8 moves. The black king is on h1, far from your pawns' queening squares.",
-       "tip": "Start with the middle pawn: 1.g6!. Answer ...fxg6 with h6 and ...hxg6 with f6. Then push the free pawn."
+       "prompt": "Promote a pawn within 8 moves. The black king is on a1, far from your pawns' queening squares.",
+       "tip": "Start with the middle pawn: 1.g6!. Answer ...fxg6 with h6 and ...hxg6 with f6. Then push the free pawn. Your king on h1 stops the black pawn that is left."
       },
       {
        "type": "quiz",
@@ -473,6 +546,16 @@
        ]
       },
       {
+       "type": "challenge",
+       "fen": "r4r2/1q2b1k1/n1p2pp1/p3p2p/P1Q1P3/2P1BN1P/1P1R2PK/5R2 w - - 2 31",
+       "prompt": "White to play. Karpov-Spassky, Candidates 1974, move 31. Ask the first question: where are Black's weaknesses? Then use them.",
+       "solution": [
+        "c4e6"
+       ],
+       "hint": "Black has no d-pawn, and his f-pawn has passed f7. Which square in front of his king can no black pawn ever attack?",
+       "explanation": "31.Qe6! No black pawn can ever attack e6: the d-pawn is gone and the f-pawn stands on f6, past it. From this hole the queen hits the weak pawn on c6, the bishop on e7 and the pawn on f6, and Rd7 against the queen and bishop on the seventh rank is the next idea. The answer to the first question named the square. The engine rates 31.Qe6 best."
+      },
+      {
        "type": "game",
        "pgn": "[Event \"Candidates semi-final (game 9), Leningrad\"]\n[Site \"Leningrad URS\"]\n[Date \"1974.??.??\"]\n[Round \"9\"]\n[White \"Anatoly Karpov\"]\n[Black \"Boris Spassky\"]\n[Result \"1-0\"]\n\n1. e4 c5 2. Nf3 e6 3. d4 cxd4 4. Nxd4 Nf6 5. Nc3 d6 6. Be2 Be7 7. O-O O-O 8. f4\nNc6 9. Be3 Bd7 10. Nb3 a5 11. a4 Nb4 12. Bf3 Bc6 13. Nd4 g6 14. Rf2 e5 15. Nxc6\nbxc6 16. fxe5 dxe5 17. Qf1 Qc8 18. h3 Nd7 19. Bg4 h5 20. Bxd7 Qxd7 21. Qc4 Bh4\n22. Rd2 Qe7 23. Rf1 Rfd8 24. Nb1 Qb7 25. Kh2 Kg7 26. c3 Na6 27. Re2 Rf8 28. Nd2\nBd8 29. Nf3 f6 30. Rd2 Be7 31. Qe6 Rad8 32. Rxd8 Bxd8 33. Rd1 Nb8 34. Bc5 Rh8\n35. Rxd8 1-0",
        "title": "Karpov vs Spassky, Candidates semi-final game 9, Leningrad 1974",
@@ -569,6 +652,74 @@
      "minutes": 14,
      "practice": ["rookEndgame"],
      "sections": [
+      {
+       "type": "lecture",
+       "title": "Rook against pawn",
+       "frames": [
+        {
+         "say": "A rook controls a whole rank. A king cannot cross a rank the rook controls without walking into check. So a rook can build a fence between the enemy king and its own pawn.",
+         "fen": "1K6/7R/5k2/8/5p2/8/8/8 w - - 0 1"
+        },
+        {
+         "say": "White's king is far away on b8. The black king on f6 wants to walk down beside its pawn; if it gets there, the rook cannot win the pawn.",
+         "arrows": [
+          {
+           "from": "f6",
+           "to": "e5",
+           "brush": "red"
+          },
+          {
+           "from": "f4",
+           "to": "f1",
+           "brush": "green"
+          }
+         ],
+         "highlights": [
+          {
+           "square": "f4",
+           "brush": "yellow"
+          }
+         ]
+        },
+        {
+         "say": "Rook to h5. The fifth rank is now a fence: the king cannot step onto it.",
+         "move": "Rh5",
+         "arrows": [
+          {
+           "from": "h5",
+           "to": "a5",
+           "brush": "green"
+          }
+         ]
+        },
+        {
+         "say": "The pawn runs alone.",
+         "move": "f3"
+        },
+        {
+         "say": "Rook behind the pawn, attacking it. A pawn without its king cannot be defended.",
+         "move": "Rh3",
+         "arrows": [
+          {
+           "from": "h3",
+           "to": "f3",
+           "brush": "red"
+          }
+         ]
+        },
+        {
+         "say": "One step from queening.",
+         "move": "f2"
+        },
+        {
+         "say": "Rook f3, check. Whatever the king does, the rook takes the pawn next move.",
+         "move": "Rf3+"
+        },
+        {
+         "say": "Two tools: cut the king off along a rank or a file, and attack the pawn from behind. Any king move instead of rook h5 would have let Black play king e5 and escort the pawn home; the engine calls that a draw."
+        }
+       ]
+      },
       {
        "type": "text",
        "md": "Rook against pawn is the ending you reach after a race of passed pawns. The rook usually wins, but only if the defending king is kept away from its pawn.\n\nTwo techniques decide it:\n\n1. Cut the king off. Put the rook on a rank or file between the enemy king and the pawn's path. A pawn without its king falls to the rook.\n2. Attack the pawn from behind. A rook behind the pawn follows it all the way down and never loses time.\n\nThen bring your own king. If your king reaches the pawn's path before the pawn reaches its last rank, you win.\n\nThe defender hopes for a pawn on the third or second rank, supported by its king, with your king far away. Then the best you get is the pawn for your rook, and the game is a draw.\n\nIn each position below exactly one rook move wins and every other move draws. The tablebase confirms it."
@@ -1168,6 +1319,16 @@
        ],
        "answer": 0,
        "explanation": "A static plus (material, structure) lasts. A dynamic plus (development, initiative, an attack) fades if it is not used. The side with the dynamic plus must play energetically; the side with the static plus wants to calm the game down."
+      },
+      {
+       "type": "challenge",
+       "fen": "r3r1k1/p4ppp/1p3n2/3p4/q1pPP3/1nP2PN1/1BQ3PP/4RRK1 w - - 0 20",
+       "prompt": "White to play. Botvinnik-Capablanca, AVRO 1938. You listed the imbalances: Black is a pawn up, White has the mobile centre. Play the move that uses White's imbalance.",
+       "solution": [
+        "e4e5"
+       ],
+       "hint": "Which piece is the only defender near Black's king? Which white pawn can attack it?",
+       "explanation": "20.e5! The mobile centre is a dynamic plus, so it must move now, before Black's extra pawn counts. The pawn attacks the knight on f6, the only black piece near the king, and it must retreat. Then f3-f4-f5 follows toward the king, while Black's queen and knight stand far away on a4 and b3. Botvinnik played it and won with an attack. The engine rates 20.e5 best."
       }
      ]
     },
@@ -1193,6 +1354,16 @@
        ],
        "answer": 0,
        "explanation": "a6, b5, d5, f7, g6 and h5 are all light squares. The bishop must defend them and can never attack White's pawns on dark squares. The knight on c3 attacks squares of both colours."
+      },
+      {
+       "type": "challenge",
+       "fen": "2b5/8/p2k1p2/1p1p1npp/3P3P/P2B1PP1/1PN2K2/8 w - - 0 44",
+       "prompt": "White to play. Karpov-Kasparov, 1984, move 44. Which minor pieces should stay on the board?",
+       "solution": [
+        "d3f5"
+       ],
+       "hint": "Count the black pawns on light squares. Which black piece must defend them, and which white piece attacks both colours?",
+       "explanation": "44.Bxf5! Bxf5 leaves knight against bishop. Black's pawns on a6, b5, d5 and h5 stand on light squares, so the light-squared bishop must guard them; five of White's six pawns stand on dark squares, where it can never attack them. The knight attacks both colours: it can go via a1 and b3 to c5, where it hits a6. Karpov played it."
       },
       {
        "type": "game",
@@ -1236,6 +1407,16 @@
       {
        "type": "text",
        "md": "Two of Silman's imbalances often work together: control of a key file and space.\n\nA file is key when it is the only open one. Whoever controls it can bring rooks to the seventh or eighth rank, and the other side's rooks have nowhere to go. Control means more than one rook on it, or a piece that stops the opponent from contesting it.\n\nSpace is the territory behind your pawn chain. With more space your pieces can move from one wing to the other; the cramped side's pieces get in each other's way.\n\nThe method against a cramped opponent is the squeeze:\n\n1. Close the centre so that he has no counterplay there.\n2. Take the open file.\n3. Improve every piece slowly. He has no good moves, so time is on your side.\n4. Open a second front only when his pieces are tied up.\n\nKarpov against Unzicker, 1974, is the classic. The a-file was the only open file, and Karpov's 24.Ba7!! made sure Black could never contest it."
+      },
+      {
+       "type": "challenge",
+       "fen": "r1r2bk1/1nqb1p1p/3p1np1/1ppPp3/1P2P3/2PBBNNP/3Q1PP1/R3R1K1 w - - 2 22",
+       "prompt": "White to play. Karpov-Unzicker, Nice 1974, move 22. The centre is closed. Take the key file in a way that lets you keep it.",
+       "solution": [
+        "a1a2"
+       ],
+       "hint": "Which file is the only open one? A file is controlled when two rooks stand on it. Where can the second rook come from?",
+       "explanation": "22.Ra2! The a-file is the only open file. The rook steps up so that the other rook can join it on a1: two white rooks against one black rook. 22.Rxa8 Rxa8 would give the file to Black's other rook. Karpov doubled with 26.Rea1, after 24.Ba7 had cut the file."
       },
       {
        "type": "quiz",
@@ -1306,6 +1487,16 @@
        "explanation": "White has no c- or e-pawn left to chase the knight from d3. From there it hits b2, c1, e1 and f2 and cuts White's position in two. Both sides have two bishops, so the bishop pair is not the answer."
       },
       {
+       "type": "challenge",
+       "fen": "r2qr1k1/5pp1/p4n1p/1pbP1b2/7B/2Nn1B2/PP1Q1PPP/1N1R1RK1 b - - 1 18",
+       "prompt": "Black to play. Karpov-Kasparov, 1985, move 18. Black is a pawn down; his plus is dynamic. Use it before it fades.",
+       "solution": [
+        "b5b4"
+       ],
+       "hint": "A dynamic plus is spent on time. Which move attacks a white piece and leaves it no good square?",
+       "explanation": "18...b4! attacks the knight on c3 with gain of time. Its best squares are a4 and e2 (19.Nb5 axb5 loses the knight, and 19.Ne4 is exchanged off by the f6-knight or the f5-bishop); from a4 or e2 it no longer guards d5. Every tempo Black gains keeps White's pieces tangled. The game went 19.Na4. The engine rates 18...b4 best."
+      },
+      {
        "type": "game",
        "pgn": "[Event \"World Championship 1985 (game 16), Moscow\"]\n[Site \"Moscow URS\"]\n[Date \"1985.10.15\"]\n[Round \"16\"]\n[White \"Anatoly Karpov\"]\n[Black \"Garry Kasparov\"]\n[Result \"0-1\"]\n\n1. e4 c5 2. Nf3 e6 3. d4 cxd4 4. Nxd4 Nc6 5. Nb5 d6 6. c4 Nf6 7. N1c3 a6 8. Na3\nd5 9. cxd5 exd5 10. exd5 Nb4 11. Be2 Bc5 12. O-O O-O 13. Bf3 Bf5 14. Bg5 Re8\n15. Qd2 b5 16. Rad1 Nd3 17. Nab1 h6 18. Bh4 b4 19. Na4 Bd6 20. Bg3 Rc8 21. b3\ng5 22. Bxd6 Qxd6 23. g3 Nd7 24. Bg2 Qf6 25. a3 a5 26. axb4 axb4 27. Qa2 Bg6 28.\nd6 g4 29. Qd2 Kg7 30. f3 Qxd6 31. fxg4 Qd4+ 32. Kh1 Nf6 33. Rf4 Ne4 34. Qxd3\nNf2+ 35. Rxf2 Bxd3 36. Rfd2 Qe3 37. Rxd3 Rc1 38. Nb2 Qf2 39. Nd2 Rxd1+ 40. Nxd1\nRe1+ 0-1",
        "title": "Karpov vs Kasparov, World Championship 1985, game 16",
@@ -1352,6 +1543,110 @@
      "objective": "Find the pawn chains, attack the enemy chain at its base with a pawn break, and play on the side your own chain points to.",
      "minutes": 12,
      "sections": [
+      {
+       "type": "lecture",
+       "title": "The pawn chain: attack the base",
+       "frames": [
+        {
+         "say": "A pawn protects the square diagonally in front of it, so pawns on one diagonal protect each other: a chain. Only the last pawn, the base, is protected by nothing but pieces. The French Defence builds two chains in three moves.",
+         "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+        },
+        {
+         "say": "Pawn to e4.",
+         "move": "e4"
+        },
+        {
+         "say": "Pawn to e6: the French.",
+         "move": "e6"
+        },
+        {
+         "say": "Pawn to d4.",
+         "move": "d4"
+        },
+        {
+         "say": "Pawn to d5.",
+         "move": "d5"
+        },
+        {
+         "say": "Pawn to e5. White's chain is d4 and e5; its base is d4. Black's chain is f7, e6 and d5. Each chain points toward one side of the board: White's at the kingside, Black's at the queenside.",
+         "move": "e5",
+         "arrows": [
+          {
+           "from": "d4",
+           "to": "e5",
+           "brush": "green"
+          },
+          {
+           "from": "f7",
+           "to": "e6",
+           "brush": "green"
+          },
+          {
+           "from": "e6",
+           "to": "d5",
+           "brush": "green"
+          }
+         ],
+         "highlights": [
+          {
+           "square": "d4",
+           "brush": "red"
+          }
+         ]
+        },
+        {
+         "say": "Pawn to c5: Black attacks the base at once. A pawn that attacks the base cannot be driven off by the chain itself.",
+         "move": "c5",
+         "arrows": [
+          {
+           "from": "c5",
+           "to": "d4",
+           "brush": "red"
+          }
+         ]
+        },
+        {
+         "say": "White props the base with a second pawn.",
+         "move": "c3"
+        },
+        {
+         "say": "Knight to c6: a second attacker on d4.",
+         "move": "Nc6",
+         "arrows": [
+          {
+           "from": "c6",
+           "to": "d4",
+           "brush": "red"
+          }
+         ]
+        },
+        {
+         "say": "Knight to f3 defends it.",
+         "move": "Nf3"
+        },
+        {
+         "say": "Queen to b6: three attackers on the base. Nimzowitsch against Salwe, Karlsbad 1911, reached this position. If d4 falls or is exchanged, e5 loses its support, and Black's pawn break f6 attacks the head of the chain from the side. First the base, then the head.",
+         "move": "Qb6",
+         "arrows": [
+          {
+           "from": "b6",
+           "to": "d4",
+           "brush": "red"
+          },
+          {
+           "from": "c5",
+           "to": "d4",
+           "brush": "red"
+          },
+          {
+           "from": "c6",
+           "to": "d4",
+           "brush": "red"
+          }
+         ]
+        }
+       ]
+      },
       {
        "type": "text",
        "md": "A pawn chain is a diagonal line of pawns, each one protecting the next. In the French Defence after 1.e4 e6 2.d4 d5 3.e5, White's chain runs d4-e5 and Black's runs e6-d5.\n\nNimzowitsch's rules for chains:\n\n1. Attack the chain at its base, the rearmost pawn, because nothing protects it. If the base falls, the whole chain is weak.\n2. The head of the chain, the most advanced pawn, can also be attacked, but it is protected and the attack is usually slower.\n3. Play on the side of the board your chain points to. White's chain d4-e5 points to the kingside, so White attacks there; Black's chain points to the queenside, so Black plays ...c5 and puts pressure on d4.\n\nIn the French, Black's breaks are ...c5 against d4 and ...f6 against e5. White's breaks are f4-f5 against e6 and, less often, c4 against d5.\n\nNimzowitsch added a twist: you can also give up the base and hold the square with pieces instead. That leads to the blockade, the next lesson."
@@ -1421,6 +1716,16 @@
        ],
        "answer": 0,
        "explanation": "After 7...Bxc5 White does not keep the pawn. The point, in My System, is that a piece on d4 cannot be chased away by ...c5 any more, and that e5 is then held by pieces too. This is the blockade."
+      },
+      {
+       "type": "challenge",
+       "fen": "rnbqkbnr/pp3ppp/4p3/2ppP3/3P4/2P5/PP3PPP/RNBQKBNR b KQkq - 0 4",
+       "prompt": "Black to play. French Defence, Advance Variation, after 1.e4 e6 2.d4 d5 3.e5 c5 4.c3. White's chain is c3-d4-e5. Attack it where it is weakest.",
+       "solution": [
+        "c5d4"
+       ],
+       "hint": "Which pawn protects d4? Take it away.",
+       "explanation": "4...cxd4! After 5.cxd4 the c3 pawn is gone, so d4 is the base of the chain and no white pawn can protect it: the b-pawn cannot reach c3 and the e-pawn has passed. Black then aims Nc6, Qb6 and Ne7-f5 at d4. The head on e5 is protected by d4; the base has only pieces."
       }
      ]
     },
@@ -1432,7 +1737,17 @@
      "sections": [
       {
        "type": "text",
-       "md": "Nimzowitsch's law for passed and isolated pawns: first restrain, then blockade, finally destroy.\n\nThe blockade is a piece on the square directly in front of the enemy pawn. The pawn cannot move, so it can no longer support an attack or threaten to promote. The blockading piece is hard to drive away. In front of an isolated pawn it is completely safe, because the pawn has no neighbours that could attack it. The best blockader is a knight: it keeps attacking even while it blocks.\n\nOverprotection is the other half of the idea. When a square is important, such as an outpost or the square in front of a blockaded pawn, defend it more times than it is attacked. The pieces that overprotect it are not passive: they stand on good squares, and when the moment comes they can attack from there.\n\nIn Nimzowitsch–Salwe, 1911, White gave up his d4 pawn on move 7, put a bishop on d4 in front of Black's d5 pawn, and guarded e5 with knight, bishop and later rooks. Black's centre pawns stayed frozen until White's attack had begun."
+       "md": "A pawn moves only forward, and it attacks only the two squares diagonally in front of it. So a piece standing directly in front of a pawn can never be attacked by that pawn, and the pawn can never move while the piece stays. That fact is behind Nimzowitsch's law for passed and isolated pawns: first restrain, then blockade, finally destroy.\n\nThe blockade is a piece on the square directly in front of the enemy pawn. The pawn cannot move, so it can no longer support an attack or threaten to promote. The blockading piece is hard to drive away. In front of an isolated pawn it is completely safe, because the pawn has no neighbours that could attack it. The best blockader is a knight: it keeps attacking even while it blocks.\n\nOverprotection is the other half of the idea. When a square is important, such as an outpost or the square in front of a blockaded pawn, defend it more times than it is attacked. The pieces that overprotect it are not passive: they stand on good squares, and when the moment comes they can attack from there.\n\nIn Nimzowitsch–Salwe, 1911, White gave up his d4 pawn on move 7, put a bishop on d4 in front of Black's d5 pawn, and guarded e5 with knight, bishop and later rooks. Black's centre pawns stayed frozen until White's attack had begun."
+      },
+      {
+       "type": "challenge",
+       "fen": "2r2rk1/pp1b2pp/1q1bpn2/3pB3/1P6/2PB1N2/P3QPPP/R4RK1 w - - 7 16",
+       "prompt": "White to play. Nimzowitsch-Salwe, Karlsbad 1911, move 16. Put a piece in front of the d5 pawn.",
+       "solution": [
+        "e5d4"
+       ],
+       "hint": "Which square stands directly in front of the d5 pawn? Which piece can go there with a threat?",
+       "explanation": "16.Bd4! The bishop stands directly in front of the d5 pawn, so the pawn cannot move, and from d4 the bishop attacks the queen on b6 with gain of time. The e5 square is free again for the knight (17.Ne5 in the game), so knight and bishop together hold d4 and e5. The engine rates 16.Bd4 best."
       },
       {
        "type": "quiz",
@@ -1616,7 +1931,17 @@
      "sections": [
       {
        "type": "text",
-       "md": "Prophylaxis means prevention: a move that stops the opponent's plan before it starts. Nimzowitsch made it a method; Dvoretsky later turned it into a habit with one question: what does my opponent want to do?\n\nThe steps:\n\n1. Imagine it is his move. What would he play? Name the threat or the plan: a pawn break, a knight jump, a rook lift.\n2. Ask whether your next move can stop it, or make it bad.\n3. Only then continue your own plan.\n\nPawn breaks are the most important target. A cramped position frees itself with a pawn break; if you restrain the break, the opponent has no plan at all. Nimzowitsch's order is restrain, blockade, destroy.\n\nThe famous example is Johner–Nimzowitsch, Dresden 1926. White's only active plan was g2-g4, followed by f4-f5. Nimzowitsch played ...h5 and then took his queen to h7. From there it watches f5, and if White ever plays g4, the h-file opens toward the white king with the black queen already on it."
+       "md": "Each side gets one move per turn, and a plan takes several. So a plan can be stopped while it is still one move short, if you see it in time and spend your move on the square it needs. A move that stops the opponent's plan before it starts is **prophylaxis** (prevention). Nimzowitsch made it a method; Dvoretsky later turned it into a habit with one question: what does my opponent want to do?\n\nThe steps:\n\n1. Imagine it is his move. What would he play? Name the threat or the plan: a pawn break, a knight jump, a rook lift.\n2. Ask whether your next move can stop it, or make it bad.\n3. Only then continue your own plan.\n\nPawn breaks are the most important target. A cramped position frees itself with a pawn break; if you restrain the break, the opponent has no plan at all. Nimzowitsch's order is restrain, blockade, destroy.\n\nThe famous example is Johner–Nimzowitsch, Dresden 1926. White's only active plan was g2-g4, followed by f4-f5. Nimzowitsch played ...h5 and then took his queen to h7. From there it watches f5, and if White ever plays g4, the h-file opens toward the white king with the black queen already on it."
+      },
+      {
+       "type": "challenge",
+       "fen": "r1b2rk1/p2qnppp/1p1p1n2/2p5/2PPpP2/1NP1P2P/P3B1P1/R1B1QRK1 b - - 2 14",
+       "prompt": "Black to play. Johner-Nimzowitsch, Dresden 1926, move 14. First ask what White wants to play. Then stop it.",
+       "solution": [
+        "h7h5"
+       ],
+       "hint": "White's centre is blocked by e4. Which pawn break on the kingside is White's only active plan, and which square does it need?",
+       "explanation": "14...h5! White's only active plan is g2-g4 and f4-f5. The h5 pawn and the f6 knight now both attack g4, so g2-g4 costs White his kingside pawn cover: after g4 hxg4 hxg4 the h-file opens. Nimzowitsch followed with ...Qf5 and ...Qh7. The engine rates 14...h5 best."
       },
       {
        "type": "quiz",
@@ -1761,6 +2086,16 @@
        "explanation": "White has no c-pawn left, and d5 is blocked by Black's pawn, so the queenside pawn break is b4-b5. After bxc6 Black must accept a weak pawn on c6 or an isolated one on d5."
       },
       {
+       "type": "challenge",
+       "fen": "r1bqr1k1/pp3ppp/2pb1nn1/3p2B1/1P1P4/2NBPN2/P1Q2PPP/1R3RK1 w - - 1 13",
+       "prompt": "White to play. Smyslov-Keres, Moscow 1948, move 13. Continue the minority attack.",
+       "solution": [
+        "b4b5"
+       ],
+       "hint": "Two pawns attack three. Which pawn can strike at c6 now?",
+       "explanation": "13.b5! attacks c6. If 13...cxb5 14.Nxb5 or Bxb5, the d5 pawn is isolated. If Black lets White take with 14.bxc6 bxc6, the c6 pawn is backward on the half-open c-file. Either way Black keeps a weak pawn, and that weakness is permanent."
+      },
+      {
        "type": "game",
        "pgn": "[Event \"World Championship Tournament, Moscow (round 17)\"]\n[Site \"Moscow\"]\n[Date \"1948\"]\n[Round \"17\"]\n[White \"Vasily Smyslov\"]\n[Black \"Paul Keres\"]\n[Result \"1-0\"]\n\n1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 c6 5. e3 Nbd7 6. cxd5 exd5 7. Bd3 Be7 8.\nNf3 O-O 9. Qc2 Re8 10. O-O Nf8 11. Rab1 Ng6 12. b4 Bd6 13. b5 Bd7 14. bxc6 Bxc6\n15. Qb3 Be7 16. Bxf6 Bxf6 17. Bb5 Qd6 18. Rfc1 h5 19. Ne2 h4 20. Bxc6 bxc6 21.\nQa4 Ne7 22. Rb7 a5 23. h3 Reb8 24. Rcb1 Rxb7 25. Rxb7 c5 26. Rb5 cxd4 27. Nexd4\nRc8 28. Nb3 Bc3 29. Qxh4 Rc4 30. g4 a4 31. Nbd4 Bxd4 32. Nxd4 Qe5 33. Nf3 Qd6\n34. Ra5 Rc8 35. Rxa4 Ng6 36. Qh5 Qf6 37. Qf5 Qc6 38. Ra7 Rf8 39. Rd7 d4 40.\nRxd4 Ra8 41. a4 1-0",
        "title": "Smyslov vs Keres, World Championship Tournament, Moscow 1948",
@@ -1884,6 +2219,16 @@
        "md": "Hanging pawns are two pawns side by side, usually on c5 and d5 (or c4 and d4), with no pawns of their own colour on the files next to them. They arise in the Queen's Gambit Declined, the Tarrasch and many Queen's Indian lines.\n\nThey are strong and weak at the same time. Strong, because they control the centre and can advance: ...d4 or ...c4 opens lines or creates a passed pawn. Weak, because no pawn can protect them; if one advances at the wrong moment, the other is left behind and the square in front of the first becomes a hole.\n\nFor the side with the pawns: keep them side by side, use the half-open b- and e-files, and push one of them when the pieces are ready.\n\nFor the opponent: attack them with pieces on the c- and d-files, and provoke an advance. Once one pawn has moved, blockade it and attack the one left behind.\n\nCapablanca turned his hanging pawns into a passed c-pawn against Bernstein in 1914. Fischer forced Spassky's pawns forward in 1972 and fixed them."
       },
       {
+       "type": "challenge",
+       "fen": "r2q1rk1/p3bppp/Qp3n2/2Pp4/8/2N1PN2/PP3PPP/2R1K2R b K - 0 13",
+       "prompt": "Black to play. Bernstein-Capablanca, Moscow 1914, move 13. Recapture on c5. Which piece or pawn takes?",
+       "solution": [
+        "b6c5"
+       ],
+       "hint": "Compare the two structures: two pawns side by side, or one pawn alone on d5.",
+       "explanation": "13...bxc5! gives Black hanging pawns on c5 and d5. Side by side they control b4, c4, d4 and e4, and the b-file opens for Black's rooks against b2. 13...Bxc5 would leave d5 isolated, with no pawn beside it, and White's pieces could blockade it on d4. Capablanca took with the pawn. The engine rates 13...bxc5 best, about half a pawn ahead of 13...Bxc5."
+      },
+      {
        "type": "position",
        "fen": "r2q1rk1/p3bppp/Q4n2/2pp4/8/2N1PN2/PP3PPP/2R1K2R w K - 0 14",
        "caption": "Bernstein–Capablanca, Moscow 1914, after 13...bxc5. Black has hanging pawns on c5 and d5, the half-open b-file and active pieces in return.",
@@ -2002,6 +2347,177 @@
        ],
        "hint": "Put the rook where Black cannot take it without giving you a passed pawn.",
        "explanation": "26.Re6!! attacks the knight on f6 and offers the rook. After 26...Rxe6 27.fxe6 (the game) the pawn on e6 cuts Black's position in two, and the queen enters on f4 and e5. The engine rates 26.Re6 more than two pawns better than the next move, 26.fxg6."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b5m8",
+   "band": 5,
+   "title": "Pawn breaks",
+   "strand": "strategy",
+   "summary": "A pawn opens a line only by capturing or being captured: find the pawn move that offers that exchange where your pieces are ready and the enemy king or a weak pawn stands behind it.",
+   "source": "Nimzowitsch, My System (the pawn chain and the break); Yusupov, Boost Your Chess 2 (pawn breaks); Steinitz–von Bardeleben, Hastings 1895; Steinitz–Chigorin, Havana 1892; Capablanca–Alekhine, Buenos Aires 1927; Johner–Nimzowitsch, Dresden 1926",
+   "lessons": [
+    {
+     "id": "b5m8l1",
+     "title": "The break that opens the centre",
+     "objective": "Play the central pawn break that opens files toward a king that has not castled, and use the squares it empties.",
+     "minutes": 12,
+     "practice": [],
+     "sections": [
+      {
+       "type": "lecture",
+       "title": "The break that opens the centre",
+       "frames": [
+        {
+         "say": "A pawn moves straight ahead, so it never opens a file by moving. A file opens only when a pawn captures or is captured. A pawn break is the move that offers that exchange. Steinitz against von Bardeleben, Hastings 1895, White to play.",
+         "fen": "r3k2r/pp1qn1pp/2p2p2/8/3P4/5N2/PP2QPPP/2R1R1K1 w kq - 0 17"
+        },
+        {
+         "say": "Black's king is still on e8, and the pawn on e6 is gone: only the pawn on c6 stands in front of the king's diagonal and files. White's rooks are on c1 and e1, the queen on e2.",
+         "highlights": [
+          {
+           "square": "e8",
+           "brush": "red"
+          },
+          {
+           "square": "c6",
+           "brush": "yellow"
+          }
+         ],
+         "arrows": [
+          {
+           "from": "e1",
+           "to": "e8",
+           "brush": "red"
+          },
+          {
+           "from": "c1",
+           "to": "c6",
+           "brush": "green"
+          }
+         ]
+        },
+        {
+         "say": "Pawn to d5. If Black takes, the d-file and the c-file open; if he does not, White takes on c6 and opens them anyway. The engine prefers this break by almost a pawn to the quiet knight moves.",
+         "move": "d5",
+         "arrows": [
+          {
+           "from": "d5",
+           "to": "c6",
+           "brush": "red"
+          }
+         ]
+        },
+        {
+         "say": "Von Bardeleben took.",
+         "move": "cxd5"
+        },
+        {
+         "say": "Knight to d4: the knight uses the square the pawn emptied, and it heads for e6, next to the king that cannot castle while the e-file is open.",
+         "move": "Nd4",
+         "arrows": [
+          {
+           "from": "d4",
+           "to": "e6",
+           "brush": "green"
+          },
+          {
+           "from": "e2",
+           "to": "e8",
+           "brush": "red"
+          }
+         ]
+        },
+        {
+         "say": "Ask three questions before a break. Which lines does it open? Whose pieces stand ready on them? What stands at the end of those lines: a king, or a weak pawn?"
+        }
+       ]
+      },
+      {
+       "type": "text",
+       "md": "A pawn moves straight ahead and captures diagonally. It cannot open a file by advancing; it opens one only when it captures or is captured. A **pawn break** is a pawn move that offers a pawn exchange, so that one way or the other a line opens.\n\nBefore you play a break, ask:\n\n1. Which files and diagonals open, whichever pawn takes?\n2. Whose rooks, queen and bishops are already standing on them? A break helps the side whose pieces arrive first.\n3. What is at the end of the line: an uncastled king, a castled king, or a weak pawn?\n\nPlay the break when the answers favour you. Prepare it when they do not yet: put the rook on the file first, then break. And restrain the opponent's breaks, because they are his plans."
+      },
+      {
+       "type": "challenge",
+       "fen": "r3k2r/pp1qn1pp/2p2p2/8/3P4/5N2/PP2QPPP/2R1R1K1 w kq - 0 17",
+       "prompt": "White to play. Steinitz–von Bardeleben, Hastings 1895. Black has not castled. Open the centre.",
+       "solution": [
+        "d4d5"
+       ],
+       "hint": "Which pawn move offers an exchange that opens lines toward e8?",
+       "explanation": "17.d5! offers the exchange in front of the uncastled king (engine about +1.4, against +0.6 for 17.Nd2 or 17.Qc4). After 17...cxd5 18.Nd4 Kf7 19.Ne6 the knight lands next to the king, and Steinitz won with a famous combination."
+      },
+      {
+       "type": "challenge",
+       "fen": "4rr1k/1ppb2bp/2q1n1p1/p3p3/8/1BPPBN2/PP3PP1/2KR1Q1R w - - 0 21",
+       "prompt": "White to play. Steinitz–Chigorin, World Championship 1892, game 4. Open the centre while Black's pieces stand on the kingside.",
+       "solution": [
+        "d3d4"
+       ],
+       "hint": "Your rook on d1 and bishop on b3 wait behind the d-pawn. Which pawn move opens their lines?",
+       "explanation": "21.d4! offers the exchange on d4 and opens the d-file for the rook and the a2-g8 diagonal for the bishop on b3 (engine about +1.8, against about +0.5 for quiet moves). The game went 21...exd4 22.Nxd4 Bxd4 23.Rxd4, and White's pieces dominated the open lines."
+      },
+      {
+       "type": "quiz",
+       "question": "Which question decides whether a pawn break is good?",
+       "options": [
+        "Does the break win a pawn at once?",
+        "Whose pieces stand ready on the lines it opens, and what stands at the end of them?",
+        "Is the pawn a centre pawn?",
+        "Has the opponent castled?"
+       ],
+       "answer": 1,
+       "explanation": "A break opens lines. It helps the side whose rooks, queen and bishops reach those lines first, and it helps most when a king or a weak pawn stands at the end of them."
+      }
+     ]
+    },
+    {
+     "id": "b5m8l2",
+     "title": "Breaks with tempo and on the wing",
+     "objective": "Use a pawn break that attacks a piece, so the opponent has no time to answer it, and open the file in front of the enemy king with a wing break.",
+     "minutes": 12,
+     "practice": [],
+     "sections": [
+      {
+       "type": "text",
+       "md": "A pawn break that also attacks a piece gains a tempo: the opponent must move the piece first, and the break happens on your terms.\n\nOn the wing, a break opens the file in front of the enemy king. A rook or queen already on that file, or one move from it, makes the break decisive. A pawn exchange on g3 or h3 is the classic way to open the h-file against a king on h2 or g1."
+      },
+      {
+       "type": "challenge",
+       "fen": "3r2k1/5pp1/7p/1p1qp3/1Pn5/1Q2PNBP/1b3PP1/1R4K1 b - - 1 30",
+       "prompt": "Black to play. Capablanca–Alekhine, World Championship 1927, game 21. Find the pawn break that gains time.",
+       "solution": [
+        "e5e4"
+       ],
+       "hint": "Which pawn move attacks a white piece and opens the d-file and the long diagonal at the same time?",
+       "explanation": "30...e4! attacks the knight on f3, so White has no time to consolidate; the bishop on b2 and the rook on d8 gain lines (engine about -1.0 for White, against about +0.2 after 30...Ba3 or 30...f6). Alekhine won the game."
+      },
+      {
+       "type": "challenge",
+       "fen": "6rk/5prq/1p1p1n2/p1pP1n1p/P1P2P2/2P3P1/2Q1R2K/2B2NR1 b - - 1 36",
+       "orientation": "black",
+       "prompt": "Black to play. Johner–Nimzowitsch, Dresden 1926. Your queen and rooks stand on the h- and g-files. Open the king's file.",
+       "solution": [
+        "h5h4"
+       ],
+       "hint": "Which pawn move offers an exchange on g3, next to the white king?",
+       "explanation": "36...h4! offers the exchange on g3; after it the h-file is open for the queen on h7 and the rook (engine about -4.6 for White, against about -3.2 for 36...Ng4+). The game went 37.Rg2 hxg3+ 38.Kg1 Qh3, and White's king fell."
+      },
+      {
+       "type": "quiz",
+       "fen": "3r2k1/5pp1/7p/1p1qp3/1Pn5/1Q2PNBP/1b3PP1/1R4K1 b - - 1 30",
+       "question": "What makes 30...e4 stronger than a slow break?",
+       "options": [
+        "It wins the knight by force",
+        "It attacks the knight on f3, so White must answer it first, and it opens lines for Black's rook and bishop",
+        "It creates a passed pawn on e4 that cannot be stopped",
+        "It stops White from castling"
+       ],
+       "answer": 1,
+       "explanation": "A break with tempo leaves the opponent no time to meet it with a counter-break or to bring defenders: he has to move the attacked piece."
       }
      ]
     }

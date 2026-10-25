@@ -3,7 +3,7 @@
     "bot": "pip",
     "label_elo": 250,
     "reference_elo": 1320,
-    "games": 4,
+    "games": 6,
     "score": 0.0,
     "estimated_elo": 644
   },
@@ -11,7 +11,7 @@
     "bot": "max",
     "label_elo": 400,
     "reference_elo": 1320,
-    "games": 4,
+    "games": 6,
     "score": 0.0,
     "estimated_elo": 644
   },
@@ -19,80 +19,360 @@
     "bot": "luna",
     "label_elo": 600,
     "reference_elo": 1320,
-    "games": 4,
-    "score": 0.0,
-    "estimated_elo": 644
+    "games": 6,
+    "score": 1.0,
+    "estimated_elo": 1040
   },
   {
     "bot": "sam",
     "label_elo": 800,
     "reference_elo": 1320,
-    "games": 4,
-    "score": 0.0,
-    "estimated_elo": 644
+    "games": 6,
+    "score": 2.5,
+    "estimated_elo": 1262
   },
   {
     "bot": "nova",
     "label_elo": 1000,
     "reference_elo": 1320,
-    "games": 4,
-    "score": 0.0,
-    "estimated_elo": 644
+    "games": 6,
+    "score": 2.0,
+    "estimated_elo": 1200
   },
   {
     "bot": "rafa",
     "label_elo": 1200,
     "reference_elo": 1320,
-    "games": 4,
-    "score": 0.0,
-    "estimated_elo": 644
+    "games": 6,
+    "score": 4.0,
+    "estimated_elo": 1440
   },
   {
     "bot": "mei",
     "label_elo": 1400,
     "reference_elo": 1400,
-    "games": 4,
-    "score": 2.0,
-    "estimated_elo": 1400
+    "games": 6,
+    "score": 5.5,
+    "estimated_elo": 1817
   },
   {
     "bot": "leo",
     "label_elo": 1600,
     "reference_elo": 1600,
-    "games": 4,
-    "score": 1.5,
-    "estimated_elo": 1511
+    "games": 6,
+    "score": 4.5,
+    "estimated_elo": 1791
   },
   {
     "bot": "ivy",
     "label_elo": 1800,
     "reference_elo": 1800,
-    "games": 4,
-    "score": 2.5,
-    "estimated_elo": 1889
+    "games": 6,
+    "score": 5.0,
+    "estimated_elo": 2080
   },
   {
     "bot": "omar",
     "label_elo": 2000,
     "reference_elo": 2000,
-    "games": 4,
-    "score": 2.5,
-    "estimated_elo": 2089
+    "games": 6,
+    "score": 4.5,
+    "estimated_elo": 2191
   },
   {
     "bot": "zara",
     "label_elo": 2200,
     "reference_elo": 2200,
-    "games": 4,
-    "score": 3.5,
-    "estimated_elo": 2538
+    "games": 6,
+    "score": 5.5,
+    "estimated_elo": 2617
   },
   {
     "bot": "viktor",
     "label_elo": 2400,
     "reference_elo": 2400,
-    "games": 4,
+    "games": 6,
+    "score": 6.0,
+    "estimated_elo": 3076
+  },
+  {
+    "bot": "elena",
+    "label_elo": 2600,
+    "reference_elo": 2600,
+    "games": 6,
+    "score": 6.0,
+    "estimated_elo": 3276
+  },
+  {
+    "bot": "arjun",
+    "label_elo": 2800,
+    "reference_elo": 2800,
+    "games": 6,
+    "score": 6.0,
+    "estimated_elo": 3476
+  },
+  {
+    "bot": "kai",
+    "label_elo": 3000,
+    "reference_elo": 3000,
+    "games": 6,
+    "score": 6.0,
+    "estimated_elo": 3676
+  },
+  {
+    "bot": "stockfish",
+    "label_elo": 3200,
+    "reference_elo": 3190,
+    "games": 6,
+    "score": 6.0,
+    "estimated_elo": 3866
+  },
+  {
+    "bot": "coach",
+    "label_elo": 1200,
+    "reference_elo": 1320,
+    "games": 6,
+    "score": 3.0,
+    "estimated_elo": 1320
+  },
+  {
+    "bot": "trickster",
+    "label_elo": 1500,
+    "reference_elo": 1500,
+    "games": 6,
+    "score": 5.0,
+    "estimated_elo": 1780
+  },
+  {
+    "bot": "wall",
+    "label_elo": 1700,
+    "reference_elo": 1700,
+    "games": 6,
+    "score": 6.0,
+    "estimated_elo": 2376
+  },
+  {
+    "bot": "grinder",
+    "label_elo": 1900,
+    "reference_elo": 1900,
+    "games": 6,
+    "score": 5.5,
+    "estimated_elo": 2317
+  },
+  {
+    "bot": "opening-caro-kann-2200",
+    "label_elo": 2200,
+    "reference_elo": 2200,
+    "games": 6,
+    "score": 5.0,
+    "estimated_elo": 2480
+  },
+  {
+    "bot": "opening-kings-indian-1800",
+    "label_elo": 1800,
+    "reference_elo": 1800,
+    "games": 6,
+    "score": 5.0,
+    "estimated_elo": 2080
+  },
+  {
+    "bot": "opening-nimzo-indian-2200",
+    "label_elo": 2200,
+    "reference_elo": 2200,
+    "games": 6,
+    "score": 5.5,
+    "estimated_elo": 2617
+  },
+  {
+    "bot": "opening-queens-gambit-1400",
+    "label_elo": 1400,
+    "reference_elo": 1400,
+    "games": 16,
+    "score": 10.5,
+    "estimated_elo": 1512
+  },
+  {
+    "bot": "opening-ruy-lopez-1800",
+    "label_elo": 1800,
+    "reference_elo": 1800,
+    "games": 6,
+    "score": 3.0,
+    "estimated_elo": 1800
+  },
+  {
+    "bot": "opening-sicilian-najdorf-1400",
+    "label_elo": 1400,
+    "reference_elo": 1400,
+    "games": 6,
+    "score": 4.0,
+    "estimated_elo": 1520
+  },
+  {
+    "bot": "middlegame-english-2200",
+    "label_elo": 2200,
+    "reference_elo": 2200,
+    "games": 6,
+    "score": 5.5,
+    "estimated_elo": 2617
+  },
+  {
+    "bot": "middlegame-sicilian-dragon-1400",
+    "label_elo": 1400,
+    "reference_elo": 1400,
+    "games": 6,
+    "score": 4.5,
+    "estimated_elo": 1591
+  },
+  {
+    "bot": "middlegame-slav-1800",
+    "label_elo": 1800,
+    "reference_elo": 1800,
+    "games": 6,
+    "score": 5.0,
+    "estimated_elo": 2080
+  },
+  {
+    "bot": "middlegame-attack-1800",
+    "label_elo": 1800,
+    "reference_elo": 1800,
+    "games": 6,
+    "score": 5.0,
+    "estimated_elo": 2080
+  },
+  {
+    "bot": "middlegame-positional-1400",
+    "label_elo": 1400,
+    "reference_elo": 1400,
+    "games": 16,
+    "score": 11.0,
+    "estimated_elo": 1537
+  },
+  {
+    "bot": "middlegame-positional-2200",
+    "label_elo": 2200,
+    "reference_elo": 2200,
+    "games": 6,
     "score": 3.5,
-    "estimated_elo": 2738
+    "estimated_elo": 2258
+  },
+  {
+    "bot": "endgame-checkmates-2200",
+    "label_elo": 2200,
+    "reference_elo": 2200,
+    "games": 6,
+    "score": 3.0,
+    "estimated_elo": 2200
+  },
+  {
+    "bot": "endgame-pawn-1800",
+    "label_elo": 1800,
+    "reference_elo": 1800,
+    "games": 6,
+    "score": 3.0,
+    "estimated_elo": 1800
+  },
+  {
+    "bot": "endgame-rook-1400",
+    "label_elo": 1400,
+    "reference_elo": 1400,
+    "games": 6,
+    "score": 2.5,
+    "estimated_elo": 1342
+  },
+  {
+    "bot": "endgame-rook-2200",
+    "label_elo": 2200,
+    "reference_elo": 2200,
+    "games": 6,
+    "score": 2.5,
+    "estimated_elo": 2142
+  },
+  {
+    "bot": "endgame-minor-1400",
+    "label_elo": 1400,
+    "reference_elo": 1400,
+    "games": 6,
+    "score": 2.5,
+    "estimated_elo": 1342
+  },
+  {
+    "bot": "endgame-queen-1800",
+    "label_elo": 1800,
+    "reference_elo": 1800,
+    "games": 6,
+    "score": 2.5,
+    "estimated_elo": 1742
+  },
+  {
+    "bot": "opening-london-1000",
+    "label_elo": 1000,
+    "reference_elo": 1320,
+    "games": 10,
+    "score": 2.0,
+    "estimated_elo": 1079
+  },
+  {
+    "bot": "middlegame-attack-1000",
+    "label_elo": 1000,
+    "reference_elo": 1320,
+    "games": 20,
+    "score": 10.5,
+    "estimated_elo": 1337
+  },
+  {
+    "bot": "middlegame-french-1000",
+    "label_elo": 1000,
+    "reference_elo": 1320,
+    "games": 10,
+    "score": 4.0,
+    "estimated_elo": 1250
+  },
+  {
+    "bot": "middlegame-attack-1400",
+    "label_elo": 1400,
+    "reference_elo": 1400,
+    "games": 10,
+    "score": 6.0,
+    "estimated_elo": 1470
+  },
+  {
+    "bot": "opening-italian-game-1000",
+    "label_elo": 1000,
+    "reference_elo": 1320,
+    "games": 6,
+    "score": 2.5,
+    "estimated_elo": 1262
+  },
+  {
+    "bot": "endgame-checkmates-1000",
+    "label_elo": 1000,
+    "reference_elo": 1320,
+    "games": 16,
+    "score": 6.5,
+    "estimated_elo": 1254
+  },
+  {
+    "bot": "endgame-pawn-1000",
+    "label_elo": 1000,
+    "reference_elo": 1320,
+    "games": 16,
+    "score": 8.5,
+    "estimated_elo": 1342
+  },
+  {
+    "bot": "endgame-pawn-1400",
+    "label_elo": 1400,
+    "reference_elo": 1400,
+    "games": 10,
+    "score": 5.5,
+    "estimated_elo": 1435
+  },
+  {
+    "bot": "endgame-checkmates-1400",
+    "label_elo": 1400,
+    "reference_elo": 1400,
+    "games": 10,
+    "score": 4.5,
+    "estimated_elo": 1365
   }
 ]

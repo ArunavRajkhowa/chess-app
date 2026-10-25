@@ -1,0 +1,7 @@
+/* One illustration style: a 2px ink line in currentColor and one brass fill, so every drawing
+   works on paper and on slate. Nothing else is coloured. */
+.art { display: block; flex: none; }
+.art .line { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.art .fill { fill: var(--brand); stroke: none; }
+.art .fill-soft { fill: var(--brand); opacity: 0.22; stroke: none; }
+.art .ink { fill: currentColor; stroke: none; }

@@ -42,9 +42,27 @@ p { margin: 0; }
 .btn-primary:hover { background: var(--brand-strong); border-color: var(--brand-strong); }
 .btn-ghost { background: transparent; border-color: transparent; }
 .btn-ghost:hover { background: var(--bg-elev-2); border-color: transparent; }
-.btn-sm { padding: 5px 10px; font-size: var(--fs-sm); border-radius: var(--r-sm); }
+.btn-sm { padding: 5px 10px; font-size: var(--fs-sm); border-radius: var(--r-sm); min-height: 32px; }
 .btn-lg { padding: 13px 22px; font-size: var(--fs-lg); }
 .btn-danger { background: var(--danger); border-color: var(--danger); color: var(--side-white); }
+/* A finger needs 44px; a mouse does not. */
+@media (pointer: coarse) { .btn, .theme-chip, .keymoments button, .band-tab, .lesson-row { min-height: 44px; } .btn-sm { min-height: 40px; } }
+
+/* Reveals: a card that answers a gesture enters by opacity and a small rise, never by layout. */
+.reveal { animation: reveal var(--anim-slow) var(--ease) both; }
+@keyframes reveal { from { opacity: 0; transform: translateY(6px); } }
+.pop { animation: pop var(--anim-slow) var(--ease-settle) both; }
+@keyframes pop { from { transform: scale(0.8); opacity: 0; } }
+.shake { animation: shake var(--anim-slow) var(--ease) both; }
+@keyframes shake { 20% { transform: translateX(-5px); } 50% { transform: translateX(4px); } 80% { transform: translateX(-2px); } }
+.pulse { animation: pulse 1s var(--ease) infinite; }
+@keyframes pulse { 50% { opacity: 0.45; } }
+/* Reduced motion stops every keyframe animation (the clock's low-time pulse, .pulse, pops); transitions are zeroed in tokens.css. */
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; } }
+
+/* An empty state is an invitation: the drawing, one sentence, one action. */
+.empty { display: flex; flex-direction: column; align-items: center; gap: var(--s-3); text-align: center; padding: var(--s-5) var(--s-4); color: var(--ink-2); }
+.empty .art { color: var(--ink-3); }
 
 .card {
   background: var(--bg-elev); border: 1px solid var(--line); border-radius: var(--r-lg);

@@ -15,8 +15,64 @@
      "minutes": 12,
      "sections": [
       {
+       "type": "lecture",
+       "title": "Lucena: build the bridge",
+       "frames": [
+        {
+         "say": "A king in front of its own pawn blocks it. To promote, the king must step out, and a rook with a free rank checks it from the side for ever. The win is to give the king a shelter from the checks. This is the Lucena position.",
+         "fen": "1K1k4/1P6/8/8/8/8/r7/2R5 w - - 0 1"
+        },
+        {
+         "say": "First a check, rook d1, to push the black king one more file away from the pawn. The king goes to e7, and the rook comes to d4 and waits. The fourth rank is the bridge.",
+         "fen": "1K6/1P2k3/8/8/3R4/8/8/r7 w - - 0 1",
+         "highlights": [
+          {
+           "square": "d4",
+           "brush": "yellow"
+          }
+         ]
+        },
+        {
+         "say": "Now the king comes out.",
+         "move": "Kc7"
+        },
+        {
+         "say": "Rook c1, check.",
+         "move": "Rc1+"
+        },
+        {
+         "say": "King b6.",
+         "move": "Kb6"
+        },
+        {
+         "say": "Rook b1, check.",
+         "move": "Rb1+"
+        },
+        {
+         "say": "King c6, toward the rook on d4.",
+         "move": "Kc6"
+        },
+        {
+         "say": "Rook c1, check.",
+         "move": "Rc1+"
+        },
+        {
+         "say": "King b5. It is next to the bridge.",
+         "move": "Kb5"
+        },
+        {
+         "say": "Rook b1, check, the last one.",
+         "move": "Rb1+"
+        },
+        {
+         "say": "Rook b4 blocks. The checks are over, the king shelters behind its own rook, and the pawn queens. The engine gives White more than fourteen pawns.",
+         "move": "Rb4"
+        }
+       ]
+      },
+      {
        "type": "text",
-       "md": "The Lucena position is the target of most winning rook-and-pawn endings. White has a pawn on the seventh rank, the king on the queening square, and the black king cut off from the pawn by at least one file. Black's rook waits to check.\n\nThe win has three steps.\n\n1. Check the defending king one more file away (1.Rd1+ Ke7). Now it cannot return to the c-file.\n2. Put the rook on the fourth rank (2.Rd4). This is the bridge.\n3. Bring the king out on the side of the defending king. Black checks from behind. The king steps down the board, and when it reaches the fifth rank, the rook blocks the next check on b4.\n\nThe fourth rank is the right rank because the king stops on the fifth. The rook interposes one rank below the king, and the checks end.\n\nDo not rush the pawn. Until the king is out, the pawn needs the king for protection."
+       "md": "A king on the queening square blocks its own pawn. It must step out to let the pawn through, and a rook with a whole rank to itself checks it from the side as often as it likes: the king has no shelter anywhere. Give the king a shelter and the win is simple. That is the Lucena position, the target of most winning rook-and-pawn endings: White has a pawn on the seventh rank, the king on the queening square, and the black king cut off from the pawn by at least one file; Black's rook waits to check.\n\nThe win has three steps.\n\n1. Check the defending king one more file away (1.Rd1+ Ke7). Now it cannot return to the c-file.\n2. Put the rook on the fourth rank (2.Rd4). This is the bridge.\n3. Bring the king out on the side of the defending king. Black checks from behind. The king steps down the board, and when it reaches the fifth rank, the rook blocks the next check on b4.\n\nThe fourth rank is the right rank because the king stops on the fifth. The rook interposes one rank below the king, and the checks end.\n\nDo not rush the pawn. Until the king is out, the pawn needs the king for protection."
       },
       {
        "type": "position",
@@ -82,7 +138,7 @@
      "sections": [
       {
        "type": "text",
-       "md": "When the defending king stands in front of the pawn, the Philidor defence draws. It has two parts.\n\n1. While the pawn is on its fifth rank, keep the rook on your own third rank (for Black, the sixth rank). If the white king steps up to that rank, the rook checks it, and the king has no shelter.\n2. When White pushes the pawn to the sixth rank, the king loses its shelter in front of the pawn. Now drop the rook to the first rank and check from behind. The king cannot escape the checks and still protect the pawn.\n\nThe defence needs no calculation. Wait on the third rank, then check from behind. Your king stays on the queening square or next to it.\n\nIn the position below, Stockfish 16 gives 0.00 for each of White's eight best moves. The drill asks you to prove it at the board."
+       "md": "A pawn cannot pass a king that stands in front of it, and the attacking king cannot help it forward while a rook controls the rank in front of the pawn: every step onto that rank is a check with no shelter. Those two facts make the Philidor defence, which draws when the defending king stands in front of the pawn. It has two parts.\n\n1. While the pawn is on its fifth rank, keep the rook on your own third rank (for Black, the sixth rank). If the white king steps up to that rank, the rook checks it, and the king has no shelter.\n2. When White pushes the pawn to the sixth rank, the king loses its shelter in front of the pawn. Now drop the rook to the first rank and check from behind. The king cannot escape the checks and still protect the pawn.\n\nThe defence needs no calculation. Wait on the third rank, then check from behind. Your king stays on the queening square or next to it.\n\nIn the position below, Stockfish 16 gives 0.00 for each of White's eight best moves. The drill asks you to prove it at the board."
       },
       {
        "type": "position",
@@ -887,6 +943,17 @@
        "explanation": "The e6-pawn stops e5 from moving, and the knight on d5 cannot be attacked by a pawn or exchanged by a minor piece. White's rooks have no way into Black's position. The game ended in a draw.",
        "fen": "3rq1k1/4rppp/2n3b1/pp2P3/2pP1QB1/P1P1R3/1B4PP/4R1K1 b - - 3 25",
        "orientation": "black"
+      },
+      {
+       "type": "challenge",
+       "fen": "3rq1k1/4rppp/2n3b1/pp2P3/2pP1QB1/P1P1R3/1B4PP/4R1K1 b - - 3 25",
+       "orientation": "black",
+       "prompt": "Black to move. White's plan is d4-d5 and e5-e6 to open lines for the two bishops. Offer a rook for the light-squared bishop so that the pawns stop for good.",
+       "solution": [
+        "e7e6"
+       ],
+       "hint": "If the bishop takes a rook on e6, which black pawn recaptures, and what does that pawn then block?",
+       "explanation": "25...Re6! If White takes, Bxe6 fxe6 puts a pawn on e6: the e5-pawn can never move, and d4-d5 is met by ...exd5. The knight goes c6-e7-d5. No white pawn can attack d5, and White's last minor piece, the b2-bishop, moves on dark squares only. The engine rates it about equal with the waiting 25...Ra7."
       }
      ]
     },
@@ -988,6 +1055,16 @@
        "answer": 0,
        "explanation": "The a-file is the only open file. With the bishop on a7, Black's rook cannot challenge it, and White's rooks take the file for good. Stockfish 16 at depth 22 rates 24.Ba7 as the best move too (about +0.8). Unzicker resigned after 44.Nh5 (Stockfish 16: about +5.5 for White).",
        "fen": "r1rq1bk1/1n1b1p1p/3p1np1/1p1Pp3/1Pp1P3/2P1BNNP/R2Q1PP1/1B2R1K1 w - - 2 24"
+      },
+      {
+       "type": "challenge",
+       "fen": "r2b1r2/1q3pk1/n1p3p1/p3p2p/P1Q1P3/2P1B2P/1P1NR1PK/5R2 w - - 5 29",
+       "prompt": "White to move, Karpov-Spassky, move 29. Five moves ago the knight went back to b1, and it is now on d2. Black has no active plan. Improve White's worst piece.",
+       "solution": [
+        "d2f3"
+       ],
+       "hint": "Which black pawn has no defender? Find the square from which the knight attacks it.",
+       "explanation": "29.Nf3! ends the knight's route b1-d2-f3. It attacks the e5-pawn, which no black piece defends, and it eyes g5. In the game Black weakened his king with 29...f6, and 31.Qe6 tied every black piece down. The engine rates it about equal with 29.Ref2."
       }
      ]
     }

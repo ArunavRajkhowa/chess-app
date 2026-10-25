@@ -22,6 +22,12 @@ export interface ReviewItem { lesson_id: string; lesson_title: string; section_i
 
 export interface LessonDetail { id: string; title: string; objective: string; minutes: number; band: number; strand: string; module_id: string; sections: Section[]; prev: string | null; next: string | null; practice: { key: string; name: string; count: number }[] }
 
+/** The lesson to do next: a player with nothing done starts in their placed band, else the first unfinished lesson. */
+export function nextLesson<T extends { band: number; completed: boolean }>(lessons: T[], level: Level | null): T | null {
+  const started = lessons.some((l) => l.completed);
+  return (started || !level ? null : lessons.find((l) => l.band === level.band && !l.completed)) ?? lessons.find((l) => !l.completed) ?? null;
+}
+
 async function req<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(path, { headers: { "Content-Type": "application/json" }, ...init });
   if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);

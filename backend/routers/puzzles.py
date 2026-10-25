@@ -13,7 +13,7 @@ from pydantic import BaseModel, Field
 from ..content.lessons import lesson_for_theme
 from ..puzzles.difficulty import difficulty
 from ..puzzles.glicko import Rating, update
-from ..puzzles.store import load_library
+from ..puzzles.store import PuzzleLibrary, load_library
 from ..storage.db import database
 from .account import Player
 
@@ -170,10 +170,16 @@ async def next_puzzle(
     themes: str | None = Query(None, description="comma separated theme keys"),
     min_rating: int | None = None,
     max_rating: int | None = None,
+    opening: str | None = Query(None, description="an opening tag prefix, as the study plan links it: 'Sicilian_Defense'"),
 ) -> dict:
     lib = load_library()
     if not lib.all:
         raise HTTPException(503, "no puzzles installed; run scripts/generate_puzzles.py")
+    if opening:
+        from ..plans.catalog import opening_puzzles  # one home for how a tag matches an opening name
+        lib = PuzzleLibrary(opening_puzzles(opening))
+        if not lib.all:
+            raise HTTPException(404, f"no puzzle carries the opening tag {opening!r}")
     rating = await _player_rating(player)
     theme_list = [t for t in (themes or "").split(",") if t]
     p = lib.pick(rating=rating.rating, themes=theme_list or None, exclude=await _recent_ids(player),

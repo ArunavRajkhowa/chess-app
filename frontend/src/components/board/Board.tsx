@@ -295,7 +295,7 @@ export function Board({
   return (
     <div
       ref={rootRef}
-      className={`board ${noAnim || !animate ? "no-anim" : ""} ${drag ? "is-dragging" : ""} ${className}`}
+      className={`board ${noAnim || !animate ? "no-anim" : ""} ${drag?.moved ? "is-dragging" : ""} ${className}`}
       data-testid="board"
       data-fen={fen}
       data-orientation={orientation}
@@ -325,14 +325,15 @@ export function Board({
         {pieces.map((p) => {
           const { col, row } = toCoords(p.square);
           const isDrag = drag?.id === p.id && drag.moved;
-          const size = rootRef.current?.clientWidth ?? 0;
+          // Only the dragged piece reads the board width: reading it for all 32 pieces tripled the render cost.
+          const half = isDrag ? (rootRef.current?.clientWidth ?? 0) / 16 : 0;
           const style = isDrag
-            ? { transform: `translate(${drag.x - size / 16}px, ${drag.y - size / 16}px)` }
+            ? { transform: `translate(${drag.x - half}px, ${drag.y - half}px)` }
             : { transform: `translate(${col * 100}%, ${row * 100}%)` };
           return (
             <div
               key={p.id}
-              className={`piece ${p.color}${p.type.toUpperCase()} ${isDrag ? "dragging" : ""} ${selected === p.square ? "selected" : ""}`}
+              className={`piece ${p.color}${p.type.toUpperCase()} ${isDrag ? "dragging" : ""} ${selected === p.square ? "selected" : ""} ${lastMove && p.square === lastMove[1] ? "moved" : ""}`}
               style={style}
               data-piece={`${p.color}${p.type}`}
               data-square={p.square}

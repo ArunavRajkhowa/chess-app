@@ -174,7 +174,7 @@ function Watch({ lessonId, sections, step, header, onEnd, endLabel }: { lessonId
   const first = sections[step.indices[0]];
   const orientation = game ? "white" : "orientation" in first && first.orientation ? first.orientation : sideOf(frames[0]?.fen ?? START_FEN);
   if (!frames.length) return <Stage board={null} header={header}><button className="btn btn-primary" onClick={onEnd} data-testid="continue">{endLabel}</button></Stage>;
-  return <LecturePlayer frames={frames} study={res?.study?.plies} studyNote={note} orientation={orientation} header={header} autoplay onEnd={onEnd} endLabel={endLabel} />;
+  return <LecturePlayer frames={frames} lessonId={lessonId} study={res?.study?.plies} studyNote={note} orientation={orientation} header={header} autoplay onEnd={onEnd} endLabel={endLabel} />;
 }
 
 function Drill({ section, onResult, header, onNext, nextLabel }: StepProps & { section: Extract<Section, { type: "drill" }>; onResult: (ok: boolean) => void }) {

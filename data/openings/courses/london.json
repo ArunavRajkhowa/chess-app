@@ -1,0 +1,161 @@
+{
+  "id": "london",
+  "name": "London System",
+  "side": "white",
+  "openings": ["Queen's Pawn Game: London System", "Queen's Pawn Game: Accelerated London System", "London System"],
+  "summary": "1.d4, Bf4, e3, Nf3 and c3: White builds the same solid setup against almost every Black defence. The bishop leaves before e3 shuts it in, the pawns on c3, d4 and e3 hold the centre, and a knight on e5 with f4 and Bd3 leads to a kingside attack. The course also covers how Black fights it with ...c5 and ...Qb6, and the b2 pawn the early bishop leaves behind.",
+  "ideas": {
+    "white": [
+      "Play Bf4 before e3, so the dark-squared bishop is outside the pawn chain.",
+      "Build the pyramid c3, d4, e3: if Black takes on d4, recapture with a pawn and keep the centre.",
+      "Put a knight on e5, support it with f4, and aim the d3 bishop at h7 for a kingside attack.",
+      "Meet ...Bd6 with Bg3: if Black takes, hxg3 opens the h-file for the rook.",
+      "Remember b2: once the bishop leaves c1, answer ...Qb6 at once with Qb3, Nc3 or c4."
+    ],
+    "black": [
+      "Hit d4 from the side with ...c5 and ...Nc6, and the b2 pawn with ...Qb6.",
+      "Gain queenside space with ...c4 when White's queen or bishop must move.",
+      "Offer to trade the f4 bishop with ...Bd6: it is White's best minor piece.",
+      "Keep a knight ready for ...Nxe5 or ...f6 so the e5 knight cannot stay forever."
+    ]
+  },
+  "structures": [
+    {"name": "The pyramid: c3, d4, e3 against d5, e6", "text": "White's pawns form a triangle that is very hard to break. The f4 bishop sits outside it. Black's main break is ...c5; White meets ...cxd4 with exd4 and keeps a pawn on d4. The e5 square is White's outpost."},
+    {"name": "Stonewall grip: Ne5 with f4", "text": "When the knight lands on e5 and the f-pawn comes to f4, ...Nxe5 is met by fxe5, which opens the f-file for White's rook. The plan is Rf3 or Qf3 and g4-g5 against Black's king."},
+    {"name": "The open h-file after ...Bxg3 hxg3", "text": "Black wins the bishop pair, but White's h1 rook gets a half-open file toward h7. Black castling short then faces the d3 bishop, the rook and a queen on the h-file."},
+    {"name": "Against ...g6: the same setup, a different target", "text": "Against the King's Indian setup the f4 bishop takes e5 from Black's ...e5 push. White plays h3 so the bishop can retreat to h2 when ...Nh5 hits it."}
+  ],
+  "pieces": {
+    "white": [
+      "f4 bishop: the London's signature piece. It controls e5 and c7 and retreats to g3 or h2, never back to c1.",
+      "d3 bishop: aims at h7. Against ...g6 it goes to e2 instead.",
+      "f3 knight: jumps to e5; the d2 knight then takes its place on f3.",
+      "d2 knight: guards e4 and keeps the c-pawn free to go to c3.",
+      "Queen: Qb3 or Qc1 against ...Qb6; Qe2 or Qf3 when the attack starts."
+    ],
+    "black": [
+      "c-pawn: ...c5 hits d4; ...c4 gains space and takes d3 from White's bishop.",
+      "Queen: ...Qb6 hits b2, the pawn the f4 bishop no longer guards.",
+      "Dark-squared bishop: ...Bd6 offers to trade White's f4 bishop.",
+      "Light-squared bishop: ...Bb7 or ...Bf5, outside the pawn chain."
+    ]
+  },
+  "lines": [
+    {
+      "id": "main",
+      "name": "Main setup: Ne5 and f4 against ...e6 and ...c5",
+      "moves": "1. d4 d5 2. Nf3 Nf6 3. Bf4 e6 4. e3 c5 5. c3 Nc6 6. Nbd2 Bd6 7. Bg3 O-O 8. Bd3 b6 9. Ne5 Bb7 10. f4",
+      "notes": {
+        "1.d4": "Takes the centre and opens a path for the c1 bishop.",
+        "2.Nf3": "Develops toward the centre and guards d4 and e5.",
+        "3.Bf4": "The London bishop: it leaves before e3 shuts it in, and it controls e5.",
+        "4.e3": "Supports d4 and opens the f1 bishop's diagonal.",
+        "4...c5": "Black's main break: it attacks d4 from the side.",
+        "5.c3": "The pyramid c3, d4, e3. If ...cxd4, White retakes with the e-pawn and keeps a pawn on d4.",
+        "6.Nbd2": "The knight guards e4 and can go to f3 when the other knight jumps to e5. On c3 it would block the c-pawn.",
+        "6...Bd6": "Offers to trade the f4 bishop, White's best minor piece.",
+        "7.Bg3": "Keeps the bishop. If ...Bxg3, hxg3 opens the h-file for the h1 rook.",
+        "8.Bd3": "Aims at h7, the weak point in front of Black's castled king.",
+        "8...b6": "Prepares ...Bb7 on the long diagonal; once the c6 knight moves, the bishop guards d5.",
+        "9.Ne5": "The outpost: only ...f6 can attack e5 with a pawn. The knight hits c6, d7, f7 and g4.",
+        "10.f4": "Supports the knight with a pawn. If ...Nxe5, fxe5 opens the f-file. Next come Rf3 or Qf3 and g4."
+      }
+    },
+    {
+      "id": "qb6-qb3",
+      "name": "...c5 and ...Qb6: Black hits b2",
+      "moves": "1. d4 d5 2. Nf3 Nf6 3. Bf4 c5 4. e3 Nc6 5. c3 Qb6 6. Qb3 c4 7. Qc2 Bf5 8. Qc1 e6 9. Nbd2 h6 10. Be2",
+      "notes": {
+        "3...c5": "Black attacks d4 at once, before White's setup is complete.",
+        "4...Nc6": "A second attacker of d4.",
+        "5.c3": "Supports d4, so ...cxd4 is met by exd4.",
+        "5...Qb6": "The queen hits b2. The bishop that guarded b2 from c1 is now on f4.",
+        "6.Qb3": "Guards b2 and offers a queen trade. After ...Qxb3 axb3 the a-file opens for White's rook.",
+        "6...c4": "Black chases the queen with tempo and gains space on the queenside.",
+        "7.Qc2": "The queen still guards b2.",
+        "7...Bf5": "Develops outside the pawn chain and hits the queen again.",
+        "8.Qc1": "The queen guards b2 from c1 and stays off the bishop's diagonal.",
+        "9.Nbd2": "Prepares b3 or e4 to break up Black's pawn on c4.",
+        "9...h6": "Gives the f5 bishop the h7 square, safe from Nh4.",
+        "10.Be2": "Not Bd3: the c4 pawn controls d3. This is Black's most active answer to the London, and White must play carefully."
+      }
+    },
+    {
+      "id": "h-file",
+      "name": "...Bd6 and ...Bxg3: the open h-file",
+      "moves": "1. d4 d5 2. Nf3 Nf6 3. Bf4 e6 4. e3 Bd6 5. Bg3 Bxg3 6. hxg3 O-O 7. Bd3 c5 8. Ne5 h6 9. c3 Qb6 10. Qe2 Nc6 11. f4",
+      "notes": {
+        "4...Bd6": "Black challenges the f4 bishop at once.",
+        "5.Bg3": "White keeps the bishop on the diagonal. If Black trades, White recaptures toward the centre.",
+        "5...Bxg3": "Black takes the bishop pair.",
+        "6.hxg3": "The h-file opens for the h1 rook, which now aims at h7. The g3 pawn guards f4.",
+        "7.Bd3": "The bishop and the rook both aim at h7.",
+        "8.Ne5": "The knight takes the outpost before White castles.",
+        "8...h6": "Takes g5 from White's pieces, but the pawn on h6 now stands on the half-open h-file, in front of the h1 rook.",
+        "9.c3": "Guards d4 again before Black's pieces arrive.",
+        "9...Qb6": "Hits b2, the pawn the bishop no longer guards.",
+        "10.Qe2": "Guards b2 along the second rank and keeps castling long open.",
+        "11.f4": "Now ...Nxe5 is met by fxe5. White plans g4 and g5 against the h6 pawn."
+      }
+    },
+    {
+      "id": "against-g6",
+      "name": "Against ...g6: h3 and a quiet centre",
+      "moves": "1. d4 Nf6 2. Nf3 g6 3. Bf4 Bg7 4. e3 d6 5. h3 O-O 6. Be2 c5 7. c3 Nc6 8. O-O",
+      "notes": {
+        "2...g6": "Black puts the bishop on g7, as in the King's Indian.",
+        "3.Bf4": "The bishop controls e5, the square Black's ...e5 push needs.",
+        "4...d6": "Prepares ...e5.",
+        "5.h3": "Gives the bishop the h2 square. If ...Nh5 hits it, Bh2 keeps it on the same diagonal.",
+        "6.Be2": "On d3 the bishop would hit the solid g6 pawn, so it goes to e2.",
+        "6...c5": "Black hits d4 from the side.",
+        "7.c3": "The pyramid again: if ...cxd4, exd4 keeps the centre.",
+        "8.O-O": "The king is safe; White plays Nbd2 next and keeps e5 under control."
+      }
+    },
+    {
+      "id": "accelerated",
+      "name": "Accelerated London: 2.Bf4 first",
+      "moves": "1. d4 d5 2. Bf4 Nf6 3. e3 e6 4. Nf3 Bd6 5. Bg3 O-O 6. Bd3 c5 7. Nbd2 Nc6 8. c3 b6 9. Ne5",
+      "notes": {
+        "2.Bf4": "The bishop comes out at once, before Nf3: the setup is the same, only the move order changes.",
+        "3.e3": "With the bishop outside the chain, e3 supports d4 at no cost.",
+        "4.Nf3": "The usual setup is complete in a different order.",
+        "4...Bd6": "Offers to trade the f4 bishop.",
+        "5.Bg3": "Keeps the bishop; ...Bxg3 hxg3 would open the h-file for White.",
+        "6.Bd3": "Aims at h7 after Black has castled.",
+        "6...c5": "Black's usual break against d4.",
+        "7.Nbd2": "Guards e4 and keeps c3 free for the pawn.",
+        "8.c3": "The pyramid c3, d4, e3 is complete.",
+        "9.Ne5": "The knight takes the outpost; f4 can follow, as in the main setup."
+      }
+    }
+  ],
+  "traps": [
+    {
+      "id": "qd2-b2",
+      "name": "5.Qd2?: the queen that does not guard b2",
+      "moves": "1. d4 d5 2. Nf3 Nf6 3. Bf4 c5 4. e3 Qb6 5. Qd2 Qxb2 6. c3 Qxa1",
+      "notes": {
+        "3.Bf4": "The bishop leaves c1, so nothing guards b2.",
+        "4...Qb6": "Hits b2 at once.",
+        "5.Qd2": "The mistake: the queen seems to guard b2, but the c2 pawn stands between them."
+      },
+      "mistake": "5.Qd2",
+      "punishment": "5...Qxb2 hits the a1 rook and the b1 knight together. White cannot guard both, and after 6.c3 Qxa1 Black has won a rook and a pawn, and the queen gets out. Answer ...Qb6 with 5.Nc3 or 5.c4, which give b2 only for quick development, or with Qb3 once c3 is played."
+    },
+    {
+      "id": "qxb2-nxd5",
+      "name": "4...Qxb2?: the poisoned b-pawn",
+      "moves": "1. d4 d5 2. Bf4 c5 3. e3 Qb6 4. Nc3 Qxb2 5. Nxd5",
+      "notes": {
+        "2.Bf4": "The Accelerated London: the bishop comes out before Nf3.",
+        "3...Qb6": "Black hits b2 at once.",
+        "4.Nc3": "White offers the b-pawn: the knight now eyes d5 and b5.",
+        "4...Qxb2": "The mistake: the queen goes far from home and nothing guards c7."
+      },
+      "mistake": "4...Qxb2",
+      "punishment": "5.Nxd5 threatens Nc7+, forking the king and the a8 rook, and Rb1 chases the queen. For example 5...Nf6 6.Rb1 Qxa2 7.Nc7+ Kd8 8.Nxa8, and White wins a rook. Develop with 4...Nf6 instead."
+    }
+  ]
+}

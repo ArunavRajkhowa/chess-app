@@ -137,3 +137,18 @@ def test_lessons_name_the_puzzle_themes_they_teach(client, caplog):
     assert L.lesson_for_theme("fork").id == "b1m1l2"
     practice = client.get("/api/learn/lessons/b2m1l2").json()["practice"]
     assert [p["key"] for p in practice] == ["fork"] and practice[0]["count"] > 0
+
+
+def test_win_material_waits_for_the_capture_of_a_new_queen():
+    # the pawn queens on b1 where the learner's queen takes it: judged after Qxb1, not on b1=Q
+    from backend.routers.learn import drill_outcome, material_balance
+    board = chess.Board("7K/8/8/8/8/k7/1p6/3Q4 w - - 0 1")
+    start = material_balance(board, chess.WHITE)
+    results = []
+    for uci in ["h8g8", "b2b1q", "d1b1", "a3a4"]:
+        mv = chess.Move.from_uci(uci)
+        by_learner = board.turn == chess.WHITE
+        board.push(mv)
+        results.append(drill_outcome(board, chess.WHITE, "win_material", mv if by_learner else None, start))
+    assert results[:3] == [None, None, None]
+    assert results[3] == {"result": "success", "reason": "won material (+1)"}

@@ -242,6 +242,8 @@ def drill_outcome(board: chess.Board, learner: chess.Color, goal: str, learner_m
         gained = material_balance(board, learner) - start_balance
         if gained >= 1:
             return {"result": "success", "reason": f"won material (+{gained})"}
-        if gained <= -3:
+        last = board.peek()
+        recapture = last.promotion and any(m.to_square == last.to_square for m in board.legal_moves)
+        if gained <= -3 and not recapture:  # a new queen the learner can take is judged after that reply
             return {"result": "fail", "reason": f"lost material ({gained})"}
     return None

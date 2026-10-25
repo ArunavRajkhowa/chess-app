@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
-import { useSettings, type BoardTheme } from "../store/settings";
+import { useSettings, type BoardTheme, type Theme } from "../store/settings";
 import { AccountPanel } from "../components/account/AccountPanel";
 import { Board } from "../components/board/Board";
-import { play as playSound } from "../lib/sound";
+import { play as playSound, SOUNDS, type SoundName } from "../lib/sound";
 import { listVoices, speak, speechAvailable } from "../lib/speech";
 
 const THEMES: { key: BoardTheme; label: string }[] = [
   { key: "ink", label: "Ink" }, { key: "boxwood", label: "Boxwood" }, { key: "walnut", label: "Walnut" }, { key: "slate", label: "Slate" },
 ];
+const LOOKS: { key: Theme; label: string }[] = [{ key: "dark", label: "Night" }, { key: "light", label: "Day" }, { key: "system", label: "System" }];
 
 /** Lessons read aloud: on or off, how fast, and which of the browser's voices. */
 function NarrationCard() {
@@ -45,6 +46,14 @@ export function SettingsPage() {
         <div className="stack">
           <AccountPanel />
           <div className="card">
+            <div className="card-title"><h3>Appearance</h3><span className="faint">night, day, or what the device says</span></div>
+            <div className="row" style={{ flexWrap: "wrap" }}>
+              {LOOKS.map((t) => (
+                <button key={t.key} className={`btn btn-sm ${s.theme === t.key ? "btn-primary" : ""}`} onClick={() => s.set({ theme: t.key })} data-testid={`look-${t.key}`}>{t.label}</button>
+              ))}
+            </div>
+          </div>
+          <div className="card">
             <div className="card-title"><h3>Board theme</h3></div>
             <div className="row" style={{ flexWrap: "wrap" }}>
               {THEMES.map((t) => (
@@ -64,7 +73,10 @@ export function SettingsPage() {
           <div className="card stack">
             <div className="card-title"><h3>Sound</h3></div>
             <label className="row"><input type="checkbox" checked={s.sound} onChange={(e) => s.set({ sound: e.target.checked })} /> Sounds on</label>
-            <label className="row">Volume <input type="range" min={0} max={1} step={0.05} value={s.volume} onChange={(e) => s.set({ volume: Number(e.target.value) })} /> <button className="btn btn-sm" onClick={() => playSound("capture")}>Test</button></label>
+            <label className="row">Volume <input type="range" min={0} max={1} step={0.05} value={s.volume} onChange={(e) => s.set({ volume: Number(e.target.value) })} /></label>
+            {(Object.entries(SOUNDS) as [SoundName, string][]).map(([name, when]) => (
+              <div key={name} className="row"><span className="grow">{when}</span><button type="button" className="btn btn-sm" onClick={() => playSound(name)} aria-label={`Play: ${when}`}>Play</button></div>
+            ))}
           </div>
           <NarrationCard />
         </div>

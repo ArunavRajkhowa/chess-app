@@ -57,6 +57,9 @@ class EnginePool:
         self.command = find_engine_command()
         self.kind = engine_kind(self.command)
         for name in ("play", "analysis"):
+            if settings.ENGINE_PROCESSES == 1 and self.slots:
+                self.slots[name] = self.slots["play"]  # one engine, one lock: a review waits for a bot move
+                continue
             transport, engine = await chess.engine.popen_uci(self.command)
             slot = EngineSlot(name=name, engine=engine, transport=transport)
             base = {"Hash": settings.ENGINE_HASH_MB}
@@ -68,7 +71,7 @@ class EnginePool:
         LOGGER.info("engine started: %s via %s (%s)", self.id_name, self.kind, " ".join(self.command))
 
     async def stop(self) -> None:
-        for slot in self.slots.values():
+        for slot in {id(s): s for s in self.slots.values()}.values():  # a shared engine quits once
             try:
                 await slot.engine.quit()
             except (chess.engine.EngineError, OSError, asyncio.TimeoutError):

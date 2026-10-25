@@ -1,5 +1,6 @@
 import type { ReviewedMove } from "../../lib/api";
 import { CLASS_LABEL } from "../../lib/review/classify";
+import { BotAvatar } from "../art";
 import { CLASS_GLYPH } from "../play/MoveList";
 
 interface Props {
@@ -19,8 +20,9 @@ interface Props {
 export function CoachPanel({ move, summary, explanation, explaining, onExplain, onRetry, onShowBest, onNext, canRetry, hasNext }: Props) {
   return (
     <div className="coachpanel" data-testid="coachpanel">
-      <div className="coachpanel-avatar" aria-hidden="true">🎓</div>
-      <div className="coachpanel-bubble">
+      <div className="coachpanel-avatar"><BotAvatar id="coach" kind="coach" size={36} /></div>
+      {/* keyed by the move so a new key moment is a new bubble: it rises in like a note being written */}
+      <div className="coachpanel-bubble reveal" key={move?.ply ?? 0}>
         {move ? (
           <>
             <div className={`coachpanel-pill`}>

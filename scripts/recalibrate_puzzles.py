@@ -1,5 +1,5 @@
-"""Rewrites every puzzle's rating from its shape (backend/puzzles/difficulty.py) and resets its rating
-deviation, keeping everything else. Usage: python -m scripts.recalibrate_puzzles [--dry]"""
+"""Rewrites every puzzle's rating (backend/puzzles/difficulty.py: the measured rating when it has one, else
+its shape) and resets its rating deviation, keeping everything else. Usage: python -m scripts.recalibrate_puzzles [--dry]"""
 from __future__ import annotations
 
 import collections
@@ -19,7 +19,7 @@ def main(dry: bool) -> None:
         rows = [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
         for r in rows:
             before[r["rating"] // 200 * 200] += 1
-            r["rating"] = difficulty(r["fen"], r["moves"], r["themes"])
+            r["rating"] = difficulty(r["fen"], r["moves"], r["themes"], measured=r.get("rating_measured"))
             r["rd"] = RD
             after[r["rating"] // 200 * 200] += 1
         if not dry:

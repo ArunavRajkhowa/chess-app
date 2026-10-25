@@ -1,5 +1,6 @@
 import { Chess } from "chess.js";
-import { useMemo, useState } from "react";
+import { memo, useMemo, useState } from "react";
+import { AwardMark, BandEmblem, BotAvatar, EmptyArt, Hero } from "../components/art";
 import { Board } from "../components/board/Board";
 import { checkSquare, destsFor, safeMove, soundForMove } from "../lib/chess/game";
 import { play as playSound } from "../lib/sound";
@@ -30,6 +31,22 @@ export function BoardDemo() {
         <span className="mono faint" data-testid="demo-fen">{fen}</span>
       </div>
       <pre className="mono faint" data-testid="demo-pgn" style={{ whiteSpace: "pre-wrap" }}>{chess.pgn()}</pre>
+      <ArtGallery />
     </div>
   );
 }
+
+/** Every illustration, to check the style by eye in both themes; memo keeps it out of each move's render. */
+const ArtGallery = memo(function ArtGallery() {
+  return (
+    <div className="row" style={{ flexWrap: "wrap", gap: 12 }} data-testid="art-gallery">
+      {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((b) => <BandEmblem key={b} band={b} size={44} />)}
+      {(["pip", "max", "luna", "sam", "nova", "rafa", "mei", "leo", "ivy", "omar", "zara", "viktor", "elena", "arjun", "kai", "stockfish", "coach", "trickster", "wall", "grinder"] as const).map((id, i) => (
+        <BotAvatar key={id} id={id} tier={(["beginner", "intermediate", "advanced", "master", "special"] as const)[Math.floor(i / 4)]} kind={({ trickster: "trap", wall: "defence", grinder: "endgame", stockfish: "engine" } as Record<string, string>)[id]} size={44} />
+      ))}
+      <EmptyArt kind="games" /><EmptyArt kind="puzzles" /><EmptyArt kind="plan" />
+      <AwardMark earned size={44} /><AwardMark earned={false} size={44} />
+      <Hero />
+    </div>
+  );
+});

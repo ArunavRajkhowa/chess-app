@@ -1,8 +1,9 @@
 import { Chess } from "chess.js";
-import { ArrowLeftRight, ChevronFirst, ChevronLast, ChevronLeft, ChevronRight, Flag, Lightbulb, RotateCcw, Sparkles } from "lucide-react";
+import { ArrowLeftRight, ChevronFirst, ChevronLast, ChevronLeft, ChevronRight, Flag, Lightbulb, RotateCcw, Sparkles, UserRound } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { api, type Classification, type GameState, type HintResponse } from "../../lib/api";
+import { api, type BotPublic, type Classification, type GameState, type HintResponse } from "../../lib/api";
+import { BotAvatar } from "../art";
 import { checkSquare, destsFor, safeMove, soundForMove } from "../../lib/chess/game";
 import { capturedFromFen } from "../../lib/chess/material";
 import type { PromotionPiece, Square } from "../../lib/chess/types";
@@ -22,6 +23,9 @@ import "./GameView.css";
 
 interface Props {
   initial: GameState;
+  /** Guide me: after each move the server sends a grounded note in the bot's domain (book idea, imbalance and plan, endgame verdict). */
+  guide?: boolean;
+  onGuide?: (on: boolean) => void;
   onNewGame: () => void;
   onRematch: () => void;
 }
@@ -36,6 +40,12 @@ interface Feedback {
 const LIVE_EVAL_MS = 700;
 const BOT_THINK_MS: [number, number] = [350, 1100];
 const LOW_TIME_MS = 10_000;
+// Made once, so React skips them on every render; drawing them again cost each move about 6 ms at 4x CPU.
+const ICON = {
+  first: <ChevronFirst size={16} />, prev: <ChevronLeft size={16} />, next: <ChevronRight size={16} />, last: <ChevronLast size={16} />,
+  hint: <Lightbulb size={14} />, takeback: <RotateCcw size={14} />, resign: <Flag size={14} />, review: <Sparkles size={16} />,
+  rematch: <ArrowLeftRight size={14} />, you: <UserRound size={22} strokeWidth={1.75} />,
+};
 
 function parseTimeControl(tc: string | null): { baseMs: number; incMs: number } | null {
   if (!tc) return null;
@@ -62,7 +72,7 @@ function fenAtPly(game: GameState, ply: number): string {
   return game.moves[ply - 1]?.fen ?? game.fen;
 }
 
-export function GameView({ initial, onNewGame, onRematch }: Props) {
+export function GameView({ initial, onNewGame, onRematch, guide = false, onGuide }: Props) {
   const navigate = useNavigate();
   const settings = useSettings();
   const evaluate = useEngine((s) => s.evaluate);
@@ -79,6 +89,7 @@ export function GameView({ initial, onNewGame, onRematch }: Props) {
   const [botSays, setBotSays] = useState<string | null>(initial.bot && "greeting" in initial.bot ? (initial.bot as { greeting: string }).greeting : null);
   const [showEval, setShowEval] = useState(true);
   const [showThreats, setShowThreats] = useState(initial.coach_mode);
+  const [guideNote, setGuideNote] = useState<string | null>(null);
   const [showFeedback, setShowFeedback] = useState(initial.coach_mode);
   const [error, setError] = useState<string | null>(null);
   const [helpUsed, setHelpUsed] = useState(0);
@@ -103,7 +114,8 @@ export function GameView({ initial, onNewGame, onRematch }: Props) {
     if (!showEval && !showFeedback) return;
     let cancelled = false;
     setEvalFen(fen);
-    evaluate(fen, { movetimeMs: LIVE_EVAL_MS, multipv: 1, onUpdate: (lines) => { if (!cancelled) setEvalLines(lines); } })
+    // The final lines only: each depth update re-rendered the whole game view during the move animation.
+    evaluate(fen, { movetimeMs: LIVE_EVAL_MS, multipv: 1 })
       .then((r) => { if (!cancelled && r) setEvalLines(r.lines); })
       .catch(() => undefined);
     return () => { cancelled = true; };
@@ -193,7 +205,8 @@ export function GameView({ initial, onNewGame, onRematch }: Props) {
     setBotThinking(true);
     addIncrement(myColor);
     try {
-      const res = await api.move(game.id, mv.lan);
+      const res = await api.move(game.id, mv.lan, false, guide);
+      setGuideNote(res.guide);
       applyServerState(res.game, optimistic.moves.length, res.player_move.uci, res.player_move.san);
       if (res.bot_says) setBotSays(res.bot_says);
       if (res.bot_move) {
@@ -281,11 +294,13 @@ export function GameView({ initial, onNewGame, onRematch }: Props) {
   const resultTitle = game.status !== "finished" ? "" : game.result === "1/2-1/2" ? "Draw" : playerWon ? "You won!" : `${botName} won`;
 
   const clockFor = (side: "w" | "b") => (tc ? <Clock ms={clocks[side]} active={clockSide === side} low={clocks[side] <= LOW_TIME_MS} /> : null);
+  const botFace = <BotAvatar id={game.bot.id} tier={(game.bot as { tier?: BotPublic["tier"] }).tier} size={30} />;
+  const youFace = ICON.you;
   const whiteCard = (
-    <PlayerCard name={game.player_color === "white" ? settings.playerName : botName} subtitle={game.player_color === "white" ? "" : `${(game.bot as { elo?: number }).elo ?? ""}`} avatar={game.player_color === "white" ? "🙂" : game.bot.avatar} color="white" captured={captured.byWhite} materialEdge={captured.balance} active={chess.turn() === "w" && game.status === "active"} thinking={botThinking && game.player_color === "black"} says={game.player_color === "black" ? botSays : null} clock={clockFor("w")} />
+    <PlayerCard name={game.player_color === "white" ? settings.playerName : botName} subtitle={game.player_color === "white" ? "" : `${(game.bot as { elo?: number }).elo ?? ""}`} avatar={game.player_color === "white" ? youFace : botFace} color="white" captured={captured.byWhite} materialEdge={captured.balance} active={chess.turn() === "w" && game.status === "active"} thinking={botThinking && game.player_color === "black"} says={game.player_color === "black" ? botSays : null} clock={clockFor("w")} />
   );
   const blackCard = (
-    <PlayerCard name={game.player_color === "black" ? settings.playerName : botName} subtitle={game.player_color === "black" ? "" : `${(game.bot as { elo?: number }).elo ?? ""}`} avatar={game.player_color === "black" ? "🙂" : game.bot.avatar} color="black" captured={captured.byBlack} materialEdge={-captured.balance} active={chess.turn() === "b" && game.status === "active"} thinking={botThinking && game.player_color === "white"} says={game.player_color === "white" ? botSays : null} clock={clockFor("b")} />
+    <PlayerCard name={game.player_color === "black" ? settings.playerName : botName} subtitle={game.player_color === "black" ? "" : `${(game.bot as { elo?: number }).elo ?? ""}`} avatar={game.player_color === "black" ? youFace : botFace} color="black" captured={captured.byBlack} materialEdge={-captured.balance} active={chess.turn() === "b" && game.status === "active"} thinking={botThinking && game.player_color === "white"} says={game.player_color === "white" ? botSays : null} clock={clockFor("b")} />
   );
 
   return (
@@ -315,7 +330,7 @@ export function GameView({ initial, onNewGame, onRematch }: Props) {
       <aside className="gameview-side card">
         <div className="gameview-status">
           {game.status === "finished" ? (
-            <div className={`gameview-result ${playerWon ? "won" : game.result === "1/2-1/2" ? "draw" : "lost"}`} data-testid="result">
+            <div className={`gameview-result pop ${playerWon ? "won" : game.result === "1/2-1/2" ? "draw" : "lost"}`} data-testid="result">
               <h2>{resultTitle}</h2>
               <div className="muted">{game.result} · {game.termination}</div>
             </div>
@@ -342,33 +357,40 @@ export function GameView({ initial, onNewGame, onRematch }: Props) {
             {hint.threats.length > 0 && <span className="faint">Threats against you: {hint.threats.join(", ")}</span>}
           </div>
         )}
+        {guideNote && guide && (
+          <div className="feedback cls-book" data-testid="guide">
+            <strong>Guide</strong>
+            <span>{guideNote}</span>
+          </div>
+        )}
         {error && <div className="chip chip-danger">{error}</div>}
 
         <MoveList moves={moveItems} currentPly={viewPly} onSelect={setViewPly} opening={null} startFen={game.start_fen} />
 
         <div className="gameview-nav">
-          <button className="btn btn-ghost btn-sm" onClick={() => setViewPly(0)} title="First move"><ChevronFirst size={16} /></button>
-          <button className="btn btn-ghost btn-sm" onClick={() => setViewPly((p) => Math.max(0, p - 1))} title="Previous"><ChevronLeft size={16} /></button>
-          <button className="btn btn-ghost btn-sm" onClick={() => setViewPly((p) => Math.min(game.moves.length, p + 1))} title="Next"><ChevronRight size={16} /></button>
-          <button className="btn btn-ghost btn-sm" onClick={() => setViewPly(game.moves.length)} title="Last move"><ChevronLast size={16} /></button>
+          <button className="btn btn-ghost btn-sm" onClick={() => setViewPly(0)} title="First move">{ICON.first}</button>
+          <button className="btn btn-ghost btn-sm" onClick={() => setViewPly((p) => Math.max(0, p - 1))} title="Previous">{ICON.prev}</button>
+          <button className="btn btn-ghost btn-sm" onClick={() => setViewPly((p) => Math.min(game.moves.length, p + 1))} title="Next">{ICON.next}</button>
+          <button className="btn btn-ghost btn-sm" onClick={() => setViewPly(game.moves.length)} title="Last move">{ICON.last}</button>
           {!live && <span className="chip chip-warn">viewing move {viewPly}</span>}
         </div>
 
         {game.status === "active" ? (
           <div className="gameview-actions">
-            <button className="btn btn-sm" onClick={doHint} disabled={!live || botThinking || chess.turn() !== myColor} data-testid="hint-btn"><Lightbulb size={14} /> Hint</button>
-            <button className="btn btn-sm" onClick={doTakeback} disabled={botThinking || !game.moves.some((m) => m.by === "player")} data-testid="takeback-btn"><RotateCcw size={14} /> Takeback</button>
-            <button className="btn btn-sm btn-danger" onClick={doResign} data-testid="resign-btn"><Flag size={14} /> Resign</button>
+            <button className="btn btn-sm" onClick={doHint} disabled={!live || botThinking || chess.turn() !== myColor} data-testid="hint-btn">{ICON.hint} Hint</button>
+            <button className="btn btn-sm" onClick={doTakeback} disabled={botThinking || !game.moves.some((m) => m.by === "player")} data-testid="takeback-btn">{ICON.takeback} Takeback</button>
+            <button className="btn btn-sm btn-danger" onClick={doResign} data-testid="resign-btn">{ICON.resign} Resign</button>
           </div>
         ) : (
           <div className="gameview-actions">
-            <button className="btn btn-primary" onClick={() => navigate(`/review/${game.id}`)} data-testid="review-btn"><Sparkles size={16} /> Game review</button>
-            <button className="btn" onClick={onRematch}><ArrowLeftRight size={14} /> Rematch</button>
+            <button className="btn btn-primary" onClick={() => navigate(`/review/${game.id}`)} data-testid="review-btn">{ICON.review} Game review</button>
+            <button className="btn" onClick={onRematch}>{ICON.rematch} Rematch</button>
             <button className="btn" onClick={onNewGame}>New bot</button>
           </div>
         )}
 
         <div className="gameview-toggles">
+          <label><input type="checkbox" checked={guide} onChange={(e) => onGuide?.(e.target.checked)} data-testid="guide-toggle" /> Guide me</label>
           <label><input type="checkbox" checked={showEval} onChange={(e) => setShowEval(e.target.checked)} /> Eval bar</label>
           <label><input type="checkbox" checked={showFeedback} onChange={(e) => setShowFeedback(e.target.checked)} /> Move feedback</label>
           <label><input type="checkbox" checked={showThreats} onChange={(e) => setShowThreats(e.target.checked)} /> Threat arrows</label>

@@ -1,6 +1,6 @@
 .playercard { position: relative; display: flex; align-items: center; gap: var(--s-3); padding: 6px 4px; min-height: 48px; }
 .playercard.active .playercard-avatar { box-shadow: 0 0 0 2px var(--brand); }
-.playercard-avatar { width: 40px; height: 40px; border-radius: var(--r-sm); background: var(--bg-elev-2); display: grid; place-items: center; font-size: 22px; }
+.playercard-avatar { width: 40px; height: 40px; border-radius: var(--r-sm); background: var(--bg-elev-2); display: grid; place-items: center; color: var(--ink-2); transition: box-shadow var(--anim-fast); }
 .playercard-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .playercard-captured { display: flex; align-items: center; height: 16px; }
 .piece-mini { display: inline-block; width: 16px; height: 16px; background-size: contain; background-repeat: no-repeat; margin-right: -5px; }

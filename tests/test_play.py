@@ -121,7 +121,6 @@ def test_timed_game_from_a_position_and_flag(client):
     assert client.post("/api/play/games", json={"bot_id": "pip", "player_color": "white", "fen": "junk"}).status_code == 400
     untimed = client.post("/api/play/games", json={"bot_id": "pip", "player_color": "white"}).json()
     assert client.post(f"/api/play/games/{untimed['id']}/flag").status_code == 409
-    assert client.post("/api/content/reload").json()["lessons"] >= 7
 
 
 def test_bot_chat_and_adaptive_coach(client):

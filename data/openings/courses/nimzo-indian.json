@@ -1,0 +1,183 @@
+{
+  "id": "nimzo-indian",
+  "name": "Nimzo-Indian Defence",
+  "side": "black",
+  "openings": ["Nimzo-Indian Defense"],
+  "summary": "1.d4 Nf6 2.c4 e6 3.Nc3 Bb4: Black pins the knight that guards e4, so White cannot build the big centre with e4. Black is often ready to give the bishop pair for doubled c-pawns and a fight for the light squares, above all e4.",
+  "ideas": {
+    "black": [
+      "Fight for e4: the f6 knight, the b4 bishop's pin, a pawn on d5 or a bishop on b7 all keep White from playing e4 for free.",
+      "Give the bishop pair on c3 when it doubles White's c-pawns or costs White time; then keep the position closed so knights are as good as bishops.",
+      "Hit d4 with ...c5 and ...Nc6, and against doubled pawns attack the front one with ...b6, ...Ba6 and ...Na5.",
+      "Put pawns on dark squares (c5, d6, e5) once the dark-squared bishop is gone, so White's c1 bishop finds no targets."
+    ],
+    "white": [
+      "Get the bishop pair and open the position for it, with f3 and e4 or with the f4 break.",
+      "Avoid doubled pawns with 4.Qc2, or accept them with 4.a3 and use the extra central pawn.",
+      "Play e4 the moment Black's control of e4 slips."
+    ]
+  },
+  "structures": [
+    {"name": "Doubled c-pawns: c3 and c4 against c5", "text": "After ...Bxc3+ bxc3 White has the bishop pair and an extra central pawn, but the pawn on c4 can never be guarded by another pawn. Black fixes it with ...c5, then attacks it with ...b6, ...Ba6, ...Na5 and ...Rc8."},
+    {"name": "Hübner: c5, d6, e5 against c4, d5, e4", "text": "A closed centre with Black's pawns on dark squares. White's bishops have little to bite on, so White breaks with f4; Black meets it with ...Ng6 and the f-file, and the knights stay strong."},
+    {"name": "Queen's Gambit centre: d5 against d4", "text": "In the Rubinstein main line Black has played ...d5 and ...c5 like a Queen's Gambit, but the dark-squared bishop is already traded for a knight. Black aims for ...e5 to open the centre for the pieces."}
+  ],
+  "pieces": {
+    "black": [
+      "b4 bishop: pins the c3 knight, then is often traded on c3 for doubled pawns or time.",
+      "f6 knight: guards e4 and jumps there when e4 is safe.",
+      "b7 or a6 bishop: b7 aims at e4 and the long diagonal; a6 attacks a pawn on c4.",
+      "c6 knight: presses d4 and goes to a5 against c4."
+    ],
+    "white": [
+      "c1 bishop: the half of the bishop pair Black wants to blunt with pawns on dark squares.",
+      "Queen on c2: recaptures on c3 without doubled pawns and watches e4.",
+      "f-pawn: f3 to support e4, or f4 to open lines for the bishops.",
+      "d3 bishop: aims at h7 and supports e4."
+    ]
+  },
+  "lines": [
+    {
+      "id": "rubinstein-hubner",
+      "name": "Rubinstein, Hübner Variation: pawns on dark squares",
+      "moves": "1. d4 Nf6 2. c4 e6 3. Nc3 Bb4 4. e3 c5 5. Bd3 Nc6 6. Nf3 Bxc3+ 7. bxc3 d6 8. e4 e5 9. d5 Ne7 10. Nh4 h6 11. f4 Ng6 12. Nxg6 fxg6",
+      "notes": {
+        "3...Bb4": "The Nimzo-Indian move. The bishop pins the c3 knight to the king; a pinned knight cannot recapture on e4, so e4 is not really guarded.",
+        "4.e3": "The Rubinstein: White opens the f1 bishop's diagonal and develops quietly; e4 can wait.",
+        "4...c5": "Hits d4 from the side before White's centre grows.",
+        "5...Nc6": "A second attacker on d4.",
+        "6...Bxc3+": "Black gives the bishop pair to double White's c-pawns. The pawn on c4 can no longer be guarded by a pawn.",
+        "7...d6": "The Hübner plan: c5, d6 and e5 on dark squares, where White's c1 bishop finds nothing to attack.",
+        "8...e5": "Hits d4 again. If the centre closes, knights are as good as bishops.",
+        "9.d5": "White closes the centre and attacks the c6 knight.",
+        "9...Ne7": "The knight heads for g6, where it watches f4.",
+        "10.Nh4": "Takes g6 from the knight and prepares f4 to open lines for the bishops.",
+        "10...h6": "Takes g5 from White's bishop and gives Black the option of ...g5 against the h4 knight.",
+        "11.f4": "The break: White wants the f-file and open diagonals.",
+        "11...Ng6": "The knight hits f4 and the h4 knight, and offers a trade of knights.",
+        "12...fxg6": "Taking with the f-pawn half-opens the f-file toward f4, ready for a rook after castling."
+      }
+    },
+    {
+      "id": "rubinstein-main",
+      "name": "Rubinstein main line: ...d5, ...c5 and ...e5",
+      "moves": "1. d4 Nf6 2. c4 e6 3. Nc3 Bb4 4. e3 O-O 5. Bd3 d5 6. Nf3 c5 7. O-O Nc6 8. a3 Bxc3 9. bxc3 dxc4 10. Bxc4 Qc7 11. Bd3 e5 12. Qc2 Re8",
+      "notes": {
+        "4...O-O": "Black castles first and keeps both ...d5 and ...c5 in hand.",
+        "5...d5": "A pawn on d5 controls e4: White's e4 push is off for now.",
+        "6...c5": "The second strike at d4, like a Queen's Gambit, but Black's bishop is already active on b4.",
+        "7...Nc6": "More pressure on d4.",
+        "8.a3": "Asks the bishop to decide.",
+        "8...Bxc3": "Black gives the bishop pair; White's c-pawns are doubled.",
+        "9...dxc4": "Black takes first, so the d3 bishop moves twice to recapture.",
+        "10...Qc7": "Prepares ...e5: the queen guards e5 and stands on the c-file behind the c5 pawn.",
+        "11.Bd3": "The bishop covers e4 and aims at h7 again.",
+        "11...e5": "The central break: Black hits d4 a third time and opens lines for the pieces.",
+        "12...Re8": "The rook supports e5 and the ...e4 push."
+      }
+    },
+    {
+      "id": "classical-keres",
+      "name": "Classical 4.Qc2: ...b6 and ...Bb7 against e4",
+      "moves": "1. d4 Nf6 2. c4 e6 3. Nc3 Bb4 4. Qc2 O-O 5. a3 Bxc3+ 6. Qxc3 b6 7. Bg5 Bb7 8. f3 h6 9. Bh4 d5 10. e3 Nbd7",
+      "notes": {
+        "4.Qc2": "The Classical: the queen guards c3, so after ...Bxc3 White recaptures with no doubled pawns. It also watches e4.",
+        "4...O-O": "Black castles and waits for a3 before deciding about the bishop.",
+        "5.a3": "Forces the trade: White gets the bishop pair with healthy pawns.",
+        "5...Bxc3+": "White has spent moves on Qc2 and a3; Black is ahead in development in return for the bishop pair.",
+        "6...b6": "Prepares ...Bb7, a second piece aimed at e4.",
+        "7.Bg5": "Pins the f6 knight, one of e4's guards.",
+        "7...Bb7": "The bishop and the f6 knight now both watch e4.",
+        "8.f3": "White takes e4 away from Black's pieces and prepares e4 itself.",
+        "8...h6": "Asks the bishop to give up the pin or retreat.",
+        "9...d5": "Now a pawn stops e4 too. f3 has weakened e3 and the white king.",
+        "10...Nbd7": "Develops and guards the pinned f6 knight."
+      }
+    },
+    {
+      "id": "classical-noa",
+      "name": "Classical, Noa Variation: the knight jumps to e4",
+      "moves": "1. d4 Nf6 2. c4 e6 3. Nc3 Bb4 4. Qc2 d5 5. a3 Bxc3+ 6. Qxc3 Ne4 7. Qc2 c5 8. dxc5 Nc6 9. cxd5 exd5 10. Nf3 Bf5",
+      "notes": {
+        "4...d5": "A pawn on d5 controls e4, so the knight can go there.",
+        "6...Ne4": "The knight takes e4 with tempo on the queen.",
+        "7.Qc2": "The queen keeps an eye on e4.",
+        "7...c5": "Hits d4 at once while Black is ahead in development.",
+        "8...Nc6": "Develops first; the c5 pawn can wait.",
+        "9.cxd5": "Takes a second pawn and attacks the c6 knight.",
+        "9...exd5": "Takes back with the pawn: the attacker of c6 is gone, the d5 pawn guards the e4 knight, and the c8 bishop is free.",
+        "10...Bf5": "The bishop lines up behind the e4 knight against the queen on c2: when the knight moves, the queen is attacked."
+      }
+    },
+    {
+      "id": "samisch",
+      "name": "Sämisch 4.a3: attack the doubled c-pawns",
+      "moves": "1. d4 Nf6 2. c4 e6 3. Nc3 Bb4 4. a3 Bxc3+ 5. bxc3 c5 6. e3 Nc6 7. Bd3 O-O 8. Ne2 b6 9. e4 Ne8 10. O-O Ba6 11. f4 f5",
+      "notes": {
+        "4.a3": "The Sämisch: White spends a move to get the bishop pair at once.",
+        "4...Bxc3+": "Black takes; White's c-pawns are doubled.",
+        "5...c5": "Fixes the doubled pawns and hits d4. The pawn on c4 has no pawn to guard it.",
+        "6...Nc6": "More pressure on d4.",
+        "8...b6": "Prepares ...Ba6 against c4.",
+        "9.e4": "White builds the centre and threatens e5 against the f6 knight.",
+        "9...Ne8": "The knight steps back before e5 or Bg5 can hit it, and frees the f-pawn.",
+        "10...Ba6": "Hits c4: White must keep pieces on its defence.",
+        "11.f4": "White plans f5 and a kingside attack.",
+        "11...f5": "Stops f5 at once and fights for e4. Blockade before the attack arrives."
+      }
+    },
+    {
+      "id": "kmoch-f3",
+      "name": "4.f3: stop e4 with ...d5",
+      "moves": "1. d4 Nf6 2. c4 e6 3. Nc3 Bb4 4. f3 d5 5. a3 Bxc3+ 6. bxc3 c5 7. cxd5 Nxd5 8. dxc5 Qa5 9. e4 Ne7 10. Be3 O-O",
+      "notes": {
+        "4.f3": "White prepares e4 straight away; if Black allows it, White has a big centre.",
+        "4...d5": "Stops e4 with a pawn before it happens.",
+        "5...Bxc3+": "Black trades and doubles the c-pawns instead of spending a move retreating.",
+        "6...c5": "Hits d4 so White cannot keep the centre for free.",
+        "7...Nxd5": "The knight attacks the c3 pawn, which no pawn can guard.",
+        "8.dxc5": "White takes a pawn, but the c-pawns are now isolated.",
+        "8...Qa5": "Attacks c3 a second time and eyes c5.",
+        "9.e4": "Chases the knight from the centre with tempo.",
+        "9...Ne7": "The knight can go to c6, close to the weak pawns.",
+        "10.Be3": "Guards the c5 pawn.",
+        "10...O-O": "Black castles first; the isolated c5 pawn stays a target."
+      }
+    }
+  ],
+  "traps": [
+    {
+      "id": "ne4-queen-trade",
+      "name": "8...Ne4?: the queen trade trick that fails",
+      "moves": "1. d4 Nf6 2. c4 e6 3. Nc3 Bb4 4. Qc2 O-O 5. a3 Bxc3+ 6. Qxc3 b6 7. Bg5 Bb7 8. f3 Ne4 9. Bxd8 Nxc3 10. Bxc7",
+      "notes": {
+        "8.f3": "Takes e4 away from Black's pieces.",
+        "8...Ne4": "The mistake: the knight attacks the queen, but its move uncovers the g5 bishop's attack on Black's queen."
+      },
+      "mistake": "8...Ne4",
+      "punishment": "9.Bxd8 Nxc3 10.Bxc7: White takes the queen first, then a pawn, and Black's knight on c3 still has to escape. (9.fxe4? is wrong: 9...Qxg5.) Play 8...h6 first and only then ...d5."
+    },
+    {
+      "id": "noa-c6-knight",
+      "name": "9...Nxc5?: the forgotten knight on c6",
+      "moves": "1. d4 Nf6 2. c4 e6 3. Nc3 Bb4 4. Qc2 d5 5. a3 Bxc3+ 6. Qxc3 Ne4 7. Qc2 c5 8. dxc5 Nc6 9. cxd5 Nxc5 10. dxc6",
+      "notes": {
+        "9.cxd5": "The pawn attacks the c6 knight.",
+        "9...Nxc5": "The mistake: Black wins the c5 pawn back but leaves the c6 knight attacked."
+      },
+      "mistake": "9...Nxc5",
+      "punishment": "10.dxc6 wins a piece. Take back 9...exd5: it removes the attacker of c6 and supports the e4 knight."
+    },
+    {
+      "id": "noa-queen-on-c3",
+      "name": "7.cxd5?: the queen on c3 is attacked",
+      "moves": "1. d4 Nf6 2. c4 e6 3. Nc3 Bb4 4. Qc2 d5 5. a3 Bxc3+ 6. Qxc3 Ne4 7. cxd5 Nxc3",
+      "notes": {
+        "6...Ne4": "The knight lands on e4 with an attack on the queen.",
+        "7.cxd5": "The mistake: White takes a pawn and forgets the queen."
+      },
+      "mistake": "7.cxd5",
+      "punishment": "7...Nxc3 wins the queen for a knight. After ...Ne4 the queen must move first: 7.Qc2 keeps it out of the knight's reach."
+    }
+  ]
+}

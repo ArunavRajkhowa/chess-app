@@ -20,6 +20,7 @@ class NewGameRequest(BaseModel):
 class MoveRequest(BaseModel):
     move: str = Field(description="UCI (e2e4, e7e8q) or SAN (Nf3, O-O)")
     want_eval: bool = False
+    want_guide: bool = False  # Guide me: a grounded note on the move in the bot's domain (backend/bots/guide.py)
 
 
 class MoveRecord(BaseModel):
@@ -60,6 +61,7 @@ class MoveResponse(BaseModel):
     bot_says: str | None = None
     eval_cp: int | None = None
     eval_text: str | None = None
+    guide: str | None = None
 
 
 class HintResponse(BaseModel):

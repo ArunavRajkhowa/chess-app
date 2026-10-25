@@ -248,6 +248,15 @@
        ],
        "hint": "Which trade leaves only kings and pawns, with your king closer to the centre?",
        "explanation": "56...Bd5! After 57.Bxd5 Kxd5 58.Ke3 Ke5 the pawn ending is lost for White: Black's king has the opposition and the extra pawn (Stockfish 16: about -6.7 for White). Stockfish 16 at depth 22: a decisive advantage for Black after 56...Bd5, 0.0 after 56...Bb3 or 56...Bc4."
+      },
+      {
+       "type": "drill",
+       "fen": "B7/8/4b3/4kp2/6p1/6P1/5K2/8 b - - 0 56",
+       "orientation": "black",
+       "goal": "promote",
+       "max_moves": 30,
+       "prompt": "Play Gukesh's side against the engine. Black to move. Win the ending: promote a pawn within 30 moves.",
+       "tip": "56...Bd5 first. After the bishops come off, take the opposition with ...Ke5 and lead with the king; push a pawn only when the king supports it. The engine's line: 57.Bxd5 Kxd5 58.Ke3 Ke5 59.Kd3 f4."
       }
      ]
     }
@@ -316,6 +325,17 @@
        "explanation": "Pawns and lasting pressure. Stockfish 16 at depth 22 rates 21...Nf4 as Black's best move (about -0.9, against about -1.05 for the next best). Botvinnik did not find the defence, and Tal won the ending.",
        "fen": "2r3k1/pp4bp/3p2p1/3Ppb1n/1qr5/2N1B1PP/PP2QPBK/R1R5 b - - 1 21",
        "orientation": "black"
+      },
+      {
+       "type": "challenge",
+       "fen": "2r3k1/pp4bp/3p2p1/3Ppb1n/1qr5/2N1B1PP/PP2QPBK/R1R5 b - - 1 21",
+       "orientation": "black",
+       "prompt": "Black to move, Botvinnik-Tal 1960, move 21. Black is worse, and Tal gave a piece here. Find the sacrifice.",
+       "solution": [
+        "h5f4"
+       ],
+       "hint": "A knight can jump to a square that a pawn attacks. What opens if that pawn takes it?",
+       "explanation": "21...Nf4! After 22.gxf4 exf4 Black has a pawn for the knight. The g7-bishop's diagonal is open to c3 and b2, the f4-pawn hits the e3-bishop, and the white king has lost its g-pawn. In the game Tal took b2 next (23.Bd2 Qxb2) and won. The engine prefers the quiet 21...Nf6 by a few tenths of a pawn. Either way Black stays only a little worse, and the sacrifice gives White the harder problems."
       }
      ]
     },
@@ -445,6 +465,17 @@
        "explanation": "The bishop stood on the king's road. Without it, the king reaches d3 in three king moves and the two passed pawns decide: 48.gxh3 Kf5 49.Kf2 Ke4 50.Bxf6 d4 51.Be7 Kd3, and Topalov resigned on move 53.",
        "fen": "8/8/4kpp1/3p1b2/p6P/2B5/6P1/6K1 b - - 2 47",
        "orientation": "black"
+      },
+      {
+       "type": "challenge",
+       "fen": "8/8/5pp1/3p1k2/p6P/2B4P/5K2/8 b - - 2 49",
+       "orientation": "black",
+       "prompt": "Black to move after 47...Bh3 48.gxh3 Kf5 49.Kf2. The bishop is gone and the road is open. Where does the king go?",
+       "solution": [
+        "f5e4"
+       ],
+       "hint": "White's bishop moves on dark squares. Find a light square next to the d-pawn's path.",
+       "explanation": "49...Ke4! On a light square the king can never be checked by the c3-bishop, and it supports ...d4 and ...Kd3. White cannot stop the d-pawn and the a-pawn together: in the game 50.Bxf6 d4 51.Be7 Kd3, and Topalov resigned on move 53. After 49...Kf4 50.Bxf6 the bishop takes a pawn and checks from g5 next, and the king is far from the d-pawn."
       }
      ]
     }
@@ -581,6 +612,16 @@
        "answer": 0,
        "explanation": "With queens off, a king can only be harassed by rooks and minor pieces. Black's rooks are passive and the bishop has no targets, so the white king becomes the strongest attacker on the board.",
        "fen": "k1r3r1/pp2R3/2p3p1/P2p1b1p/1P1B3K/2P2P2/7P/4R3 w - - 10 39"
+      },
+      {
+       "type": "challenge",
+       "fen": "k1r3r1/pp2R1B1/2p3p1/P2p1bKp/1P5P/2P2P2/4R3/8 w - - 1 43",
+       "prompt": "White to move, move 43. The white king stands on g5 and Black can only defend. Open a second front: find the pawn move that breaks the black king's cover.",
+       "solution": [
+        "a5a6"
+       ],
+       "hint": "The black king on a8 hides behind the a7- and b7-pawns. Which white pawn can attack one of them?",
+       "explanation": "43.a6! After 43...bxa6 the a7-pawn has lost its neighbour: 44.Bd4 and 45.Bxa7+ win it with check, as in the game. Black's rooks are tied to g6 and the e-file, so they cannot help the king."
       }
      ]
     },
@@ -714,6 +755,83 @@
      "minutes": 15,
      "sections": [
       {
+       "type": "lecture",
+       "title": "Capablanca 1924: the king is worth two pawns",
+       "frames": [
+        {
+         "say": "In a rook ending, mating threats against a king on the back rank come from three pieces together: the rook on the seventh, a pawn near the king, and your own king beside them. Material is counted after that. Capablanca against Tartakower, New York 1924, White to play; Black threatens rook takes c3 with check.",
+         "fen": "5k2/p1p4R/1pr5/3p1pP1/P2P1P2/2P2K2/8/8 w - - 0 35"
+        },
+        {
+         "say": "Capablanca ignores the pawn. The king is going to h4, g5 and f6.",
+         "move": "Kg3",
+         "arrows": [
+          {
+           "from": "g3",
+           "to": "h4",
+           "brush": "green"
+          },
+          {
+           "from": "h4",
+           "to": "g5",
+           "brush": "green"
+          },
+          {
+           "from": "g5",
+           "to": "f6",
+           "brush": "green"
+          }
+         ]
+        },
+        {
+         "say": "Rook takes c3, check.",
+         "move": "Rxc3+"
+        },
+        {
+         "say": "King h4.",
+         "move": "Kh4"
+        },
+        {
+         "say": "Rook f3 attacks the second pawn.",
+         "move": "Rf3",
+         "arrows": [
+          {
+           "from": "f3",
+           "to": "f4",
+           "brush": "red"
+          }
+         ]
+        },
+        {
+         "say": "Pawn to g6. The f-pawn is given up as well; the engine prefers this to every other move by more than a pawn and a half.",
+         "move": "g6"
+        },
+        {
+         "say": "Rook takes f4, check. Black is two pawns up.",
+         "move": "Rxf4+"
+        },
+        {
+         "say": "King g5 attacks the rook and goes on to f6.",
+         "move": "Kg5"
+        },
+        {
+         "say": "The rook steps away.",
+         "move": "Re4"
+        },
+        {
+         "say": "King f6. The threat is rook h8, mate: the king covers e7, f7 and g7, the rook would cover the back rank. Black must run with the king, White wins the c-pawn with check, and the engine gives White about four pawns. Capablanca won on move 52.",
+         "move": "Kf6",
+         "arrows": [
+          {
+           "from": "h7",
+           "to": "h8",
+           "brush": "red"
+          }
+         ]
+        }
+       ]
+      },
+      {
        "type": "text",
        "md": "Capablanca-Tartakower, New York 1924, is one of the most quoted rook endings in chess literature.\n\nWhite has a rook on the seventh rank and a pawn on g5, but Black threatens ...Rxc3+. Capablanca played 35.Kg3: he let Black take both pawns with check, because his king reaches h4, g5 and f6. There, king, rook and the g-pawn create mating threats against the black king on the back rank.\n\nStockfish 16 at depth 22: about +2.2 after 35.Kg3, about +0.2 after the next best move.\n\nThree rook-ending rules in one game:\n\n1. A rook on the seventh rank is worth about a pawn (Fine's rule of thumb).\n2. An active king is worth more than a pawn, sometimes two.\n3. A far-advanced passed pawn, supported by king and rook, outweighs the opponent's material."
       },
@@ -828,6 +946,15 @@
        ],
        "hint": "Passive rook moves are too slow. Which move starts your own counterplay at once?",
        "explanation": "60.b4! The queenside pawns advance while Black spends tempi on the kingside. Stockfish 16 at depth 24: about 0.0 after 60.b4, about -4.3 after 60.b3, about -4.9 after the game's 60.Ra4."
+      },
+      {
+       "type": "drill",
+       "fen": "8/8/7p/8/2R2p1p/2P1k1r1/1P4PK/8 w - - 0 60",
+       "orientation": "white",
+       "goal": "draw",
+       "max_moves": 40,
+       "prompt": "Play Anand's side from move 60 against the engine. Hold the draw: make a draw by repetition, or keep the game going for 40 moves.",
+       "tip": "60.b4 at once. Then keep the rook active: check the king and attack pawns instead of waiting. The engine's line: 60.b4 h3 61.gxh3 Rg5 62.Rc6 f3 63.Re6+ Kd2 64.Rxh6."
       }
      ]
     },
@@ -877,6 +1004,15 @@
        ],
        "hint": "Which pawn move opens a file next to the black king and attacks c6?",
        "explanation": "57.b5! cxb5 58.Rxb5: the b-file opens, and after 59.Rb6 and 60.Nxe6 White wins the e6-pawn. Stockfish 16 at depth 22: about +1.9 after 57.b5, about +1.1 after the next best move."
+      },
+      {
+       "type": "drill",
+       "fen": "5r2/kp6/5K2/P2R3p/7P/6P1/8/8 w - - 10 76",
+       "orientation": "white",
+       "goal": "promote",
+       "max_moves": 40,
+       "prompt": "Carlsen-Karjakin: Karjakin resigned after 74.Kg5 Rh8 75.Kf6. Play on after 75...Rf8+. White has an extra pawn in a rook ending. Convert it against the engine: promote a pawn within 40 moves.",
+       "tip": "Do not hurry here either. The king leads, and the rook keeps the black king and rook passive."
       }
      ]
     }

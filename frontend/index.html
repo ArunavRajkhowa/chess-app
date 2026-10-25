@@ -10,6 +10,14 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-title" content="Chess Coach" />
     <title>Chess Coach</title>
+    <script>
+      // The saved theme before first paint (same key as src/store/settings.ts); Shell keeps it in step after.
+      try {
+        var t = (JSON.parse(localStorage.getItem("chess-coach-settings") || "{}").state || {}).theme || "dark";
+        if (t === "system") t = matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+        document.documentElement.dataset.theme = t;
+      } catch (e) { /* storage off: the dark default */ }
+    </script>
   </head>
   <body>
     <div id="root"></div>

@@ -4,13 +4,8 @@ from __future__ import annotations
 from fastapi import APIRouter
 
 from ..coach.client import llm_enabled, llm_model, llm_problem, llm_provider
-from ..content.endgames import load_endgames
-from ..content.games import load_games
-from ..content.lessons import load_curriculum
 from ..engine.pool import pool
 from ..openings.book import load_book
-from ..openings.courses import load_courses
-from ..puzzles.store import load_library
 
 router = APIRouter(prefix="/api", tags=["health"])
 
@@ -20,23 +15,7 @@ async def health() -> dict:
     return {
         "ok": pool.ready,
         "engine": {"name": pool.id_name, "kind": pool.kind, "command": pool.command},
-        "openings": len(load_book().all),
+        "openings": len(load_book().all) if load_book.cache_info().currsize else None,  # None until the book is warm
         "coach": {"llm": llm_enabled(), "provider": llm_provider(), "model": llm_model(), "problem": llm_problem()},
     }
 
-
-@router.post("/content/reload")
-async def reload_content() -> dict:
-    """Re-reads lessons, puzzles, master games and opening courses from data/ without a restart."""
-    load_curriculum.cache_clear()
-    load_library.cache_clear()
-    load_games.cache_clear()
-    load_endgames.cache_clear()
-    load_courses.cache_clear()
-    return {
-        "lessons": sum(len(m.lessons) for m in load_curriculum()),
-        "puzzles": len(load_library().all),
-        "games": len(load_games()),
-        "endgames": len(load_endgames()["positions"]),
-        "courses": len(load_courses()),
-    }

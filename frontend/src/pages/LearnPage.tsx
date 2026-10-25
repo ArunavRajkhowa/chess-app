@@ -1,7 +1,8 @@
 import { ArrowRight, CheckCircle2, Circle, Play, RotateCcw, Search } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { learnApi, type Band, type LessonSummary, type Level } from "../lib/learnApi";
+import { BandEmblem } from "../components/art";
+import { learnApi, nextLesson, type Band, type LessonSummary, type Level } from "../lib/learnApi";
 import "./Learn.css";
 
 function Progress({ done, total }: { done: number; total: number }) {
@@ -27,9 +28,7 @@ export function LearnPage() {
   useEffect(() => { learnApi.curriculum().then((r) => { setBands(r.bands); setLevel(r.level); setReviewDue(r.review_due); }).catch((e: Error) => setError(e.message)); }, []);
 
   const lessons = useMemo(() => bands.flatMap((b) => b.modules.flatMap((m) => m.lessons.map((l) => ({ ...l, band: b.band, bandName: b.name, module: m.title })))), [bands]);
-  // A player who has done nothing yet starts in the band their puzzle rating places them in, not at the rules.
-  const started = lessons.some((l) => l.completed);
-  const next = (started || !level ? null : lessons.find((l) => l.band === level.band && !l.completed)) ?? lessons.find((l) => !l.completed) ?? null;
+  const next = nextLesson(lessons, level);
   const band = bands.find((b) => b.band === (open ?? next?.band ?? 0)) ?? null;
   const strands = [...new Set(lessons.map((l) => l.strand))].map((s) => ({ strand: s, ...count(lessons.filter((l) => l.strand === s)) }));
   const total = count(lessons);
@@ -97,7 +96,7 @@ export function LearnPage() {
             </div>
           </Link>
           <Link to="/puzzles" className="card learn-card" data-testid="learn-level">
-            <span className="band-num num">{level ? level.band : "?"}</span>
+            {level ? <BandEmblem band={level.band} size={36} /> : <span className="band-num num">?</span>}
             <div>
               <b>{level ? `Your level: ${bands[level.band]?.name ?? `band ${level.band}`}` : "Find your level"}</b>
               <div className="faint">{level ? `By your puzzle rating of ${level.puzzle_rating}. Lessons in this band should feel right.` : "Solve about ten rated puzzles and the curriculum places you."}</div>
@@ -142,7 +141,7 @@ export function LearnPage() {
           <div className="band-tabs" role="tablist">
             {bands.map((b) => (
               <button key={b.band} role="tab" aria-selected={band?.band === b.band} className={`band-tab ${band?.band === b.band ? "on" : ""}`} onClick={() => setOpen(b.band)} data-testid={`band-${b.band}`}>
-                <span className="band-tab-head"><b className="band-num num">{b.band}</b><b>{b.name}</b></span>
+                <span className="band-tab-head"><BandEmblem band={b.band} size={28} /><b>{b.name}</b></span>
                 <span className="faint">{b.rating}</span>
                 <Progress done={b.lessons_done} total={b.lessons_total} />
                 <span className="faint num">{b.lessons_done}/{b.lessons_total}</span>
@@ -152,6 +151,7 @@ export function LearnPage() {
           {band && (
             <section className="band-panel" role="tabpanel">
               <div className="band-panel-head">
+                <BandEmblem band={band.band} size={40} />
                 <h2>Band {band.band} · {band.name}</h2>
                 <span className="muted">{band.subtitle} · {band.rating}</span>
               </div>
