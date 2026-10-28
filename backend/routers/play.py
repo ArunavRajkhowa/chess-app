@@ -2,10 +2,8 @@
 hint or a takeback, resign. The server holds the rules (python-chess) so a game is always legal."""
 from __future__ import annotations
 
-import asyncio
 import logging
 import random
-from collections import defaultdict
 
 import chess
 import chess.pgn
@@ -19,6 +17,7 @@ from ..engine.score import cp_from_score, describe_score
 from ..openings.book import load_book
 from ..schema.play import GameState, HintResponse, MoveRecord, MoveRequest, MoveResponse, NewGameRequest
 from ..storage import games as store
+from ..locks import KeyedLocks
 from .account import Player
 
 LOGGER = logging.getLogger("chess.play")
@@ -31,7 +30,7 @@ START_MAX_EDGE_CP = 150  # a specialist's middlegame start must be this close to
 _START_VERDICTS: dict[str, int] = {}  # fen -> cp (White's view), so each start position is checked once
 PIECE_VALUES = {chess.PAWN: 1, chess.KNIGHT: 3, chess.BISHOP: 3, chess.ROOK: 5, chess.QUEEN: 9, chess.KING: 0}
 # One lock per game: a move, takeback, resign or flag reads the game, changes it and stores it whole.
-_GAME_LOCKS: defaultdict[str, asyncio.Lock] = defaultdict(asyncio.Lock)
+_GAME_LOCKS = KeyedLocks()
 
 
 def _board_from_moves(moves: list[dict], start_fen: str | None = None) -> chess.Board:
@@ -199,7 +198,9 @@ def _parse_move(board: chess.Board, text: str) -> chess.Move:
     text = text.strip()
     looks_uci = len(text) in (4, 5) and text[0] in "abcdefgh" and text[1].isdigit() and text[2] in "abcdefgh"
     try:
-        return chess.Move.from_uci(text) if looks_uci else board.parse_san(text)
+        return board.parse_uci(text) if looks_uci else board.parse_san(text)
+    except chess.IllegalMoveError:
+        raise HTTPException(400, f"illegal move {text!r} in {board.fen()}")
     except ValueError:
         raise HTTPException(400, f"cannot parse move {text!r}")
 
@@ -238,7 +239,7 @@ async def new_game(req: NewGameRequest, player: Player) -> GameState:
             start_board = chess.Board(req.fen)
         except ValueError:
             raise HTTPException(400, f"bad FEN {req.fen!r}")
-        if not start_board.is_valid() or start_board.is_game_over():
+        if not start_board.is_valid() or start_board.is_game_over(claim_draw=True):
             raise HTTPException(400, "the start position is illegal or already finished")
         start_fen = start_board.fen()
     game_id = await store.insert_game(player, player_color=color, bot_id=req.bot_id, coach_mode=req.coach_mode,
@@ -284,8 +285,6 @@ async def make_move(game_id: str, req: MoveRequest, player: Player) -> MoveRespo
         if board.turn != (chess.WHITE if player_is_white else chess.BLACK):
             raise HTTPException(409, "not your turn")
         move = _parse_move(board, req.move)
-        if move not in board.legal_moves:
-            raise HTTPException(400, f"illegal move {req.move!r} in {board.fen()}")
 
         before = board.copy()
         san = board.san(move)

@@ -2,6 +2,7 @@
 the stored report."""
 from __future__ import annotations
 
+import asyncio
 import io
 import uuid
 
@@ -21,6 +22,8 @@ QUICK_DEPTH = 12
 FULL_DEPTH = 16
 DEEP_DEPTH = 20
 DEPTHS = {"quick": QUICK_DEPTH, "full": FULL_DEPTH, "deep": DEEP_DEPTH}
+MAX_PLIES = 600  # guess: 300 moves, far above a real game; caps the engine time one review takes
+MAX_PGN_CHARS = 100_000  # guess: about 3x a long annotated game
 
 
 class StartReviewRequest(BaseModel):
@@ -28,7 +31,7 @@ class StartReviewRequest(BaseModel):
 
 
 class ImportPgnRequest(BaseModel):
-    pgn: str
+    pgn: str = Field(max_length=MAX_PGN_CHARS)
     mode: str = Field("full", pattern="^(quick|full|deep)$")
 
 
@@ -43,18 +46,25 @@ async def start(game_id: str, req: StartReviewRequest, player: Player) -> dict:
         raise HTTPException(404, "no such game")
     if not row["moves"]:
         raise HTTPException(400, "the game has no moves")
-    job = jobs.start_review(player, game_id, _moves_of(row), depth=DEPTHS[req.mode], result=row.get("result"), start_fen=row.get("start_fen"))
+    if len(row["moves"]) > MAX_PLIES:
+        raise HTTPException(400, f"the game has {len(row['moves'])} plies; a review takes at most {MAX_PLIES}")
+    try:
+        job = jobs.start_review(player, game_id, _moves_of(row), depth=DEPTHS[req.mode], result=row.get("result"), start_fen=row.get("start_fen"))
+    except jobs.ReviewBusy as exc:
+        raise HTTPException(429, str(exc)) from exc
     return job.public()
 
 
-@router.post("/import")
-async def import_pgn(req: ImportPgnRequest, player: Player) -> dict:
-    game = chess.pgn.read_game(io.StringIO(req.pgn))
+def _parse_pgn(pgn: str) -> tuple[chess.pgn.Game, list[chess.Move], list[dict], str | None]:
+    """Parse and replay an imported PGN; raise 400 naming what is wrong. Runs on a thread."""
+    game = chess.pgn.read_game(io.StringIO(pgn))
     if game is None or game.errors:
         raise HTTPException(400, "could not parse PGN" + (f": {game.errors[0]}" if game and game.errors else ""))
     moves = list(game.mainline_moves())
     if not moves:
         raise HTTPException(400, "the PGN has no moves")
+    if len(moves) > MAX_PLIES:
+        raise HTTPException(400, f"the game has {len(moves)} plies; a review takes at most {MAX_PLIES}")
     board = game.board()  # the FEN header's position when the game starts from one
     if type(board) is not chess.Board or not board.is_valid():
         raise HTTPException(400, f"only standard chess from a legal position can be reviewed (Variant {game.headers.get('Variant', 'standard')!r}, FEN {board.fen()!r})")
@@ -64,6 +74,16 @@ async def import_pgn(req: ImportPgnRequest, player: Player) -> dict:
         san = board.san(mv)
         board.push(mv)
         recs.append({"ply": board.ply(), "san": san, "uci": mv.uci(), "fen": board.fen(), "by": "player", "source": "import", "eval_cp": None})
+    return game, moves, recs, start_fen
+
+
+@router.post("/import")
+async def import_pgn(req: ImportPgnRequest, player: Player) -> dict:
+    try:
+        jobs.check_free(player)  # refuse before storing a game nobody will review
+    except jobs.ReviewBusy as exc:
+        raise HTTPException(429, str(exc)) from exc
+    game, moves, recs, start_fen = await asyncio.to_thread(_parse_pgn, req.pgn)
     game_id = uuid.uuid4().hex[:12]
     result = game.headers.get("Result") if game.headers.get("Result") in ("1-0", "0-1", "1/2-1/2") else None
     white = game.headers.get("White") if game.headers.get("White", "?") != "?" else "White"
@@ -74,7 +94,11 @@ async def import_pgn(req: ImportPgnRequest, player: Player) -> dict:
         (game_id, player, "white", None, "import", "finished", result, "imported", str(game), __import__("json").dumps(recs),
          game.headers.get("ECO"), game.headers.get("Opening"), white, black, "import", start_fen),
     )
-    job = jobs.start_review(player, game_id, moves, depth=DEPTHS[req.mode], result=result, start_fen=start_fen)
+    try:  # again after the parse: a concurrent import may have started a review meanwhile
+        job = jobs.start_review(player, game_id, moves, depth=DEPTHS[req.mode], result=result, start_fen=start_fen)
+    except jobs.ReviewBusy as exc:
+        await database.execute("DELETE FROM games WHERE id = ?", (game_id,))  # stored only to be reviewed
+        raise HTTPException(429, str(exc)) from exc
     return {"game_id": game_id, "job": job.public(), "white": white, "black": black}
 
 

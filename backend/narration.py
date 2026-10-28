@@ -13,6 +13,8 @@ from .settings import REPO_ROOT, settings
 LOGGER = logging.getLogger("chess.narration")
 AUDIO_DIR = REPO_ROOT / "data" / "audio"
 MAX_TEXT = 600  # one frame's narration; longer text is a bug in the caller, not a sentence to read
+# Anyone may ask for any text, so the disk cache is capped; past it new audio is served but not kept.
+MAX_CACHED_FILES = 5_000  # guess: about 330 MB at the measured 65 KB per file in data/audio
 RATE = "-6%"  # a touch slower than the default: a coach, not a newsreader
 _SAN = re.compile(r"\b([KQRBN])?([a-h])?x?([a-h][1-8])(=[QRBN])?([+#])?\b")
 _PIECES = {"K": "king", "Q": "queen", "R": "rook", "B": "bishop", "N": "knight"}
@@ -75,5 +77,8 @@ async def synthesize(text: str, voice: str | None = None) -> bytes | None:
     if not data:
         return None
     AUDIO_DIR.mkdir(parents=True, exist_ok=True)
+    if sum(1 for _ in AUDIO_DIR.glob("*.mp3")) >= MAX_CACHED_FILES:
+        LOGGER.warning("narration cache holds %d files or more: audio served without caching", MAX_CACHED_FILES)
+        return data
     path.write_bytes(data)
     return data

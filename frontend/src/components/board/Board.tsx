@@ -46,6 +46,9 @@ export interface BoardProps {
 interface DragState {
   id: number;
   from: Square;
+  /** Where the press started: the drag threshold measures from here. */
+  x0: number;
+  y0: number;
   x: number;
   y: number;
   moved: boolean;
@@ -216,7 +219,9 @@ export function Board({
       setSelected(sq);
       (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
       const rect = rootRef.current!.getBoundingClientRect();
-      setDrag({ id: piece.id, from: sq, x: e.clientX - rect.left, y: e.clientY - rect.top, moved: false, pointerId: e.pointerId, wasSelected: selected === sq });
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      setDrag({ id: piece.id, from: sq, x0: x, y0: y, x, y, moved: false, pointerId: e.pointerId, wasSelected: selected === sq });
       setHover(sq);
     } else {
       setSelected(null);
@@ -230,7 +235,7 @@ export function Board({
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
     // A press that wobbles less than a fifth of a square stays a click, never a tiny drag.
-    const moved = drag.moved || Math.hypot(x - drag.x, y - drag.y) > Math.max(6, rect.width / 40);
+    const moved = drag.moved || Math.hypot(x - drag.x0, y - drag.y0) > Math.max(6, rect.width / 40);
     setDrag({ ...drag, x, y, moved });
     setHover(squareFromPointer(e.clientX, e.clientY));
   };

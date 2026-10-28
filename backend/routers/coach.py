@@ -14,10 +14,11 @@ from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 
 from ..coach import fallback
-from ..coach.client import CoachDeclined, llm_enabled, llm_model, prompt, stream_text
+from ..coach.client import CoachDeclined, CoachTruncated, llm_enabled, llm_model, prompt, stream_text
 from ..coach.context import bot_brief, coach_context, player_context
 from ..coach.facts import position_facts
 from ..engine.pool import pool
+from ..settings import settings
 from ..openings.book import load_book
 from ..review import jobs
 from ..review.classify import BLUNDER, MISS, MISTAKE
@@ -46,11 +47,21 @@ class ExplainRequest(BaseModel):
     level: Level | None = Field(None, pattern=LEVELS, description="omitted: from the player's puzzle rating")
 
 
+# a turn holds at most one answer: COACH_MAX_TOKENS at ~4 characters a token, doubled (a guess)
+MAX_TURN_CHARS = settings.COACH_MAX_TOKENS * 8
+HISTORY_TURNS = 8  # earlier turns the model sees
+
+
+class ChatTurn(BaseModel):
+    role: str = Field(pattern="^(user|assistant)$")
+    content: str = Field(max_length=MAX_TURN_CHARS)
+
+
 class ChatRequest(BaseModel):
     fen: str
     question: str = Field(min_length=1, max_length=2000)
     level: Level | None = Field(None, pattern=LEVELS, description="omitted: from the player's puzzle rating")
-    history: list[dict] = Field(default_factory=list, description="prior turns [{role, content}]")
+    history: list[ChatTurn] = Field(default_factory=list, description="earlier turns; the model sees the last HISTORY_TURNS")
     game_id: str | None = Field(None, description="the game the position comes from: the coach then knows the moves so far")
     lesson_id: str | None = Field(None, description="the lesson the question comes from")
 
@@ -139,7 +150,7 @@ def _parried(previous: chess.Board | None, last_move: chess.Move | None) -> set[
 def _unverified_moves(text: str, verified: set[str]) -> list[str]:
     """Move tokens in the text that are not in the verified set."""
     tokens = {t for t in _SAN_TOKEN.findall(text) if len(t) >= 3} | set(_NUMBERED_PAWN_MOVE.findall(text))
-    return sorted(t for t in tokens if t.rstrip("+#") not in verified and re.search(r"[a-h][1-8]", t))
+    return sorted(t for t in tokens if t.rstrip("+#") not in verified)
 
 
 async def _respond(system: str, user: str, purpose: str, rules_text: str, verified: set[str]) -> AsyncIterator[str]:
@@ -153,13 +164,15 @@ async def _respond(system: str, user: str, purpose: str, rules_text: str, verifi
             yield _sse({"type": "done", "source": "llm", "model": llm_model(), "unverified_moves": _unverified_moves(text, verified)})
             return
         except CoachDeclined:
-            LOGGER.warning("coach declined %s; using rules", purpose)
+            LOGGER.warning("coach declined %s", purpose)
+        except CoachTruncated as exc:
+            LOGGER.warning("coach answer cut for %s: %s", purpose, exc)
         except Exception:  # boundary: the stream must end with an answer, never hang
-            LOGGER.error("coach model call failed for %s; using rules", purpose, exc_info=True)
-            if collected:
-                yield _sse({"type": "text", "text": "\n\n(The coach stopped early.)"})
-                yield _sse({"type": "done", "source": "llm", "model": llm_model()})
-                return
+            LOGGER.error("coach model call failed for %s", purpose, exc_info=True)
+        if collected:  # model text is on screen: end it, check it, and add no rules text
+            yield _sse({"type": "text", "text": "\n\n(The coach stopped early.)"})
+            yield _sse({"type": "done", "source": "llm", "model": llm_model(), "unverified_moves": _unverified_moves("".join(collected), verified)})
+            return
     yield _sse({"type": "text", "text": rules_text})
     yield _sse({"type": "done", "source": "rules"})
 
@@ -287,14 +300,14 @@ async def explain(req: ExplainRequest, player: Player):
     return _stream(_respond(prompt("coach_system"), user, "explain", rules, verified))
 
 
-async def chat_answer(board: chess.Board, question: str, *, level: str, context: dict, history: list[dict] = ()) -> tuple[str, str, set[str]]:
+async def chat_answer(board: chess.Board, question: str, *, level: str, context: dict, history: list[ChatTurn] = ()) -> tuple[str, str, set[str]]:
     """The model's user prompt, the rule-based answer and the moves the answer may name."""
     last_move, previous_fen, played = _game_moves(context)
     f = await position_facts(board, pool, last_move=last_move, previous_fen=previous_fen)
     asked = [await judge_move(board, m) for m in asked_moves(board, question)]
     if asked:
         f["asked_moves"] = asked
-    turns = "\n".join(f"{t.get('role', 'user')}: {t.get('content', '')}" for t in list(history)[-8:])
+    turns = "\n".join(f"{t.role}: {t.content}" for t in list(history)[-HISTORY_TURNS:])
     user = prompt("chat").format(player_level=level, context=json.dumps(context), facts=json.dumps(f))
     if turns:
         user += f"\n\nEarlier in this conversation:\n{turns}"

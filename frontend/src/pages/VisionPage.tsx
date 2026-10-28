@@ -28,6 +28,7 @@ export function VisionPage() {
   const [result, setResult] = useState<string | null>(null);
   const timer = useRef<number | null>(null);
 
+  useEffect(() => () => { if (timer.current) clearInterval(timer.current); }, []);
   useEffect(() => { fetch("/api/vision").then((r) => r.json()).then((r) => setBest(r.best)).catch(() => undefined); }, []);
 
   const nextTarget = () => {
@@ -38,6 +39,8 @@ export function VisionPage() {
     while (opts.size < 4) opts.add(randomSquare());
     setOptions([...opts].sort(() => Math.random() - 0.5));
   };
+
+  const stop = () => { if (timer.current) clearInterval(timer.current); setRunning(false); };
 
   const start = () => {
     setScore(0); setMisses(0); setLeft(ROUND_SECONDS); setResult(null); setRunning(true);
@@ -96,8 +99,8 @@ export function VisionPage() {
             </>
           )}
           <div className="row" style={{ flexWrap: "wrap" }}>
-            <button className={`btn btn-sm ${mode === "find" ? "btn-primary" : ""}`} onClick={() => { setMode("find"); setRunning(false); }} data-testid="vision-find">Find the square</button>
-            <button className={`btn btn-sm ${mode === "name" ? "btn-primary" : ""}`} onClick={() => { setMode("name"); setRunning(false); }} data-testid="vision-name">Name the square</button>
+            <button className={`btn btn-sm ${mode === "find" ? "btn-primary" : ""}`} onClick={() => { setMode("find"); stop(); }} data-testid="vision-find">Find the square</button>
+            <button className={`btn btn-sm ${mode === "name" ? "btn-primary" : ""}`} onClick={() => { setMode("name"); stop(); }} data-testid="vision-name">Name the square</button>
             <label className="row faint"><input type="checkbox" checked={randomFlip} onChange={(e) => setRandomFlip(e.target.checked)} /> random orientation</label>
             <button className="btn btn-sm btn-ghost" onClick={() => setOrientation((o) => (o === "white" ? "black" : "white"))}>Flip</button>
           </div>

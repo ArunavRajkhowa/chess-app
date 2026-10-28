@@ -6,8 +6,8 @@ export interface CoachDone {
   model?: string;
 }
 
-export async function streamCoach(path: string, body: unknown, onText: (chunk: string) => void): Promise<CoachDone> {
-  const res = await fetch(path, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+export async function streamCoach(path: string, body: unknown, onText: (chunk: string) => void, signal?: AbortSignal): Promise<CoachDone> {
+  const res = await fetch(path, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body), signal });
   if (!res.ok || !res.body) throw new Error(`${res.status} ${res.statusText}`);
   const reader = res.body.getReader();
   const decoder = new TextDecoder();
@@ -25,7 +25,11 @@ export async function streamCoach(path: string, body: unknown, onText: (chunk: s
       if (!line) continue;
       const evt = JSON.parse(line.slice(5).trim()) as { type: string; text?: string } & Partial<CoachDone>;
       if (evt.type === "text" && evt.text) onText(evt.text);
-      else if (evt.type === "done") done = { source: evt.source ?? "rules", unverified_moves: evt.unverified_moves, model: evt.model };
+      else if (evt.type === "done") {
+        done = { source: evt.source ?? "rules", unverified_moves: evt.unverified_moves, model: evt.model };
+        // every coach surface shows the server's check: a move the model named outside the fact sheet
+        if (evt.unverified_moves?.length) onText(`\n\n(Not checked by the engine: ${evt.unverified_moves.join(", ")})`);
+      }
       else if (evt.type === "error") throw new Error(evt.text ?? "coach error");
     }
   }

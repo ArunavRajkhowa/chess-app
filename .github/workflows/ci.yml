@@ -1,0 +1,57 @@
+# Runs every check on each push and pull request: lint, the Python suite with a real engine, the
+# frontend's type check, unit tests and build, then the browser suite against the built app.
+# Free on a public repository. Render can wait for it: Settings → Auto-Deploy → "After CI checks pass".
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      STOCKFISH_PATH: /usr/games/stockfish
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: backend/requirements-dev.txt
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install Stockfish and Python packages
+        run: |
+          sudo apt-get update && sudo apt-get install -y --no-install-recommends stockfish
+          pip install -r backend/requirements-dev.txt
+      - name: Lint (Python)
+        run: ruff check .
+      - name: Python tests
+        run: python -m pytest -q
+      - name: Frontend packages, lint, unit tests and build
+        working-directory: frontend
+        run: |
+          npm ci
+          npx oxlint
+          npx vitest run
+          node scripts/copy-engine.mjs
+          npm run build
+      - name: Browser tests against the built app
+        working-directory: frontend
+        run: |
+          npx playwright install --with-deps chromium
+          (cd .. && DB_PATH="$RUNNER_TEMP/e2e.sqlite3" python -m uvicorn backend.app:app --host 127.0.0.1 --port 8765 > "$RUNNER_TEMP/backend.log" 2>&1 &)
+          for i in $(seq 1 90); do curl -sf http://127.0.0.1:8765/api/health > /dev/null && break; sleep 2; done
+          E2E_BASE_URL=http://127.0.0.1:8765 E2E_NO_SERVER=1 npx playwright test
+      - name: Backend log on failure
+        if: failure()
+        run: tail -n 200 "$RUNNER_TEMP/backend.log" || true

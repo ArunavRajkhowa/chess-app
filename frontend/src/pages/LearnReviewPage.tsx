@@ -65,6 +65,6 @@ export function LearnReviewPage() {
   const step = { header, onNext: next, nextLabel: at + 1 >= queue.items.length ? "Finish review" : "Next" };
   const key = `${item.lesson_id}-${item.section_index}`;
   return item.section.type === "quiz"
-    ? <Quiz key={key} section={item.section} fen={item.section.fen ?? "8/8/8/8/8/8/8/8 w - - 0 1"} onResult={onResult} {...step} />
+    ? <Quiz key={key} section={item.section} fen={item.section.fen} onResult={onResult} {...step} />
     : <Challenge key={key} section={item.section} onResult={onResult} {...step} />;
 }

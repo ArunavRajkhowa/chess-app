@@ -5,10 +5,10 @@ export interface ModuleSummary { id: string; title: string; strand: string; summ
 export interface Band { band: number; name: string; subtitle: string; rating: string; modules: ModuleSummary[]; lessons_total: number; lessons_done: number }
 
 export type Section =
-  | { type: "text"; md: string }
+  | { type: "text"; md: string; fen: string; paragraphs: { md: string; fen: string }[] }
   | { type: "position"; fen: string; orientation?: "white" | "black"; arrows?: { from: string; to: string; brush: Brush }[]; highlights?: { square: string; brush: Brush }[]; caption?: string }
   | { type: "challenge"; fen: string; prompt: string; solution: string[]; solution_san: string[]; hint?: string; explanation?: string; accept_any_legal?: boolean; accept_any_check?: boolean; also?: string[]; also_san?: string[]; orientation?: "white" | "black" }
-  | { type: "quiz"; question: string; options: string[]; answer: number; explanation?: string; fen?: string }
+  | { type: "quiz"; question: string; options: string[]; answer: number; explanation?: string; fen: string }
   | { type: "drill"; fen: string; goal: "mate" | "promote" | "draw" | "survive" | "win_material"; max_moves?: number; prompt: string; tip?: string; orientation?: "white" | "black" }
   | { type: "game"; pgn: string; title?: string; mode?: "guess" | "replay"; notes?: Record<string, string>; plies: { ply: number; san: string; uci: string; fen: string }[]; start_fen: string; headers: Record<string, string> }
   | { type: "lecture"; title?: string; orientation?: "white" | "black"; frames: LectureFrame[] };

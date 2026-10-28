@@ -148,7 +148,7 @@ export function Challenge({ section, onResult, header, onNext, nextLabel }: Step
   const orientation = section.orientation ?? (solverColor === "w" ? "white" : "black");
   const board = trying
     ? <Board fen={explore.fen} orientation={orientation} movable={{ color: "both", dests: explore.dests }} lastMove={explore.lastMove} check={explore.check} onMove={explore.onMove} />
-    : <Board fen={fen} orientation={orientation} movable={{ color: chess.turn(), dests }} lastMove={last} check={checkSquare(chess)} shapes={shapes} highlights={highlights} onMove={onMove} />;
+    : <Board fen={fen} orientation={orientation} movable={{ color: chess.turn() === solverColor ? solverColor : "none", dests }} lastMove={last} check={checkSquare(chess)} shapes={shapes} highlights={highlights} onMove={onMove} />;
   return (
     <Stage board={board} header={header}>
       <YourTurn fen={section.fen} prompt={section.prompt} kind="challenge" />

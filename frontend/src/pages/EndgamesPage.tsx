@@ -26,6 +26,7 @@ export function EndgamesPage() {
   const [now, setNow] = useState(Date.now());
   const startedAt = useRef(Date.now());
   const boardCol = useRef<HTMLDivElement>(null);
+  const run = useRef(0); // each start or theme change bumps it, so a stale challenge advance does nothing
 
   const reload = () => get<{ themes: Theme[]; positions: Position[] }>("/api/endgames").then((r) => { setThemes(r.themes); setPositions(r.positions); }).catch(() => undefined);
   useEffect(() => { void reload(); }, []);
@@ -37,7 +38,7 @@ export function EndgamesPage() {
 
   const list = useMemo(() => positions.filter((p) => p.theme === theme), [positions, theme]);
 
-  const start = (p: Position) => { setCurrent(p); setResetToken((t) => t + 1); startedAt.current = Date.now(); };
+  const start = (p: Position) => { run.current += 1; setCurrent(p); setResetToken((t) => t + 1); startedAt.current = Date.now(); };
   useEffect(() => { if (!current && list.length) start(list[0]); }, [list]); // eslint-disable-line react-hooks/exhaustive-deps
   const startChallenge = async () => {
     const r = await get<{ positions: Position[] }>(`/api/endgames/challenge?theme=${theme}`);
@@ -46,16 +47,17 @@ export function EndgamesPage() {
   };
   const onOutcome = async (o: DrillOutcome, _moves: number, line: string[]) => {
     if (!current) return;
+    const r = run.current;
     const seconds = (Date.now() - startedAt.current) / 1000;
     // the server replays the line and records its own verdict
     await fetch("/api/endgames/attempt", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ key: current.key, line, seconds, mode: challenge ? "challenge" : "practice" }) }).catch(() => undefined);
     void reload();
-    if (challenge) {
+    if (challenge && run.current === r) {
       const solved = challenge.solved + (o.result === "success" ? 1 : 0);
       const i = challenge.i + 1;
       if (i >= challenge.list.length) { setChallenge({ ...challenge, solved, i, done: true }); return; }
       setChallenge({ ...challenge, solved, i });
-      setTimeout(() => start(challenge.list[i]), 900);
+      setTimeout(() => { if (run.current === r) start(challenge.list[i]); }, 900);
     }
   };
   const elapsed = challenge ? Math.floor(((challenge.done ? now : now) - challenge.startedAt) / 1000) : 0;
@@ -86,7 +88,7 @@ export function EndgamesPage() {
           )}
           <div className="card eg-pick">
             <div className="row" style={{ flexWrap: "wrap", marginBottom: 12 }}>
-              <select className="select" value={theme} onChange={(e) => { setTheme(e.target.value); setChallenge(null); }} aria-label="Theme" data-testid="eg-theme">
+              <select className="select" value={theme} onChange={(e) => { run.current += 1; setTheme(e.target.value); setChallenge(null); }} aria-label="Theme" data-testid="eg-theme">
                 {themes.map((t) => <option key={t.key} value={t.key}>{t.name}</option>)}
               </select>
               <button className="btn btn-sm" onClick={startChallenge} data-testid="eg-challenge"><Timer size={14} /> Timed challenge (5 in a row)</button>

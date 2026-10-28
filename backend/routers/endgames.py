@@ -4,6 +4,7 @@ attempt sends the whole line and the server replays it to decide success."""
 from __future__ import annotations
 
 import random
+from typing import Literal
 
 import chess
 from fastapi import APIRouter, HTTPException, Query
@@ -22,7 +23,7 @@ class EndgameAttempt(BaseModel):
     key: str
     line: list[str] = Field(default_factory=list, max_length=200)  # every move of the attempt, both sides, UCI
     seconds: float = Field(ge=0)
-    mode: str = "practice"
+    mode: Literal["practice", "challenge"] = "practice"
 
 
 def judge_line(position: dict, line: list[str]) -> tuple[bool, int]:

@@ -348,6 +348,7 @@
       },
       {
        "type": "quiz",
+       "fen": "r2q1rk1/pb3ppp/1pn1pn2/8/3P2P1/2NBP2Q/PP3P1P/R1B2RK1 w - - 0 1",
        "question": "Look back at the second task, 1.g5. Which way of removing the defender was it?",
        "options": [
         "Chasing it with a pawn",

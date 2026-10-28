@@ -10,6 +10,7 @@ from collections.abc import AsyncIterator
 from contextlib import aclosing
 from pathlib import Path
 
+import anyio
 import httpx
 
 from ..settings import settings
@@ -65,6 +66,10 @@ def llm_problem() -> str | None:
 
 class CoachDeclined(RuntimeError):
     pass
+
+
+class CoachTruncated(RuntimeError):
+    """The answer stopped at max_tokens after some text was shown."""
 
 
 async def _log_cost(purpose: str, model: str, input_tokens: int | None, output_tokens: int | None, cached_tokens: int | None) -> None:
@@ -164,38 +169,43 @@ async def _stream_openai(*, system: str, user: str, purpose: str, max_tokens: in
             if response.status_code != 200:
                 detail = (await response.aread()).decode("utf-8", "replace")
                 raise RuntimeError(f"{url} answered HTTP {response.status_code}: {_error_text(detail)}")
-            async with aclosing(response.aiter_lines()) as lines:
-                async for line in lines:
-                    if not line.startswith("data:"):  # blank lines and ": keep-alive" comments
-                        continue
-                    data = line[5:].strip()
-                    if data == "[DONE]":  # the server ends the body next; reading on closes the stream cleanly
-                        continue
-                    chunk = json.loads(data)
-                    if chunk.get("error"):
-                        raise RuntimeError(f"the model server reported an error mid-stream: {_error_text(json.dumps({'error': chunk['error']}))}")
-                    usage = chunk.get("usage") or usage
-                    for choice in chunk.get("choices") or []:
-                        finish_reason = choice.get("finish_reason") or finish_reason
-                        # `reasoning` and `reasoning_content` carry thinking on some servers: never shown
-                        text = think.feed((choice.get("delta") or {}).get("content") or "")
-                        if text:
-                            shown += len(text)
-                            yield text
+            try:
+                async with aclosing(response.aiter_lines()) as lines:
+                    async for line in lines:
+                        if not line.startswith("data:"):  # blank lines and ": keep-alive" comments
+                            continue
+                        data = line[5:].strip()
+                        if data == "[DONE]":  # the server ends the body next; reading on closes the stream cleanly
+                            continue
+                        chunk = json.loads(data)
+                        if chunk.get("error"):
+                            raise RuntimeError(f"the model server reported an error mid-stream: {_error_text(json.dumps({'error': chunk['error']}))}")
+                        usage = chunk.get("usage") or usage
+                        for choice in chunk.get("choices") or []:
+                            finish_reason = choice.get("finish_reason") or finish_reason
+                            # `reasoning` and `reasoning_content` carry thinking on some servers: never shown
+                            text = think.feed((choice.get("delta") or {}).get("content") or "")
+                            if text:
+                                shown += len(text)
+                                yield text
+            finally:  # the server counts the tokens even when the stream fails or the reader leaves
+                cached = (usage.get("prompt_tokens_details") or {}).get("cached_tokens")
+                with anyio.CancelScope(shield=True):
+                    await _log_cost(purpose, settings.COACH_MODEL, usage.get("prompt_tokens"), usage.get("completion_tokens"), cached)
     tail = think.flush()
     if tail:
         shown += len(tail)
         yield tail
-    cached = (usage.get("prompt_tokens_details") or {}).get("cached_tokens")
-    await _log_cost(purpose, settings.COACH_MODEL, usage.get("prompt_tokens"), usage.get("completion_tokens"), cached)
     if not shown:
         raise CoachDeclined(f"the model sent no answer text (finish_reason={finish_reason}); a thinking model may have used all {max_tokens} tokens")
+    if finish_reason == "length":
+        raise CoachTruncated(f"the answer stopped at max_tokens={max_tokens} (finish_reason=length, expected stop)")
 
 
 async def _stream_anthropic(*, system: str, user: str, purpose: str, max_tokens: int) -> AsyncIterator[str]:
     import anthropic
 
-    client = anthropic.AsyncAnthropic(api_key=settings.ANTHROPIC_API_KEY)
+    client = anthropic.AsyncAnthropic(api_key=settings.ANTHROPIC_API_KEY, timeout=httpx.Timeout(CONNECT_TIMEOUT_SECONDS, read=READ_TIMEOUT_SECONDS))
     model = settings.ANTHROPIC_MODEL
     kwargs: dict = {
         "model": model,
@@ -209,11 +219,17 @@ async def _stream_anthropic(*, system: str, user: str, purpose: str, max_tokens:
         kwargs["betas"] = ["server-side-fallback-2026-07-01"]
         kwargs["fallbacks"] = "default"
     surface = client.beta.messages if use_fallback else client.messages
+    final = None
     async with surface.stream(**kwargs) as stream:
-        async for text in stream.text_stream:
-            yield text
-        final = await stream.get_final_message()
-    usage = final.usage
-    await _log_cost(purpose, final.model, usage.input_tokens, usage.output_tokens, getattr(usage, "cache_read_input_tokens", 0))
+        try:
+            async for text in stream.text_stream:
+                yield text
+            final = await stream.get_final_message()
+        finally:  # the API counts the tokens even when the stream fails or the reader leaves
+            usage = final.usage if final else None
+            with anyio.CancelScope(shield=True):
+                await _log_cost(purpose, final.model if final else model, usage and usage.input_tokens, usage and usage.output_tokens, usage and getattr(usage, "cache_read_input_tokens", 0))
     if final.stop_reason == "refusal":
         raise CoachDeclined("the model declined this request")
+    if final.stop_reason == "max_tokens":
+        raise CoachTruncated(f"the answer stopped at max_tokens={max_tokens} (stop_reason=max_tokens, expected end_turn)")

@@ -99,6 +99,9 @@ def _leads_to(board: chess.Board, move: chess.Move, positions: frozenset[str]) -
 
 LONG_RANGE = (chess.BISHOP, chess.ROOK, chess.QUEEN)  # the pieces a slip overlooks
 FREE_PIECE_PAWNS = 3  # a slipping bot always takes a capture among its lines that nets at least this much
+# a slip may drop a minor piece, never a rook or the queen: 300 cp plus room for depth-2 noise (a guess).
+# The engine scores Qxg5?? Bxg5 Bxg5 (queen for knight and bishop) at 396 cp, so _drops_a_major checks material too.
+SLIP_MAX_LOSS_CP = 400
 
 
 def _wins_a_piece(board: chess.Board, move: chess.Move) -> bool:
@@ -110,6 +113,19 @@ def _wins_a_piece(board: chess.Board, move: chess.Move) -> bool:
     after = board.copy(stack=False)
     after.push(move)
     return PIECE_VALUES[victim] - exchange_gain(after, move.to_square) >= FREE_PIECE_PAWNS
+
+
+def _drops_a_major(board: chess.Board, move: chess.Move) -> bool:
+    """True when the move puts the bot's rook or queen where the opponent's best static exchange wins a rook's worth."""
+    mover = board.piece_type_at(move.from_square)
+    if mover not in (chess.ROOK, chess.QUEEN):
+        return False
+    taken = board.piece_type_at(move.to_square)
+    if taken and PIECE_VALUES[taken] >= PIECE_VALUES[mover]:  # an even trade, not a dropped piece
+        return False
+    after = board.copy(stack=False)
+    after.push(move)
+    return exchange_gain(after, move.to_square) >= PIECE_VALUES[chess.ROOK]
 
 
 def _blind_spot(board: chess.Board, rng: random.Random) -> chess.Board | None:
@@ -180,6 +196,7 @@ async def choose_move(board: chess.Board, bot: Bot, pool: EnginePool, rng: rando
         return BotChoice(move=mv, source="random", cp_loss=0, best_move=None, eval_cp=None)
 
     depth = bot.search.depth if bot.search.movetime_seconds is None else None
+    slip = None
     if not in_book and bot.selection.slip_prob and rng.random() < bot.selection.slip_prob:
         blind = _blind_spot(board, rng)
         if blind is not None:
@@ -187,8 +204,7 @@ async def choose_move(board: chess.Board, bot: Bot, pool: EnginePool, rng: rando
                                         time_seconds=bot.search.movetime_seconds)
             mv = seen[0]["pv"][0] if seen and seen[0].get("pv") else None
             if mv is not None and board.is_legal(mv):
-                # its evaluation is of a board that is not the real one: no eval is reported
-                return BotChoice(move=mv, source="slip", cp_loss=0, best_move=None, eval_cp=None)
+                slip = mv
 
     multipv = min(bot.search.multipv, len(legal))
     infos = await pool.play_move(
@@ -210,6 +226,18 @@ async def choose_move(board: chess.Board, bot: Bot, pool: EnginePool, rng: rando
         return BotChoice(move=mv, source="random", cp_loss=0, best_move=None, eval_cp=None)
 
     best_move, best_cp = lines[0]
+    if slip is not None:
+        slip_cp = dict(lines).get(slip)
+        if slip_cp is None:
+            judged = await pool.play_move(board, options={"UCI_LimitStrength": False, "Skill Level": 20}, depth=depth,
+                                          time_seconds=bot.search.movetime_seconds, root_moves=[slip])
+            slip_cp = cp_from_score(judged[0]["score"], board.turn) if judged and judged[0].get("score") is not None else None
+        # judged on the real board: a slip that gives away more than a minor piece is not played
+        # a mate score on either side is the engine's choice, as for the free-piece grab below
+        no_mate = slip_cp is not None and max(abs(best_cp), abs(slip_cp)) < MATE_CP - 1000
+        if no_mate and best_cp - slip_cp <= SLIP_MAX_LOSS_CP and not _drops_a_major(board, slip):
+            eval_white = slip_cp if board.turn == chess.WHITE else -slip_cp
+            return BotChoice(move=slip, source="slip", cp_loss=max(0, best_cp - slip_cp), best_move=best_move, eval_cp=eval_white)
     # In the opening, a line on the way to one of the bot's favourite openings wins over the others.
     named = dict(load_book().continuations(board)) if in_book else {}
     favourite = _favourite_positions(bot.personality.favourite_openings) if in_book else frozenset()

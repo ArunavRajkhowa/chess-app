@@ -202,7 +202,7 @@
       },
       {
        "type": "quiz",
-       "fen": "k7/5pp1/6p1/5P1P/8/8/8/K7 w - - 0 1",
+       "fen": "k7/5pp1/6p1/5P1P/8/8/8/K7 w - - 0 2",
        "question": "White played 1.g6 and Black answered 1...hxg6. Which move wins now?",
        "options": [
         "2.f6",

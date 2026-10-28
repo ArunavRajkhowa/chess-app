@@ -31,21 +31,14 @@ function stepsOf(sections: Section[]): Step[] {
   return steps;
 }
 
-/** The board a step without its own position shows: the nearest position after it, else before it. */
-function contextFen(sections: Section[], step: number): string {
-  const fenOf = (s: Section) => ("fen" in s && s.fen ? s.fen : s.type === "lecture" ? s.frames[0].fen : s.type === "game" ? s.start_fen : null);
-  for (let i = step; i < sections.length; i++) { const f = fenOf(sections[i]); if (f) return f; }
-  for (let i = step - 1; i >= 0; i--) { const f = fenOf(sections[i]); if (f) return f; }
-  return START_FEN;
-}
-
 /** The lesson's Markdown as words to say: no emphasis marks, no list markers. */
 const plainText = (md: string) => md.replace(/[*`_]/g, "").replace(/^\s*(\d+\.|[-*])\s+/gm, "").replace(/\n+/g, " ").trim();
 /** The squares a paragraph names light up while it is read. */
 const namedSquares = (text: string): Square[] => [...new Set(text.match(/\b[a-h][1-8]\b/g) ?? [])].slice(0, 8);
 
-function textFrames(md: string, fen: string): Frame[] {
-  return md.split(/\n\s*\n/).map((p) => plainText(p)).filter(Boolean).map((say) => ({ fen, say, highlights: namedSquares(say).map((square) => ({ square, brush: "yellow" as const })) }));
+/** A text section read paragraph by paragraph, each over the board the server chose for it. */
+function textFrames(paragraphs: { md: string; fen: string }[]): Frame[] {
+  return paragraphs.map((p) => ({ fen: p.fen, say: plainText(p.md) })).filter((f) => f.say).map((f) => ({ ...f, highlights: namedSquares(f.say).map((square) => ({ square, brush: "yellow" as const })) }));
 }
 
 /** A model game as a narrated walkthrough: every move spoken, the annotated ones in the author's words, the rest in the study's. */
@@ -65,7 +58,7 @@ function watchFrames(sections: Section[], step: Extract<Step, { kind: "watch" }>
   const out: Frame[] = [];
   for (const i of step.indices) {
     const s = sections[i];
-    if (s.type === "text") out.push(...textFrames(s.md, contextFen(sections, i)));
+    if (s.type === "text") out.push(...textFrames(s.paragraphs));
     else if (s.type === "position") out.push({ fen: s.fen, say: s.caption ?? "", arrows: s.arrows, highlights: s.highlights });
     else if (s.type === "lecture") out.push(...s.frames);
     else if (s.type === "game") out.push(...gameFrames(s, study));
@@ -158,7 +151,7 @@ export function LessonPage() {
   const report = (ok: boolean) => onResult(step.index, ok);
   switch (section.type) {
     case "challenge": return <Challenge key={`${lesson.id}-${at}`} section={section} onResult={report} {...props} />;
-    case "quiz": return <Quiz key={`${lesson.id}-${at}`} section={section} fen={section.fen ?? contextFen(sections, step.index)} onResult={report} {...props} />;
+    case "quiz": return <Quiz key={`${lesson.id}-${at}`} section={section} fen={section.fen} onResult={report} {...props} />;
     case "drill": return <Drill key={`${lesson.id}-${at}`} section={section} onResult={report} {...props} />;
     default: return null;
   }

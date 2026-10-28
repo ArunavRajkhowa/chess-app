@@ -10,11 +10,12 @@ import pytest
 
 from backend.bots import maia
 from backend.bots.roster import BOTS, get_bot
-from backend.bots.selector import LONG_RANGE, _shape, _wins_a_piece, choose_move
+from backend.bots.selector import LONG_RANGE, SLIP_MAX_LOSS_CP, _drops_a_major, _shape, _wins_a_piece, choose_move
 from backend.bots.specialists import specialist_bots
 from backend.engine.pool import EnginePool
 
 FREE_KNIGHT = "r1bqkbnr/pppp1ppp/2n5/4N3/4P3/8/PPPP1PPP/RNBQKB1R b KQkq - 0 3"  # 3.Nxe5?? after 1.e4 e5 2.Nf3 Nc6
+QUEEN_FOR_KNIGHT = "2r2rk1/pb1nbppp/1p2pq2/1N4N1/8/3P1P2/PPP3PP/R1BQRK2 b - - 2 16"  # Qxg5?? Bxg5 (a played Nova game)
 
 
 def test_wins_a_piece_is_a_static_exchange_fact():
@@ -25,6 +26,16 @@ def test_wins_a_piece_is_a_static_exchange_fact():
     rook = chess.Board("4k3/8/2p5/3r4/4P3/8/8/3QK3 w - - 0 1")  # the rook on d5 is defended by c6
     assert _wins_a_piece(rook, chess.Move.from_uci("e4d5"))  # the pawn nets 5 - 1
     assert not _wins_a_piece(rook, chess.Move.from_uci("d1d5"))  # the queen nets 5 - 9
+
+
+def test_drops_a_major_is_a_static_exchange_fact():
+    board = chess.Board(QUEEN_FOR_KNIGHT)
+    assert _drops_a_major(board, board.parse_san("Qxg5"))  # Bxg5 Bxg5: queen for knight and bishop
+    assert _drops_a_major(board, board.parse_san("Rxc2"))  # Qxc2: a rook for a pawn
+    assert not _drops_a_major(board, board.parse_san("Qh6"))
+    assert not _drops_a_major(board, board.parse_san("Nc5"))  # a minor piece is a club player's slip
+    trade = chess.Board("3r2k1/3r1ppp/8/8/8/8/5PPP/3R2K1 w - - 0 1")
+    assert not _drops_a_major(trade, trade.parse_san("Rxd7"))  # rook for rook is a trade
 
 
 @pytest.fixture()
@@ -59,7 +70,26 @@ def test_a_slip_overlooks_one_enemy_long_range_piece(event_loop, engine):
     choice = event_loop.run_until_complete(choose_move(board, slipper, engine, random.Random(1)))
     missing = [sq for sq in chess.SQUARES if board.piece_at(sq) != seen[0].piece_at(sq)]
     assert len(missing) == 1 and board.piece_type_at(missing[0]) in LONG_RANGE and board.color_at(missing[0]) == chess.BLACK
-    assert choice.source == "slip" and board.is_legal(choice.move) and choice.eval_cp is None
+    assert choice.source == "slip" and board.is_legal(choice.move) and choice.cp_loss <= SLIP_MAX_LOSS_CP
+
+
+def test_a_slip_never_gives_away_a_rook_or_queen(event_loop, engine):
+    board = chess.Board(QUEEN_FOR_KNIGHT)
+    real = engine.play_move
+
+    async def blind_takes_the_knight(b, **kw):
+        infos = await real(b, **kw)
+        if b.board_fen() != board.board_fen():  # the slip's board: it forgot a piece and grabs the knight
+            infos[0]["pv"] = [chess.Move.from_uci("f6g5")]
+        return infos
+
+    engine.play_move = blind_takes_the_knight
+    slipper = get_bot("nova")
+    slipper = replace(slipper, selection=replace(slipper.selection, slip_prob=1.0))
+    rng = random.Random(2)
+    picks = [event_loop.run_until_complete(choose_move(board, slipper, engine, rng)) for _ in range(4)]
+    assert [c.move.uci() for c in picks if c.move.uci() == "f6g5"] == []  # judged on the real board: Bxg5 wins the queen
+    assert all(c.source == "engine" for c in picks)
 
 
 def test_opening_moves_are_book_moves(event_loop, engine):

@@ -17,7 +17,8 @@ RATINGS = (1000, 1400, 1800, 2200)
 # rating -> (depth, temperature_cp) replacing the nearest classic bot's; measured in data/bot_calibration.json:
 # with Mei's depth 4 / 55 cp the 1400 middlegame specialists scored 12/12 against Stockfish at UCI_Elo 1400;
 # with Nova's depth 2 / 100 cp opening-london-1000 scored 6/10 against UCI_Elo 1320, level with the 1400s;
-# with Nova's slips added (slip_prob 0.55) the six measured 1000s score 1.5 to 3 of 6
+# with Nova's slips added (slip_prob 0.55) the six measured 1000s score 1.5 to 4 of 6 (18.5/36, est. ~1320);
+# a slip may no longer drop a rook or queen, and widening the temperature to 220 cp did not change that (17.5/36)
 STRENGTH_OVERRIDES = {1000: (2, 150), 1400: (3, 70)}
 OPENING_BOOK_PLIES = 20  # an opening specialist follows the book twice as long as a classic bot
 OPENING_FAVOURITE_MAX_LOSS_CP = 100  # and accepts a book move that costs this much against its own best line

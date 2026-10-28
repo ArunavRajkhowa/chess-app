@@ -134,10 +134,11 @@ export function PuzzlesPage() {
     // play the opponent's first move after a beat
     setTimeout(() => {
       setSolver((cur) => {
-        if (!cur || cur.phase !== "intro") return cur;
+        if (!cur || cur.phase !== "intro" || cur.fen !== s.fen) return cur; // a later load() owns the board
         const c = new Chess(cur.fen);
         const mv = safeMove(c, p.moves[0]);
-        if (mv) playSound(soundForMove(mv, c));
+        if (!mv) return cur;
+        playSound(soundForMove(mv, c));
         return { ...cur, chess: c, fen: c.fen(), index: 1, lastMove: [p.moves[0].slice(0, 2), p.moves[0].slice(2, 4)], phase: "solving" };
       });
     }, 500);

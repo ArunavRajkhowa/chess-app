@@ -7,19 +7,19 @@ import json
 import logging
 import time
 import uuid
-from collections import defaultdict
 
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
 from ..plans.plan import TRACKED_KINDS, build_plan, closest_families, with_progress
 from ..storage.db import database
+from ..locks import KeyedLocks
 from .account import Player
 from .learn import player_level
 
 LOGGER = logging.getLogger("chess.plans")
 router = APIRouter(prefix="/api/plans", tags=["plans"])
-_PLAN_LOCKS: defaultdict[str, asyncio.Lock] = defaultdict(asyncio.Lock)  # one tick at a time per plan
+_PLAN_LOCKS = KeyedLocks()  # one tick at a time per plan
 
 
 class PlanRequest(BaseModel):

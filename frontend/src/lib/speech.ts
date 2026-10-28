@@ -54,7 +54,7 @@ function fetchAudio(text: string): Promise<string | null> {
   if (!p) {
     p = fetch(`/api/narration?text=${encodeURIComponent(key)}`)
       .then(async (r) => (r.status === 200 ? URL.createObjectURL(await r.blob()) : null))
-      .catch(() => null);
+      .catch(() => { audio.delete(key); return null; }); // no answer at all (offline): ask again next time
     audio.set(key, p);
   }
   return p;

@@ -15,8 +15,8 @@ async function dragMove(page: Page, from: string, to: string) {
   const b = center(to);
   await page.mouse.move(a.x, a.y);
   await page.mouse.down();
-  await page.mouse.move(a.x + 10, a.y + 10, { steps: 3 });
-  await page.mouse.move(b.x, b.y, { steps: 8 });
+  // a real mouse reports a few pixels per event: big jumps once hid a drag that never started
+  await page.mouse.move(b.x, b.y, { steps: Math.ceil(Math.hypot(b.x - a.x, b.y - a.y) / 3) });
   await page.mouse.up();
 }
 
@@ -24,6 +24,12 @@ async function clickMove(page: Page, from: string, to: string) {
   await page.locator(`[data-square="${from}"].sq`).click();
   await page.locator(`[data-square="${to}"].sq`).click();
 }
+
+test("a slow one-square drag plays the move", async ({ page }) => {
+  await page.goto("/dev/board");
+  await dragMove(page, "e2", "e3");
+  await expect(page.getByTestId("demo-fen")).toContainText("rnbqkbnr/pppppppp/8/8/8/4P3/PPPP1PPP/RNBQKBNR b");
+});
 
 test("board renders 32 pieces and accepts drag and click moves", async ({ page }) => {
   await page.goto("/dev/board");

@@ -11,6 +11,7 @@ from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel, Field
 
 from ..content.lessons import lesson_for_theme
+from ..locks import KeyedLocks
 from ..puzzles.difficulty import difficulty
 from ..puzzles.glicko import Rating, update
 from ..puzzles.store import PuzzleLibrary, load_library
@@ -21,6 +22,7 @@ router = APIRouter(prefix="/api/puzzles", tags=["puzzles"])
 
 RATING_KEY = "puzzle_rating"
 RUSH_LENGTH = 60
+_RATING_LOCKS = KeyedLocks()  # one rating read-update-write at a time per player
 
 
 class AttemptRequest(BaseModel):
@@ -230,6 +232,11 @@ async def get_puzzle(puzzle_id: str) -> dict:
 @router.post("/{puzzle_id}/attempt")
 async def attempt(puzzle_id: str, req: AttemptRequest, player: Player) -> dict:
     """Judges the attempt from the moves played; the browser's verdict is never trusted."""
+    async with _RATING_LOCKS[player]:
+        return await _judge_attempt(puzzle_id, req, player)
+
+
+async def _judge_attempt(puzzle_id: str, req: AttemptRequest, player: str) -> dict:
     p = load_library().by_id.get(puzzle_id)
     before = await _player_rating(player)
     if not p and req.mode == "mistakes":
@@ -246,7 +253,10 @@ async def attempt(puzzle_id: str, req: AttemptRequest, player: Player) -> dict:
         raise HTTPException(404, "no such puzzle")
     solved = solves(p.fen, p.moves, req.moves, solver_first=False) and not req.hinted
     after = before
-    if req.mode == "rated":
+    # only the first rated attempt on a puzzle moves the rating, as on lichess
+    first_rated = req.mode == "rated" and not await database.fetch_one(
+        "SELECT 1 FROM puzzle_attempts WHERE player_id = ? AND puzzle_id = ? AND mode = 'rated' LIMIT 1", (player, puzzle_id))
+    if first_rated:
         after = update(before, Rating(rating=p.rating, rd=p.rd), 1.0 if solved else 0.0)
         await database.set_player_value(player, RATING_KEY, {"rating": after.rating, "rd": after.rd, "volatility": after.volatility})
     await database.execute(
@@ -285,10 +295,10 @@ async def rush_start(mode: str = Query("3m", pattern="^(3m|5m|survival)$")) -> d
 
 
 class RushResult(BaseModel):
-    mode: str
-    score: int
-    wrong: int
-    seconds: float
+    mode: str = Field(pattern="^(3m|5m|survival)$")
+    score: int = Field(ge=0, le=RUSH_LENGTH)
+    wrong: int = Field(ge=0, le=RUSH_LENGTH)
+    seconds: float = Field(ge=0)
 
 
 @router.post("/rush/finish")

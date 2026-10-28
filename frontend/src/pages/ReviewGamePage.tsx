@@ -11,7 +11,7 @@ import { EvalGraph } from "../components/review/EvalGraph";
 import { ReportTable } from "../components/review/ReportTable";
 import { useVariation, VariationBar, WhyPanel } from "../components/study/WhyPanel";
 import { studyApi, useStudy } from "../lib/studyApi";
-import { api, type GameReport, type ReviewedMove } from "../lib/api";
+import { api, ApiError, type GameReport, type ReviewedMove } from "../lib/api";
 import { checkSquare, destsFor, safeMove, soundForMove } from "../lib/chess/game";
 import type { PromotionPiece, Square } from "../lib/chess/types";
 import { winPercent } from "../lib/engine/uci";
@@ -34,6 +34,8 @@ function barScore(text: string, whiteWon: boolean): { cp?: number; mate?: number
   return m ? { mate: (m[1] ? -1 : 1) * Number(m[2]) } : { cp: Math.round(Number(text) * 100) };
 }
 
+const POLL_MISSES = 4; // lost progress polls in a row before the page gives up (a guess)
+
 export function ReviewGamePage() {
   const { gameId = "" } = useParams();
   const [report, setReport] = useState<GameReport | null>(null);
@@ -52,6 +54,7 @@ export function ReviewGamePage() {
   const evaluate = useEngine((s) => s.evaluate);
   const loadEngine = useEngine((s) => s.load);
   const pollRef = useRef<number | null>(null);
+  const explainAbort = useRef<AbortController | null>(null); // a ply change stops the model writing for the move left behind
   const slotRef = useRef<HTMLDivElement>(null);
   const [movesBelow, setMovesBelow] = useState(false);
 
@@ -75,24 +78,37 @@ export function ReviewGamePage() {
 
   useEffect(() => {
     let cancelled = false;
-    (async () => {
-      if (await load()) return;
+    const later = (next: () => void, ms: number) => { pollRef.current = window.setTimeout(next, ms); };
+    const fail = (e: unknown) => setError(e instanceof Error ? e.message : String(e));
+    const start = async () => {
+      if (cancelled || await load()) return;
       try {
         const job = await api.startReview(gameId, "full");
-        setProgress(job.progress);
-        const tick = async () => {
-          if (cancelled) return;
-          const j = await api.reviewJob(job.id);
-          setProgress(j.progress);
-          if (j.status === "done") { await load(); return; }
-          if (j.status === "failed") { setError(j.error ?? "review failed"); return; }
-          pollRef.current = window.setTimeout(tick, 600);
-        };
-        void tick();
+        if (!cancelled) { setProgress(job.progress); void poll(job.id, 0); }
       } catch (e) {
-        setError(e instanceof Error ? e.message : String(e));
+        if (cancelled) return;
+        // the player's review of another game is still running: this one starts when it ends
+        if (e instanceof ApiError && e.status === 429) later(() => void start(), 2000);
+        else fail(e);
       }
-    })();
+    };
+    const poll = async (jobId: string, misses: number) => {
+      if (cancelled) return;
+      try {
+        const j = await api.reviewJob(jobId);
+        if (cancelled) return;
+        setProgress(j.progress);
+        if (j.status === "done") { await load(); return; }
+        if (j.status === "failed") { setError(j.error ?? "review failed"); return; }
+        later(() => void poll(jobId, 0), 600);
+      } catch (e) {
+        if (cancelled) return;
+        // a lost poll (a network switch, one 502) is asked again; several in a row are an error
+        if (misses + 1 < POLL_MISSES) later(() => void poll(jobId, misses + 1), 1500);
+        else fail(e);
+      }
+    };
+    void start();
     return () => { cancelled = true; if (pollRef.current) clearTimeout(pollRef.current); };
   }, [gameId, load]);
 
@@ -117,7 +133,7 @@ export function ReviewGamePage() {
     return () => ro.disconnect();
   }, [report]);
 
-  useEffect(() => { setShowBest(false); setExplanation(null); variation.stop(); if (retry && retry.ply !== ply) setRetry(null); }, [ply]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { setShowBest(false); explainAbort.current?.abort(); setExplanation(null); setExplaining(false); variation.stop(); if (retry && retry.ply !== ply) setRetry(null); }, [ply]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -152,19 +168,25 @@ export function ReviewGamePage() {
     const wa = line ? (current.color === "white" ? winPercent(line) : 100 - winPercent(line)) : current.win_after;
     const cls = classifyDrop(current.win_before, wa, false);
     playSound("wrong");
-    setRetry({ ply: current.ply, status: "wrong", fen: current.fen_before, text: `${mv.san} is ${cls === "best" ? "fine" : cls === "excellent" || cls === "good" ? "reasonable, but not the best" : "not it: still " + cls}. Try again, or press Show best.` });
+    // the player may have left this move while the engine thought: a cleared retry stays cleared
+    setRetry((prev) => prev?.ply !== current.ply ? prev : { ply: current.ply, status: "wrong", fen: current.fen_before, text: `${mv.san} is ${cls === "best" ? "fine" : cls === "excellent" || cls === "good" ? "reasonable, but not the best" : "not it: still " + cls}. Try again, or press Show best.` });
   };
 
   const explain = async () => {
     if (!current) return;
+    explainAbort.current?.abort();
+    const ctl = new AbortController();
+    explainAbort.current = ctl;
     setExplaining(true);
     setExplanation("");
     try {
-      await streamCoach("/api/coach/explain", { game_id: gameId, ply: current.ply }, (chunk) => setExplanation((t) => (t ?? "") + chunk));
+      await streamCoach("/api/coach/explain", { game_id: gameId, ply: current.ply }, (chunk) => {
+        if (!ctl.signal.aborted) setExplanation((t) => (t ?? "") + chunk);
+      }, ctl.signal);
     } catch (e) {
-      setExplanation(`Coach unavailable: ${e instanceof Error ? e.message : String(e)}`);
+      if (!ctl.signal.aborted) setExplanation(`Coach unavailable: ${e instanceof Error ? e.message : String(e)}`);
     } finally {
-      setExplaining(false);
+      if (!ctl.signal.aborted) setExplaining(false);
     }
   };
 

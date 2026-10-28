@@ -3,8 +3,6 @@ queue of missed tasks, and the engine reply for drill sections (play a position 
 with a goal)."""
 from __future__ import annotations
 
-import json
-
 import chess
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
@@ -29,7 +27,6 @@ class ProgressUpdate(BaseModel):
     lesson_id: str
     completed: bool = False
     score: float | None = Field(None, ge=0, le=100)
-    state: dict = Field(default_factory=dict)
     results: dict[int, bool] = Field(default_factory=dict, description="section index -> solved on the first try")
 
 
@@ -109,8 +106,8 @@ async def lesson(lesson_id: str) -> dict:
 
 @router.get("/progress")
 async def progress(player: Player) -> dict:
-    rows = await database.fetch_all("SELECT lesson_id, completed_at, score, attempts, state_json FROM player_lessons WHERE player_id = ?", (player,))
-    return {"progress": {r["lesson_id"]: {"completed_at": r["completed_at"], "score": r["score"], "attempts": r["attempts"], "state": json.loads(r["state_json"])} for r in rows}}
+    rows = await database.fetch_all("SELECT lesson_id, completed_at, score, attempts FROM player_lessons WHERE player_id = ?", (player,))
+    return {"progress": {r["lesson_id"]: {"completed_at": r["completed_at"], "score": r["score"], "attempts": r["attempts"]} for r in rows}}
 
 
 @router.post("/progress")
@@ -122,12 +119,12 @@ async def update_progress(req: ProgressUpdate, player: Player) -> dict:
         if not (0 <= idx < len(lsn.sections)) or lsn.sections[idx]["type"] not in TASK_TYPES:
             raise HTTPException(400, f"results index {idx}: lesson {req.lesson_id} has no challenge or quiz there")
     await database.execute(
-        "INSERT INTO player_lessons(player_id, lesson_id, completed_at, score, attempts, state_json) VALUES(?, ?, CASE WHEN ? THEN datetime('now') END, ?, 1, ?) "
+        "INSERT INTO player_lessons(player_id, lesson_id, completed_at, score, attempts) VALUES(?, ?, CASE WHEN ? THEN datetime('now') END, ?, 1) "
         "ON CONFLICT(player_id, lesson_id) DO UPDATE SET completed_at = COALESCE(CASE WHEN excluded.completed_at IS NOT NULL THEN excluded.completed_at END, player_lessons.completed_at), "
         "score = CASE WHEN excluded.score IS NULL THEN player_lessons.score "
         "WHEN player_lessons.score IS NULL OR excluded.score > player_lessons.score THEN excluded.score ELSE player_lessons.score END, "
-        "attempts = player_lessons.attempts + 1, state_json = excluded.state_json",
-        (player, req.lesson_id, int(req.completed), req.score, json.dumps(req.state)),
+        "attempts = player_lessons.attempts + 1",
+        (player, req.lesson_id, int(req.completed), req.score),
     )
     # A missed task joins the review queue for tomorrow; a task solved again while already queued climbs the ladder.
     for idx, solved in req.results.items():

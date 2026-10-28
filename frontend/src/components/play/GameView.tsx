@@ -85,8 +85,8 @@ export function GameView({ initial, onNewGame, onRematch, guide = false, onGuide
   const [viewPly, setViewPly] = useState<number>(initial.moves.length);
   const [botThinking, setBotThinking] = useState(false);
   const [pending, setPending] = useState<GameState | null>(null); // bot reply held back for a natural delay
-  const [evalLines, setEvalLines] = useState<EngineLine[] | null>(null);
-  const [evalFen, setEvalFen] = useState<string>("");
+  // The lines carry their position, so a stale result is never read as the current one.
+  const [evalLines, setEvalLines] = useState<{ fen: string; lines: EngineLine[] } | null>(null);
   const [feedback, setFeedback] = useState<Feedback | null>(null);
   const [hint, setHint] = useState<HintResponse | null>(null);
   const [botSays, setBotSays] = useState<string | null>(initial.bot && "greeting" in initial.bot ? (initial.bot as { greeting: string }).greeting : null);
@@ -120,15 +120,14 @@ export function GameView({ initial, onNewGame, onRematch, guide = false, onGuide
   useEffect(() => {
     if (!showEval && !showFeedback) return;
     let cancelled = false;
-    setEvalFen(fen);
     // The final lines only: each depth update re-rendered the whole game view during the move animation.
     evaluate(fen, { movetimeMs: LIVE_EVAL_MS, multipv: 1 })
-      .then((r) => { if (!cancelled && r) setEvalLines(r.lines); })
+      .then((r) => { if (!cancelled && r) setEvalLines({ fen, lines: r.lines }); })
       .catch(() => undefined);
     return () => { cancelled = true; };
   }, [fen, evaluate, showEval, showFeedback]);
 
-  const topLine = evalLines && evalFen === fen ? evalLines[0] : undefined;
+  const topLine = evalLines?.fen === fen ? evalLines.lines[0] : undefined;
 
   // Remember the eval before the player's move so we can judge it when the next eval arrives.
   useEffect(() => {
@@ -139,9 +138,10 @@ export function GameView({ initial, onNewGame, onRematch, guide = false, onGuide
     }
   }, [topLine, live, chess, myColor, fen, game.status]);
 
-  const judgePlayerMove = useCallback((uci: string, winAfterLine: EngineLine | undefined, ply: number, san: string) => {
+  const judgePlayerMove = useCallback((uci: string, winAfterLine: EngineLine | undefined, ply: number, san: string, fenBefore: string) => {
     const before = lastEvalBefore.current;
-    if (!before || !winAfterLine) return;
+    // A fast reply can beat the live eval: then the saved eval is of an older position, so say nothing.
+    if (!before || !winAfterLine || before.fen !== fenBefore) return;
     const wb = myColor === "w" ? before.win : 100 - before.win;
     const wa = myColor === "w" ? winPercent(winAfterLine) : 100 - winPercent(winAfterLine);
     const cls = classifyDrop(wb, wa, before.best === uci);
@@ -155,7 +155,7 @@ export function GameView({ initial, onNewGame, onRematch, guide = false, onGuide
     if (showFeedback) {
       const after = next.moves[playerPly - 1]?.fen;
       if (after) {
-        evaluate(after, { movetimeMs: 500, multipv: 1 }).then((r) => judgePlayerMove(playerUci, r?.lines[0], playerPly, playerSan)).catch(() => undefined);
+        evaluate(after, { movetimeMs: 500, multipv: 1 }).then((r) => judgePlayerMove(playerUci, r?.lines[0], playerPly, playerSan, fenAtPly(next, playerPly - 1))).catch(() => undefined);
       }
     }
   }, [evaluate, judgePlayerMove, showFeedback]);
@@ -283,9 +283,14 @@ export function GameView({ initial, onNewGame, onRematch, guide = false, onGuide
   const clockSide = game.status === "active" && game.moves.length >= (tc ? 1 : 0) ? (botThinking ? (myColor === "w" ? "b" : "w") : (chess.turn() as "w" | "b")) : null;
   useEffect(() => {
     if (!tc || !clockSide || game.status !== "active") return;
+    // Take off the real time passed: a hidden tab runs timers once a second or less.
+    let last = performance.now();
     const t = setInterval(() => {
+      const now = performance.now();
+      const spent = now - last;
+      last = now;
       setClocks((c) => {
-        const next = { ...c, [clockSide]: Math.max(0, c[clockSide] - 100) };
+        const next = { ...c, [clockSide]: Math.max(0, c[clockSide] - spent) };
         if (clockSide === myColor && next[clockSide] <= LOW_TIME_MS && !lowWarned.current) { lowWarned.current = true; playSound("lowTime"); }
         return next;
       });

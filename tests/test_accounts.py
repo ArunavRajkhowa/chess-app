@@ -193,6 +193,16 @@ def test_ten_failed_sign_ins_from_one_address_lock_it_out(client):
     assert r.status_code == 429 and "15 minutes" in r.json()["detail"]
 
 
+def test_failed_sign_ins_spread_over_addresses_lock_the_account(client):
+    sign_up(client)
+    client.post("/api/account/signout")
+    for i in range(auth.ACCOUNT_ATTEMPT_LIMIT):  # each address stays under its own limit
+        r = client.post("/api/account/signin", json={**ME, "password": "wrong wrong"}, headers={"x-forwarded-for": f"10.0.{i}.1"})
+        assert r.status_code == 401
+    r = client.post("/api/account/signin", json=ME, headers={"x-forwarded-for": "10.9.9.9"})
+    assert r.status_code == 429
+
+
 def test_sign_out_everywhere_ends_the_other_devices_session(client):
     sign_up(client)
     laptop = client.cookies["session"]

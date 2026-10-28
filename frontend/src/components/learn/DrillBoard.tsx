@@ -1,5 +1,5 @@
 import { Chess } from "chess.js";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Board } from "../board/Board";
 import { checkSquare, destsFor, safeMove, soundForMove } from "../../lib/chess/game";
 import type { PromotionPiece, Square } from "../../lib/chess/types";
@@ -26,11 +26,14 @@ export function DrillBoard({ fen: startFen, goal, maxMoves, orientation, onOutco
   if (state.token !== resetToken) {
     setState({ token: resetToken, fen: startFen, moves: 0, line: [], outcome: null, busy: false, last: null });
   }
+  const tokenRef = useRef(resetToken); // a reply that lands after Restart belongs to the abandoned attempt
+  tokenRef.current = resetToken;
   const chess = useMemo(() => new Chess(state.fen), [state.fen]);
   const learner = new Chess(startFen).turn();
   const dests = useMemo(() => (state.outcome || state.busy ? new Map() : destsFor(chess)), [chess, state.outcome, state.busy]);
 
   const onMove = async (from: Square, to: Square, promotion?: PromotionPiece) => {
+    const t = resetToken;
     const c = new Chess(state.fen);
     const mv = safeMove(c, { from, to, promotion });
     if (!mv) return;
@@ -39,6 +42,7 @@ export function DrillBoard({ fen: startFen, goal, maxMoves, orientation, onOutco
     try {
       const uci = from + to + (promotion ?? "");
       const r = await learnApi.drillMove(state.fen, uci, goal, startFen, state.line);
+      if (tokenRef.current !== t) return;
       const n = state.moves + 1;
       const line = [...state.line, uci, ...(r.reply ? [r.reply.uci] : [])];
       let out = r.outcome;
@@ -48,13 +52,14 @@ export function DrillBoard({ fen: startFen, goal, maxMoves, orientation, onOutco
       }
       const apply = () => setState((s) => ({ ...s, fen: r.fen, moves: n, line, busy: false, outcome: out, last: r.reply ? [r.reply.uci.slice(0, 2), r.reply.uci.slice(2, 4)] : s.last }));
       if (r.reply) {
-        setTimeout(() => { apply(); const c2 = new Chess(r.fen); playSound(c2.inCheck() ? "check" : "move"); if (out) onOutcome(out, n, line); }, 300);
+        setTimeout(() => { if (tokenRef.current !== t) return; apply(); const c2 = new Chess(r.fen); playSound(c2.inCheck() ? "check" : "move"); if (out) onOutcome(out, n, line); }, 300);
       } else {
         apply();
         if (out) onOutcome(out, n, line);
       }
       if (out) playSound(out.result === "success" ? "win" : "lose");
     } catch (e) {
+      if (tokenRef.current !== t) return;
       const out = { result: "fail" as const, reason: e instanceof Error ? e.message : String(e) };
       setState((s) => ({ ...s, busy: false, outcome: out }));
       onOutcome(out, state.moves + 1, state.line);

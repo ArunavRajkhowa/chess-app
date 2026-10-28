@@ -20,6 +20,11 @@ STATUS_QUEUED = "queued"
 STATUS_RUNNING = "running"
 STATUS_DONE = "done"
 STATUS_FAILED = "failed"
+FINISHED_JOB_TTL_S = 300  # guess: long enough for the browser's 0.6 s poll to read the end; the report stays in SQLite
+
+
+class ReviewBusy(Exception):
+    """The player already has a review queued or running for another game."""
 
 
 @dataclass
@@ -59,10 +64,18 @@ async def stored_report(player_id: str, game_id: str) -> dict | None:
     return json.loads(row["report_json"]) if row else None
 
 
+def check_free(player_id: str) -> None:
+    """Raise ReviewBusy when the player already has a review queued or running."""
+    busy = next((j for j in _jobs.values() if j.player_id == player_id and j.status in (STATUS_QUEUED, STATUS_RUNNING)), None)
+    if busy:
+        raise ReviewBusy(f"a review of game {busy.game_id} is still {busy.status}; wait for it to finish")
+
+
 def start_review(player_id: str, game_id: str, moves: list[chess.Move], *, depth: int, result: str | None, start_fen: str | None = None) -> ReviewJob:
     existing = _by_game.get(game_id)
     if existing and _jobs[existing].status in (STATUS_QUEUED, STATUS_RUNNING):
         return _jobs[existing]
+    check_free(player_id)
     job = ReviewJob(id=uuid.uuid4().hex[:10], game_id=game_id, player_id=player_id, total_positions=len(moves) + 1)
     _jobs[job.id] = job
     _by_game[game_id] = job.id
@@ -91,3 +104,10 @@ async def _run(job: ReviewJob, moves: list[chess.Move], depth: int, result: str 
         job.status = STATUS_FAILED
         job.error = f"{type(exc).__name__}: {exc}"
         LOGGER.error("review failed game=%s", job.game_id, exc_info=True)
+    asyncio.get_running_loop().call_later(FINISHED_JOB_TTL_S, _forget, job)
+
+
+def _forget(job: ReviewJob) -> None:
+    _jobs.pop(job.id, None)
+    if _by_game.get(job.game_id) == job.id:
+        _by_game.pop(job.game_id)

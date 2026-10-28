@@ -6,6 +6,7 @@ from __future__ import annotations
 import io
 import json
 import logging
+import re
 from dataclasses import dataclass, field
 from functools import lru_cache
 from pathlib import Path
@@ -93,6 +94,8 @@ def _validate_section(sec: dict) -> dict:
     if t == "text":
         if not sec.get("md"):
             raise ValueError("text section without md")
+        if sec.get("fen"):  # a text read over its own position, when no other section has the right one
+            _check_fen(sec["fen"])
     elif t == "position":
         _check_fen(sec["fen"])
     elif t == "challenge":
@@ -164,6 +167,54 @@ def _validate_section(sec: dict) -> dict:
     return sec
 
 
+# A move quoted in prose with its number: "30.Bxf7+", "12...Nd4", "5. O-O".
+QUOTED_MOVE = re.compile(r"\b(\d+)\.(\.\.)?\s?(O-O-O|O-O|[NBRQK]?[a-h]?[1-8]?x?[a-h][1-8](?:=[NBRQ])?)[+#]?")
+
+
+def quoted_moves(text: str) -> list[tuple[int, bool, str]]:
+    """Every numbered move in the text as (move number, White to move, SAN without check marks)."""
+    return [(int(n), not dots, san) for n, dots, san in QUOTED_MOVE.findall(text)]
+
+
+def _own_fen(sec: dict) -> str | None:
+    if sec["type"] == "lecture":
+        return sec["frames"][0]["fen"]
+    if sec["type"] == "game":
+        return sec["start_fen"]
+    return sec.get("fen")
+
+
+def _before_quoted_move(text: str, games: list[dict]) -> str | None:
+    """The position just before the first quoted move that one of the lesson's games plays at that number."""
+    for number, white, san in quoted_moves(text):
+        for game in games:
+            fen = game["start_fen"]
+            for ply in game["plies"]:
+                board = chess.Board(fen)
+                if board.fullmove_number == number and board.turn == white and ply["san"].rstrip("+#") == san:
+                    return fen
+                fen = ply["fen"]
+    return None
+
+
+def _place_boards(sections: list[dict]) -> None:
+    """Gives each text section, and each quiz without a position, the board it is read over: the position
+    before a move it quotes from one of the lesson's games, else the nearest position after it, else before it.
+    A text section's paragraphs each get a board too: their own quoted move's, else the section's."""
+    games = [s for s in sections if s["type"] == "game"]
+    for i, sec in enumerate(sections):
+        if sec["type"] not in ("text", "quiz"):
+            continue
+        words = sec.get("md") or sec.get("question") or ""
+        if not sec.get("fen"):
+            later = [f for s in sections[i + 1:] if (f := _own_fen(s))]
+            earlier = [f for s in reversed(sections[:i]) if (f := _own_fen(s))]
+            sec["fen"] = _before_quoted_move(words, games) or next(iter(later + earlier), chess.STARTING_FEN)
+        if sec["type"] == "text":
+            paragraphs = [p.strip() for p in re.split(r"\n\s*\n", words) if p.strip()]
+            sec["paragraphs"] = [{"md": p, "fen": _before_quoted_move(p, games) or sec["fen"]} for p in paragraphs]
+
+
 def _sans(board: chess.Board, ucis: list[str]) -> list[str]:
     b = board.copy()
     out = []
@@ -198,6 +249,7 @@ def load_curriculum() -> list[Module]:
                     except (ValueError, KeyError) as exc:
                         dropped += 1
                         LOGGER.warning("dropped %s lesson %s section %d: %s", path.name, lsn.get("id"), i, exc)
+                _place_boards(sections)
                 practice = [t for t in lsn.get("practice", []) if t in THEME_INFO]
                 for t in set(lsn.get("practice", [])) - set(practice):
                     LOGGER.warning("dropped %s lesson %s practice theme %r: not a puzzle theme key", path.name, lsn["id"], t)

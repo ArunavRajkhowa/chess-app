@@ -6,9 +6,11 @@ import base64
 import hashlib
 import hmac
 import logging
+import asyncio
 import secrets
 import time
 from collections import defaultdict
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 from .settings import settings
@@ -20,9 +22,16 @@ MIN_PASSWORD = 8
 # n=2^15, r=8 costs 32 MiB and about 0.3 s per hash on a dev laptop; the parameters are stored with the hash.
 _N, _R, _P = 2**15, 8, 1
 _MAXMEM = 64 * 1024 * 1024
+# hashes at once: each takes 32 MiB, and the free host has 512 MB next to Stockfish and Maia (a guess).
+# Their own threads, so a burst of sign-ins waits on the event loop, not in the pool the store uses.
+_HASHERS = ThreadPoolExecutor(2, thread_name_prefix="scrypt")
 RESET_HOURS = 2
 # A client that fails this often inside the window is refused until the oldest failure ages out.
 ATTEMPT_LIMIT, ATTEMPT_WINDOW = 10, 15 * 60
+# failures per account from all addresses together: slows guessing spread over many addresses, and is
+# high enough that one person mistyping cannot lock the owner out (a guess, not measured)
+ACCOUNT_ATTEMPT_LIMIT = 30
+SWEEP_AT = 10_000  # tracked keys before aged-out entries are swept, so random keys cannot grow memory
 
 
 def hash_password(password: str) -> str:
@@ -39,6 +48,11 @@ def verify_password(password: str, stored: str | None) -> bool:
     _, n, r, p, salt, digest = (stored or _NOBODY).split("$")
     got = hashlib.scrypt(password.encode(), salt=bytes.fromhex(salt), n=int(n), r=int(r), p=int(p), maxmem=_MAXMEM)
     return hmac.compare_digest(got.hex(), digest) and stored is not None
+
+
+async def hashing(fn, *args):
+    """Runs hash_password or verify_password on the hashing threads."""
+    return await asyncio.get_running_loop().run_in_executor(_HASHERS, fn, *args)
 
 
 def secret_key() -> bytes:
@@ -89,15 +103,28 @@ def reset_token_valid(token: str, password_hash: str | None) -> bool:
 _attempts: dict[tuple[str, str], list[float]] = defaultdict(list)  # (bucket, client address) -> failure times
 
 
-def over_limit(bucket: str, client: str) -> bool:
-    """True once the client has ATTEMPT_LIMIT recorded attempts inside the window. In memory, one process."""
+def over_limit(bucket: str, client: str, limit: int = ATTEMPT_LIMIT) -> bool:
+    """True once the client has `limit` recorded attempts inside the window. In memory, one process."""
     recent = [t for t in _attempts.get((bucket, client), []) if t > time.time() - ATTEMPT_WINDOW]
     if recent:
         _attempts[bucket, client] = recent
     else:
         _attempts.pop((bucket, client), None)  # spoofed or aged-out addresses keep no entry
-    return len(recent) >= ATTEMPT_LIMIT
+    return len(recent) >= limit
+
+
+def forget_attempt(bucket: str, client: str) -> None:
+    """Takes back the latest recorded attempt; an emptied key is removed, since the sweep reads its last time."""
+    times = _attempts.get((bucket, client))
+    if times:
+        times.pop()
+    if not times:
+        _attempts.pop((bucket, client), None)
 
 
 def record_attempt(bucket: str, client: str) -> None:
-    _attempts[bucket, client].append(time.time())
+    now = time.time()
+    if len(_attempts) >= SWEEP_AT:
+        for key in [k for k, times in _attempts.items() if times[-1] <= now - ATTEMPT_WINDOW]:
+            del _attempts[key]
+    _attempts[bucket, client].append(now)

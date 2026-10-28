@@ -3,11 +3,11 @@ is reached only through a random `session` token that a `sessions` row maps to i
 The id is a secret: no response body ever carries it."""
 from __future__ import annotations
 
-import asyncio
 import hashlib
 import logging
 import re
 import secrets
+import time
 from typing import Annotated
 
 import httpx
@@ -23,7 +23,8 @@ router = APIRouter(prefix="/api/account", tags=["account"])
 
 PLAYER_COOKIE = "player"
 SESSION_COOKIE = "session"
-COOKIE_DAYS = 400  # the longest lifetime Chrome keeps a cookie
+COOKIE_DAYS = 400  # the longest lifetime Chrome keeps a cookie; the server ends a session at the same age
+MAX_PASSWORD = 1024  # a ceiling so one request cannot make scrypt hash megabytes (a guess, not measured)
 _PLAYER_ID = re.compile(r"[0-9a-f]{32}")
 _EMAIL = re.compile(r"[^@\s]+@[^@\s]+\.[^@\s]+")
 GOOGLE_TOKENINFO = "https://oauth2.googleapis.com/tokeninfo"
@@ -37,7 +38,7 @@ PLAYER_TABLES = ("games", "puzzle_attempts", "events", "sessions", "player_plans
 # Per-player tables with one row per key: when the guest and the account both have a key, the account's row wins.
 PLAYER_KEYED_TABLES = ("player_lessons", "player_values", "player_reviews")
 
-_sessions: dict[str, str] = {}  # token hash -> player id, so a signed-in request costs no store read
+_sessions: dict[str, tuple[str, float]] = {}  # token hash -> (player id, expiry), so a signed-in request costs no store read
 
 
 def _set_cookie(request: Request, response: Response, name: str, value: str) -> None:
@@ -55,11 +56,14 @@ async def current_player(request: Request, response: Response) -> str:
     if token:
         key = _token_hash(token)
         if key not in _sessions:
-            row = await database.fetch_one("SELECT player_id FROM sessions WHERE token_hash = ?", (key,))
+            row = await database.fetch_one(
+                "SELECT player_id, CAST(strftime('%s', created_at) AS INTEGER) AS started FROM sessions WHERE token_hash = ?", (key,))
             if row:
-                _sessions[key] = row["player_id"]
-        if key in _sessions:
-            return _sessions[key]
+                _sessions[key] = (row["player_id"], row["started"] + COOKIE_DAYS * 86400)
+        cached = _sessions.get(key)
+        if cached and cached[1] > time.time():
+            return cached[0]
+        _sessions.pop(key, None)
         response.delete_cookie(SESSION_COOKIE)  # signed out elsewhere: carry on as a guest
     player_id = request.cookies.get(PLAYER_COOKIE, "")
     if _PLAYER_ID.fullmatch(player_id) and not await database.fetch_one(
@@ -81,12 +85,12 @@ class GoogleSignIn(BaseModel):
 
 class Credentials(BaseModel):
     email: str = Field(max_length=254)
-    password: str = Field(min_length=auth.MIN_PASSWORD)
+    password: str = Field(min_length=auth.MIN_PASSWORD, max_length=MAX_PASSWORD)
 
 
 class PasswordChange(BaseModel):
-    current: str
-    new: str = Field(min_length=auth.MIN_PASSWORD)
+    current: str = Field(max_length=MAX_PASSWORD)
+    new: str = Field(min_length=auth.MIN_PASSWORD, max_length=MAX_PASSWORD)
 
 
 class ResetRequest(BaseModel):
@@ -95,7 +99,7 @@ class ResetRequest(BaseModel):
 
 class ResetConfirm(BaseModel):
     token: str
-    password: str = Field(min_length=auth.MIN_PASSWORD)
+    password: str = Field(min_length=auth.MIN_PASSWORD, max_length=MAX_PASSWORD)
 
 
 class SignOut(BaseModel):
@@ -219,7 +223,7 @@ async def sign_up(req: Credentials, request: Request, response: Response, player
     await database.execute(
         "INSERT INTO players(id, email, password_hash, signed_in_at) VALUES(?, ?, ?, datetime('now')) "
         "ON CONFLICT(id) DO UPDATE SET email = excluded.email, password_hash = excluded.password_hash, signed_in_at = excluded.signed_in_at",
-        (player, email, await asyncio.to_thread(auth.hash_password, req.password)),
+        (player, email, await auth.hashing(auth.hash_password, req.password)),
     )
     await _start_session(request, response, player, player)
     return {"email": email}
@@ -228,14 +232,19 @@ async def sign_up(req: Credentials, request: Request, response: Response, player
 @router.post("/signin")
 async def sign_in(req: Credentials, request: Request, response: Response, player: Player) -> dict:
     """Signs in with email and password; the guest's games and progress move to the account.
-    After 10 failures from one address in 15 minutes, the address waits."""
-    if auth.over_limit("signin", _client(request)):
-        raise HTTPException(429, f"too many sign-in attempts: wait {auth.ATTEMPT_WINDOW // 60} minutes")
+    After 10 failures from one address, or 30 on one account, in 15 minutes, the sign-in waits."""
     email = _email(req.email)
+    if auth.over_limit("signin", _client(request)) or auth.over_limit("signin-account", email, auth.ACCOUNT_ATTEMPT_LIMIT):
+        raise HTTPException(429, f"too many sign-in attempts: wait {auth.ATTEMPT_WINDOW // 60} minutes")
+    # Counted before the hash, so concurrent requests all see it; a success takes it back below.
+    attempts = [("signin", _client(request)), ("signin-account", email)]
+    for bucket, key in attempts:
+        auth.record_attempt(bucket, key)
     owner = await database.fetch_one("SELECT id, password_hash FROM players WHERE email = ? AND password_hash IS NOT NULL", (email,))
-    if not await asyncio.to_thread(auth.verify_password, req.password, owner["password_hash"] if owner else None):
-        auth.record_attempt("signin", _client(request))
+    if not await auth.hashing(auth.verify_password, req.password, owner["password_hash"] if owner else None):
         raise HTTPException(401, WRONG_SIGN_IN)
+    for bucket, key in attempts:
+        auth.forget_attempt(bucket, key)
     me = await database.fetch_one("SELECT email FROM players WHERE id = ?", (player,))
     if me and me["email"] and player != owner["id"]:
         raise HTTPException(409, SIGNED_IN)
@@ -247,10 +256,12 @@ async def sign_in(req: Credentials, request: Request, response: Response, player
 @router.post("/password")
 async def change_password(req: PasswordChange, request: Request, player: Player) -> dict:
     """Sets a new password after checking the current one, and signs out every other device."""
+    _limit("password", request, "password attempts")
     me = await database.fetch_one("SELECT password_hash FROM players WHERE id = ?", (player,))
-    if not me or not await asyncio.to_thread(auth.verify_password, req.current, me["password_hash"]):
+    # no stored hash means no password to guess, so no scrypt is spent hiding that
+    if not me or not me["password_hash"] or not await auth.hashing(auth.verify_password, req.current, me["password_hash"]):
         raise HTTPException(401, "the current password is wrong")
-    new_hash = await asyncio.to_thread(auth.hash_password, req.new)
+    new_hash = await auth.hashing(auth.hash_password, req.new)
     await database.execute("UPDATE players SET password_hash = ? WHERE id = ?", (new_hash, player))
     await _end_sessions(player, keep=request.cookies.get(SESSION_COOKIE))
     return {"ok": True}
@@ -282,7 +293,7 @@ async def confirm_reset(req: ResetConfirm, request: Request, response: Response,
     if not owner or not auth.reset_token_valid(req.token, owner["password_hash"]):
         raise HTTPException(401, "this reset link is not valid any more: ask for a new one")
     await database.execute("UPDATE players SET password_hash = ?, signed_in_at = datetime('now') WHERE id = ?",
-                           (await asyncio.to_thread(auth.hash_password, req.password), owner["id"]))
+                           (await auth.hashing(auth.hash_password, req.password), owner["id"]))
     await _end_sessions(owner["id"])
     me = await database.fetch_one("SELECT email FROM players WHERE id = ?", (player,))
     signed_in_as_another = bool(me and me["email"]) and player != owner["id"]  # that account is not merged away
