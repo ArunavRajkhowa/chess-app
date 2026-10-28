@@ -6,6 +6,8 @@ from __future__ import annotations
 import base64
 import re
 import sqlite3
+
+import libsql
 import time
 
 import httpx
@@ -77,8 +79,13 @@ def reviewed_import(client) -> tuple[str, str]:
     raise AssertionError("review did not finish")
 
 
+def _db(db_file):
+    """A connection through libsql, as the app's: a second SQLite library in one process breaks its locks on Linux."""
+    return libsql.connect(str(db_file))
+
+
 def rows_of(db_file, player_id: str) -> dict[str, int]:
-    conn = sqlite3.connect(db_file)
+    conn = _db(db_file)
     counts = {t: conn.execute(f"SELECT COUNT(*) FROM {t} WHERE player_id = ?", (player_id,)).fetchone()[0]
               for t in A.PLAYER_TABLES + A.PLAYER_KEYED_TABLES}
     counts["players"] = conn.execute("SELECT COUNT(*) FROM players WHERE id = ?", (player_id,)).fetchone()[0]
@@ -303,7 +310,7 @@ def test_google_sign_in_is_refused_while_signed_in_to_a_password_account(client,
     sign_up(client)
     r = client.post("/api/account/google", json={"credential": "sub-9"})
     assert r.status_code == 409 and r.json()["detail"] == "this browser is already signed in: sign out first"
-    assert sqlite3.connect(db_file).execute("SELECT COUNT(*) FROM players WHERE email = ?", (ME["email"],)).fetchone()[0] == 1
+    assert _db(db_file).execute("SELECT COUNT(*) FROM players WHERE email = ?", (ME["email"],)).fetchone()[0] == 1
 
 
 def test_a_google_sign_in_cannot_take_over_an_unverified_password_account(client, google):
@@ -400,23 +407,23 @@ def test_delete_my_data_leaves_no_row_of_the_player_and_spares_others(client, db
 
     assert client.delete("/api/account").json() == {"deleted": True}
     assert not any(rows_of(db_file, me).values())
-    assert sqlite3.connect(db_file).execute("SELECT COUNT(*) FROM reviews WHERE game_id = ?", (imported,)).fetchone()[0] == 0
-    assert sqlite3.connect(db_file).execute("SELECT COUNT(*) FROM players WHERE email = ?", (ME["email"],)).fetchone()[0] == 0
+    assert _db(db_file).execute("SELECT COUNT(*) FROM reviews WHERE game_id = ?", (imported,)).fetchone()[0] == 0
+    assert _db(db_file).execute("SELECT COUNT(*) FROM players WHERE email = ?", (ME["email"],)).fetchone()[0] == 0
     assert rows_of(db_file, other)["games"] == 1
     assert "player" not in client.cookies and "session" not in client.cookies
 
 
 def test_every_table_with_a_player_id_is_merged_and_deleted(client, db_file):
-    conn = sqlite3.connect(db_file)
-    tables = [t for (t,) in conn.execute("SELECT name FROM sqlite_master WHERE type = 'table'")
-              if "player_id" in {c[1] for c in conn.execute(f"PRAGMA table_info({t})")}]
+    conn = _db(db_file)
+    tables = [t for (t,) in conn.execute("SELECT name FROM sqlite_master WHERE type = 'table'").fetchall()
+              if "player_id" in {c[1] for c in conn.execute(f"PRAGMA table_info({t})").fetchall()}]
     assert sorted(tables) == sorted(A.PLAYER_TABLES + A.PLAYER_KEYED_TABLES)
 
 
 def test_an_event_is_stored_with_its_platform_and_without_the_user_agent(client, db_file):
     r = client.post("/api/events", json={"name": "page.viewed", "props": {"page": "puzzles"}}, headers={"user-agent": ANDROID_UA})
     assert r.json() == {"ok": True}
-    row = sqlite3.connect(db_file).execute("SELECT name, platform, props_json FROM events").fetchone()
+    row = _db(db_file).execute("SELECT name, platform, props_json FROM events").fetchone()
     assert row == ("page.viewed", "android", '{"page": "puzzles"}')
 
 

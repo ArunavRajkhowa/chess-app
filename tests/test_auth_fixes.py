@@ -70,10 +70,12 @@ def test_a_password_longer_than_the_ceiling_is_refused_before_hashing(client):
 
 def test_a_session_older_than_the_cookie_lifetime_is_refused(client):
     client.post("/api/account/signup", json=ME)
-    import sqlite3
+    import libsql  # the app's own SQLite: a second library in one process breaks its locks on Linux
     from backend import settings as s
-    with sqlite3.connect(s.settings.DB_PATH) as db:
-        db.execute("UPDATE sessions SET created_at = datetime('now', ?)", (f"-{A.COOKIE_DAYS + 1} days",))
+    db = libsql.connect(s.settings.DB_PATH)
+    db.execute("UPDATE sessions SET created_at = datetime('now', ?)", (f"-{A.COOKIE_DAYS + 1} days",))
+    db.commit()
+    db.close()
     A._sessions.clear()  # a process restart
     assert client.get("/api/account").json()["email"] is None
 
