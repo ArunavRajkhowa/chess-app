@@ -1,0 +1,25 @@
+maia3-5m.onnx
+
+This file is a converted copy of the Maia-3 5M chess model ("Maia3 5M").
+
+Authors: the Computational Social Science Lab (CSSLab), University of Toronto:
+  Daniel Monroe, George Eilender, Philip Chalmers, Zhenwei Tang and Ashton Anderson.
+  Paper: "Chessformer: A Unified Architecture for Chess Modeling", ICLR 2026,
+  https://openreview.net/forum?id=2ltBRzEHyd
+
+Upstream:
+  Code:    https://github.com/CSSLab/maia3 (commit 1e13597c42d4858b7cfd7cfdae01e297263364b2)
+  Weights: https://huggingface.co/UofTCSSLab/Maia3-5M (revision b6559de2398d7140b985f28fd2c19fb5e47ddabe,
+           file maia3-5m.pt, sha256 ba14208b2992d85502f5fb501934abf6aaaeb355e9f3fdf90e326911f562524f)
+
+Licence: GNU Affero General Public License, version 3 (AGPL-3.0).
+  Full text: https://www.gnu.org/licenses/agpl-3.0.txt and the LICENSE file of the upstream repository.
+
+What was changed:
+  - The PyTorch checkpoint was exported to ONNX (opset 17, float32) by scripts/export_maia3.py.
+    The weights are not changed, retrained or quantised. RMSNorm is written out as
+    ReduceMean/Sqrt/Div/Mul because the exporter has no RMSNorm operator.
+  - The exported graph returns the move policy and value logits only; the ponder (time) head
+    output is dropped.
+  - backend/bots/maia.py re-implements the upstream input encoding (maia3/dataset.py,
+    tokenize_board and get_historical_tokens) with numpy instead of torch.

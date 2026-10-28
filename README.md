@@ -33,7 +33,7 @@ Turso database. It installs on Android, iPhone and desktop Chrome as an app, run
 | Puzzles | 5,801: 558 generated, rated by their shape (`backend/puzzles/difficulty.py`), and 5,243 from the lichess puzzle database (CC0, `scripts/import_lichess_puzzles.py`), which keep their measured lichess rating; 70 themes, opening tags | replayed at load; generated puzzles have one solution per solver move at depth 16; an engine sample of 100 lichess puzzles passed 98 |
 | Endgames | 56 positions in five themes | engine goal check; no piece hangs at the start |
 | Openings | 3,865 named lines (lichess, CC0) | parsed at load |
-| Bots | 20, from 250 to 3200, plus 140 specialists generated from the 14 opening courses, master games and endgames | `scripts/calibrate_bots.py`, 6 games each against Stockfish at the bot's label (`data/bot_calibration.json`, 2026-10-25): every classic bot and every specialist kind and rating within the 6-game noise of its label |
+| Bots | 20, from 250 to 3200, plus 140 specialists generated from the 14 opening courses, master games and endgames; the 7 ladder bots from 1400 to 2600 play Maia-3's human moves after the book | `scripts/bot_humanlike.py --positions`: Maia's sampled move matches the lichess player's 45-55% of the time (1,000 positions per band) and blunders 2.5-5.5% of the time where the players blunder 3-11.5%; `scripts/calibrate_bots.py`, 6 games each against Stockfish at the bot's label (`data/bot_calibration.json`, 2026-10-25 and, for the Maia bots, 2026-10-28): every bot within the 6-game noise of its label, the bots under 1400 keep the Stockfish selector because Maia, set below the ratings it was trained on, broke the ladder order |
 | Opening courses | 14: Caro-Kann, English, French, Italian, King's Indian, London, Nimzo-Indian, Queen's Gambit, Queen's Gambit Declined, Ruy Lopez, Scandinavian, Sicilian Dragon, Sicilian Najdorf, Slav; 69 lines, 33 traps | `scripts/validate_courses.py --engine`: every trap's punishment is the engine's move; every board claim in the notes checked with python-chess |
 
 ## Run it
@@ -195,8 +195,15 @@ python -m scripts.annotate_games --workers 4                 # the why/why-not s
 
 Piece set by Colin M.L. Burnett (CC BY-SA 3.0). Opening names from lichess
 [chess-openings](https://github.com/lichess-org/chess-openings) (CC0). Engine: Stockfish (GPLv3),
-WASM build by Nathan Rugg. Accuracy and win-chance formulas after lichess; move classification
+WASM build (c) Chess.com, LLC (npm `stockfish`, by Nathan Rugg). Accuracy and win-chance formulas after lichess; move classification
 boundaries after chess.com's published expected-points model. Master-game scores from the
 pgnmentor.com player files and The Week in Chess (via the `rozim/ChessData` mirror), the 1997
 Deep Blue games from python-chess's test data, and the AlphaZero games DeepMind released in 2018;
 the themes and notes on them are this project's own.
+
+## Licence
+
+GNU AGPL-3.0 ([LICENSE](LICENSE)). The bots run the Maia-3 model, which is AGPL-3.0, so the app is too.
+In short: you may use, change and share it; if you run a changed copy as a service, you must offer
+its users the source (the app links to it in Settings and the sidebar).
+Third-party software and data, with their licences: [THIRD_PARTY.md](THIRD_PARTY.md).

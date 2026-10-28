@@ -71,7 +71,7 @@ class GameReport:
         return asdict(self)
 
 
-def _exchange_gain(board: chess.Board, square: chess.Square) -> int:
+def exchange_gain(board: chess.Board, square: chess.Square) -> int:
     """Static exchange on `square` for the side to move: the material it wins by capturing there with
     its cheapest legal capturer, both sides recapturing only while it pays (0 if capturing loses)."""
     captures = [m for m in board.legal_moves if m.to_square == square]
@@ -81,7 +81,7 @@ def _exchange_gain(board: chess.Board, square: chess.Square) -> int:
     target = PIECE_VALUES[board.piece_at(square).piece_type]
     after = board.copy(stack=False)
     after.push(cheapest)
-    return max(0, target - _exchange_gain(after, square))
+    return max(0, target - exchange_gain(after, square))
 
 
 def _sacrificed_pawns(board: chess.Board, move: chess.Move) -> int:
@@ -96,7 +96,7 @@ def _sacrificed_pawns(board: chess.Board, move: chess.Move) -> int:
     after = board.copy(stack=False)
     after.push(move)
     targets = {m.to_square for m in after.legal_moves if after.color_at(m.to_square) == mover.color}
-    return max(0, max((_exchange_gain(after, sq) for sq in targets), default=0) - gained)
+    return max(0, max((exchange_gain(after, sq) for sq in targets), default=0) - gained)
 
 
 def _note_for(cls: str, rm_best_san: str, cp_loss: int, mover_mate_missed: bool, allows_mate: int | None,

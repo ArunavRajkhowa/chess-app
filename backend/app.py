@@ -8,6 +8,7 @@ import time
 import uuid
 from contextlib import asynccontextmanager
 
+import chess
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse
@@ -15,6 +16,7 @@ from fastapi.staticfiles import StaticFiles
 
 from .engine.pool import IllegalPosition, pool
 from .logging_setup import configure_logging
+from .bots import maia
 from .bots.specialists import specialist_bots
 from .content.lessons import load_curriculum
 from .openings.book import load_book
@@ -31,6 +33,7 @@ def _warm_content() -> None:
     """Builds the cached content once at start, so no request pays for it."""
     started = time.monotonic()
     load_book()
+    maia.policy(chess.Board(), 1500, 1500)  # loads the bots' Maia-3 model (10-20 s on a small host)
     specialist_bots()  # the courses, the master games and the endgames
     load_curriculum()
     for family in catalog.families():

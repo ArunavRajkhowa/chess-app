@@ -1,14 +1,18 @@
-.botpicker { display: grid; grid-template-columns: 1fr 320px; gap: var(--s-5); align-items: start; }
+.botpicker { display: grid; grid-template-columns: minmax(0, 1fr) minmax(var(--side-min), 400px); gap: var(--s-5); align-items: start; }
 .botpicker-tier header { display: flex; align-items: baseline; gap: var(--s-3); margin: var(--s-4) 0 var(--s-2); }
-.botpicker-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: var(--s-2); }
-.botcard { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 10px 6px; border-radius: var(--r-md); border: 1px solid var(--line); background: var(--bg-elev); cursor: pointer; transition: transform 80ms, border-color var(--anim); }
+.botpicker-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(110px, 22%), 1fr)); gap: var(--s-2); }
+.botcard { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 4px; border-radius: var(--r-md); border: 1px solid var(--line); background: var(--bg-elev); cursor: pointer; transition: transform 80ms, border-color var(--anim); }
 .botcard:hover { transform: translateY(-2px); border-color: var(--line-strong); }
 .botcard.selected { border-color: var(--brand); box-shadow: 0 0 0 2px color-mix(in srgb, var(--brand) 40%, transparent); }
 .botcard-avatar { color: var(--ink-2); }
 .botcard.selected .botcard-avatar { color: var(--ink); }
 .botcard-name { font-weight: 700; font-size: var(--fs-sm); }
 .botcard-elo { color: var(--ink-3); font-size: var(--fs-xs); }
-.botpicker-side { position: sticky; top: var(--s-4); display: flex; flex-direction: column; gap: var(--s-3); }
+.botpicker-filters { flex-wrap: wrap; }
+/* The panel stays in view beside the list. When taller than the window, its body scrolls; Coach mode and Play stay at its foot. */
+.botpicker-side { position: sticky; top: var(--s-4); max-height: calc(100dvh - 2 * var(--s-4) - var(--tabbar-h)); display: flex; flex-direction: column; gap: var(--s-3); }
+.botpicker-body { flex: 1 1 auto; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: var(--s-3); }
+.botpicker-foot { flex: none; display: flex; flex-direction: column; gap: var(--s-3); }
 .botpicker-hero { display: flex; gap: var(--s-3); align-items: center; }
 .botpicker-hero-avatar { color: var(--ink); }
 .botpicker-colors { display: flex; gap: var(--s-2); }
@@ -17,4 +21,9 @@
 .colorbtn.black { background: var(--side-black); color: var(--side-white); }
 .colorbtn.random { background: linear-gradient(135deg, var(--side-white) 50%, var(--side-black) 50%); color: var(--brand); }
 .colorbtn.on { border-color: var(--brand); box-shadow: 0 0 0 2px color-mix(in srgb, var(--brand) 40%, transparent); }
-@media (max-width: 900px) { .botpicker { grid-template-columns: 1fr; } .botpicker-side { position: static; } }
+/* Phone: the panel stacks under the list, and the Play button stays above the tab bar while the list scrolls. */
+@media (max-width: 639px) {
+  .botpicker { grid-template-columns: 1fr; padding-bottom: 64px; }
+  .botpicker-side, .botpicker-body { position: static; max-height: none; overflow: visible; }
+  .botpicker-start { position: fixed; left: var(--main-pad); right: var(--main-pad); bottom: calc(var(--tabbar-h) + var(--s-2)); z-index: 40; box-shadow: var(--shadow); }
+}

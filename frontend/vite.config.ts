@@ -1,7 +1,8 @@
 import react from "@vitejs/plugin-react";
 import { defineConfig, type Plugin } from "vite";
 
-const BACKEND = "http://127.0.0.1:8765";
+// BACKEND_URL points the dev server at another backend (a test server with a scratch database).
+const BACKEND = process.env.BACKEND_URL ?? "http://127.0.0.1:8765";
 
 // The page brings the player cookie, as the backend's own page does (backend/app.py), so the
 // app's parallel first calls share one guest instead of each minting one. The backend judges the

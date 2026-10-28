@@ -145,7 +145,7 @@ export function AskCoach({ fen, lessonId }: { fen: string; lessonId?: string }) 
   return (
     <div className="ask-coach">
       <form className="row" onSubmit={(e) => { e.preventDefault(); void ask(); }}>
-        <input className="input" value={question} onChange={(e) => setQuestion(e.target.value)} placeholder="Ask about this position, e.g. why not Nxe4?" data-testid="ask-coach-input" />
+        <input className="input" value={question} onChange={(e) => setQuestion(e.target.value)} placeholder="Ask about this position" data-testid="ask-coach-input" />
         <button className="btn btn-sm" type="submit" disabled={!question.trim() || answer?.busy} aria-label="Ask"><Send size={14} /></button>
       </form>
       {answer && answer.fen === fen && <div className="ask-coach-answer" data-testid="ask-coach-answer">{answer.text ? <Markdown md={answer.text} /> : "Thinking…"}</div>}

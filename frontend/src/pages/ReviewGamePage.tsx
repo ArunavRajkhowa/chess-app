@@ -1,6 +1,7 @@
 import { Chess } from "chess.js";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Board } from "../components/board/Board";
 import type { Shape } from "../components/board/shapes";
 import { EvalBar } from "../components/play/EvalBar";
@@ -22,6 +23,8 @@ import { streamCoach } from "../lib/coach";
 import "../components/review/Review.css";
 
 const START = new Chess().fen();
+// the move list goes under the eval graph when the board column leaves this much height: three rows
+const MOVES_BELOW_MIN = 120;
 
 /** The eval bar's input from a review score text, White's view: "+0.35", "M2", "-M3", "#" (mate on the board) or "½". */
 function barScore(text: string, whiteWon: boolean): { cp?: number; mate?: number; result?: "1-0" | "0-1" | "1/2-1/2" } {
@@ -49,6 +52,8 @@ export function ReviewGamePage() {
   const evaluate = useEngine((s) => s.evaluate);
   const loadEngine = useEngine((s) => s.load);
   const pollRef = useRef<number | null>(null);
+  const slotRef = useRef<HTMLDivElement>(null);
+  const [movesBelow, setMovesBelow] = useState(false);
 
   useEffect(() => { void loadEngine(); }, [loadEngine]);
 
@@ -102,6 +107,15 @@ export function ReviewGamePage() {
   const chess = useMemo(() => new Chess(fen), [fen]);
   const keyMoments = report?.key_moments ?? [];
   const nextKey = keyMoments.find((k) => k > ply) ?? null;
+
+  // a width-limited board leaves room under the eval graph: the move list fills it, else it goes in the side column
+  useEffect(() => {
+    const el = slotRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(([e]) => setMovesBelow(e.contentRect.height >= MOVES_BELOW_MIN));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [report]);
 
   useEffect(() => { setShowBest(false); setExplanation(null); variation.stop(); if (retry && retry.ply !== ply) setRetry(null); }, [ply]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -196,15 +210,24 @@ export function ReviewGamePage() {
   const resultLine = report.result ? `${report.result} · ` : "";
   const opening = report.opening ? `${report.opening.eco} ${report.opening.name}` : null; // absence is data: no invented name
   const summary = `${resultLine}${opening ? `${opening}. ` : ""}White ${pct(report.white.accuracy)} · Black ${pct(report.black.accuracy)}. ${keyMoments.length} key moments.`;
+  // a player strip: name, estimated rating and the game's accuracy for that side
+  const strip = (c: "white" | "black") => (
+    <>
+      <strong>{names[c]} <span className="faint review-rating">est. {report[c].estimated_rating ?? "–"}</span></strong>
+      <span className="review-acc"><span className="faint">accuracy</span> <b className="num" data-testid={`acc-${c}`}>{report[c].accuracy ?? "–"}</b></span>
+    </>
+  );
+  const moveCard = (
+    <div className="card review-moves">
+      <MoveList moves={moves.map((m) => ({ ply: m.ply, san: m.san, classification: m.classification }))} currentPly={ply} onSelect={setPly} opening={null} />
+    </div>
+  );
   const canRetry = !!current && ["inaccuracy", "mistake", "blunder", "miss"].includes(current.classification) && (!names.playerColor || current.color === names.playerColor);
 
   return (
-    <div className="review" data-testid="review">
-      <div>
-        <div className="row" style={{ justifyContent: "space-between", marginBottom: 6 }}>
-          <strong>{orientation === "white" ? names.black : names.white}</strong>
-          <span className="faint">{report.result ?? "*"}</span>
-        </div>
+    <div className="board-page review" data-testid="review">
+      <div className="board-col">
+        <div className="row review-strip">{strip(orientation === "white" ? "black" : "white")}</div>
         <div className="gameview-board-row">
           <EvalBar {...bar} orientation={orientation} />
           <Board
@@ -218,29 +241,19 @@ export function ReviewGamePage() {
             onMove={onRetryMove}
           />
         </div>
-        <div className="row" style={{ justifyContent: "space-between", marginTop: 6 }}>
-          <strong>{orientation === "white" ? names.white : names.black}</strong>
+        <div className="row review-strip">
+          {strip(orientation)}
+          <button className="btn btn-ghost btn-sm" onClick={() => setPly((p) => Math.max(0, p - 1))} disabled={ply === 0} aria-label="Previous move" title="Previous move" data-testid="review-prev"><ChevronLeft size={18} /></button>
+          <button className="btn btn-ghost btn-sm" onClick={() => setPly((p) => Math.min(moves.length, p + 1))} disabled={ply === moves.length} aria-label="Next move" title="Next move" data-testid="review-next"><ChevronRight size={18} /></button>
           <button className="btn btn-ghost btn-sm" onClick={() => setOrientation((o) => (o === "white" ? "black" : "white"))}>Flip</button>
         </div>
+        {retry && <div className={`retry-banner ${retry.status === "wrong" ? "wrong" : ""}`} data-testid="retry-banner">{retry.status === "waiting" ? "Your move: find something better." : retry.text}</div>}
         <EvalGraph graph={report.eval_graph} moves={moves} currentPly={ply} onSelect={setPly} />
-        {retry && <div className={`retry-banner ${retry.status === "wrong" ? "wrong" : ""}`} data-testid="retry-banner" style={{ marginTop: 8 }}>{retry.status === "waiting" ? "Your move: find something better." : retry.text}</div>}
+        <div className="review-slot" ref={slotRef}>{movesBelow && moveCard}</div>
       </div>
 
-      <aside className="review-side">
-        <div className="card">
-          <div className="review-summary">
-            <div><div className="review-acc white num" data-testid="acc-white">{report.white.accuracy ?? "–"}</div><div className="review-rating">{names.white} · est. {report.white.estimated_rating ?? "–"}</div></div>
-            <div className="faint">accuracy</div>
-            <div><div className="review-acc black num" data-testid="acc-black">{report.black.accuracy ?? "–"}</div><div className="review-rating">{names.black} · est. {report.black.estimated_rating ?? "–"}</div></div>
-          </div>
-          <div className="faint" style={{ textAlign: "center", marginTop: 6 }}>{opening ? `${opening} · ` : ""}depth {report.depth}</div>
-          <div className="row" style={{ justifyContent: "center", marginTop: 10 }}>
-            <button className="btn btn-sm" onClick={tellStory} disabled={narrating} data-testid="summary-btn">{narrating ? "Writing…" : "Coach summary"}</button>
-            <button className="btn btn-sm" onClick={practiceFromHere} data-testid="practice-btn">Practice from here</button>
-          </div>
-          {narrative && <p className="coach-explanation" data-testid="narrative" style={{ marginTop: 10 }}>{narrative}</p>}
-        </div>
-        <div className="card">
+      <aside className="side-col">
+        <div className="card review-coach">
           <CoachPanel
             move={current}
             summary={summary}
@@ -254,33 +267,37 @@ export function ReviewGamePage() {
             hasNext={nextKey !== null}
           />
           {keyMoments.length > 0 && (
-            <div className="keymoments" style={{ marginTop: 10 }}>
+            <div className="keymoments">
               {keyMoments.map((k) => {
                 const m = moves[k - 1];
                 return <button key={k} className={k === ply ? "current" : ""} onClick={() => setPly(k)} title={m.classification}>{m.move_number}{m.color === "white" ? "." : "…"} {m.san} <i className={`cls-badge cls-${m.classification}`}>{CLASS_GLYPH[m.classification]}</i></button>;
               })}
             </div>
           )}
-        </div>
-        {current && (
-          <div className="card" data-testid="review-why">
-            {variation.variation && <VariationBar v={variation.variation} onStep={variation.step} onBack={variation.stop} />}
-            {studyPly && !variation.variation && <WhyPanel ply={studyPly} onVariation={(c) => { setRetry(null); variation.start(studyPly, c); }} />}
-            {!studyPly && <p className="faint">{!studyRes ? "Loading the engine's study…" : studyRes.status === "running" ? `The engine is studying every move: ${studyRes.progress.done} of ${studyRes.progress.total}. Why and why-not notes appear when it is done.` : studyRes.status === "failed" ? `The study failed: ${studyRes.error ?? "unknown error"}` : "No study for this move."}</p>}
+          <div className="row review-actions">
+            <button className="btn btn-sm" onClick={tellStory} disabled={narrating} data-testid="summary-btn">{narrating ? "Writing…" : "Coach summary"}</button>
+            <button className="btn btn-sm" onClick={practiceFromHere} data-testid="practice-btn">Practice from here</button>
           </div>
-        )}
-        <div className="card">
-          <ReportTable white={report.white} black={report.black} whiteName={names.white} blackName={names.black} />
-          <div className="phase-grades" style={{ marginTop: 10 }}>
-            {(["opening", "middlegame", "endgame"] as const).map((p) => (
-              <div key={p}><div className="faint">{p}</div><div className="num"><b>{report.white.phase_accuracy[p] ?? "–"}</b> / <b>{report.black.phase_accuracy[p] ?? "–"}</b></div></div>
-            ))}
-          </div>
+          {narrative && <p className="coach-explanation" data-testid="narrative">{narrative}</p>}
+          {current && (
+            <div data-testid="review-why">
+              {variation.variation && <VariationBar v={variation.variation} onStep={variation.step} onBack={variation.stop} />}
+              {studyPly && !variation.variation && <WhyPanel ply={studyPly} onVariation={(c) => { setRetry(null); variation.start(studyPly, c); }} />}
+              {!studyPly && <p className="faint">{!studyRes ? "Loading the engine's study…" : studyRes.status === "running" ? `The engine is studying every move: ${studyRes.progress.done} of ${studyRes.progress.total}. Why and why-not notes appear when it is done.` : studyRes.status === "failed" ? `The study failed: ${studyRes.error ?? "unknown error"}` : "No study for this move."}</p>}
+            </div>
+          )}
+          <details className="fold">
+            <summary>Opening, move counts and phase accuracy</summary>
+            <p className="faint">{opening ? `${opening} · ` : ""}depth {report.depth}</p>
+            <ReportTable white={report.white} black={report.black} whiteName={names.white} blackName={names.black} />
+            <div className="phase-grades">
+              {(["opening", "middlegame", "endgame"] as const).map((p) => (
+                <div key={p}><div className="faint">{p}</div><div className="num"><b>{report.white.phase_accuracy[p] ?? "–"}</b> / <b>{report.black.phase_accuracy[p] ?? "–"}</b></div></div>
+              ))}
+            </div>
+          </details>
         </div>
-        <div className="card" style={{ padding: 0 }}>
-          <MoveList moves={moves.map((m) => ({ ply: m.ply, san: m.san, classification: m.classification }))} currentPly={ply} onSelect={setPly} opening={null} />
-        </div>
-        <Link to="/review" className="muted">← All games</Link>
+        {!movesBelow && moveCard}
       </aside>
     </div>
   );

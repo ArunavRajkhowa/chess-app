@@ -67,11 +67,6 @@ export function LearnPage() {
           <h1>Learn</h1>
           <p>From the rules to master level, one band at a time. Every lesson plays as a narrated video and stops only when it is your move.</p>
         </div>
-        <div className="learn-total">
-          <span className="faint">lessons done</span>
-          <b className="num">{total.done} / {total.total}</b>
-          <Progress {...total} />
-        </div>
       </div>
       {error && <div className="chip chip-danger">{error}</div>}
 
@@ -107,7 +102,7 @@ export function LearnPage() {
 
       {lessons.length > 0 && (
         <div className="learn-filters" data-testid="learn-filters">
-          <label className="learn-search"><Search size={14} /><input className="input" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search lessons: fork, opposition, castling…" data-testid="learn-search" /></label>
+          <label className="learn-search"><Search size={14} /><input className="input" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search lessons" data-testid="learn-search" /></label>
           <select className="select" value={status} onChange={(e) => setStatus(e.target.value as Status)} aria-label="Status" data-testid="learn-status">
             <option value="all">All lessons</option><option value="todo">Not done yet</option><option value="done">Done</option>
           </select>
@@ -124,7 +119,6 @@ export function LearnPage() {
           {strands.map((s) => (
             <button key={s.strand} className={`learn-topic ${strand === s.strand ? "on" : ""}`} onClick={() => setStrand(strand === s.strand ? null : s.strand)} data-testid={`strand-${s.strand.replace(/\s+/g, "-")}`}>
               <span className="learn-topic-name">{s.strand}</span>
-              <Progress done={s.done} total={s.total} />
               <span className="faint num">{s.done}/{s.total}</span>
             </button>
           ))}
@@ -142,9 +136,8 @@ export function LearnPage() {
             {bands.map((b) => (
               <button key={b.band} role="tab" aria-selected={band?.band === b.band} className={`band-tab ${band?.band === b.band ? "on" : ""}`} onClick={() => setOpen(b.band)} data-testid={`band-${b.band}`}>
                 <span className="band-tab-head"><BandEmblem band={b.band} size={28} /><b>{b.name}</b></span>
-                <span className="faint">{b.rating}</span>
+                <span className="faint">{b.rating} · <span className="num">{b.lessons_done}/{b.lessons_total}</span></span>
                 <Progress done={b.lessons_done} total={b.lessons_total} />
-                <span className="faint num">{b.lessons_done}/{b.lessons_total}</span>
               </button>
             ))}
           </div>

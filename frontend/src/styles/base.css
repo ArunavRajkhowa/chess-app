@@ -44,7 +44,7 @@ p { margin: 0; }
 .btn-ghost:hover { background: var(--bg-elev-2); border-color: transparent; }
 .btn-sm { padding: 5px 10px; font-size: var(--fs-sm); border-radius: var(--r-sm); min-height: 32px; }
 .btn-lg { padding: 13px 22px; font-size: var(--fs-lg); }
-.btn-danger { background: var(--danger); border-color: var(--danger); color: var(--side-white); }
+.btn-danger { background: var(--danger); border-color: var(--danger); color: var(--on-danger); }
 /* A finger needs 44px; a mouse does not. */
 @media (pointer: coarse) { .btn, .theme-chip, .keymoments button, .band-tab, .lesson-row { min-height: 44px; } .btn-sm { min-height: 40px; } }
 
@@ -96,6 +96,42 @@ p { margin: 0; }
   font-family: var(--font-display); font-style: normal; font-weight: 700; font-size: 1.05em; line-height: 1;
   color: var(--cls, var(--ink-2)); letter-spacing: -0.04em;
 }
+
+/* Layout system (docs/design.md). A board page: the board column beside the side column while
+   the content can give the board --board-min and the panel --side-min (a 640 px window and up);
+   under that the panel stacks and the board shrinks so the panel's first block stays in view.
+   The board's size comes from the window height less the shell padding, the tab bar and the
+   page's own --board-chrome, capped at --board-max and by the width the panel leaves. */
+.board-page {
+  --board-size: clamp(var(--board-min), 100dvh - 2 * var(--main-pad) - var(--tabbar-h) - var(--board-chrome), var(--board-max));
+  display: grid; gap: var(--gap); align-items: start;
+  grid-template-columns: min(var(--board-size), 100% - var(--side-min) - var(--gap)) minmax(var(--side-min), var(--side-max));
+}
+.board-col { min-width: 0; display: flex; flex-direction: column; gap: var(--s-2); }
+.side-col { min-width: 0; display: flex; flex-direction: column; gap: var(--s-4); }
+@media (max-width: 900px) { .board-page { --gap: var(--s-4); } }
+@media (max-width: 639px) {
+  .board-page {
+    --board-size: clamp(260px, 100dvh - 2 * var(--main-pad) - var(--tabbar-h) - var(--board-chrome) - var(--gap) - var(--panel-lead), var(--board-max));
+    --gap: var(--s-3);
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .board-col { width: 100%; max-width: var(--board-size); margin-inline: auto; }
+}
+/* Side by side, a .board-under block fills the band a width-limited board leaves; the side column spans both rows. On a phone it goes last. */
+@media (min-width: 640px) {
+  .board-page:has(> .board-under) { grid-template-rows: auto 1fr; }
+  .board-page:has(> .board-under) > .side-col { grid-row: 1 / span 2; }
+  .board-under { grid-column: 1; grid-row: 2; }
+}
+/* A reading page or block: one column at a comfortable line length. */
+.reading { max-width: var(--measure); }
+/* A grid of cards that never squeezes a card under 300 px; one column on a phone. */
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: var(--s-4); align-items: start; }
+/* Secondary content folds: <details class="fold"><summary>Ideas for Black</summary>...</details>. */
+.fold > summary { cursor: pointer; font-weight: 650; padding: var(--s-1) 0; }
+.fold[open] > summary { margin-bottom: var(--s-2); }
+@media (max-width: 900px) { .card { padding: var(--s-4); } }
 
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-thumb { background: var(--line-strong); border-radius: 999px; border: 2px solid var(--bg); }

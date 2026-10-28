@@ -76,6 +76,10 @@ parsed before the port opened; both were changed.
 | Bot reply, later moves | about 1 s |
 | Quick review of a 30-ply game | 133 s |
 | Full review of the same game | 343 s |
+| Maia-3 bot reply (a ladder bot after the book), idle, 2026-10-28 | median 0.5 s, p95 0.6 s (Sam, then on Maia, Ivy, Elena; 55 replies) |
+| Maia-3 bot reply while a full review runs, 2026-10-28 | median 1.1 s, max 1.8 s (Sam; 8 replies); a Stockfish book reply waited 13-20 s for the one engine |
+| Memory peak with Maia-3 loaded, through a full review, 2026-10-28 | 442 MiB (464 MB) of 512 MB, measured twice: 400 and 442 MiB |
+| Content warm including the Maia-3 model, 2026-10-28 | 209 s after start (the host was busy with other runs) |
 
 The first reply of each game took longer than the later ones; the cause was not measured. A wake
 from sleep adds Render's own start of about a minute.

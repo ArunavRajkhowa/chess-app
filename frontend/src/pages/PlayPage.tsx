@@ -18,6 +18,7 @@ export function PlayPage() {
   useEffect(() => { void loadEngine(); }, [loadEngine]);
 
   useEffect(() => {
+    window.scrollTo(0, 0); // the picker's Play button sits low on a phone; the game opens at the top
     if (!gameId) { setGame(null); return; }
     api.game(gameId).then(setGame).catch((e: Error) => setError(e.message));
   }, [gameId]);

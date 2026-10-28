@@ -1,6 +1,6 @@
 import { Chess } from "chess.js";
 import { ArrowLeftRight, ChevronFirst, ChevronLast, ChevronLeft, ChevronRight, Flag, Lightbulb, RotateCcw, Sparkles, UserRound } from "lucide-react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { api, type BotPublic, type Classification, type GameState, type HintResponse } from "../../lib/api";
 import { BotAvatar } from "../art";
@@ -40,6 +40,9 @@ interface Feedback {
 const LIVE_EVAL_MS = 700;
 const BOT_THINK_MS: [number, number] = [350, 1100];
 const LOW_TIME_MS = 10_000;
+// Height under a width-limited board that the nav row needs, and that the nav plus a useful move list need.
+const UNDER_NAV_PX = 40;
+const UNDER_LIST_PX = 120;
 // Made once, so React skips them on every render; drawing them again cost each move about 6 ms at 4x CPU.
 const ICON = {
   first: <ChevronFirst size={16} />, prev: <ChevronLeft size={16} />, next: <ChevronRight size={16} />, last: <ChevronLast size={16} />,
@@ -97,6 +100,10 @@ export function GameView({ initial, onNewGame, onRematch, guide = false, onGuide
   const tc = useMemo(() => parseTimeControl(initial.time_control), [initial.time_control]);
   const [clocks, setClocks] = useState<{ w: number; b: number }>(() => (tc && savedClocks(initial)) || { w: tc?.baseMs ?? 0, b: tc?.baseMs ?? 0 });
   const lowWarned = useRef(false);
+  const viewRef = useRef<HTMLDivElement>(null);
+  const boardColRef = useRef<HTMLDivElement>(null);
+  // What goes under a width-limited board (side by side only): nothing, the nav row, or the move list and the nav.
+  const [under, setUnder] = useState<"none" | "nav" | "list">("none");
   const flagged = useRef(false);
 
   const live = viewPly === game.moves.length;
@@ -244,6 +251,21 @@ export function GameView({ initial, onNewGame, onRematch, guide = false, onGuide
     try { const g = await api.resign(game.id); setGame(g); setViewPly(g.moves.length); playSound("lose"); } catch (e) { setError(e instanceof Error ? e.message : String(e)); }
   };
 
+  // The page is as tall as the window (min-height); the band is that height less the board column.
+  useLayoutEffect(() => {
+    const view = viewRef.current, col = boardColRef.current;
+    if (!view || !col) return;
+    const measure = () => {
+      const css = getComputedStyle(view);
+      const band = parseFloat(css.minHeight) - col.offsetHeight - parseFloat(css.rowGap);
+      setUnder(band >= UNDER_LIST_PX ? "list" : band >= UNDER_NAV_PX ? "nav" : "none");
+    };
+    const ro = new ResizeObserver(measure);
+    ro.observe(view);
+    ro.observe(col);
+    return () => ro.disconnect();
+  }, []);
+
   // Keyboard navigation through the move list.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -303,10 +325,21 @@ export function GameView({ initial, onNewGame, onRematch, guide = false, onGuide
     <PlayerCard name={game.player_color === "black" ? settings.playerName : botName} subtitle={game.player_color === "black" ? "" : `${(game.bot as { elo?: number }).elo ?? ""}`} avatar={game.player_color === "black" ? youFace : botFace} color="black" captured={captured.byBlack} materialEdge={-captured.balance} active={chess.turn() === "b" && game.status === "active"} thinking={botThinking && game.player_color === "white"} says={game.player_color === "white" ? botSays : null} clock={clockFor("b")} />
   );
 
+  const moveList = <MoveList moves={moveItems} currentPly={viewPly} onSelect={setViewPly} opening={null} startFen={game.start_fen} />;
+  const nav = (
+    <div className="gameview-nav">
+      <button className="btn btn-ghost btn-sm" onClick={() => setViewPly(0)} title="First move">{ICON.first}</button>
+      <button className="btn btn-ghost btn-sm" onClick={() => setViewPly((p) => Math.max(0, p - 1))} title="Previous">{ICON.prev}</button>
+      <button className="btn btn-ghost btn-sm" onClick={() => setViewPly((p) => Math.min(game.moves.length, p + 1))} title="Next">{ICON.next}</button>
+      <button className="btn btn-ghost btn-sm" onClick={() => setViewPly(game.moves.length)} title="Last move">{ICON.last}</button>
+      {!live && <span className="chip chip-warn">viewing move {viewPly}</span>}
+    </div>
+  );
+
   return (
-    <div className="gameview" data-testid="gameview" data-status={game.status}>
+    <div ref={viewRef} className="gameview board-page" data-testid="gameview" data-status={game.status}>
       <Confetti show={playerWon} />
-      <div className="gameview-board-col">
+      <div ref={boardColRef} className="board-col gameview-board-col">
         {orientation === "white" ? blackCard : whiteCard}
         <div className="gameview-board-row">
           {showEval && <EvalBar cp={topLine?.cp} mate={topLine?.mate} orientation={orientation} loading={engineStatus !== "ready"} />}
@@ -327,7 +360,14 @@ export function GameView({ initial, onNewGame, onRematch, guide = false, onGuide
         {orientation === "white" ? whiteCard : blackCard}
       </div>
 
-      <aside className="gameview-side card">
+      {under !== "none" && (
+        <div className="board-under gameview-under">
+          {under === "list" && moveList}
+          {nav}
+        </div>
+      )}
+
+      <aside className="side-col gameview-side card">
         <div className="gameview-status">
           {game.status === "finished" ? (
             <div className={`gameview-result pop ${playerWon ? "won" : game.result === "1/2-1/2" ? "draw" : "lost"}`} data-testid="result">
@@ -343,6 +383,20 @@ export function GameView({ initial, onNewGame, onRematch, guide = false, onGuide
           )}
           {game.opening && <div className="faint" style={{ marginTop: 4 }}>{game.opening.eco} · {game.opening.name}</div>}
         </div>
+
+        {game.status === "active" ? (
+          <div className="gameview-actions">
+            <button className="btn btn-sm" onClick={doHint} disabled={!live || botThinking || chess.turn() !== myColor} data-testid="hint-btn">{ICON.hint} Hint</button>
+            <button className="btn btn-sm" onClick={doTakeback} disabled={botThinking || !game.moves.some((m) => m.by === "player")} data-testid="takeback-btn">{ICON.takeback} Takeback</button>
+            <button className="btn btn-sm btn-danger" onClick={doResign} data-testid="resign-btn">{ICON.resign} Resign</button>
+          </div>
+        ) : (
+          <div className="gameview-actions">
+            <button className="btn btn-primary" onClick={() => navigate(`/review/${game.id}`)} data-testid="review-btn">{ICON.review} Game review</button>
+            <button className="btn" onClick={onRematch}>{ICON.rematch} Rematch</button>
+            <button className="btn" onClick={onNewGame}>New bot</button>
+          </div>
+        )}
 
         {feedback && showFeedback && (
           <div className={`feedback cls-${feedback.classification}`} data-testid="feedback">
@@ -365,29 +419,8 @@ export function GameView({ initial, onNewGame, onRematch, guide = false, onGuide
         )}
         {error && <div className="chip chip-danger">{error}</div>}
 
-        <MoveList moves={moveItems} currentPly={viewPly} onSelect={setViewPly} opening={null} startFen={game.start_fen} />
-
-        <div className="gameview-nav">
-          <button className="btn btn-ghost btn-sm" onClick={() => setViewPly(0)} title="First move">{ICON.first}</button>
-          <button className="btn btn-ghost btn-sm" onClick={() => setViewPly((p) => Math.max(0, p - 1))} title="Previous">{ICON.prev}</button>
-          <button className="btn btn-ghost btn-sm" onClick={() => setViewPly((p) => Math.min(game.moves.length, p + 1))} title="Next">{ICON.next}</button>
-          <button className="btn btn-ghost btn-sm" onClick={() => setViewPly(game.moves.length)} title="Last move">{ICON.last}</button>
-          {!live && <span className="chip chip-warn">viewing move {viewPly}</span>}
-        </div>
-
-        {game.status === "active" ? (
-          <div className="gameview-actions">
-            <button className="btn btn-sm" onClick={doHint} disabled={!live || botThinking || chess.turn() !== myColor} data-testid="hint-btn">{ICON.hint} Hint</button>
-            <button className="btn btn-sm" onClick={doTakeback} disabled={botThinking || !game.moves.some((m) => m.by === "player")} data-testid="takeback-btn">{ICON.takeback} Takeback</button>
-            <button className="btn btn-sm btn-danger" onClick={doResign} data-testid="resign-btn">{ICON.resign} Resign</button>
-          </div>
-        ) : (
-          <div className="gameview-actions">
-            <button className="btn btn-primary" onClick={() => navigate(`/review/${game.id}`)} data-testid="review-btn">{ICON.review} Game review</button>
-            <button className="btn" onClick={onRematch}>{ICON.rematch} Rematch</button>
-            <button className="btn" onClick={onNewGame}>New bot</button>
-          </div>
-        )}
+        {under !== "list" && moveList}
+        {under === "none" && nav}
 
         <div className="gameview-toggles">
           <label><input type="checkbox" checked={guide} onChange={(e) => onGuide?.(e.target.checked)} data-testid="guide-toggle" /> Guide me</label>

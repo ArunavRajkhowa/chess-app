@@ -35,13 +35,13 @@ export function YourTurn({ fen, prompt, kind }: { fen: string; prompt: string; k
   );
 }
 
-/** Board on the left, the lesson and the current step on the right, on every step. */
+/** The board beside the lesson and the current step; on a narrow window the header goes above the board, the step below. */
 export function Stage({ board, header, children }: { board: ReactNode; header: ReactNode; children: ReactNode }) {
   return (
-    <div className="lesson" data-testid="lesson">
-      <div className="lesson-board">{board}</div>
-      <aside className="lesson-side">
-        {header}
+    <div className="lesson board-page" data-testid="lesson">
+      <div className="lesson-top">{header}</div>
+      <div className="board-col">{board}</div>
+      <aside className="side-col">
         <div className="card stack">{children}</div>
       </aside>
     </div>

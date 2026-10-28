@@ -64,7 +64,7 @@ export function DrillBoard({ fen: startFen, goal, maxMoves, orientation, onOutco
   return (
     <div className="stack">
       <Board fen={state.fen} orientation={orientation ?? (learner === "w" ? "white" : "black")} movable={{ color: learner, dests }} lastMove={state.last} check={checkSquare(chess)} onMove={onMove} />
-      <div className="row">
+      <div className="row drill-meta">
         <span className="chip">moves: <b className="num">{state.moves}</b>{maxMoves ? ` / ${maxMoves}` : ""}</span>
         {state.busy && <span className="chip chip-info">engine…</span>}
         {state.outcome && <span className={`chip ${state.outcome.result === "success" ? "chip-ok" : "chip-danger"}`} data-testid={state.outcome.result === "success" ? "task-ok" : "task-bad"}>{state.outcome.result === "success" ? "Done: " : "Not this time: "}{state.outcome.reason}</span>}

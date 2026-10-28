@@ -53,8 +53,9 @@ When two approaches both work, take the one a new developer follows in one read.
    is in `glicko.py`. Move classification and accuracy constants live in
    [backend/review/classify.py](backend/review/classify.py); the browser copy in
    `frontend/src/lib/review/classify.ts` mirrors the drop ladder for live feedback and nothing more.
-   Bot strength lives in [backend/bots/roster.py](backend/bots/roster.py) (depth, temperature,
-   personality); the engine's own Skill Level is never used, so engine lines stay honest.
+   Bot strength lives in [backend/bots/roster.py](backend/bots/roster.py): depth, temperature and
+   personality for a Stockfish bot; Maia-3's `elo_self` and sampling (`MaiaProfile`) for a ladder bot
+   rated 1400-2600. The engine's own Skill Level is never used, so engine lines stay honest.
 5. **Two config planes.** `.env` / `Settings` ([backend/settings.py](backend/settings.py)) holds
    what belongs to the machine: paths, the API key, the model name, ports. `Settings` uses
    `extra="ignore"`, so a new env var needs a field **and** a line in `.env.example`. Anything
@@ -86,6 +87,9 @@ Browser (`fetch /api/*`, SSE for the coach) → FastAPI routers → one of:
 - the **engine pool** ([backend/engine/pool.py](backend/engine/pool.py)): two UCI engines,
   `play` for bot moves and `analysis` for review, hints, drills and the coach's facts, each
   behind its own lock;
+- **Maia-3** ([backend/bots/maia.py](backend/bots/maia.py)): a human-move network on the CPU (ONNX)
+  that picks a ladder bot's move after the book, called through `asyncio.to_thread` and loaded in
+  the start-up warm-up;
 - the **content loaders** (`backend/content/*`, `backend/openings/book.py`, `backend/puzzles/store.py`):
   JSON, PGN and TSV under `data/`, loaded once and cached;
 - the **store** ([backend/storage/db.py](backend/storage/db.py)): SQLite through `libsql`, a local

@@ -1,12 +1,30 @@
-.games-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: var(--s-3); }
+.games-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: var(--s-3); align-items: start; }
+.games-filter { flex-wrap: wrap; }
+.games-filter .input { flex: 1 1 220px; min-width: 0; }
+.games-filter .select { width: auto; max-width: 100%; }
 .game-tile { display: flex; flex-direction: column; gap: 6px; transition: transform 80ms, border-color var(--anim); }
 .game-tile:hover { transform: translateY(-2px); border-color: var(--line-strong); }
-.gamestudy { display: grid; grid-template-columns: minmax(320px, 560px) minmax(320px, 440px); gap: var(--s-5); align-items: start; }
-.games-side { display: flex; flex-direction: column; gap: var(--s-3); }
-.games-side .movelist { max-height: 40vh; }
+.game-tile .chip { white-space: nowrap; }
+/* The tile shows the first three lines of why the game is worth studying; the game page reads all of it. */
+.game-why { font-size: var(--fs-sm); display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; line-clamp: 3; overflow: hidden; }
+/* Master game: the controls and key moments under the board are its chrome. Beside the board the side
+   column is as tall as the window allows, and the move list fills what is left, scrolling inside
+   (contain: size keeps its length out of the row height). */
+.board-page.gamestudy { --board-chrome: 84px; }
+.game-head { display: flex; flex-direction: column; gap: var(--s-1); }
+.game-head h2 { font-size: var(--fs-xl); margin: 0; display: flex; align-items: center; gap: var(--s-2); flex-wrap: wrap; }
+@media (max-width: 639px) { .game-head h2 { font-size: var(--fs-md); } }
+.game-moves { padding: 0; overflow: hidden; display: flex; flex-direction: column; }
+.game-moves .movelist { max-height: 40vh; }
+@media (min-width: 640px) {
+  /* A width-limited board leaves height below it: the side column takes the window's full height. */
+  .board-page.gamestudy { align-items: stretch; }
+  .gamestudy > .side-col { min-height: calc(100dvh - 2 * var(--main-pad) - var(--tabbar-h)); }
+  .gamestudy > .side-col { gap: var(--s-3); }
+  .game-moves { flex: 1 1 0; min-height: 150px; contain: size; }
+  .game-moves .movelist { flex: 1; min-height: 0; max-height: none; }
+}
 .comment { border-left: 3px solid var(--brand); padding-left: 10px; }
-.keymoments { display: flex; flex-wrap: wrap; gap: 4px; }
+.keymoments { display: flex; flex-wrap: wrap; align-items: center; gap: 4px var(--s-2); }
 .keymoments button { border: 0; background: var(--bg-elev-2); border-radius: var(--r-sm); padding: 2px 8px; font-size: var(--fs-xs); font-weight: 700; cursor: pointer; color: var(--ink); }
 .keymoments button.current { outline: 2px solid var(--brand); }
-.theme-chip.on { border-color: var(--brand); background: color-mix(in srgb, var(--brand) 22%, transparent); }
-@media (max-width: 900px) { .gamestudy { grid-template-columns: 1fr; } }

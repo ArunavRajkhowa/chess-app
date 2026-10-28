@@ -14,7 +14,24 @@ chess.com's review is a scoreboard: a wall of coloured classification badges, a 
 
 ## Type
 
-Two families, clearly different: Schibsted Grotesk for the interface, Newsreader (a book serif) for titles, the big numbers (accuracy, rating) and annotation glyphs. Scale: 12 / 13.5 / 15 / 18 / 21 / 28 / 40 px (`--fs-xs` to `--fs-3xl`). Body 15 px at 1.5 line height; titles weight 560, headings 650. Line length under 68 characters (`.page-head p`).
+Two families, clearly different: Schibsted Grotesk for the interface, Newsreader (a book serif) for titles, the big numbers (accuracy, rating) and annotation glyphs. Scale: 13 / 14 / 16 / 18 / 21 / 28 / 40 px (`--fs-xs` to `--fs-3xl`). Body 16 px at 1.5 line height; nothing a player reads is under 13 px. Titles weight 560, headings 650. Line length under 70 characters (`--measure`).
+
+## Layout system
+
+The board is as large as the window allows; text is never squeezed to make room. Classes in `base.css`, sizes in `tokens.css`.
+- Shell: full sidebar from 1280 px, an icon rail (64 px) from 901 to 1279 px, the phone tab bar at 900 px and under. Content is centred, at most 1600 px.
+- Board page (`.board-page` > `.board-col` + `.side-col`): every page whose task is a board. The board and the thing you act on or read next to it are on screen together, without a scroll.
+  1. Beside: the side column sits next to the board whenever the content can give the board `--board-min` (300 px) and the panel `--side-min` (a 640 px window and wider, so a 750 px window keeps both side by side).
+  2. Board size: `window height - 2 x --main-pad - --tabbar-h - --board-chrome`, clamped to 300-800 px, and never wider than the width the panel leaves.
+  3. Side column: `--side-min` is `clamp(280px, 30vw, 360px)`; the column grows to `--side-max` (560 px) when the board is height-limited.
+  4. Phone (under 640 px): the panel stacks below the board, and the board also gives up `--panel-lead`, so the panel's first block (status or prompt and its primary buttons) is visible above the tab bar.
+  5. Example: Play at 750 x 700 with `--board-chrome: 112px` gives a 384 px board and a 280 px panel with Hint and Resign at y 377, above the tab bar at 643.
+- Page settings, on the page's own `.board-page`, measured, never guessed: `--board-chrome` is the height of the page's own rows above and below the board (page head, player strips, the button row under the board), not the shell padding or the tab bar; `--panel-lead` (default 120 px) is the height of the first panel block on a phone, and that block comes first in the side column.
+- Shell: `--main-pad` (32 / 24 / 16 px) is the content padding; `--tabbar-h` is the phone tab bar (57 px plus the safe area), and the content has that much bottom padding so nothing hides under the bar.
+- Reading (`.reading`, `.page-head p`): one column, at most 70 characters a line.
+- Card grids (`.cards`): auto-fill, no card under 300 px, one column on a phone.
+- Density: fewer, larger panels. One side column holds at most three cards; secondary content (ideas, structures, notes) goes in `<details class="fold">`, closed by default. No text under `--fs-xs` (13 px); body copy is `--fs-md`. Spacing comes from `--s-*` and `--gap` only.
+- Verify at 390 x 844, 750 x 700, 768 x 900, 1024 x 800 and 1440 x 900: no sideways scroll; the board and the panel's first block visible together; body 16 px, secondary 13 px or more.
 
 ## Colour
 

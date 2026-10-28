@@ -94,38 +94,45 @@ export function BotPicker({ onStart, busy, initialBotId, initialColor }: Props) 
       <aside className="botpicker-side card">
         {selected ? (
           <>
-            <div className="botpicker-hero">
-              <span className="botpicker-hero-avatar" aria-hidden="true"><BotAvatar id={selected.id} tier={selected.tier} size={56} /></span>
-              <div>
-                <h2>{selected.name}</h2>
-                <div className="muted">{selected.tagline} · <span className="num">{selected.elo}</span></div>
+            <div className="botpicker-body">
+              <div className="botpicker-hero">
+                <span className="botpicker-hero-avatar" aria-hidden="true"><BotAvatar id={selected.id} tier={selected.tier} size={56} /></span>
+                <div>
+                  <h2>{selected.name}</h2>
+                  <div className="muted">{selected.tagline} · <span className="num">{selected.elo}</span></div>
+                </div>
+              </div>
+              <p className="muted">{selected.description}</p>
+              {selected.personality.favourite_openings.length > 0 && (
+                <details className="fold">
+                  <summary>Openings it plays ({selected.personality.favourite_openings.length})</summary>
+                  <div className="row" style={{ flexWrap: "wrap" }}>
+                    {selected.personality.favourite_openings.map((o) => <span key={o} className="chip">{o}</span>)}
+                  </div>
+                </details>
+              )}
+              <div className="botpicker-colors" role="radiogroup" aria-label="Play as">
+                {(["white", "random", "black"] as const).map((c) => (
+                  <button key={c} type="button" role="radio" aria-checked={color === c} className={`colorbtn ${c} ${color === c ? "on" : ""}`} onClick={() => setColor(c)} title={`Play as ${c}`}>
+                    {c === "random" ? "?" : ""}
+                  </button>
+                ))}
+              </div>
+              <div className="row" style={{ flexWrap: "wrap" }} role="radiogroup" aria-label="Time control">
+                {TIME_CONTROLS.map((t) => (
+                  <button key={t.label} type="button" role="radio" aria-checked={timeControl === t.key} className={`btn btn-sm ${timeControl === t.key ? "btn-primary" : ""}`} onClick={() => setTimeControl(t.key)} data-testid={`tc-${t.key ?? "none"}`}>{t.label}</button>
+                ))}
               </div>
             </div>
-            <p className="muted">{selected.description}</p>
-            {selected.personality.favourite_openings.length > 0 && (
-              <div className="row" style={{ flexWrap: "wrap" }}>
-                {selected.personality.favourite_openings.map((o) => <span key={o} className="chip">{o}</span>)}
-              </div>
-            )}
-            <div className="botpicker-colors" role="radiogroup" aria-label="Play as">
-              {(["white", "random", "black"] as const).map((c) => (
-                <button key={c} type="button" role="radio" aria-checked={color === c} className={`colorbtn ${c} ${color === c ? "on" : ""}`} onClick={() => setColor(c)} title={`Play as ${c}`}>
-                  {c === "random" ? "?" : ""}
-                </button>
-              ))}
+            <div className="botpicker-foot">
+              <label className="row" style={{ cursor: "pointer" }}>
+                <input type="checkbox" checked={coachMode} onChange={(e) => setCoachMode(e.target.checked)} />
+                <span>Coach mode: move feedback, hints, takebacks and threats</span>
+              </label>
+              <button type="button" className="btn btn-primary btn-lg botpicker-start" disabled={busy} onClick={() => onStart(selected, color, coachMode, timeControl)} data-testid="start-game">
+                {busy ? "Starting…" : `Play ${selected.name}`}
+              </button>
             </div>
-            <div className="row" style={{ flexWrap: "wrap" }} role="radiogroup" aria-label="Time control">
-              {TIME_CONTROLS.map((t) => (
-                <button key={t.label} type="button" role="radio" aria-checked={timeControl === t.key} className={`btn btn-sm ${timeControl === t.key ? "btn-primary" : ""}`} onClick={() => setTimeControl(t.key)} data-testid={`tc-${t.key ?? "none"}`}>{t.label}</button>
-              ))}
-            </div>
-            <label className="row" style={{ cursor: "pointer" }}>
-              <input type="checkbox" checked={coachMode} onChange={(e) => setCoachMode(e.target.checked)} />
-              <span>Coach mode: move feedback, hints, takebacks and threats</span>
-            </label>
-            <button type="button" className="btn btn-primary btn-lg" disabled={busy} onClick={() => onStart(selected, color, coachMode, timeControl)} data-testid="start-game">
-              {busy ? "Starting…" : `Play ${selected.name}`}
-            </button>
           </>
         ) : (
           <p className="faint">Loading bots…</p>

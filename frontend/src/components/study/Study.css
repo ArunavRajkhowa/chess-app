@@ -1,5 +1,5 @@
 /* The "why this move, why not the others" panel and the position assessment. */
-.why { display: flex; flex-direction: column; gap: var(--s-2); border-top: 1px solid var(--line); padding-top: var(--s-2); font-size: var(--fs-sm); }
+.why { display: flex; flex-direction: column; gap: var(--s-2); border-top: 1px solid var(--line); padding-top: var(--s-2); font-size: var(--fs-md); }
 .why-head { display: flex; align-items: baseline; gap: var(--s-2); flex-wrap: wrap; }
 .why-head b { font-size: var(--fs-md); }
 .why-head .cls-badge { color: var(--cls); font-weight: 700; font-family: var(--font-display); }

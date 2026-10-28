@@ -8,7 +8,11 @@
   overflow: hidden;
   box-shadow: var(--shadow-sm);
   contain: layout paint;
+  /* cqw sizes the markers: 12.5cqw is one square at any board size. */
+  container-type: inline-size;
 }
+.board:focus { outline: none; }
+.board:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .board-squares {
   position: absolute; inset: 0;
   display: grid;
@@ -20,18 +24,27 @@
 .sq.dark { background: var(--sq-dark); }
 .sq::after { content: ""; position: absolute; inset: 0; pointer-events: none; }
 .sq.last-move::after { background: var(--sq-last); }
-.sq.selected::after { background: var(--sq-selected); }
+.sq.selected::after { background: var(--sq-selected); box-shadow: inset 0 0 0 0.6cqw var(--dest-body); }
 .sq.premove::after { background: var(--sq-premove); }
 .sq.check::after { background: var(--sq-check); animation: check-pulse calc(var(--anim-slow) * 2) var(--ease) 2; }
 @keyframes check-pulse { 50% { opacity: 0.55; } }
 .sq.drag-over::after { box-shadow: inset 0 0 0 4px var(--sq-hover); }
+.sq.kbd-focus::after { box-shadow: inset 0 0 0 1cqw var(--accent); }
+/* A destination is a box: a filled square on an empty square, a frame round a piece it captures.
+   A dark body with a light rim reads on light and dark squares in both themes. */
+.board { --dest-body: color-mix(in srgb, var(--side-black) 50%, transparent); --dest-rim: color-mix(in srgb, var(--side-white) 85%, transparent); }
+.sq.dest { cursor: pointer; }
 .sq.dest::before {
-  content: ""; position: absolute; inset: 0; margin: auto; width: 32%; height: 32%;
-  border-radius: 50%; background: var(--sq-dest); pointer-events: none; z-index: 1;
+  content: ""; position: absolute; inset: 28%; border-radius: var(--r-sm);
+  background: var(--dest-body); box-shadow: 0 0 0 0.4cqw var(--dest-rim);
+  pointer-events: none; z-index: 1;
 }
 .sq.dest.occupied::before {
-  width: 100%; height: 100%; background: none;
-  border: 0.42em solid var(--sq-dest); box-sizing: border-box; border-width: 7%;
+  inset: 0.4cqw; background: none;
+  box-shadow: inset 0 0 0 1cqw var(--dest-body), 0 0 0 0.4cqw var(--dest-rim);
+}
+@media (hover: hover) {
+  .sq.dest:hover::before { inset: 0.4cqw; background: var(--dest-body); }
 }
 .sq.hl-green::after { background: var(--arrow-green); opacity: 0.55; }
 .sq.hl-red::after { background: var(--arrow-red); opacity: 0.55; }
@@ -39,11 +52,14 @@
 .sq.hl-yellow::after { background: var(--arrow-yellow); opacity: 0.55; }
 
 .coord {
-  position: absolute; font-size: calc(var(--board-size, 480px) / 42); font-weight: 700;
-  line-height: 1; pointer-events: none; z-index: 2; opacity: 0.95;
+  /* A fifth of a square, never under 13 px on a board of 300 px or more.
+     z 3: above a resting piece (z 2), so a piece never hides it; below a piece that moved (z 4). */
+  position: absolute; font-size: max(2.5cqw, min(13px, 4.4cqw)); font-weight: 700;
+  line-height: 1; pointer-events: none; z-index: 3;
 }
-.coord.rank { top: 3%; left: 4%; }
-.coord.file { bottom: 3%; right: 5%; }
+/* In the corner, where the piece image is transparent */
+.coord.rank { top: 0; left: 1px; }
+.coord.file { bottom: 1px; right: 1px; }
 .sq.light .coord { color: var(--sq-coord-on-light); }
 .sq.dark .coord { color: var(--sq-coord-on-dark); }
 
@@ -51,7 +67,7 @@
 .piece {
   position: absolute; left: 0; top: 0; width: 12.5%; height: 12.5%;
   background-size: 100% 100%; background-repeat: no-repeat; background-position: center;
-  will-change: transform; z-index: 3;
+  will-change: transform; z-index: 2;
   transition: transform var(--anim) var(--ease);
 }
 /* The piece that just moved travels above the others and settles with a short scale. `scale` is

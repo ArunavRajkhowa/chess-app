@@ -1,6 +1,7 @@
-"""The bot roster: who the player can face, how strong each one is, and how it plays. Strength is
-search depth plus the selector's temperature (selector.py), never the engine's Skill Level, so every
-line stays an honest evaluation. scripts/calibrate_bots.py measures it into data/bot_calibration.json."""
+"""The bot roster: who the player can face, how strong each one is, and how it plays. A ladder bot
+rated 1400-2600 picks its moves with Maia-3 after the book (MaiaProfile); every other bot's strength is
+search depth plus the selector's temperature, never the engine's Skill Level, so every line stays an
+honest evaluation. scripts/calibrate_bots.py measures it into data/bot_calibration.json."""
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -28,10 +29,21 @@ class SearchProfile:
 @dataclass(frozen=True)
 class SelectionProfile:
     """temperature_cp: softmax width in centipawns (0 = always the best line).
-    random_move_prob: chance of a uniformly random legal move, for the weakest bots only."""
+    random_move_prob: chance of a uniformly random legal move, for the two beginners only.
+    slip_prob: chance, after the book, of choosing with one enemy bishop, rook or queen out of sight (selector._blind_spot)."""
     temperature_cp: float
     random_move_prob: float = 0.0
+    slip_prob: float = 0.0
     book_plies: int = 8
+
+
+@dataclass(frozen=True)
+class MaiaProfile:
+    """elo_self: the rating Maia-3 plays as (a net plays above its label, so it is calibrated, not the label).
+    temperature and top_p reshape its policy before the draw; measured in scripts/bot_humanlike.py."""
+    elo_self: int
+    temperature: float
+    top_p: float = 1.0
 
 
 @dataclass(frozen=True)
@@ -41,8 +53,8 @@ class Personality:
     solidity: float = 0.0
     trade_when_ahead: float = 0.0
     favourite_openings: tuple[str, ...] = ()
-    # a favourite opening's book move is played when it costs at most this much against the bot's
-    # best line at its own depth; a trap-setter accepts more
+    # a book move (a favourite opening's or any named line) is played only when it costs at most
+    # this much against the bot's best line at its own depth; a trap-setter accepts more
     favourite_max_loss_cp: int = 60
 
 
@@ -74,6 +86,7 @@ class Bot:
     description: str = ""
     chat: dict[str, tuple[str, ...]] = field(default_factory=dict)
     specialty: Specialty | None = None
+    maia: MaiaProfile | None = None  # set: Maia-3 chooses the move after the book; None: the Stockfish selector
 
 
 # What a bot says when something happens. Keys are events the play API detects after each move pair.
@@ -100,17 +113,23 @@ PERSONALITY_CHAT: dict[str, dict[str, tuple[str, ...]]] = {
 }
 
 
-def _bot(id, name, elo, tier, tagline, avatar, depth, temp, *, multipv=4, random_move=0.0,
-         movetime=None, personality=None, description="", **lines) -> Bot:
+def _bot(id, name, elo, tier, tagline, avatar, depth, temp, *, multipv=4, random_move=0.0, slip=0.0,
+         movetime=None, personality=None, description="", maia=None, **lines) -> Bot:
     chat = {k: tuple(v) for k, v in DEFAULT_CHAT.items()}
     for k, v in PERSONALITY_CHAT.get(id, {}).items():
         chat[k] = tuple(v) + chat[k]
     return Bot(
         id=id, name=name, elo=elo, tier=tier, tagline=tagline, avatar=avatar,
         search=SearchProfile(depth=depth, movetime_seconds=movetime, multipv=multipv),
-        selection=SelectionProfile(temperature_cp=temp, random_move_prob=random_move),
-        personality=personality or Personality(), description=description, chat=chat, **lines,
+        selection=SelectionProfile(temperature_cp=temp, random_move_prob=random_move, slip_prob=slip),
+        personality=personality or Personality(), description=description, chat=chat, maia=maia, **lines,
     )
+
+
+# Maia's sampling, measured per lichess band on 1,000 real positions each (PLAN.md 2.2): the setting
+# that keeps the top-1 human-move match within 3 points of always playing Maia's top move, with the most variety.
+def _maia(elo_self: int) -> MaiaProfile:
+    return MaiaProfile(elo_self, temperature=0.5, top_p=0.9)  # 1100-2200 bands: 2.3-2.8 points under argmax, runs differ 26-32%
 
 
 BOTS: list[Bot] = [
@@ -124,36 +143,46 @@ BOTS: list[Bot] = [
          greeting="Let's go! I like taking pieces."),
     _bot("luna", "Luna", 600, TIER_BEGINNER, "Knows the opening principles", "🌙", 2, 150, multipv=6, random_move=0.08,
          description="Luna develops her pieces and castles, then drifts. Good practice for simple tactics."),
-    _bot("sam", "Sam", 800, TIER_BEGINNER, "Spots one-move threats", "🧢", 3, 100, multipv=5, random_move=0.03,
+    _bot("sam", "Sam", 800, TIER_BEGINNER, "Spots one-move threats", "🧢", 1, 100, multipv=5, slip=0.6,
          description="Sam sees hanging pieces and one-move captures, but misses deeper tactics."),
     # Intermediate ------------------------------------------------------------------------------
-    # 2026-10-25, 6 games against UCI_Elo 1320: Nova at depth 3 / 90 cp scored 5.5, Rafa at depth 4 / 65 cp 6.0
-    _bot("nova", "Nova", 1000, TIER_INTERMEDIATE, "Club night regular", "✨", 2, 100, multipv=5,
+    _bot("nova", "Nova", 1000, TIER_INTERMEDIATE, "Club night regular", "✨", 2, 70, multipv=5, slip=0.55,
          description="Nova plays sensible chess and finds two-move tactics. Your first real test."),
-    _bot("rafa", "Rafa", 1200, TIER_INTERMEDIATE, "Loves a gambit", "🎸", 3, 80, multipv=4,
+    _bot("rafa", "Rafa", 1200, TIER_INTERMEDIATE, "Loves a gambit", "🎸", 3, 55, multipv=4, slip=0.4,
          personality=Personality(aggression=0.7, favourite_openings=("King's Gambit", "Evans Gambit", "Smith-Morra", "Scotch Gambit")),
          description="Rafa sacrifices pawns for open lines and attacks early. Keep your king safe."),
+    # Maia's elo_self, 2026-10-28 (scripts/calibrate_bots.py, data/bot_calibration.json): a net plays above its
+    # rating. Labels under 1400 needed an elo_self under the 600 Maia was trained on, and there the ladder broke
+    # (Sam on Stockfish scored 11/18 against Nova at 450), so Pip to Rafa keep the Stockfish selector.
+    # The depth and temperature stay on the Maia bots for the specialists.
     _bot("mei", "Mei", 1400, TIER_INTERMEDIATE, "Solid and patient", "🍵", 4, 55, multipv=4,
          personality=Personality(solidity=0.7, favourite_openings=("Caro-Kann", "London System", "Slav")),
-         description="Mei never overextends. You will have to create something yourself."),
+         description="Mei never overextends. You will have to create something yourself.",
+         maia=_maia(1100)),
     _bot("leo", "Leo", 1600, TIER_INTERMEDIATE, "Tactical and sharp", "🦁", 5, 45, multipv=4,
          personality=Personality(aggression=0.5, favourite_openings=("Sicilian", "King's Indian")),
-         description="Leo calculates well in open positions. Avoid tactics you have not checked twice."),
+         description="Leo calculates well in open positions. Avoid tactics you have not checked twice.",
+         maia=_maia(1600)),
     # Advanced -----------------------------------------------------------------------------------
     _bot("ivy", "Ivy", 1800, TIER_ADVANCED, "Positional squeeze", "🌿", 6, 40, multipv=4,
          personality=Personality(solidity=0.5, trade_when_ahead=0.6, favourite_openings=("Queen's Gambit", "Catalan", "English")),
-         description="Ivy improves her pieces, grabs space and converts small edges. Learn to make plans against her."),
+         description="Ivy improves her pieces, grabs space and converts small edges. Learn to make plans against her.",
+         maia=_maia(1800)),
     _bot("omar", "Omar", 2000, TIER_ADVANCED, "Expert strength", "🏜️", 7, 35, multipv=4,
-         description="Omar plays like a strong club expert. Few mistakes, punishes yours."),
+         description="Omar plays like a strong club expert. Few mistakes, punishes yours.",
+         maia=_maia(2000)),
     _bot("zara", "Zara", 2200, TIER_ADVANCED, "Candidate master", "⚡", 9, 25, multipv=4,
          personality=Personality(aggression=0.3),
-         description="Zara's attacking play is precise. Defend accurately or lose quickly."),
+         description="Zara's attacking play is precise. Defend accurately or lose quickly.",
+         maia=_maia(2200)),
     _bot("viktor", "Viktor", 2400, TIER_ADVANCED, "FIDE master", "🧊", 11, 16, multipv=3,
          personality=Personality(solidity=0.6, trade_when_ahead=0.8),
-         description="Viktor grinds endgames. Expect every small advantage to be converted."),
+         description="Viktor grinds endgames. Expect every small advantage to be converted.",
+         maia=_maia(2400)),
     # Master -------------------------------------------------------------------------------------
     _bot("elena", "Elena", 2600, TIER_MASTER, "International master", "👑", 14, 5, multipv=2,
-         description="Elena plays near-perfect chess at club time controls."),
+         description="Elena plays near-perfect chess at club time controls.",
+         maia=_maia(2600)),
     _bot("arjun", "Arjun", 2800, TIER_MASTER, "Grandmaster", "🐘", 16, 2, multipv=2,
          description="Grandmaster strength. Expect to learn more than you win."),
     _bot("kai", "Kai", 3000, TIER_MASTER, "Super grandmaster", "🐉", 18, 0, multipv=1, movetime=0.8,

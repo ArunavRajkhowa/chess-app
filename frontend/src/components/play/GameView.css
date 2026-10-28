@@ -1,10 +1,19 @@
-.gameview { display: grid; grid-template-columns: minmax(320px, 640px) minmax(300px, 380px); gap: var(--s-5); align-items: start; }
+/* Chrome: the two player strips. On a phone the panel leads with the status and the Hint row. */
+.gameview { --board-chrome: 112px; --panel-lead: 96px; }
 .gameview-board-col { display: flex; flex-direction: column; gap: 2px; }
 .gameview-board-row { display: flex; gap: var(--s-2); align-items: stretch; }
 .gameview-board-row .board { flex: 1 1 auto; }
-.gameview-board-row .evalbar { flex: 0 0 22px; align-self: stretch; height: auto; }
-.gameview-side { display: flex; flex-direction: column; gap: var(--s-3); max-height: calc(100vh - 48px); position: sticky; top: var(--s-4); }
-.gameview-side .movelist { flex: 1 1 auto; min-height: 160px; max-height: 40vh; border: 1px solid var(--line); border-radius: var(--r-sm); }
+.gameview-board-row .evalbar { flex: 0 0 26px; align-self: stretch; height: auto; }
+/* The panel is as tall as the page row; the move list takes the height that is left and scrolls. */
+.gameview-side { gap: var(--s-3); align-self: stretch; }
+.gameview .movelist { flex: 1 1 0; min-height: 96px; border: 1px solid var(--line); border-radius: var(--r-sm); }
+/* Under a width-limited board (GameView measures the band): size containment so the block takes the band and never grows the page. */
+.gameview-under { contain: size; align-self: stretch; display: flex; flex-direction: column; gap: var(--s-2); }
+.gameview-under .movelist { min-height: 0; }
+/* With the move list under the board, the panel holds only status, notes and actions: it ends at its content. */
+.gameview:has(> .gameview-under .movelist) > .gameview-side { align-self: start; }
+/* Side by side, the page is as tall as the window: the panel takes the height, and a .board-under block the band a width-limited board leaves. */
+@media (min-width: 640px) { .gameview { min-height: calc(100dvh - 2 * var(--main-pad) - var(--tabbar-h)); } }
 .gameview-result { text-align: center; padding: var(--s-3); border-radius: var(--r-md); background: var(--bg-elev-2); }
 .gameview-result.won h2 { color: var(--ok); }
 .gameview-result.lost h2 { color: var(--danger); }
@@ -15,4 +24,3 @@
 .gameview-actions { display: flex; flex-wrap: wrap; gap: var(--s-2); }
 .gameview-toggles { display: flex; flex-wrap: wrap; gap: var(--s-3); font-size: var(--fs-sm); color: var(--ink-2); }
 .gameview-toggles label { display: flex; gap: 6px; align-items: center; cursor: pointer; }
-@media (max-width: 900px) { .gameview { grid-template-columns: 1fr; } .gameview-side { position: static; max-height: none; } }

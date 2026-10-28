@@ -43,18 +43,19 @@
   --c-blunder: #eb6058;
   --c-forced: #a4b3a0;
   --danger: #eb6058;
+  --on-danger: #161e27; /* text on a danger fill: 5.1:1 */
   --warn: #e6c35c;
   --ok: #8dc07e;
   --info: #86a9e6;
 
-  /* Board: "ink" is the default theme (overridden by [data-board]) */
+  /* Board: "ink" is the default theme (overridden by [data-board]).
+     A coordinate label has 4.5:1 contrast against its square in every board theme (WCAG AA). */
   --sq-light: #e7decb;
   --sq-dark: #5a7a8c;
-  --sq-coord-on-light: #5a7a8c;
-  --sq-coord-on-dark: #e7decb;
+  --sq-coord-on-light: #4b6574;
+  --sq-coord-on-dark: #ffffff;
   --sq-last: rgba(214, 170, 84, 0.55);
   --sq-selected: rgba(214, 170, 84, 0.7);
-  --sq-dest: rgba(16, 22, 29, 0.24);
   --sq-check: radial-gradient(circle at center, rgba(229, 83, 75, 0.95) 0%, rgba(229, 83, 75, 0.7) 28%, rgba(229, 83, 75, 0) 88%);
   --sq-premove: rgba(70, 120, 190, 0.5);
   --sq-hover: rgba(255, 255, 255, 0.4);
@@ -67,9 +68,10 @@
   --font: "Schibsted Grotesk Variable", "Segoe UI", system-ui, -apple-system, sans-serif;
   --font-display: "Newsreader Variable", Georgia, "Times New Roman", serif;
   --font-mono: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
-  --fs-xs: 12px;
-  --fs-sm: 13.5px;
-  --fs-md: 15px;
+  /* Body 16 px; nothing a player reads is under 13 px (board coordinates aside) */
+  --fs-xs: 13px;
+  --fs-sm: 14px;
+  --fs-md: 16px;
   --fs-lg: 18px;
   --fs-xl: 21px;
   --fs-2xl: 28px;
@@ -96,7 +98,22 @@
   --anim-slow: 320ms;
   --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
   --ease-settle: cubic-bezier(0.34, 1.4, 0.64, 1);
+
+  /* Layout system (docs/design.md, "Layout system"): the shell, the board page, the reading measure */
   --nav-w: 216px;
+  --rail-w: 64px;
+  --gap: var(--s-5);
+  --board-max: 800px;
+  --board-min: 300px;
+  /* A page sets these two on its .board-page: the height of its own rows above and below the
+     board (page head, player strips, button row), and on a phone the first panel block. */
+  --board-chrome: 0px;
+  --panel-lead: 120px;
+  --side-min: clamp(280px, 30vw, 360px);
+  --side-max: 560px;
+  --measure: 70ch;
+  --main-pad: var(--s-6);
+  --tabbar-h: 0px;
 }
 
 /* Daylight: warm paper, the same brass. The Shell sets data-theme from Settings. */
@@ -128,10 +145,10 @@
   --c-blunder: #b82f28;
   --c-forced: #5f6e5c;
   --danger: #b82f28;
+  --on-danger: #f2eee6; /* text on a danger fill: 5.1:1 */
   --warn: #8c6d00;
   --ok: #357a30;
   --info: #3463c4;
-  --sq-dest: rgba(16, 22, 29, 0.2);
   --shadow: 0 12px 32px rgba(60, 45, 20, 0.18);
   --shadow-sm: 0 1px 3px rgba(60, 45, 20, 0.2);
 }
@@ -139,20 +156,20 @@
 [data-board="boxwood"] {
   --sq-light: #ecdcb8;
   --sq-dark: #a77d58;
-  --sq-coord-on-light: #a77d58;
-  --sq-coord-on-dark: #ecdcb8;
+  --sq-coord-on-light: #785a3f;
+  --sq-coord-on-dark: #231a12;
 }
 [data-board="walnut"] {
   --sq-light: #c9b48a;
   --sq-dark: #8a6240;
-  --sq-coord-on-light: #8a6240;
-  --sq-coord-on-dark: #c9b48a;
+  --sq-coord-on-light: #5b412a;
+  --sq-coord-on-dark: #f2ede3;
 }
 [data-board="slate"] {
   --sq-light: #dde2e5;
   --sq-dark: #7f95a3;
-  --sq-coord-on-light: #7f95a3;
-  --sq-coord-on-dark: #dde2e5;
+  --sq-coord-on-light: #56656f;
+  --sq-coord-on-dark: #242a2e;
 }
 
 /* One home for the classification colour: every badge, border and graph mark reads --cls. */

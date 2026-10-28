@@ -1,8 +1,10 @@
-.vision { display: grid; grid-template-columns: minmax(300px, 520px) minmax(260px, 360px); gap: var(--s-5); align-items: start; }
+/* around the board: the orientation line below; on a phone the question card leads the panel,
+   so a timed round never scrolls */
+.vision { --board-chrome: 36px; --panel-lead: 200px; }
 .vision-board { cursor: crosshair; }
-.vision-bottom { margin: var(--s-2) 0 0; text-align: center; font-size: var(--fs-lg); font-weight: 700; }
+.vision-bottom { margin: 0; text-align: center; font-size: var(--fs-lg); font-weight: 700; }
 .vision-side { display: flex; flex-direction: column; gap: var(--s-3); }
 .vision-target { font-size: 64px; font-weight: 500; font-family: var(--font-display); text-align: center; }
+.vision-target.ask { font-size: var(--fs-xl); }
 .vision-options { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-2); }
 .vision-options .btn { font-family: var(--font-mono); font-size: var(--fs-lg); }
-@media (max-width: 900px) { .vision { grid-template-columns: 1fr; } }

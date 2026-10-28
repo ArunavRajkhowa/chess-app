@@ -10,7 +10,7 @@
 .home-daily-body { display: flex; gap: var(--s-4); align-items: flex-start; }
 /* Awards: a row of rosettes, brass when earned; the words belong to the next one to earn. */
 .awards-row { display: flex; flex-wrap: wrap; gap: 6px; }
-.awards-row .award { display: flex; flex-direction: column; align-items: center; gap: 2px; width: 76px; text-align: center; font-size: var(--fs-xs); }
+.awards-row .award { display: flex; flex-direction: column; align-items: center; gap: 2px; width: 88px; text-align: center; font-size: var(--fs-xs); }
 .awards-row .art { color: var(--ink-3); }
 .awards-row .earned .art { color: var(--ink); }
 .awards-row .earned.new { animation: pop var(--anim-slow) var(--ease-settle) both; }

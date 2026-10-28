@@ -16,6 +16,9 @@ import "./Analysis.css";
 
 const DEPTH = 20;
 const LINES = 3;
+// Heights (px) the room under a width-limited board must have to take the engine card, else the paste box.
+const ENGINE_UNDER_MIN = 260;
+const LOAD_UNDER_MIN = 100;
 
 function sanLine(fen: string, pv: string[]): string[] {
   const c = new Chess(fen);
@@ -46,8 +49,22 @@ export function AnalysisPage() {
   const status = useEngine((s) => s.status);
   const loadEngine = useEngine((s) => s.load);
   const evalFen = useRef("");
+  const slotRef = useRef<HTMLDivElement>(null);
+  const [under, setUnder] = useState<"engine" | "load" | null>(null);
 
   useEffect(() => { void loadEngine(); }, [loadEngine]);
+
+  // a width-limited board leaves room under it: the engine card fills it, or the paste box when the room is smaller
+  useEffect(() => {
+    const el = slotRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(([e]) => {
+      const h = e.contentRect.height;
+      setUnder(h >= ENGINE_UNDER_MIN ? "engine" : h >= LOAD_UNDER_MIN ? "load" : null);
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
 
   const sync = useCallback(() => {
     const f = chess.fen();
@@ -128,10 +145,44 @@ export function AnalysisPage() {
   const shapes: Shape[] = showArrow && top?.pv[0] ? [{ orig: top.pv[0].slice(0, 2), dest: top.pv[0].slice(2, 4), brush: "green" }] : [];
   const cur = viewPly > 0 ? history[viewPly - 1] : null;
 
+  const engineCard = (
+    <div className="card">
+      <div className="card-title">
+        <h3>Engine</h3>
+        <div className="row">
+          <label className="faint row"><input type="checkbox" checked={engineOn} onChange={(e) => setEngineOn(e.target.checked)} /> on</label>
+          <label className="faint row"><input type="checkbox" checked={showArrow} onChange={(e) => setShowArrow(e.target.checked)} /> arrow</label>
+          <span className="chip">{status === "ready" ? `depth ${lines[0]?.depth ?? 0}` : status}</span>
+        </div>
+      </div>
+      <ul className="engine-lines" data-testid="engine-lines">
+        {shownLines.map((l) => (
+          <li key={l.multipv}>
+            <button onClick={() => playUci(l.pv[0])} disabled={!live}>
+              <b className={`num eval ${(l.cp ?? (l.mate ?? 0) * 1000) >= 0 ? "white" : "black"}`}>{lineScoreText(l)}</b>
+              <span>{sanLine(fen, l.pv).join(" ")}</span>
+            </button>
+          </li>
+        ))}
+        {!shownLines.length && <li className="faint" data-testid="engine-status">{result ? `${boardChess.isCheckmate() ? "Checkmate" : "Draw"} · ${result}` : engineOn ? "thinking…" : "engine off"}</li>}
+      </ul>
+      <details className="fold analysis-fold">
+        <summary>Assessment: imbalances and plans</summary>
+        <Assessment fen={fen} />
+      </details>
+    </div>
+  );
+  const loadCard = (
+    <div className="card analysis-load">
+      <textarea className="input" rows={2} placeholder="Paste a FEN or a PGN" value={input} onChange={(e) => setInput(e.target.value)} data-testid="analysis-input" />
+      <button className="btn btn-sm" onClick={load} data-testid="analysis-load">Load</button>
+    </div>
+  );
+
   return (
-    <div className="analysis" data-testid="analysis">
-      <div>
-        <div className="row" style={{ justifyContent: "space-between", marginBottom: 8 }}>
+    <div className="board-page analysis" data-testid="analysis">
+      <div className="board-col">
+        <div className="row analysis-head">
           <h2>Analysis</h2>
           <div className="row">
             <button className="btn btn-sm" onClick={() => setOrientation((o) => (o === "white" ? "black" : "white"))}>Flip</button>
@@ -143,45 +194,19 @@ export function AnalysisPage() {
           <EvalBar cp={top?.cp} mate={top?.mate} result={result} orientation={orientation} loading={status !== "ready"} />
           <Board fen={fen} orientation={orientation} movable={{ color: live ? "both" : "none", dests }} lastMove={cur ? null : null} check={checkSquare(boardChess)} shapes={shapes} onMove={onMove} />
         </div>
-        <div className="row" style={{ marginTop: 8 }}>
-          <textarea className="input" rows={2} placeholder="Paste a FEN or a PGN" value={input} onChange={(e) => setInput(e.target.value)} data-testid="analysis-input" />
-          <button className="btn btn-sm" onClick={load} data-testid="analysis-load">Load</button>
-        </div>
+        <div className="analysis-slot" ref={slotRef}>{under === "engine" ? engineCard : under === "load" ? loadCard : null}</div>
       </div>
-      <aside className="analysis-side">
-        <div className="card">
-          <div className="card-title">
-            <h3>Engine</h3>
-            <div className="row">
-              <label className="faint row"><input type="checkbox" checked={engineOn} onChange={(e) => setEngineOn(e.target.checked)} /> on</label>
-              <label className="faint row"><input type="checkbox" checked={showArrow} onChange={(e) => setShowArrow(e.target.checked)} /> arrow</label>
-              <span className="chip">{status === "ready" ? `depth ${lines[0]?.depth ?? 0}` : status}</span>
-            </div>
-          </div>
-          <ul className="engine-lines" data-testid="engine-lines">
-            {shownLines.map((l) => (
-              <li key={l.multipv}>
-                <button onClick={() => playUci(l.pv[0])} disabled={!live}>
-                  <b className={`num eval ${(l.cp ?? (l.mate ?? 0) * 1000) >= 0 ? "white" : "black"}`}>{lineScoreText(l)}</b>
-                  <span>{sanLine(fen, l.pv).join(" ")}</span>
-                </button>
-              </li>
-            ))}
-            {!shownLines.length && <li className="faint" data-testid="engine-status">{result ? `${boardChess.isCheckmate() ? "Checkmate" : "Draw"} · ${result}` : engineOn ? "thinking…" : "engine off"}</li>}
-          </ul>
-        </div>
-        <div className="card">
-          <div className="card-title"><h3>Assessment</h3><span className="faint">imbalances and plans</span></div>
-          <Assessment fen={fen} />
-        </div>
-        <div className="card" style={{ padding: 0 }}>
+      <aside className="side-col analysis-side">
+        {under !== "engine" && engineCard}
+        <div className="card analysis-moves">
           <MoveList moves={history.map((m, i) => ({ ply: i + 1, san: m.san }))} currentPly={viewPly} onSelect={goTo} opening={null} />
+          <div className="row analysis-actions">
+            <button className="btn btn-sm btn-primary" onClick={review} disabled={!history.length} data-testid="analysis-review">Review this game</button>
+            <button className="btn btn-sm" onClick={() => navigator.clipboard?.writeText(fen)}>Copy FEN</button>
+          </div>
+          {error && <span className="chip chip-danger" data-testid="analysis-error">{error}</span>}
         </div>
-        <div className="row">
-          <button className="btn btn-primary" onClick={review} disabled={!history.length} data-testid="analysis-review">Review this game</button>
-          <button className="btn" onClick={() => navigator.clipboard?.writeText(fen)}>Copy FEN</button>
-        </div>
-        {error && <span className="chip chip-danger" data-testid="analysis-error">{error}</span>}
+        {under !== "load" && loadCard}
       </aside>
     </div>
   );

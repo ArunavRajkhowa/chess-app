@@ -39,9 +39,9 @@ function Go({ r, primary = false }: { r: Resource | null | undefined; primary?: 
 }
 
 /** One section: the finding, its worked example, the actions; or what would unlock it. */
-function Section({ title, finding, absent, ex, actions, children }: { title: string; finding: string | null; absent: string | null; ex?: Example | null; actions: (Resource | null | undefined)[]; children?: React.ReactNode }) {
+function Section({ title, finding, absent, ex, actions, children, wide = false }: { wide?: boolean; title: string; finding: string | null; absent: string | null; ex?: Example | null; actions: (Resource | null | undefined)[]; children?: React.ReactNode }) {
   return (
-    <section className="card ins-section">
+    <section className={`card ins-section ${wide ? "ins-wide" : ""}`}>
       <div className="card-title"><h3>{title}</h3></div>
       {finding ? <p className="ins-finding">{finding}</p> : <p className="faint">{absent ?? "Nothing stands out here yet."}</p>}
       {ex && <Worked ex={ex} />}
@@ -80,9 +80,15 @@ export function InsightsPage() {
       setPlanning(false);
     }
   };
-  const acc = data.accuracy;
-  const w = 600, h = 100;
-  const pts = (acc?.timeline ?? []).map((t, i, all) => `${(i / Math.max(1, all.length - 1)) * w},${h - (t.accuracy / 100) * h}`).join(" ");
+  // Each of the player's positions is shown once: a later section that would repeat it shows none.
+  const shown = new Set<string>();
+  const once = (ex: Example | null | undefined) => {
+    if (!ex) return null;
+    const key = `${ex.game_id}-${ex.move_number}-${ex.played_uci}`;
+    if (shown.has(key)) return null;
+    shown.add(key);
+    return ex;
+  };
 
   return (
     <div className="stack" data-testid="insights">
@@ -99,7 +105,7 @@ export function InsightsPage() {
             <div className="faint">This week, fix one thing</div>
             <h2>{focus.goal}</h2>
             <p className="muted">{focus.why}</p>
-            {focus.example && <Worked ex={focus.example} />}
+            {once(focus.example) && <Worked ex={focus.example!} />}
             <div className="ins-actions"><Go r={focus.action} primary />{focus.also.map((a) => <Go key={a.id} r={a} />)}
               <button className="btn btn-sm" disabled={planning} onClick={() => void makePlan(focus)}>Make this my plan</button></div>
             {planError && <p className="faint">{planError}</p>}
@@ -112,13 +118,14 @@ export function InsightsPage() {
           <div className="card-title"><h3>Your week</h3><span className="faint">biggest win-chance loss per game first</span></div>
           <ol className="ins-plan">
             {data.plan.map((p) => (
-              <li key={p.rank}><div><b>{p.goal}</b> <span className="faint">−{p.gain_per_game}% per game</span><div className="muted">{p.why}</div></div><Go r={p.action} /></li>
+              <li key={p.rank}><div className="grow"><b>{p.rank}. {p.goal}</b> <span className="faint">−{p.gain_per_game}% per game</span><div className="muted">{p.why}</div></div><Go r={p.action} /></li>
             ))}
           </ol>
         </section>
       )}
 
-      <Section title="Openings" finding={op.finding} absent={more(op.needs, "games in one opening")} ex={op.repeated[0]?.example ?? op.rows[0]?.leave_book?.example} actions={[op.action, op.bot]}>
+      <div className="ins-grid">
+      <Section wide={op.rows.length > 0} title="Openings" finding={op.finding} absent={more(op.needs, "games in one opening")} ex={once(op.repeated[0]?.example ?? op.rows[0]?.leave_book?.example)} actions={[op.action, op.bot]}>
         {op.rows.length > 0 && (
           <table className="games-table">
             <thead><tr><th>Opening</th><th>Games</th><th>Score</th><th>Accuracy</th><th>Leave book</th><th>First mistake</th></tr></thead>
@@ -134,14 +141,14 @@ export function InsightsPage() {
         )}
       </Section>
 
-      <Section title="Middlegame" finding={mg.finding} absent={more(mg.needs, "games that reach the middlegame")} ex={mg.errors.plan.example ?? mg.errors.tactic.example} actions={[mg.action, mg.watch, mg.bot]}>
+      <Section title="Middlegame" finding={mg.finding} absent={more(mg.needs, "games that reach the middlegame")} ex={once(mg.errors.plan.example ?? mg.errors.tactic.example)} actions={[mg.action, mg.watch, mg.bot]}>
         {mg.imbalances.length > 0 && (
           <ul className="ins-list">{mg.imbalances.map((r) => <li key={`${r.kind}-${r.mine}`}><span>{r.mine ? "You have" : "Opponent has"} <b>{r.kind}</b></span><span className="num">{r.score}% over {r.games}</span>{r.watch && <Link to={r.watch.href} className="faint">watch {r.watch.title}</Link>}</li>)}</ul>
         )}
         {mg.mobility && mg.mobility.mean_diff !== null && <p className="faint">At move 20 your pieces have {Math.abs(mg.mobility.mean_diff)} {mg.mobility.mean_diff >= 0 ? "more" : "fewer"} legal moves than the opponent's, on average over {mg.mobility.games} games.</p>}
       </Section>
 
-      <Section title="Endgames" finding={eg.finding} absent={more(eg.needs, "games that reach an endgame")} ex={eg.conversion?.example} actions={[eg.action, eg.lesson, eg.bot]}>
+      <Section title="Endgames" finding={eg.finding} absent={more(eg.needs, "games that reach an endgame")} ex={once(eg.conversion?.example)} actions={[eg.action, eg.lesson, eg.bot]}>
         {(eg.conversion || eg.hold) && (
           <div className="ins-stats">
             <div><div className="faint">Winning endgames converted</div><b className="num">{eg.conversion ? `${eg.conversion.won} / ${eg.conversion.games}` : "–"}</b></div>
@@ -151,8 +158,7 @@ export function InsightsPage() {
         {eg.types.length > 0 && <ul className="ins-list">{eg.types.map((t) => <li key={t.type}><span>{t.name}</span><span className="num">{t.wins} / {t.draws} / {t.losses}</span><span className="faint">accuracy {t.accuracy ?? "–"}</span></li>)}</ul>}
       </Section>
 
-      <Section title="Move quality" finding={q.finding} absent="Not enough judged moves in one phase yet." ex={q.clusters.peak?.example} actions={[q.action, q.bot]}>
-        {acc && <svg viewBox={`0 0 ${w} ${h}`} className="spark" preserveAspectRatio="none"><polyline points={pts} fill="none" stroke="var(--brand)" strokeWidth={2} /></svg>}
+      <Section title="Move quality" finding={q.finding} absent="Not enough judged moves in one phase yet." ex={once(q.clusters.peak?.example)} actions={[q.action, q.bot]}>
         <div className="ins-stats">
           {(["opening", "middlegame", "endgame"] as const).map((p) => <div key={p}><div className="faint">{p}</div><b className="num">{q.phases[p]?.accuracy ?? "–"}</b><div className="faint">{q.phases[p] ? `${q.phases[p]!.errors} mistakes` : "no moves"}</div></div>)}
         </div>
@@ -160,15 +166,16 @@ export function InsightsPage() {
         {q.time_controls && <ul className="ins-list">{q.time_controls.map((t) => <li key={t.time_control}><span>{t.time_control}</span><span className="num">accuracy {t.accuracy}</span><span className="faint">{t.blunders_per_game} blunders per game</span></li>)}</ul>}
       </Section>
 
-      <Section title="Tactics" finding={tc.finding} absent={more(tc.needs, "missed tactics of one kind")} ex={tc.motifs.find((m) => m.theme === tc.most_missed)?.example} actions={[tc.action, tc.lesson, tc.bot]}>
+      <Section title="Tactics" finding={tc.finding} absent={more(tc.needs, "missed tactics of one kind")} ex={once(tc.motifs.find((m) => m.theme === tc.most_missed)?.example)} actions={[tc.action, tc.lesson, tc.bot]}>
         {tc.motifs.some((m) => m.seen) && <ul className="ins-list">{tc.motifs.filter((m) => m.seen).map((m) => <li key={m.theme}><span>{m.name}</span><span className="num">found {m.found} · missed {m.missed}</span><span className="faint">−{m.drop_per_game}% per game</span></li>)}</ul>}
       </Section>
 
       <section className="card ins-section">
         <div className="card-title"><h3>Strengths</h3></div>
-        {strengths.length ? <ul className="ins-list">{strengths.map((s, i) => <li key={i}><span className="chip chip-ok">{s.area}</span><span>{s.text}</span></li>)}</ul>
+        {strengths.length ? <ul className="ins-list ins-strengths">{strengths.map((s, i) => <li key={i}><span className="chip chip-ok">{s.area}</span><span>{s.text}</span></li>)}</ul>
           : <p className="faint">No area is clearly better than your band yet: strengths show once a rate is high over five chances or more.</p>}
       </section>
+      </div>
     </div>
   );
 }

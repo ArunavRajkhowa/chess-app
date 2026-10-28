@@ -60,6 +60,47 @@ weakened a second time (one depth less, higher temperature, four candidate lines
 Ivy 2.5/4, Omar 2.5/4, Zara 3.5/4 and Viktor 3.5/4 (`data/bot_calibration.json`). Four games is a
 coarse ruler (4/4 happens 6% of the time at equal strength), so the UI still says "about".
 
+Measured 2026-10-28: the ladder bots rated 1400 to 2600 (Mei to Elena) now draw their moves after
+the book from Maia-3 (`backend/bots/maia.py`, a network trained on lichess games that predicts the
+move a player of a given rating makes). Pip to Rafa, the bots above 2600, the character bots
+(Trickster, The Wall, The Grinder, Coach) and the specialists keep the Stockfish selector. The book
+phase is unchanged. Each Maia bot's `MaiaProfile` in `roster.py` holds its `elo_self` and sampling.
+
+Why not below 1400: labels under 1400 needed an elo_self under the 600 Maia was trained on, and there
+the ladder order broke (Stockfish Sam scored 11/18 against Maia Nova at elo_self 450). Re-measured on
+the Stockfish selector (6 games against Stockfish at 1320 unless noted): Luna 644, Sam 1040, Nova
+1320, Rafa 1440; head to head Luna 5/12 against Sam, Sam 3/6 against Nova, Nova 1/6 against Rafa,
+Rafa 0.5/12 against Mei. The order holds, but Sam to Rafa sit 200-320 above their labels and Sam and
+Nova are not told apart in 6 games.
+
+Sampling (`scripts/bot_humanlike.py --positions`, 1,000 lichess positions with their game history
+per band; "runs differ" is the chance two seeded runs play different moves, exact from the
+distribution). Always playing Maia's top move repeats games; sampling the raw policy loses a third of
+the match. Chosen: T=0.5 with top-p 0.9 for every Maia bot (the 800 band is measured but no bot uses it).
+
+| band | argmax match | chosen setting | match | runs differ | distinct moves in 5 runs |
+|---|---|---|---|---|---|
+| 800 | 49.3% | T=0.3 | 46.8% | 26.4% | 1.63 |
+| 1100 | 46.8% | T=0.5, top-p 0.9 | 44.5% | 31.8% | 1.76 |
+| 1500 | 54.3% | T=0.5, top-p 0.9 | 51.5% | 30.6% | 1.72 |
+| 1900 | 56.9% | T=0.5, top-p 0.9 | 54.3% | 26.5% | 1.62 |
+| 2200 | 57.2% | T=0.5, top-p 0.9 | 54.6% | 26.4% | 1.61 |
+
+Safety: Maia's policy holds legal moves only and the server still validates every move. No Stockfish
+override was added: on 200 positions per band (depth 12) Maia's sampled move lost 300 cp or more in
+5.5 / 2.5 / 2.5 / 5.0 / 3.0% of positions (800 to 2200) against the players' 11.5 / 6.0 / 5.0 / 3.0 /
+4.0%, and missed a mate in one as often as they did (3 against 4 in 1,000).
+
+Strength: a net plays above its rating, so `elo_self` was calibrated (6 games against Stockfish at
+`UCI_Elo` max(label, 1320), 12 for Sam and Nova): Luna 300 (0.5/6), Sam 400 (0.5/12), Nova 450
+(3/12), Rafa 550 (2/6), Mei 1100 (4/6 at 1400), and Leo to Elena at their labels (4, 3.5, 2, 5, 1.5
+and 1.5 of 6). Labels under 1320 need an `elo_self` under the 600 Maia was trained on; that range is
+measured, not trained. Ladder neighbours, 6 games each: Nova scored 1.5 against Rafa and Sam 2.5
+against Nova, so that order holds; Luna scored 3 against Sam (and 2.5 with Luna at 200), so Luna is
+not fitted: under about 400 Maia stops getting weaker. Against this reference (0.1 s a move) Maia at
+its own label scored far above it (Mei 6/6 at 1400, Nova 5/6 at 1320), so the reference may be weaker
+than its label; the ladder is honest relative to it, not to lichess.
+
 ### 2.3 Game review
 
 - Every position is analysed once at the chosen depth (quick 12, full 16, deep 20) with two

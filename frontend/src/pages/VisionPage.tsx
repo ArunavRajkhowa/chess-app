@@ -66,42 +66,43 @@ export function VisionPage() {
   };
 
   return (
-    <div className="vision" data-testid="vision">
-      <div>
-        <div className="page-head"><div><h1>Board vision</h1><p>Know every square by name without looking at the coordinates. Thirty seconds a round.</p></div></div>
-        <div className="row" style={{ marginBottom: 10, flexWrap: "wrap" }}>
-          <button className={`btn btn-sm ${mode === "find" ? "btn-primary" : ""}`} onClick={() => { setMode("find"); setRunning(false); }} data-testid="vision-find">Find the square</button>
-          <button className={`btn btn-sm ${mode === "name" ? "btn-primary" : ""}`} onClick={() => { setMode("name"); setRunning(false); }} data-testid="vision-name">Name the square</button>
-          <label className="row faint"><input type="checkbox" checked={randomFlip} onChange={(e) => setRandomFlip(e.target.checked)} /> random orientation</label>
-          <button className="btn btn-sm btn-ghost" onClick={() => setOrientation((o) => (o === "white" ? "black" : "white"))}>Flip</button>
+    <div data-testid="vision">
+      <div className="board-page vision">
+        <div className="board-col">
+          <div className="vision-board" onClickCapture={mode === "find" && running ? (e) => { const el = (e.target as HTMLElement).closest("[data-square]"); if (el) { e.stopPropagation(); answer(el.getAttribute("data-square")!); } } : undefined}>
+            <Board
+              fen={EMPTY}
+              orientation={orientation}
+              showCoordinates={false}
+              highlights={[...(mode === "name" && running ? [{ square: target, brush: "yellow" as const }] : []), ...(flash ? [flash] : [])]}
+            />
+          </div>
+          <p className="vision-bottom" data-testid="vision-bottom">{orientation === "white" ? "White" : "Black"} at the bottom</p>
         </div>
-        <div className="vision-board" onClickCapture={mode === "find" && running ? (e) => { const el = (e.target as HTMLElement).closest("[data-square]"); if (el) { e.stopPropagation(); answer(el.getAttribute("data-square")!); } } : undefined}>
-          <Board
-            fen={EMPTY}
-            orientation={orientation}
-            showCoordinates={false}
-            highlights={[...(mode === "name" && running ? [{ square: target, brush: "yellow" as const }] : []), ...(flash ? [flash] : [])]}
-          />
-        </div>
-        <p className="vision-bottom" data-testid="vision-bottom">{orientation === "white" ? "White" : "Black"} at the bottom</p>
+        <aside className="side-col card vision-side">
+          {running ? (
+            <>
+              <div className={`vision-target ${mode === "name" ? "ask" : ""}`} data-testid="vision-target">{mode === "find" ? target : "Which square is highlighted?"}</div>
+              <div className="row"><span className="chip chip-ok">score {score}</span><span className="chip chip-danger">misses {misses}</span><span className="chip num">{left}s</span></div>
+              {mode === "name" && (
+                <div className="vision-options">{options.map((o) => <button key={o} className="btn" onClick={() => answer(o)} data-testid={`opt-${o}`}>{o}</button>)}</div>
+              )}
+            </>
+          ) : (
+            <>
+              <p className="muted">{mode === "find" ? "A square name appears; click it on the board." : "A square lights up; pick its name."} Thirty seconds a round. {result && <b>{result}</b>}</p>
+              <div className="row"><span className="chip">best find: {best.find}</span><span className="chip">best name: {best.name}</span></div>
+              <button className="btn btn-primary btn-lg" onClick={start} data-testid="vision-start">Start</button>
+            </>
+          )}
+          <div className="row" style={{ flexWrap: "wrap" }}>
+            <button className={`btn btn-sm ${mode === "find" ? "btn-primary" : ""}`} onClick={() => { setMode("find"); setRunning(false); }} data-testid="vision-find">Find the square</button>
+            <button className={`btn btn-sm ${mode === "name" ? "btn-primary" : ""}`} onClick={() => { setMode("name"); setRunning(false); }} data-testid="vision-name">Name the square</button>
+            <label className="row faint"><input type="checkbox" checked={randomFlip} onChange={(e) => setRandomFlip(e.target.checked)} /> random orientation</label>
+            <button className="btn btn-sm btn-ghost" onClick={() => setOrientation((o) => (o === "white" ? "black" : "white"))}>Flip</button>
+          </div>
+        </aside>
       </div>
-      <aside className="card vision-side">
-        {running ? (
-          <>
-            <div className="vision-target" data-testid="vision-target">{mode === "find" ? target : "Which square is highlighted?"}</div>
-            <div className="row"><span className="chip chip-ok">score {score}</span><span className="chip chip-danger">misses {misses}</span><span className="chip num">{left}s</span></div>
-            {mode === "name" && (
-              <div className="vision-options">{options.map((o) => <button key={o} className="btn" onClick={() => answer(o)} data-testid={`opt-${o}`}>{o}</button>)}</div>
-            )}
-          </>
-        ) : (
-          <>
-            <p className="muted">{mode === "find" ? "A square name appears; click it on the board." : "A square lights up; pick its name."} {result && <b>{result}</b>}</p>
-            <div className="row"><span className="chip">best find: {best.find}</span><span className="chip">best name: {best.name}</span></div>
-            <button className="btn btn-primary btn-lg" onClick={start} data-testid="vision-start">Start</button>
-          </>
-        )}
-      </aside>
     </div>
   );
 }

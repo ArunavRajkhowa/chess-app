@@ -1,10 +1,19 @@
-.puzzles { display: grid; grid-template-columns: minmax(320px, 600px) minmax(300px, 400px); gap: var(--s-5); align-items: start; }
-.puzzles-side { display: flex; flex-direction: column; gap: var(--s-3); }
-.puzzles-empty { display: flex; flex-direction: column; gap: var(--s-3); align-items: flex-start; min-height: 320px; justify-content: center; }
+/* the board column is the board alone; on a phone the prompt card leads the panel */
+.puzzles { --board-chrome: 0px; --panel-lead: 130px; }
+/* beside the board the mode row heads the panel; on a phone it follows the prompt */
+@media (min-width: 640px) { .puzzles-modes { order: -1; } }
+/* two by two: four names never leave one alone on a second row */
+.puzzles-modes { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-2); }
+.puzzles-start { display: flex; flex-direction: column; gap: var(--s-3); align-items: flex-start; }
+.puzzle-meta { flex-wrap: wrap; margin-top: var(--s-2); }
+.chip.puzzle-hearts { font-size: var(--fs-md); letter-spacing: 1px; }
+/* about 45 chips: one scroll box, so the stats and the Start card stay in reach */
+.fold[open] .theme-grid { max-height: 40dvh; overflow-y: auto; }
 .theme-grid { display: flex; flex-wrap: wrap; gap: 6px; }
 .theme-chip { border: 1px solid var(--line); background: var(--bg-elev-2); color: var(--ink); border-radius: var(--r-sm); padding: 4px 10px; font-size: var(--fs-xs); font-weight: 600; cursor: pointer; }
 .theme-chip.on { border-color: var(--brand); background: color-mix(in srgb, var(--brand) 22%, transparent); }
-.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--s-2); }
+.stats-grid { display: flex; flex-wrap: wrap; gap: var(--s-2) var(--s-3); }
+.stats-grid > div { white-space: nowrap; }
 .stats-grid .faint { font-size: var(--fs-xs); }
 .rush-bar { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s-2); }
 .rush-score { font-family: var(--font-display); font-size: var(--fs-2xl); font-weight: 600; }
@@ -17,7 +26,6 @@
 .puzzle-state.failed strong { color: var(--danger); }
 .rush-done { grid-column: 1 / -1; display: flex; align-items: center; gap: var(--s-2); }
 .ok { color: var(--ok); } .bad { color: var(--danger); }
-@media (max-width: 900px) { .puzzles { grid-template-columns: 1fr; } }
 .puzzle-goal { display: block; color: var(--brand); font-weight: 600; font-size: var(--fs-sm); }
 .puzzle-explore { margin-top: var(--s-3); }
 .puzzle-trained { display: flex; flex-direction: column; gap: 6px; margin-top: var(--s-3); padding-top: var(--s-3); border-top: 1px solid var(--line); font-size: var(--fs-sm); }

@@ -59,3 +59,61 @@ test("promotion dialog appears and promotes", async ({ page }) => {
   await page.getByTestId("promo-n").click();
   await expect(page.getByTestId("demo-pgn")).toContainText("axb8=N");
 });
+
+test("click to select, click a box to move, click again to clear", async ({ page }) => {
+  await page.goto("/dev/board");
+  const sq = (s: string) => page.locator(`[data-square="${s}"].sq`);
+  // a knight in the start position has two destination boxes
+  await sq("b1").click();
+  await expect(sq("b1")).toHaveClass(/selected/);
+  await expect(page.locator(".sq.dest")).toHaveCount(2);
+  await expect(sq("a3")).toHaveClass(/dest/);
+  await expect(sq("c3")).toHaveClass(/dest/);
+  // the selected piece clicked again clears the selection
+  await sq("b1").click();
+  await expect(page.locator(".sq.selected")).toHaveCount(0);
+  await expect(page.locator(".sq.dest")).toHaveCount(0);
+  // an empty square that is not a destination clears it
+  await sq("g1").click();
+  await expect(page.locator(".sq.dest")).toHaveCount(2);
+  await sq("d5").click();
+  await expect(page.locator(".sq.selected")).toHaveCount(0);
+  // another own piece switches the selection
+  await sq("g1").click();
+  await sq("e2").click();
+  await expect(sq("e2")).toHaveClass(/selected/);
+  await expect(sq("g1")).not.toHaveClass(/selected/);
+  await expect(page.locator(".sq.dest")).toHaveCount(2); // e3, e4
+  // Escape clears
+  await page.keyboard.press("Escape");
+  await expect(page.locator(".sq.selected")).toHaveCount(0);
+  // click-click moves
+  await sq("e2").click();
+  await sq("e4").click();
+  await expect(page.getByTestId("demo-pgn")).toContainText("1. e4");
+  await expect(page.locator(".sq.selected")).toHaveCount(0);
+  // a press with a small wobble is a click, not a drag onto the next square
+  const box = (await sq("e7").boundingBox())!;
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(box.x + box.width / 2 + 4, box.y + box.height / 2 + 3, { steps: 2 });
+  await page.mouse.up();
+  await expect(sq("e7")).toHaveClass(/selected/);
+  await expect(page.locator(".sq.dest")).toHaveCount(2);
+});
+
+test("keyboard: arrows move the focus ring, Enter selects and moves", async ({ page }) => {
+  await page.goto("/dev/board");
+  await page.getByTestId("board").focus();
+  await page.keyboard.press("ArrowUp"); // first arrow lands on e1
+  await expect(page.locator('[data-square="e1"].sq')).toHaveClass(/kbd-focus/);
+  await page.keyboard.press("ArrowUp"); // e2
+  await page.keyboard.press("Enter");
+  await expect(page.locator('[data-square="e2"].sq')).toHaveClass(/selected/);
+  await page.keyboard.press("ArrowUp");
+  await page.keyboard.press("ArrowUp"); // e4
+  await page.keyboard.press(" ");
+  await expect(page.getByTestId("demo-pgn")).toContainText("1. e4");
+  await page.keyboard.press("Escape");
+  await expect(page.locator(".sq.kbd-focus")).toHaveCount(0);
+});

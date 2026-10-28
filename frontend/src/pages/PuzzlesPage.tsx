@@ -278,17 +278,8 @@ export function PuzzlesPage() {
   const trained = (puzzle?.themes ?? []).map((k) => themes.find((t) => t.key === k)).filter((t): t is PuzzleTheme => !!t?.motif);
 
   return (
-    <div className="puzzles" data-testid="puzzles">
-      <div>
-        <div className="row" style={{ justifyContent: "space-between", marginBottom: 8 }}>
-          <div className="row">
-            {(["rated", "custom", "rush", "mistakes"] as Mode[]).map((m) => (
-              <button key={m} className={`btn btn-sm ${mode === m ? "btn-primary" : ""}`} onClick={() => { setMode(m); setOpening(null); setError(null); if (m !== "rush") setRush(null); if (m !== "mistakes") setMistakes(null); }} data-testid={`mode-${m}`}>{m === "rush" ? "Puzzle Rush" : m === "mistakes" ? "My mistakes" : m[0].toUpperCase() + m.slice(1)}</button>
-            ))}
-          </div>
-          {streak > 1 && <span className="chip chip-ok pop" key={streak}><Flame size={12} /> {streak} in a row</span>}
-          {mode === "daily" && <span className="chip chip-danger" data-testid="hearts">{"♥".repeat(hearts)}<span className="faint">{"♥".repeat(5 - hearts)}</span></span>}
-        </div>
+    <div className="board-page puzzles" data-testid="puzzles">
+      <div className="board-col">
         {puzzle && solver ? (
           <Board
             fen={explore.active ? explore.fen : solver.fen}
@@ -300,25 +291,10 @@ export function PuzzlesPage() {
             highlights={explore.active ? [] : highlights}
             onMove={over ? explore.onMove : onMove}
           />
-        ) : (
-          <div className="puzzles-empty card">
-            <h2>{mode === "rush" ? "Puzzle Rush" : mode === "custom" ? "Custom puzzles" : mode === "mistakes" ? "My mistakes" : mode === "review" ? "Review" : "Rated puzzles"}</h2>
-            <p className="muted">{mode === "rush" ? "Solve as many as you can. Three mistakes end the run." : mode === "custom" ? "Pick themes and a rating range. These do not change your rating." : mode === "mistakes" ? "Positions from your reviewed games where you went wrong. Find the move you missed." : mode === "review" ? "Puzzles you missed before, back on the spaced ladder: a day, then three, a week, and on." : "Puzzles near your rating. Solve the whole line to earn points."}</p>
-            {mode === "rush" ? (
-              <div className="row">
-                <button className="btn btn-primary" onClick={() => startRush("3m")} data-testid="rush-3m"><Timer size={14} /> 3 minutes</button>
-                <button className="btn" onClick={() => startRush("5m")}><Timer size={14} /> 5 minutes</button>
-                <button className="btn" onClick={() => startRush("survival")}>Survival</button>
-              </div>
-            ) : (
-              <button className="btn btn-primary btn-lg" onClick={nextPuzzle} data-testid="start-puzzles">Start</button>
-            )}
-            {error && <span className="chip chip-danger">{error}</span>}
-          </div>
-        )}
+        ) : <Board fen={START_FEN} />}
       </div>
 
-      <aside className="puzzles-side">
+      <aside className="side-col">
         {rush && (
           <div className="card rush-bar" data-testid="rush-bar">
             <div><div className="faint">score</div><div className="num rush-score">{rush.score}</div></div>
@@ -329,12 +305,14 @@ export function PuzzlesPage() {
         )}
         {puzzle && solver && (
           <div className="card">
-            <div className={`row puzzle-state ${solver.phase}`} style={{ justifyContent: "space-between" }} key={solver.phase}>
-              <span className="grow">
+            <div className={`puzzle-state ${solver.phase}`} key={solver.phase}>
               <strong data-testid="puzzle-turn">{solver.phase === "solved" ? "Solved!" : solver.phase === "revealed" ? "Solution shown" : solver.phase === "failed" ? "Not quite" : solver.phase === "intro" ? `${mode === "daily" ? "Daily puzzle · " : ""}Watch the opponent's move…` : `${mode === "daily" ? "Daily puzzle · " : ""}${puzzle.solver_color === "white" ? "White" : "Black"} to play`}</strong>
               {(solver.phase === "intro" || solver.phase === "solving") && <span className="puzzle-goal" data-testid="puzzle-goal">{puzzle.goal}</span>}
-              </span>
+            </div>
+            <div className="row puzzle-meta">
               <span className="chip">puzzle {puzzle.rating}</span>
+              {mode === "daily" && <span className="chip chip-danger puzzle-hearts" data-testid="hearts">{"♥".repeat(hearts)}<span className="faint">{"♥".repeat(5 - hearts)}</span></span>}
+              {streak > 1 && <span className="chip chip-ok pop" key={streak}><Flame size={12} /> {streak} in a row</span>}
             </div>
             {playerRating !== null && mode === "rated" && <div className="faint">Your puzzle rating: <b className="num">{playerRating}</b>{result && <span className={result.delta >= 0 ? "ok" : "bad"}> ({result.delta >= 0 ? "+" : ""}{result.delta})</span>}</div>}
             {solver.phase === "solving" && (
@@ -378,9 +356,36 @@ export function PuzzlesPage() {
             {mode === "mistakes" && mistakes && <div className="faint">mistake {mistakes.i + 1} of {mistakes.total}</div>}
           </div>
         )}
+        {!puzzle && (
+          <div className="card puzzles-start">
+            <h2>{mode === "rush" ? "Puzzle Rush" : mode === "custom" ? "Custom puzzles" : mode === "mistakes" ? "My mistakes" : mode === "review" ? "Review" : "Rated puzzles"}</h2>
+            <p className="muted">{mode === "rush" ? "Solve as many as you can. Three mistakes end the run." : mode === "custom" ? "Pick themes and a rating range. These do not change your rating." : mode === "mistakes" ? "Positions from your reviewed games where you went wrong. Find the move you missed." : mode === "review" ? "Puzzles you missed before, back on the spaced ladder: a day, then three, a week, and on." : "Puzzles near your rating. Solve the whole line to earn points."}</p>
+            {mode === "rush" ? (
+              <div className="row">
+                <button className="btn btn-primary" onClick={() => startRush("3m")} data-testid="rush-3m"><Timer size={14} /> 3 minutes</button>
+                <button className="btn" onClick={() => startRush("5m")}><Timer size={14} /> 5 minutes</button>
+                <button className="btn" onClick={() => startRush("survival")}>Survival</button>
+              </div>
+            ) : (
+              <button className="btn btn-primary btn-lg" onClick={nextPuzzle} data-testid="start-puzzles">Start</button>
+            )}
+            {error && <span className="chip chip-danger">{error}</span>}
+          </div>
+        )}
+        <div className="puzzles-modes">
+          {(["rated", "custom", "rush", "mistakes"] as Mode[]).map((m) => (
+            <button key={m} className={`btn btn-sm ${mode === m ? "btn-primary" : ""}`} onClick={() => { setMode(m); setOpening(null); setError(null); if (m !== "rush") setRush(null); if (m !== "mistakes") setMistakes(null); }} data-testid={`mode-${m}`}>{m === "rush" ? "Puzzle Rush" : m === "mistakes" ? "My mistakes" : m[0].toUpperCase() + m.slice(1)}</button>
+          ))}
+        </div>
         {mode === "custom" && (
-          <div className="card">
-            <div className="card-title"><h3>Themes</h3><span className="faint">{opening ? `${opening.replace(/_/g, " ")} · ` : ""}{selectedThemes.length ? `${selectedThemes.length} selected` : "any"}</span></div>
+          <details className="card fold" open={!puzzle}>
+            <summary>Themes <span className="faint">· {opening ? `${opening.replace(/_/g, " ")} · ` : ""}{selectedThemes.length ? `${selectedThemes.length} selected` : "any"}</span></summary>
+            <div className="row" style={{ margin: "10px 0" }}>
+              <label className="faint">Rating</label>
+              <input type="number" className="input" style={{ width: 90 }} value={range[0]} onChange={(e) => setRange([Number(e.target.value), range[1]])} />
+              <span className="faint">to</span>
+              <input type="number" className="input" style={{ width: 90 }} value={range[1]} onChange={(e) => setRange([range[0], Number(e.target.value)])} />
+            </div>
             <div className="theme-grid">
               {themes.map((t) => (
                 <button key={t.key} className={`theme-chip ${selectedThemes.includes(t.key) ? "on" : ""}`} title={t.description} onClick={() => { setOpening(null); setSelectedThemes((s) => (s.includes(t.key) ? s.filter((x) => x !== t.key) : [...s, t.key])); }}>
@@ -388,13 +393,7 @@ export function PuzzlesPage() {
                 </button>
               ))}
             </div>
-            <div className="row" style={{ marginTop: 10 }}>
-              <label className="faint">Rating</label>
-              <input type="number" className="input" style={{ width: 90 }} value={range[0]} onChange={(e) => setRange([Number(e.target.value), range[1]])} />
-              <span className="faint">to</span>
-              <input type="number" className="input" style={{ width: 90 }} value={range[1]} onChange={(e) => setRange([range[0], Number(e.target.value)])} />
-            </div>
-          </div>
+          </details>
         )}
         {stats && (
           <div className="card">
@@ -402,7 +401,7 @@ export function PuzzlesPage() {
             <div className="stats-grid">
               <div><div className="faint">rating</div><b className="num">{stats.rating}</b></div>
               <div><div className="faint">solved</div><b className="num">{stats.solved}/{stats.attempts}</b></div>
-              <div><div className="faint">accuracy</div><b className="num">{stats.accuracy ?? "–"}%</b></div>
+              <div><div className="faint">accuracy</div><b className="num">{stats.accuracy === null ? "–" : `${stats.accuracy}%`}</b></div>
               <div><div className="faint">rush best</div><b className="num">{Math.max(stats.rush_best["3m"] ?? 0, stats.rush_best["5m"] ?? 0, stats.rush_best.survival ?? 0)}</b></div>
             </div>
           </div>

@@ -225,3 +225,12 @@ def test_two_moves_posted_at_once_are_stored_as_answered(client):
     with ThreadPoolExecutor(2) as ex:
         codes = list(ex.map(lambda mv: client.post(f"/api/play/games/{gid}/move", json={"move": mv}).status_code, ["d2d4", "f1c4"]))
     assert len(client.get(f"/api/play/games/{gid}").json()["moves"]) == 2 * codes.count(200)
+
+
+def test_the_warm_up_loads_the_maia_model(monkeypatch):
+    from backend import app as app_module
+    from backend.bots import maia
+
+    monkeypatch.setattr(maia, "_session", None)
+    app_module._warm_content()
+    assert maia._session is not None

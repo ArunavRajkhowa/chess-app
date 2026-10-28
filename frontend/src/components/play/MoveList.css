@@ -1,5 +1,6 @@
 /* A scoresheet: ruled rows, the move number in the book serif, glyphs straight after the move. */
-.movelist { overflow-y: auto; font-size: var(--fs-md); background: var(--bg-elev); }
+/* position: relative makes the rows' offsetTop count from the list; the bottom padding lets a scroll stop on a row edge. */
+.movelist { position: relative; overflow-y: auto; padding-bottom: 36px; font-size: var(--fs-md); background: var(--bg-elev); }
 .movelist-opening { color: var(--ink-2); font-size: var(--fs-sm); padding: 8px 12px; border-bottom: 1px solid var(--line); font-family: var(--font-display); font-style: italic; }
 .movelist-row { display: grid; grid-template-columns: 40px 1fr 1fr; align-items: center; border-bottom: 1px solid color-mix(in srgb, var(--line) 70%, transparent); }
 .movelist-num { color: var(--ink-3); padding-left: 12px; font-family: var(--font-display); font-size: var(--fs-sm); }

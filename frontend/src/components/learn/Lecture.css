@@ -1,6 +1,8 @@
 .lecture { display: flex; flex-direction: column; gap: var(--s-3); }
 .lecture-caption { margin: 0; font-family: var(--font-display); font-size: var(--fs-lg); line-height: 1.45; min-height: 3.6em; }
 .lecture-bar { display: flex; gap: 3px; height: 6px; }
+.lecture-progress { gap: var(--s-2); }
+.lecture-progress .num { white-space: nowrap; font-size: var(--fs-sm); }
 .lecture-bar i { flex: 1; border-radius: 3px; background: var(--bg-elev-2); cursor: pointer; transition: background var(--anim); }
 .lecture-bar i.seen { background: color-mix(in srgb, var(--brand) 55%, var(--bg-elev-2)); }
 .lecture-bar i.now { background: var(--brand); }

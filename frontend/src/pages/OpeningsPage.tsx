@@ -98,6 +98,7 @@ function Explorer() {
     sync();
     setResults([]);
     setQuery("");
+    window.scrollTo({ top: 0 });
   };
   const goTo = (ply: number) => {
     const target = ply <= 0 ? START_FEN : history[ply - 1].fen;
@@ -120,49 +121,23 @@ function Explorer() {
   const live = viewPly === history.length;
   const boardChess = useMemo(() => new Chess(fen), [fen]);
   const dests = useMemo(() => (live ? destsFor(boardChess) : new Map()), [boardChess, live]);
-  const maxBelow = Math.max(1, ...(explore?.continuations.map((c) => c.lines_below) ?? [1]));
   const lastUci = viewPly > 0 ? history[viewPly - 1].uci : null;
 
   return (
-    <div className="openings" data-testid="openings">
-      <div>
-        <div className="row" style={{ justifyContent: "space-between", flexWrap: "wrap", marginBottom: 8 }}>
-          <div>
-            <h2 data-testid="opening-name">{explore?.opening ? `${explore.opening.eco} · ${explore.opening.name}` : viewPly ? "Out of book" : "Starting position"}</h2>
-            <div className="faint">{explore?.opening?.pgn ?? "Play moves on the board or pick a line."}</div>
-          </div>
-          <div className="row">
-            <button className="btn btn-sm" onClick={() => setOrientation((o) => (o === "white" ? "black" : "white"))}>Flip</button>
-            <button className="btn btn-sm" onClick={undo} disabled={!history.length}>Undo</button>
-            <button className="btn btn-sm" onClick={reset} disabled={!history.length}>Reset</button>
-          </div>
-        </div>
+    <div className="board-page explorer" data-testid="openings">
+      <div className="board-col">
         <Board fen={fen} orientation={orientation} movable={{ color: live ? "both" : "none", dests }} lastMove={lastUci ? [lastUci.slice(0, 2), lastUci.slice(2, 4)] : null} check={checkSquare(boardChess)} onMove={onMove} />
-        <div className="card" style={{ marginTop: 12, padding: 0 }}>
-          <MoveList moves={history.map((m, i) => ({ ply: i + 1, san: m.san }))} currentPly={viewPly} onSelect={goTo} opening={explore?.opening?.name ?? null} />
+        <div className="row">
+          <button className="btn btn-sm" onClick={() => setOrientation((o) => (o === "white" ? "black" : "white"))}>Flip</button>
+          <button className="btn btn-sm" onClick={undo} disabled={!history.length}>Undo</button>
+          <button className="btn btn-sm" onClick={reset} disabled={!history.length}>Reset</button>
         </div>
       </div>
-      <aside className="openings-side">
-        {!history.length && courses.length > 0 && (
-          <div className="card">
-            <div className="card-title"><h3>Opening courses</h3><span className="faint">why every move is played</span></div>
-            <ul className="courses" data-testid="courses">
-              {courses.map((c) => (
-                <li key={c.id}>
-                  <Link to={`/openings/courses/${c.id}`} data-testid={`course-${c.id}`}>
-                    <b>{c.name}</b>
-                    <span className="chip">as {c.side === "white" ? "White" : "Black"}</span>
-                    <span className="faint num">{c.lines} lines · {c.traps} traps</span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-        <div className="card">
+      <aside className="side-col">
+        <div className="card stack">
           <div className="row input-row">
             <Search size={16} className="faint" />
-            <input className="input" placeholder="Search openings (Najdorf, London, C65…)" value={query} onChange={(e) => setQuery(e.target.value)} data-testid="opening-search" />
+            <input className="input" placeholder="Search: Najdorf, C65…" value={query} onChange={(e) => setQuery(e.target.value)} data-testid="opening-search" />
           </div>
           {results.length > 0 && (
             <ul className="results">
@@ -171,36 +146,62 @@ function Explorer() {
               ))}
             </ul>
           )}
+          {!history.length && (
+            <details className="fold">
+              <summary>Browse families</summary>
+              <div className="families">
+                {families.map((f) => (
+                  <button key={f.name} className="theme-chip" onClick={() => loadLine(f.pgn)} title={`${f.eco_from}–${f.eco_to}, ${f.lines} lines`}>{f.name} <span className="faint num">{f.lines}</span></button>
+                ))}
+              </div>
+            </details>
+          )}
         </div>
-        <div className="card">
+        <div className="card stack">
+          <h3 data-testid="opening-name">{explore?.opening ? `${explore.opening.eco} · ${explore.opening.name}` : viewPly ? "Out of book" : "Starting position"}</h3>
+          {history.length > 0
+            ? <div className="openings-moves"><MoveList moves={history.map((m, i) => ({ ply: i + 1, san: m.san }))} currentPly={viewPly} onSelect={goTo} /></div>
+            : <div className="faint">Play a move on the board, pick a course or search for a line.</div>}
           <div className="card-title"><h3>Named continuations</h3><span className="faint">{explore?.continuations.length ?? 0}</span></div>
           {explore && explore.continuations.length === 0 && <p className="faint">No named lines from here. You are on your own: use the engine in Play or Coach.</p>}
           <ul className="conts" data-testid="continuations">
             {explore?.continuations.map((c) => (
               <li key={c.uci}>
-                <button onClick={() => playSan(c.san)} disabled={!live}>
+                <button onClick={() => playSan(c.san)} disabled={!live} title={c.name ? `${c.eco} · ${c.name}` : undefined}>
                   <b className="conts-san">{c.san}</b>
-                  <span className="conts-name">{c.name && <><span className="chip">{c.eco}</span> {c.name}</>}</span>
-                  <span className="conts-bar"><i style={{ width: `${Math.max(4, (100 * c.lines_below) / maxBelow)}%` }} /></span>
+                  <span className="conts-name">{c.name && afterOpening(c.name, explore.opening?.name)}</span>
                   <span className="faint num">{c.lines_below}</span>
                 </button>
               </li>
             ))}
           </ul>
         </div>
-        {!history.length && (
-          <div className="card">
-            <div className="card-title"><h3>Browse families</h3></div>
-            <div className="families">
-              {families.map((f) => (
-                <button key={f.name} className="theme-chip" onClick={() => loadLine(f.pgn)} title={`${f.eco_from}–${f.eco_to}, ${f.lines} lines`}>{f.name} <span className="faint num">{f.lines}</span></button>
-              ))}
-            </div>
-          </div>
-        )}
       </aside>
+      {courses.length > 0 && (
+        <div className="card board-under">
+          <div className="card-title"><h3>Opening courses</h3></div>
+          <ul className="courses" data-testid="courses">
+            {courses.map((c) => (
+              <li key={c.id}>
+                <Link to={`/openings/courses/${c.id}`} data-testid={`course-${c.id}`}>
+                  <b>{c.name}</b>
+                  <span className="faint num">as {c.side === "white" ? "White" : "Black"} · {c.lines} lines · {c.traps} traps</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
+}
+
+/** A continuation's name without the part the heading already shows ("…Najdorf Variation, English Attack" → "English Attack"). */
+function afterOpening(name: string, opening: string | undefined): string {
+  if (!opening) return name;
+  if (name.startsWith(`${opening}, `)) return name.slice(opening.length + 2);
+  const family = opening.split(":")[0];
+  return name.startsWith(`${family}: `) ? name.slice(family.length + 2) : name;
 }
 
 const moveLabel = (ply: number, san: string) => `${Math.ceil(ply / 2)}${ply % 2 ? "." : "..."}${san}`;
@@ -260,7 +261,7 @@ function CourseView({ courseId }: { courseId: string }) {
     return () => window.removeEventListener("keydown", onKey);
   }, [practice, ply, step]);
 
-  const choose = (kind: "lines" | "traps", i: number) => { setPick({ kind, i }); setPly(0); setPractice(null); };
+  const choose = (kind: "lines" | "traps", i: number) => { setPick({ kind, i }); setPly(0); setPractice(null); window.scrollTo({ top: 0 }); };
 
   const onMove = (from: Square, to: Square, promotion?: PromotionPiece) => {
     if (!myTurn || !practice) return;
@@ -284,83 +285,84 @@ function CourseView({ courseId }: { courseId: string }) {
   const highlights = mistake && ply === mistake.ply ? [{ square: mistake.uci.slice(2, 4), brush: "red" as const }] : [];
   const other: Side = course.side === "white" ? "black" : "white";
   return (
-    <div className="openings" data-testid="course">
-      <div>
-        <div className="row" style={{ justifyContent: "space-between", marginBottom: 8 }}>
-          <div>
-            <h2 data-testid="course-line">{line.name}</h2>
-            <div className="faint">{line.opening.eco} · {line.opening.name}</div>
-          </div>
-          {pick.kind === "lines" && (practice
-            ? <button className="btn btn-sm" onClick={() => { setPractice(null); setPly(0); }}>Stop practice</button>
-            : <button className="btn btn-sm btn-primary" onClick={() => { setPly(0); setPractice({ right: 0, wrong: 0, miss: null }); }} data-testid="practise-line">Practise this line</button>)}
-        </div>
-        <div className={`course-board ${shaking ? "shake" : ""}`} onAnimationEnd={() => setShaking(false)}>
-          <Board fen={fen} orientation={course.side} movable={{ color: myTurn ? learner : "none", dests }} lastMove={current ? [current.uci.slice(0, 2), current.uci.slice(2, 4)] : null} check={checkSquare(board)} highlights={highlights} onMove={onMove} />
-        </div>
-        <div className="row" style={{ marginTop: 8 }}>
-          <button className="btn btn-sm" onClick={() => step(0)} disabled={!!practice}>⏮</button>
-          <button className="btn btn-sm" onClick={() => step(ply - 1)} disabled={!!practice}>◀</button>
-          <button className="btn btn-sm" onClick={() => step(ply + 1)} disabled={!!practice}>▶</button>
-          <button className="btn btn-sm" onClick={() => step(moves.length)} disabled={!!practice}>⏭</button>
-          <span className="chip num">{ply}/{moves.length}</span>
-        </div>
-        <div className="card" style={{ marginTop: 12, padding: 0 }}>
-          <MoveList moves={(practice ? moves.slice(0, ply) : moves).map((m) => ({ ply: m.ply, san: m.san }))} currentPly={ply} onSelect={(p) => !practice && step(p)} opening={line.opening.name} />
-        </div>
+    <div data-testid="course">
+      <div className="course-head">
+        <Link to="/openings" className="muted">← Openings</Link>
+        <h2>{course.name}</h2>
+        <span className="chip">as {course.side === "white" ? "White" : "Black"}</span>
       </div>
-      <aside className="openings-side course-side">
-        <div className="card stack">
-          <Link to="/openings" className="muted">← Openings</Link>
-          <h2>{course.name}</h2>
-          <div className="row"><span className="chip">as {course.side === "white" ? "White" : "Black"}</span>{course.eco_from && <span className="chip num">{course.eco_from}–{course.eco_to}</span>}</div>
+      <div className="board-page course-page">
+        <div className="board-col">
+          <div className={`course-board ${shaking ? "shake" : ""}`} onAnimationEnd={() => setShaking(false)}>
+            <Board fen={fen} orientation={course.side} movable={{ color: myTurn ? learner : "none", dests }} lastMove={current ? [current.uci.slice(0, 2), current.uci.slice(2, 4)] : null} check={checkSquare(board)} highlights={highlights} onMove={onMove} />
+          </div>
+          <div className="row">
+            <button className="btn btn-sm" onClick={() => step(0)} disabled={!!practice}>⏮</button>
+            <button className="btn btn-sm" onClick={() => step(ply - 1)} disabled={!!practice}>◀</button>
+            <button className="btn btn-sm" onClick={() => step(ply + 1)} disabled={!!practice}>▶</button>
+            <button className="btn btn-sm" onClick={() => step(moves.length)} disabled={!!practice}>⏭</button>
+            <span className="chip num">{ply}/{moves.length}</span>
+            <span className="grow" />
+            {pick.kind === "lines" && (practice
+              ? <button className="btn btn-sm" onClick={() => { setPractice(null); setPly(0); }}>Stop practice</button>
+              : <button className="btn btn-sm btn-primary" onClick={() => { setPly(0); setPractice({ right: 0, wrong: 0, miss: null }); }} data-testid="practise-line">Practise line</button>)}
+          </div>
+        </div>
+        <aside className="side-col">
+          <div className="card stack" data-testid="course-note">
+            <div>
+              <h3 data-testid="course-line">{line.name}</h3>
+              <div className="faint">{line.opening.eco} · {line.opening.name}</div>
+            </div>
+            {practice ? (
+              <>
+                {practice.miss && <div className="course-note bad" data-testid="practice-miss">{practice.miss}</div>}
+                {done
+                  ? <div className="course-note ok" data-testid="practice-done">Line complete: {practice.right} of {practice.right + practice.wrong} moves from memory.</div>
+                  : <div className="faint">{myTurn ? "Your move: play the line's move." : "Watch the reply…"}</div>}
+              </>
+            ) : (
+              <>
+                {current?.comment ? <p><b>{moveLabel(current.ply, current.san)}</b> {current.comment}</p> : ply === 0 && <p className="faint">Step through the moves: each move with an idea has a note.</p>}
+                {mistake && (ply >= mistake.ply
+                  ? <div className="course-note bad" data-testid="trap-punishment"><b>{moveLabel(mistake.ply, mistake.san)} is the mistake.</b> {line.punishment}</div>
+                  : <div className="faint">{line.mistake_by === course.side ? "A trap to avoid" : "A trap to set"}: step to {moveLabel(mistake.ply, mistake.san)}.</div>)}
+              </>
+            )}
+            <div className="openings-moves">
+              <MoveList moves={(practice ? moves.slice(0, ply) : moves).map((m) => ({ ply: m.ply, san: m.san }))} currentPly={ply} onSelect={(p) => !practice && step(p)} />
+            </div>
+          </div>
+          <div className="card">
+            <div className="card-title"><h3>Lines</h3></div>
+            <ul className="course-items">
+              {course.lines.map((l, i) => <li key={l.id}><button className={pick.kind === "lines" && pick.i === i ? "on" : ""} onClick={() => choose("lines", i)}>{l.name}</button></li>)}
+            </ul>
+            <div className="card-title" style={{ marginTop: 12 }}><h3>Traps</h3></div>
+            <ul className="course-items">
+              {course.traps.map((t, i) => (
+                <li key={t.id}>
+                  <button className={pick.kind === "traps" && pick.i === i ? "on" : ""} onClick={() => choose("traps", i)} data-testid={`trap-${t.id}`}>
+                    <span className="grow">{t.name}</span><span className="chip">{t.mistake_by === course.side ? "avoid" : "set"}</span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </aside>
+        <div className="card stack course-about board-under">
           <p className="muted">{course.summary}</p>
-        </div>
-        <div className="card stack" data-testid="course-note">
-          {practice ? (
-            <>
-              {practice.miss && <div className="course-note bad" data-testid="practice-miss">{practice.miss}</div>}
-              {done
-                ? <div className="course-note ok" data-testid="practice-done">Line complete: {practice.right} of {practice.right + practice.wrong} moves from memory.</div>
-                : <div className="faint">{myTurn ? "Your move: play the line's move." : "Watch the reply…"}</div>}
-            </>
-          ) : (
-            <>
-              {current?.comment ? <p><b>{moveLabel(current.ply, current.san)}</b> {current.comment}</p> : <p className="faint">{ply === 0 ? "Step through the moves: each move with an idea has a note." : `${moveLabel(current!.ply, current!.san)}: no note on this move.`}</p>}
-              {mistake && (ply >= mistake.ply
-                ? <div className="course-note bad" data-testid="trap-punishment"><b>{moveLabel(mistake.ply, mistake.san)} is the mistake.</b> {line.punishment}</div>
-                : <div className="faint">{line.mistake_by === course.side ? "A trap to avoid" : "A trap to set"}: step to {moveLabel(mistake.ply, mistake.san)}.</div>)}
-            </>
-          )}
-        </div>
-        <div className="card">
-          <div className="card-title"><h3>Lines</h3></div>
-          <ul className="course-items">
-            {course.lines.map((l, i) => <li key={l.id}><button className={pick.kind === "lines" && pick.i === i ? "on" : ""} onClick={() => choose("lines", i)}>{l.name}</button></li>)}
-          </ul>
-          <div className="card-title" style={{ marginTop: 12 }}><h3>Traps</h3></div>
-          <ul className="course-items">
-            {course.traps.map((t, i) => (
-              <li key={t.id}>
-                <button className={pick.kind === "traps" && pick.i === i ? "on" : ""} onClick={() => choose("traps", i)} data-testid={`trap-${t.id}`}>
-                  <span className="grow">{t.name}</span><span className="chip">{t.mistake_by === course.side ? "avoid" : "set"}</span>
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div className="card stack">
-          <details open><summary>Ideas for {course.side === "white" ? "White" : "Black"}</summary><ul>{course.ideas[course.side].map((t) => <li key={t}>{t}</li>)}</ul></details>
-          <details><summary>What {other === "white" ? "White" : "Black"} wants</summary><ul>{course.ideas[other].map((t) => <li key={t}>{t}</li>)}</ul></details>
-          <details><summary>Pawn structures</summary><ul>{course.structures.map((s) => <li key={s.name}><b>{s.name}.</b> {s.text}</li>)}</ul></details>
-          <details><summary>Key pieces</summary><ul>{course.pieces[course.side].map((t) => <li key={t}>{t}</li>)}</ul></details>
+          <details className="fold"><summary>Ideas for {course.side === "white" ? "White" : "Black"}</summary><ul>{course.ideas[course.side].map((t) => <li key={t}>{t}</li>)}</ul></details>
+          <details className="fold"><summary>What {other === "white" ? "White" : "Black"} wants</summary><ul>{course.ideas[other].map((t) => <li key={t}>{t}</li>)}</ul></details>
+          <details className="fold"><summary>Pawn structures</summary><ul>{course.structures.map((s) => <li key={s.name}><b>{s.name}.</b> {s.text}</li>)}</ul></details>
+          <details className="fold"><summary>Key pieces</summary><ul>{course.pieces[course.side].map((t) => <li key={t}>{t}</li>)}</ul></details>
           {course.model_games.length > 0 && (
-            <details><summary>Model games <span className="faint num">{course.model_games.length}</span></summary>
+            <details className="fold"><summary>Model games <span className="faint num">{course.model_games.length}</span></summary>
               <ul>{course.model_games.map((g) => <li key={g.id}><Link to={`/games/${g.id}`}>{g.white} – {g.black}{/^\d{4}$/.test(g.year) ? `, ${g.year}` : ""}</Link></li>)}</ul>
             </details>
           )}
         </div>
-      </aside>
+      </div>
     </div>
   );
 }

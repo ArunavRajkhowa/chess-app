@@ -1,4 +1,3 @@
-.spark { width: 100%; height: 80px; }
 .ins-headline { display: flex; flex-direction: column; gap: var(--s-4); }
 .ins-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: var(--s-3); }
 .ins-stats b { font-size: var(--fs-lg); }
@@ -6,12 +5,25 @@
 .ins-finding { font-size: var(--fs-md); margin: 0 0 var(--s-3); }
 .ins-actions { display: flex; flex-wrap: wrap; gap: var(--s-2); margin-top: var(--s-3); }
 .trend-up { color: var(--ok); } .trend-down { color: var(--danger); } .trend-flat { color: var(--ink-3); }
-.worked { display: flex; gap: var(--s-3); align-items: flex-start; flex-wrap: wrap; margin-top: var(--s-2); }
-.worked-board { width: 180px; flex: none; }
-.worked-text { display: flex; flex-direction: column; gap: var(--s-1); font-size: var(--fs-sm); min-width: 0; flex: 1; }
+.ins-grid { columns: 480px 2; column-gap: var(--s-4); }
+.ins-grid > * { break-inside: avoid; margin-bottom: var(--s-4); }
+.ins-wide { column-span: all; }
+.worked { display: flex; gap: var(--s-4); align-items: flex-start; flex-wrap: wrap; margin-top: var(--s-2); }
+.worked-board { flex: 1 1 260px; max-width: 360px; }
+.worked-text { display: flex; flex-direction: column; gap: var(--s-1); min-width: 200px; flex: 1; }
+/* Wide: the week's focus reads beside its worked board, at a reading measure, instead of under it. */
+@media (min-width: 1000px) {
+  .ins-focus:has(.worked) { display: grid; grid-template-columns: minmax(260px, 360px) minmax(0, var(--measure)); grid-template-rows: repeat(5, auto) 1fr; column-gap: var(--s-5); align-items: start; }
+  .ins-focus:has(.worked) > * { grid-column: 2; margin-top: 0; }
+  .ins-focus .worked { display: contents; }
+  .ins-focus .worked-board { grid-column: 1; grid-row: 1 / 7; max-width: none; width: 100%; }
+  .ins-focus .worked-text { grid-column: 2; min-width: 0; margin-top: var(--s-2); }
+}
 .ins-list, .ins-plan { margin: var(--s-3) 0 0; padding: 0; display: flex; flex-direction: column; gap: var(--s-2); font-size: var(--fs-sm); }
 .ins-list { list-style: none; }
-.ins-list li { display: flex; flex-wrap: wrap; gap: var(--s-3); align-items: baseline; }
-.ins-plan { padding-left: var(--s-5); }
-.ins-plan li > div { display: inline-block; margin-right: var(--s-2); }
+.ins-list li { display: grid; grid-template-columns: minmax(9em, 1fr) auto minmax(0, 1.2fr); gap: 2px var(--s-3); align-items: baseline; }
+.ins-strengths li { grid-template-columns: auto 1fr; }
+.ins-plan { list-style: none; gap: var(--s-3); }
+.ins-plan li { display: flex; flex-wrap: wrap; gap: var(--s-2) var(--s-4); align-items: center; }
 .ins-section .games-table { margin-top: var(--s-3); display: block; overflow-x: auto; }
+@media (max-width: 560px) { .ins-list li { grid-template-columns: minmax(0, 1fr) auto; } .ins-list li > :nth-child(3) { grid-column: 1 / -1; } }

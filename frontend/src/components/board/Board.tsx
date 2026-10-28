@@ -50,7 +50,12 @@ interface DragState {
   y: number;
   moved: boolean;
   pointerId: number;
+  /** The piece was already selected at the press: a click (no drag) on it clears the selection. */
+  wasSelected: boolean;
 }
+
+const ARROWS: Record<string, [number, number]> = { ArrowUp: [0, -1], ArrowDown: [0, 1], ArrowLeft: [-1, 0], ArrowRight: [1, 0] };
+const PIECE_NAMES: Record<string, string> = { p: "pawn", n: "knight", b: "bishop", r: "rook", q: "queen", k: "king" };
 
 const BRUSH_FOR_MOD = (e: { shiftKey: boolean; altKey: boolean; ctrlKey: boolean; metaKey: boolean }): Brush =>
   e.shiftKey ? "red" : e.altKey ? "blue" : e.ctrlKey || e.metaKey ? "yellow" : "green";
@@ -85,6 +90,9 @@ export function Board({
   const [userShapes, setUserShapes] = useState<Shape[]>([]);
   const [drawing, setDrawing] = useState<{ orig: Square; brush: Brush } | null>(null);
   const [noAnim, setNoAnim] = useState(false);
+  const [focusSq, setFocusSq] = useState<Square | null>(null);
+  // Focus from a click leaves the arrow keys to the page (move-list navigation); focus from Tab takes them.
+  const pointerFocused = useRef(false);
   const prevOrientation = useRef(orientation);
 
   const turn = turnFromFen(fen);
@@ -130,6 +138,11 @@ export function Board({
     [orientation],
   );
 
+  const fromCoords = useCallback(
+    (col: number, row: number): Square => (orientation === "white" ? squareAt(col, 7 - row) : squareAt(7 - col, row)),
+    [orientation],
+  );
+
   const squareFromPointer = useCallback(
     (clientX: number, clientY: number): Square | null => {
       const el = rootRef.current;
@@ -138,11 +151,9 @@ export function Board({
       const x = (clientX - rect.left) / rect.width;
       const y = (clientY - rect.top) / rect.height;
       if (x < 0 || x >= 1 || y < 0 || y >= 1) return null;
-      const col = Math.floor(x * 8);
-      const row = Math.floor(y * 8);
-      return orientation === "white" ? squareAt(col, 7 - row) : squareAt(7 - col, row);
+      return fromCoords(Math.floor(x * 8), Math.floor(y * 8));
     },
-    [orientation],
+    [fromCoords],
   );
 
   // Moves ----------------------------------------------------------------------------------
@@ -173,8 +184,23 @@ export function Board({
     [pieceAt, isUsersTurn, premovable, canMoveColor, destsOf, autoQueen, onMove, onPremove],
   );
 
+  const isSelectable = (sq: Square) => {
+    const piece = pieceAt.get(sq);
+    return !!piece && canMoveColor(piece.color) && (isUsersTurn || premovable);
+  };
+
+  /** Moves the selected piece to `sq` when it is a destination (or a premove); true when it did. */
+  const moveSelectedTo = (sq: Square) => {
+    if (!selected || selected === sq || !(destsOf(selected).includes(sq) || (!isUsersTurn && premovable))) return false;
+    if (!tryMove(selected, sq)) return false;
+    setSelected(null);
+    return true;
+  };
+
   // Pointer handling -----------------------------------------------------------------------
   const onPointerDown = (e: React.PointerEvent) => {
+    pointerFocused.current = true;
+    setFocusSq(null);
     const sq = squareFromPointer(e.clientX, e.clientY);
     if (!sq) return;
     if (e.button === 2) {
@@ -183,20 +209,14 @@ export function Board({
     }
     if (e.button !== 0) return;
     if (premove && onPremove) onPremove(null);
+    if (moveSelectedTo(sq)) return;
     const piece = pieceAt.get(sq);
-    const selectable = piece && canMoveColor(piece.color) && (isUsersTurn || premovable);
-
-    if (selected && selected !== sq && (destsOf(selected).includes(sq) || (!isUsersTurn && premovable))) {
-      if (tryMove(selected, sq)) {
-        setSelected(null);
-        return;
-      }
-    }
-    if (selectable && piece) {
+    if (piece && isSelectable(sq)) {
+      // The press selects at once so a drag can start; the release decides if it was a click.
       setSelected(sq);
       (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
       const rect = rootRef.current!.getBoundingClientRect();
-      setDrag({ id: piece.id, from: sq, x: e.clientX - rect.left, y: e.clientY - rect.top, moved: false, pointerId: e.pointerId });
+      setDrag({ id: piece.id, from: sq, x: e.clientX - rect.left, y: e.clientY - rect.top, moved: false, pointerId: e.pointerId, wasSelected: selected === sq });
       setHover(sq);
     } else {
       setSelected(null);
@@ -209,7 +229,8 @@ export function Board({
     const rect = rootRef.current!.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-    const moved = drag.moved || Math.hypot(x - drag.x, y - drag.y) > 4;
+    // A press that wobbles less than a fifth of a square stays a click, never a tiny drag.
+    const moved = drag.moved || Math.hypot(x - drag.x, y - drag.y) > Math.max(6, rect.width / 40);
     setDrag({ ...drag, x, y, moved });
     setHover(squareFromPointer(e.clientX, e.clientY));
   };
@@ -226,20 +247,38 @@ export function Board({
     }
     if (!drag) return;
     const target = squareFromPointer(e.clientX, e.clientY);
-    const wasDrag = drag.moved;
     setDrag(null);
     setHover(null);
-    if (!target) return;
-    if (target === drag.from) {
-      // Click without moving keeps the selection; a second click on the same piece deselects.
-      if (wasDrag) return;
+    if (!drag.moved) {
+      if (drag.wasSelected) setSelected(null);
       return;
     }
-    if (tryMove(drag.from, target)) {
+    // An illegal drop snaps back and keeps the selection, so a click on a destination still works.
+    if (target && target !== drag.from && tryMove(drag.from, target)) setSelected(null);
+  };
+
+  // Keyboard: arrows move a focus ring, Enter or Space acts as a click, Escape clears.
+  const onKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Escape") {
+      if (!selected && !focusSq) return;
       setSelected(null);
-    } else if (wasDrag) {
-      // Illegal drop: snap back. Keep selection so a click-click still works.
+      setFocusSq(null);
+    } else if (pointerFocused.current) {
+      return;
+    } else if (ARROWS[e.key]) {
+      const [dc, dr] = ARROWS[e.key];
+      const from = focusSq ?? selected;
+      const at = from ? toCoords(from) : { col: 4, row: 7 };
+      const step = from ? 1 : 0;
+      setFocusSq(fromCoords(Math.min(7, Math.max(0, at.col + dc * step)), Math.min(7, Math.max(0, at.row + dr * step))));
+    } else if ((e.key === "Enter" || e.key === " ") && focusSq) {
+      if (focusSq === selected) setSelected(null);
+      else if (!moveSelectedTo(focusSq)) setSelected(isSelectable(focusSq) ? focusSq : null);
+    } else {
+      return;
     }
+    e.preventDefault();
+    e.stopPropagation();
   };
 
   const onPointerCancel = () => {
@@ -272,20 +311,21 @@ export function Board({
       for (const d of destsOf(selected)) add(d, pieceAt.has(d) ? "dest occupied" : "dest");
     }
     if (drag?.moved && hover) add(hover, "drag-over");
+    add(focusSq, "kbd-focus");
     for (const h of highlights) add(h.square, `hl-${h.brush}`);
     return m;
-  }, [lastMove, premove, selected, check, showDests, isUsersTurn, destsOf, pieceAt, drag, hover, highlights]);
+  }, [lastMove, premove, selected, check, showDests, isUsersTurn, destsOf, pieceAt, drag, hover, highlights, focusSq]);
 
   const squares = useMemo(() => {
     const out: { sq: Square; col: number; row: number; light: boolean }[] = [];
     for (let row = 0; row < 8; row++) {
       for (let col = 0; col < 8; col++) {
-        const sq = orientation === "white" ? squareAt(col, 7 - row) : squareAt(7 - col, row);
+        const sq = fromCoords(col, row);
         out.push({ sq, col, row, light: (fileIndex(sq) + rankIndex(sq)) % 2 === 1 });
       }
     }
     return out;
-  }, [orientation]);
+  }, [fromCoords]);
 
   const allShapes = useMemo(() => {
     const live: Shape[] = drawing && hover && hover !== drawing.orig ? [{ orig: drawing.orig, dest: hover, brush: drawing.brush }] : [];
@@ -299,6 +339,10 @@ export function Board({
       data-testid="board"
       data-fen={fen}
       data-orientation={orientation}
+      tabIndex={movable && movable.color !== "none" ? 0 : undefined}
+      aria-label={focusSq ? `${focusSq} ${pieceAt.get(focusSq) ? PIECE_NAMES[pieceAt.get(focusSq)!.type] : "empty"}` : "Chessboard: arrow keys pick a square, Enter selects and moves"}
+      onKeyDown={onKeyDown}
+      onBlur={() => { pointerFocused.current = false; setFocusSq(null); }}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}

@@ -1,8 +1,8 @@
-.evalbar { position: relative; width: 22px; height: 100%; background: var(--side-black); border-radius: var(--r-sm); box-shadow: inset 0 0 0 1px var(--line); overflow: hidden; }
+.evalbar { position: relative; width: 26px; height: 100%; background: var(--side-black); border-radius: var(--r-sm); box-shadow: inset 0 0 0 1px var(--line); overflow: hidden; }
 /* White's share is a full-height bar scaled from the white end: a transform, so the bar never relays out. */
 .evalbar-white { position: absolute; inset: 0; background: var(--side-white); transform-origin: bottom; transition: transform var(--anim-slow) var(--ease); }
 .evalbar.flipped .evalbar-white { transform-origin: top; }
-.evalbar-text { position: absolute; left: 0; right: 0; text-align: center; font-size: 10px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.evalbar-text { position: absolute; left: 0; right: 0; text-align: center; font-size: var(--fs-xs); letter-spacing: -0.03em; font-weight: 700; font-variant-numeric: tabular-nums; }
 .evalbar:not(.flipped) .evalbar-text.on-white { bottom: 4px; color: var(--side-black); }
 .evalbar:not(.flipped) .evalbar-text.on-black { top: 4px; color: var(--side-white); }
 .evalbar.flipped .evalbar-text.on-white { top: 4px; color: var(--side-black); }

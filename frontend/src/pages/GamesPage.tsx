@@ -34,6 +34,7 @@ const studyNote = (r: ReturnType<typeof useStudy>) =>
 interface GameSummary { id: string; white: string; black: string; event: string; year: string; result: string; eco: string; opening: string; themes: string[]; why: string; level: number; plies: number }
 interface GameDetail extends GameSummary { moves: { ply: number; san: string; uci: string; fen: string; comment: string | null }[]; key_moments: { ply: number; note: string }[]; pgn: string }
 interface Theme { key: string; name: string; count: number }
+const FIRST_GAMES = 24; // the list opens on this many; the rest are one click away
 
 async function get<T>(path: string): Promise<T> {
   const r = await fetch(path);
@@ -51,27 +52,35 @@ function GamesIndex() {
   const [games, setGames] = useState<GameSummary[]>([]);
   const [themes, setThemes] = useState<Theme[]>([]);
   const [theme, setTheme] = useState<string | null>(null);
+  const [query, setQuery] = useState("");
+  const [all, setAll] = useState(false);
   useEffect(() => {
     get<{ games: GameSummary[]; themes: Theme[] }>(`/api/games${theme ? `?theme=${theme}` : ""}`).then((r) => { setGames(r.games); setThemes(r.themes); }).catch(() => undefined);
   }, [theme]);
+  const q = query.trim().toLowerCase();
+  const found = q ? games.filter((g) => `${g.white} ${g.black} ${g.event} ${g.year} ${g.eco} ${g.opening}`.toLowerCase().includes(q)) : games;
+  const shown = all ? found : found.slice(0, FIRST_GAMES);
   return (
     <div className="stack" data-testid="games">
       <div className="page-head"><div><h1>Master games</h1><p>Model games chosen for what they teach, with every key move explained. Watch them with commentary, replay them, or guess the moves.</p></div></div>
-      <div className="row" style={{ flexWrap: "wrap" }}>
-        <button className={`theme-chip ${theme === null ? "on" : ""}`} onClick={() => setTheme(null)}>All</button>
-        {themes.map((t) => <button key={t.key} className={`theme-chip ${theme === t.key ? "on" : ""}`} onClick={() => setTheme(t.key)}>{t.name} <span className="faint num">{t.count}</span></button>)}
+      <div className="row games-filter">
+        <input className="input" type="search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Player, event or opening" aria-label="Search games" data-testid="games-search" />
+        <select className="select" value={theme ?? ""} onChange={(e) => setTheme(e.target.value || null)} aria-label="Theme" data-testid="games-theme">
+          <option value="">All themes</option>
+          {themes.map((t) => <option key={t.key} value={t.key}>{t.name} ({t.count})</option>)}
+        </select>
       </div>
       <div className="games-grid">
-        {games.map((g) => (
+        {shown.map((g) => (
           <Link key={g.id} to={`/games/${g.id}`} className="card game-tile" data-testid={`game-${g.id}`}>
             <div className="row" style={{ justifyContent: "space-between" }}><b>{g.white} – {g.black}</b><span className="chip num">{g.result}</span></div>
-            <div className="faint">{g.event}{g.event && g.year ? ", " : ""}{g.year} · {g.eco} {g.opening}</div>
-            <p className="muted" style={{ fontSize: 13 }}>{g.why}</p>
-            <div className="row" style={{ flexWrap: "wrap" }}>{g.themes.map((t) => <span key={t} className="chip">{t}</span>)}<span className="chip chip-info">band {g.level}</span></div>
+            <div className="faint">{g.event}{g.event && g.year ? ", " : ""}{g.year} · {g.eco} {g.opening} · band {g.level}</div>
+            <p className="muted game-why" title={g.why}>{g.why}</p>
           </Link>
         ))}
-        {games.length === 0 && <p className="faint">No games match.</p>}
+        {found.length === 0 && <p className="faint">No games match.</p>}
       </div>
+      {shown.length < found.length && <button type="button" className="btn" style={{ alignSelf: "center" }} onClick={() => setAll(true)}>Show all {found.length} games</button>}
     </div>
   );
 }
@@ -150,61 +159,68 @@ function GameStudy({ gameId }: { gameId: string }) {
           <option value="w">as White</option><option value="b">as Black</option>
         </select>
       )}
+      <button className="btn btn-sm" onClick={() => setOrientation((o) => (o === "white" ? "black" : "white"))}>Flip</button>
+      <Link to="/games" className="btn btn-sm btn-ghost">← All games</Link>
     </div>
   );
-  const title = <div><h2>{game.white} – {game.black}</h2><div className="faint">{game.event}{game.event && game.year ? ", " : ""}{game.year} · {game.eco} {game.opening} · {game.result}</div></div>;
+  // The title is one line; the event and opening fold into "About this game", so the board keeps the room.
+  const head = (
+    <div className="game-head">
+      <h2>{game.white} – {game.black} <span className="chip num">{game.result}</span></h2>
+    </div>
+  );
+  const about = (
+    <details className="fold">
+      <summary>About this game</summary>
+      <p className="faint">{game.event}{game.event && game.year ? ", " : ""}{game.year} · {game.eco} {game.opening}</p>
+      <p className="muted">{game.why}</p>
+    </details>
+  );
   if (mode === "watch") {
     return (
       <div data-testid="gamestudy">
-        <LecturePlayer frames={watchFrames(game, study)} study={study} studyNote={studyNote(studyRes)} orientation={orientation} header={<div className="lesson-head"><Link to="/games" className="muted">← All games</Link>{title}</div>}>
+        <LecturePlayer frames={watchFrames(game, study)} study={study} studyNote={studyNote(studyRes)} orientation={orientation} header={head}>
           {modes}
-          <button className="btn btn-sm" style={{ width: "fit-content" }} onClick={() => setOrientation((o) => (o === "white" ? "black" : "white"))}>Flip</button>
         </LecturePlayer>
       </div>
     );
   }
   return (
-    <div className="gamestudy" data-testid="gamestudy">
-      <div>
-        <div className="row" style={{ justifyContent: "space-between", marginBottom: 8 }}>
-          {title}
-          <button className="btn btn-sm" onClick={() => setOrientation((o) => (o === "white" ? "black" : "white"))}>Flip</button>
-        </div>
+    <div className="board-page gamestudy" data-testid="gamestudy">
+      <div className="board-col">
         {mode === "replay" ? (
           <Board fen={explore.fen} orientation={orientation} movable={{ color: "both", dests: explore.dests }} lastMove={exploring ? explore.lastMove : lastMove} check={explore.check} onMove={explore.onMove} />
         ) : (
           <Board fen={fen} orientation={orientation} movable={{ color: guessTurn ? guessColor : "none", dests }} lastMove={lastMove} check={checkSquare(chess)} onMove={onGuess} />
         )}
-        <div className="row" style={{ marginTop: 8 }}>
+        <div className="row">
           <button className="btn btn-sm" onClick={() => setPly(0)}>⏮</button>
           <button className="btn btn-sm" onClick={() => setPly(Math.max(0, ply - 1))}>◀</button>
           <button className="btn btn-sm" onClick={() => !guessTurn && setPly(Math.min(total, ply + 1))} disabled={guessTurn}>▶</button>
           <button className="btn btn-sm" onClick={() => setPly(total)} disabled={mode === "guess"}>⏭</button>
           <span className="chip num">{ply}/{total}</span>
         </div>
+        {game.key_moments.length > 0 && (
+          <div className="keymoments"><span className="faint">Key moments</span>{game.key_moments.map((k) => <button key={k.ply} className={k.ply === ply ? "current" : ""} onClick={() => setPly(k.ply)}>{Math.ceil(k.ply / 2)}{k.ply % 2 ? "." : "…"} {game.moves[k.ply - 1].san}</button>)}</div>
+        )}
       </div>
-      <aside className="games-side">
+      <aside className="side-col">
+        {head}
+        {modes}
         <div className="card stack">
-          {modes}
           {mode === "guess" && <div className="row"><span className="chip chip-ok">score {score.points} / {score.guesses * 3}</span>{guessTurn && <span className="chip chip-info">your guess</span>}</div>}
           {feedback && <div className="task-banner" data-testid="guess-feedback">{feedback}</div>}
-          <p className="muted">{game.why}</p>
           {current?.comment && !exploring && <div className="comment" data-testid="comment"><Markdown md={current.comment.replace(/^!+\s*/, "")} /></div>}
           {mode === "replay" && (
             <ExplorePanel explore={explore} compareLabel="Played in the game" idle={<p className="faint">Wonder why a move was not played? Play it on the board and the engine answers.</p>} />
           )}
-          {mode === "replay" && <AskCoach fen={explore.fen} />}
+          {mode === "guess" && !feedback && <p className="faint">Play the move you think the master played.</p>}
         </div>
-        <div className="card" style={{ padding: 0 }}>
+        <div className="card game-moves">
           <MoveList moves={game.moves.map((m) => ({ ply: m.ply, san: m.san }))} currentPly={ply} onSelect={(p) => !guessTurn && setPly(p)} opening={game.opening} />
         </div>
-        {game.key_moments.length > 0 && (
-          <div className="card">
-            <div className="card-title"><h3>Key moments</h3></div>
-            <div className="keymoments">{game.key_moments.map((k) => <button key={k.ply} className={k.ply === ply ? "current" : ""} onClick={() => setPly(k.ply)}>{Math.ceil(k.ply / 2)}{k.ply % 2 ? "." : "…"} {game.moves[k.ply - 1].san}</button>)}</div>
-          </div>
-        )}
-        <Link to="/games" className="muted">← All games</Link>
+        {mode === "replay" && <AskCoach fen={explore.fen} />}
+        {about}
       </aside>
     </div>
   );

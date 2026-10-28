@@ -1,4 +1,4 @@
-import { BarChart3, BookOpen, Brain, Eye, Flag, GraduationCap, Home, Library, Microscope, MoreHorizontal, Puzzle, Settings, Swords, Target, TrendingUp, X } from "lucide-react";
+import { BarChart3, BookOpen, Brain, Code, Eye, Flag, GraduationCap, Home, Library, Microscope, MoreHorizontal, Puzzle, Settings, Swords, Target, TrendingUp, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { useSettings } from "../../store/settings";
@@ -32,10 +32,21 @@ const SETTINGS: NavItem = { to: "/settings", label: "Settings", icon: Settings }
 // On a phone the bar holds the four places a session starts; everything else is one tap away under More.
 const PHONE_BAR = new Set(["/", "/play", "/puzzles", "/learn"]);
 const ALL = [...NAV.flatMap((g) => g.items), SETTINGS];
+// AGPL-3.0 section 13: every user over the network is offered the source.
+export const SOURCE_URL = "https://github.com/ArunavRajkhowa/chess-app";
+
+function SourceLink() {
+  return (
+    <a href={SOURCE_URL} target="_blank" rel="noreferrer" title="Source code (AGPL-3.0)" className="shell-source">
+      <Code size={15} strokeWidth={1.75} />
+      <span>Source code</span>
+    </a>
+  );
+}
 
 function Item({ to, label, icon: Icon, end, className = "" }: NavItem & { className?: string }) {
   return (
-    <NavLink to={to} end={end} className={({ isActive }) => `${className} ${isActive ? "active" : ""}`}>
+    <NavLink to={to} end={end} title={label} className={({ isActive }) => `${className} ${isActive ? "active" : ""}`}>
       <Icon size={17} strokeWidth={1.75} />
       <span>{label}</span>
     </NavLink>
@@ -90,6 +101,7 @@ export function Shell() {
           </div>
         ))}
         <Item {...SETTINGS} className="shell-settings" />
+        <SourceLink />
         <button type="button" ref={moreButton} className={`shell-more ${more ? "active" : ""}`} onClick={() => setMore((m) => !m)} aria-expanded={more} aria-controls="shell-more-sheet">
           {more ? <X size={17} strokeWidth={1.75} /> : <MoreHorizontal size={17} strokeWidth={1.75} />}
           <span>More</span>
@@ -100,6 +112,7 @@ export function Shell() {
           <ul>
             {ALL.filter((it) => !PHONE_BAR.has(it.to)).map((it) => <li key={it.to}><Item {...it} /></li>)}
           </ul>
+          <SourceLink />
         </div>
       )}
       <main className="shell-main">

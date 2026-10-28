@@ -132,14 +132,14 @@ export function LessonPage() {
 
   const header = (
     <div className="lesson-head">
-      <div className="row" style={{ justifyContent: "space-between" }}>
+      <div className="row">
         <Link to="/learn" className="muted"><ArrowLeft size={14} /> Learn</Link>
+        <span className="lesson-kicker grow">Band {lesson.band} · {lesson.strand}</span>
         <div className="row">
           {lesson.prev && <button className="btn btn-sm btn-ghost" onClick={() => navigate(`/learn/${lesson.prev}`)} aria-label="Previous lesson" title="Previous lesson"><ArrowLeft size={14} /></button>}
           {lesson.next && <button className="btn btn-sm btn-ghost" onClick={() => navigate(`/learn/${lesson.next}`)} aria-label="Next lesson" title="Next lesson"><ArrowRight size={14} /></button>}
         </div>
       </div>
-      <div className="lesson-kicker">Band {lesson.band} · {lesson.strand}</div>
       <h2>{lesson.title}</h2>
       <p className="muted">{lesson.objective}</p>
       <div className="lesson-progress">

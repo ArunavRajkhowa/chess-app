@@ -2,6 +2,7 @@
 .goalbar-form { display: flex; align-items: center; gap: var(--s-2); }
 .goalbar-icon { color: var(--brand); flex: none; }
 .goalbar-form .input { min-width: 0; }
+.goalbar-form .btn { flex: none; white-space: nowrap; }
 .goalbar-chips { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-2); }
 .goalbar-chip { cursor: pointer; border: 1px solid var(--line); background: var(--bg-elev); transition: border-color var(--anim); }
 .goalbar-chip:hover { border-color: var(--brand); }

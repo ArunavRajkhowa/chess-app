@@ -12,10 +12,10 @@ export function StudyPlanPage() {
       <div className="page-head">
         <div>
           <h1>Study plan</h1>
-          <p>Say what you want to learn. The plan is built from the lessons, courses, puzzles, master games, endgames and specialist bots the app has, nothing invented.</p>
+          {!planId && <p>Say what you want to learn. The plan is built from the lessons, courses, puzzles, master games, endgames and specialist bots the app has, nothing invented.</p>}
         </div>
       </div>
-      <GoalBar autoFocus={!planId} />
+      <GoalBar autoFocus={!planId} examples={!planId} />
       {planId ? <PlanView planId={planId} /> : <PlanList />}
     </div>
   );
@@ -70,7 +70,7 @@ function PlanView({ planId }: { planId: string }) {
         <p className="muted">“{plan.goal}”</p>
         <div className="row"><div className="progress grow"><i style={{ width: `${pct}%` }} /></div><span className="num faint" data-testid="plan-progress">{plan.done} of {plan.total} done</span></div>
         {plan.key_points.length > 0 && (
-          <details className="plan-points" open data-testid="plan-points">
+          <details className="plan-points" data-testid="plan-points">
             <summary>Key points ({plan.key_points.length})</summary>
             <ul>
               {plan.key_points.map((k, i) => <li key={i}>{k.text} <span className="faint">— {k.source.title}</span></li>)}
@@ -78,37 +78,39 @@ function PlanView({ planId }: { planId: string }) {
           </details>
         )}
       </section>
-      {STEP_GROUPS.map(({ kind, label }) => {
-        const steps = plan.steps.filter((s) => s.kind === kind);
-        if (!steps.length) return null;
-        return (
-          <section key={kind} className="card plan-group" data-testid={`plan-group-${kind}`}>
-            <div className="card-title"><h3>{label}</h3><span className="faint num">{steps.filter((s) => s.done).length}/{steps.length}</span></div>
-            <ol className="plan-steps">
-              {steps.map((s) => (
-                <li key={s.n} className={`plan-step ${s.done ? "done" : ""}`} data-testid="plan-step">
-                  {s.tracked
-                    ? <span className={`plan-mark ${s.done ? "on" : ""}`} title={s.done ? "Done" : "Progress comes from your records"}>{s.done ? <Check size={14} /> : <Circle size={14} />}</span>
-                    : <button type="button" className={`plan-mark tick ${s.done ? "on" : ""}`} onClick={() => tick(s)} title={s.done ? "Mark as not done" : "Mark as done"} data-testid="step-tick">{s.done ? <Check size={14} /> : <Circle size={14} />}</button>}
-                  <div className="plan-step-body">
-                    <Link to={s.url} className="plan-step-title" data-testid={`step-${s.kind}`}>{s.n}. {s.title}{s.watch ? <span className="chip">narrated</span> : null}</Link>
-                    <div className="muted plan-step-reason">{s.reason}</div>
-                    {s.groups && (
-                      <details className="plan-points" data-testid="step-groups">
-                        <summary>{s.groups.length} groups</summary>
-                        <ul>
-                          {s.groups.map((grp) => <li key={grp.pgn}><Link to={grp.url}>{grp.name}</Link> <span className="faint num">{grp.lines} line{grp.lines === 1 ? "" : "s"}, ECO {grp.ecos}</span></li>)}
-                        </ul>
-                      </details>
-                    )}
-                    {s.progress && <div className="faint num">{s.progress}</div>}
-                  </div>
-                </li>
-              ))}
-            </ol>
-          </section>
-        );
-      })}
+      <div className="plan-groups">
+        {STEP_GROUPS.map(({ kind, label }) => {
+          const steps = plan.steps.filter((s) => s.kind === kind);
+          if (!steps.length) return null;
+          return (
+            <section key={kind} className="card plan-group" data-testid={`plan-group-${kind}`}>
+              <div className="card-title"><h3>{label}</h3><span className="faint num">{steps.filter((s) => s.done).length}/{steps.length}</span></div>
+              <ol className="plan-steps">
+                {steps.map((s) => (
+                  <li key={s.n} className={`plan-step ${s.done ? "done" : ""}`} data-testid="plan-step">
+                    {s.tracked
+                      ? <span className={`plan-mark ${s.done ? "on" : ""}`} title={s.done ? "Done" : "Progress comes from your records"}>{s.done ? <Check size={14} /> : <Circle size={14} />}</span>
+                      : <button type="button" className={`plan-mark tick ${s.done ? "on" : ""}`} onClick={() => tick(s)} title={s.done ? "Mark as not done" : "Mark as done"} data-testid="step-tick">{s.done ? <Check size={14} /> : <Circle size={14} />}</button>}
+                    <div className="plan-step-body">
+                      <Link to={s.url} className="plan-step-title" data-testid={`step-${s.kind}`}>{s.n}. {s.title}{s.watch ? <span className="chip">narrated</span> : null}</Link>
+                      <div className="muted plan-step-reason">{s.reason}</div>
+                      {s.groups && (
+                        <details className="plan-points" data-testid="step-groups">
+                          <summary>{s.groups.length} groups</summary>
+                          <ul>
+                            {s.groups.map((grp) => <li key={grp.pgn}><Link to={grp.url}>{grp.name}</Link> <span className="faint num">{grp.lines} line{grp.lines === 1 ? "" : "s"}, ECO {grp.ecos}</span></li>)}
+                          </ul>
+                        </details>
+                      )}
+                      {s.progress && <div className="faint num">{s.progress}</div>}
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            </section>
+          );
+        })}
+      </div>
     </div>
   );
 }

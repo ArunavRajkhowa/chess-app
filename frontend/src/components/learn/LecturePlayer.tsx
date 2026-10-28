@@ -1,5 +1,5 @@
 import { Chess } from "chess.js";
-import { Pause, Play, SkipBack, SkipForward, StepBack, StepForward, Volume2, VolumeX } from "lucide-react";
+import { Pause, Play, SkipForward, StepBack, StepForward, Volume2, VolumeX } from "lucide-react";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Board } from "../board/Board";
 import type { Shape } from "../board/shapes";
@@ -122,18 +122,20 @@ export function LecturePlayer({ frames, orientation = "white", header, study, st
     <Stage board={board} header={header}>
       <div className="lecture" data-testid="lecture">
         <p className="lecture-caption" data-testid="lecture-caption" aria-live="polite">{frame.say}</p>
-        <div className="lecture-bar" role="progressbar" aria-valuemin={1} aria-valuemax={frames.length} aria-valuenow={index + 1}>
-          {frames.map((_, i) => <i key={i} className={i < index ? "seen" : i === index ? "now" : ""} onClick={() => go(i)} />)}
+        <div className="row lecture-progress">
+          <div className="lecture-bar grow" role="progressbar" aria-valuemin={1} aria-valuemax={frames.length} aria-valuenow={index + 1}>
+            {frames.map((_, i) => <i key={i} className={i < index ? "seen" : i === index ? "now" : ""} onClick={() => go(i)} />)}
+          </div>
+          <span className="faint num">{index + 1} / {frames.length}</span>
         </div>
         <div className="row lecture-controls">
-          <button className="btn btn-sm btn-ghost" onClick={() => go(0)} aria-label="Restart" title="Restart"><SkipBack size={15} /></button>
           <button className="btn btn-sm btn-ghost" onClick={() => go(index - 1)} disabled={index === 0} aria-label="Previous" title="Previous (←)"><StepBack size={15} /></button>
           <button className="btn btn-primary lecture-play" onClick={toggle} data-testid="lecture-play" aria-label={playing ? "Pause" : "Play"} title="Play or pause (space)">
             {playing ? <Pause size={16} /> : <Play size={16} />}
           </button>
           <button className="btn btn-sm btn-ghost" onClick={() => go(index + 1)} disabled={index + 1 >= frames.length} aria-label="Next" title="Next (→)" data-testid="lecture-next"><StepForward size={15} /></button>
           <button className="btn btn-sm btn-ghost" onClick={() => { setPlaying(false); go(frames.length - 1); }} aria-label="Skip to the end" title="Skip to the end" data-testid="lecture-end"><SkipForward size={15} /></button>
-          <span className="faint num grow" style={{ textAlign: "right" }}>{index + 1} / {frames.length}</span>
+          <span className="grow" />
           <button className="btn btn-sm btn-ghost" onClick={() => setSettings({ narration: !narration })} aria-label={narration ? "Mute narration" : "Narration on"} title={narration ? "Mute narration" : "Narration on"}>
             {narration ? <Volume2 size={15} /> : <VolumeX size={15} />}
           </button>

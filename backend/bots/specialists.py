@@ -16,7 +16,8 @@ LOGGER = logging.getLogger("chess.bots")
 RATINGS = (1000, 1400, 1800, 2200)
 # rating -> (depth, temperature_cp) replacing the nearest classic bot's; measured in data/bot_calibration.json:
 # with Mei's depth 4 / 55 cp the 1400 middlegame specialists scored 12/12 against Stockfish at UCI_Elo 1400;
-# with Nova's depth 2 / 100 cp opening-london-1000 scored 6/10 against UCI_Elo 1320, level with the 1400s
+# with Nova's depth 2 / 100 cp opening-london-1000 scored 6/10 against UCI_Elo 1320, level with the 1400s;
+# with Nova's slips added (slip_prob 0.55) the six measured 1000s score 1.5 to 3 of 6
 STRENGTH_OVERRIDES = {1000: (2, 150), 1400: (3, 70)}
 OPENING_BOOK_PLIES = 20  # an opening specialist follows the book twice as long as a classic bot
 OPENING_FAVOURITE_MAX_LOSS_CP = 100  # and accepts a book move that costs this much against its own best line
@@ -46,7 +47,7 @@ def _specialist(spec: Specialty, elo: int, *, tagline: str, description: str, pe
     depth, temp = STRENGTH_OVERRIDES.get(elo, (base.search.depth, base.selection.temperature_cp))
     bot = _bot(f"{spec.kind}-{spec.key}-{elo}", spec.name, elo, TIER_SPECIALIST, tagline, avatar or AVATARS[spec.kind],
                depth, temp, multipv=base.search.multipv,
-               random_move=base.selection.random_move_prob, personality=personality, description=description,
+               random_move=base.selection.random_move_prob, slip=base.selection.slip_prob, personality=personality, description=description,
                greeting=GREETINGS[spec.kind])
     if book_plies is not None:
         bot = replace(bot, selection=replace(bot.selection, book_plies=book_plies))

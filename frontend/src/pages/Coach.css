@@ -1,9 +1,16 @@
-.coachpage { display: grid; grid-template-columns: minmax(320px, 560px) minmax(320px, 480px); gap: var(--s-5); align-items: start; }
-.coach-chat { display: flex; flex-direction: column; gap: var(--s-3); max-height: calc(100vh - 60px); }
-.coach-turns { flex: 1 1 auto; overflow-y: auto; display: flex; flex-direction: column; gap: var(--s-2); min-height: 240px; }
+/* The chat is as tall as the board beside it; its turns scroll inside. */
+.coachpage { --board-chrome: 48px; --panel-lead: 160px; }
+.coach-chat { display: flex; flex-direction: column; gap: var(--s-3); height: max(360px, calc(var(--board-size) - 56px)); }
+.coach-head h2 { font-size: var(--fs-xl); margin: 0; }
+.coach-head .select { width: auto; }
+.coach-tools { flex-wrap: wrap; }
+.coach-tools .input { flex: 1 1 120px; min-width: 0; }
+.coach-ask .input { flex: 1; min-width: 0; }
+.coach-turns { flex: 1 1 auto; overflow-y: auto; display: flex; flex-direction: column; gap: var(--s-2); min-height: 0; }
+.coach-source { font-size: var(--fs-xs); }
 .turn { display: flex; flex-direction: column; gap: 2px; }
 .turn.user .turn-body { align-self: flex-end; background: var(--brand); color: var(--brand-ink); }
-.turn-body { max-width: 90%; padding: 8px 12px; border-radius: var(--r-md); background: var(--bg-elev-2); white-space: pre-wrap; font-size: var(--fs-sm); }
+.turn-body { max-width: 90%; padding: 8px 12px; border-radius: var(--r-md); background: var(--bg-elev-2); white-space: pre-wrap; }
 .presets { display: flex; flex-wrap: wrap; gap: 6px; }
-.settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-5); }
-@media (max-width: 900px) { .coachpage, .settings-grid { grid-template-columns: 1fr; } .coachpage .row { flex-wrap: wrap; } }
+.presets .btn { text-align: left; }
+@media (max-width: 639px) { .coach-chat { height: auto; max-height: 75dvh; } .coach-tools .input { flex-basis: 200px; } }

@@ -8,3 +8,5 @@ httpx>=0.28
 libsql>=0.1.11
 
 edge-tts>=7.0
+onnxruntime>=1.23.2
+numpy>=2.3

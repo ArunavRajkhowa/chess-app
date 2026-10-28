@@ -1,0 +1,4 @@
+/* Home rules beyond pages.css: the daily board sits beside its text when the card is wide, above it when narrow. */
+.home-daily .home-daily-body { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: var(--s-4); align-items: start; }
+.home-daily-board { max-width: 480px; }
+.home-games .chip { white-space: nowrap; }

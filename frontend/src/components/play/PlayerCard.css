@@ -1,7 +1,7 @@
 .playercard { position: relative; display: flex; align-items: center; gap: var(--s-3); padding: 6px 4px; min-height: 48px; }
 .playercard.active .playercard-avatar { box-shadow: 0 0 0 2px var(--brand); }
 .playercard-avatar { width: 40px; height: 40px; border-radius: var(--r-sm); background: var(--bg-elev-2); display: grid; place-items: center; color: var(--ink-2); transition: box-shadow var(--anim-fast); }
-.playercard-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.playercard-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: none; }
 .playercard-captured { display: flex; align-items: center; height: 16px; }
 .piece-mini { display: inline-block; width: 16px; height: 16px; background-size: contain; background-repeat: no-repeat; margin-right: -5px; }
 .playercard-edge { margin-left: 10px; font-size: var(--fs-xs); color: var(--ink-2); font-weight: 700; }
@@ -12,3 +12,5 @@
 .piece-mini.bK { background-image: url("/pieces/cburnett/bK.svg"); } .piece-mini.bQ { background-image: url("/pieces/cburnett/bQ.svg"); }
 .piece-mini.bR { background-image: url("/pieces/cburnett/bR.svg"); } .piece-mini.bB { background-image: url("/pieces/cburnett/bB.svg"); }
 .piece-mini.bN { background-image: url("/pieces/cburnett/bN.svg"); } .piece-mini.bP { background-image: url("/pieces/cburnett/bP.svg"); }
+/* On a phone the bot's line takes its own row under the name, so the name and the clock keep their width. */
+@media (max-width: 600px) { .playercard { flex-wrap: wrap; } .playercard-bubble { order: 3; flex-basis: 100%; max-width: none; margin-left: 0; } }

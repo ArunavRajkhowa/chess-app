@@ -1,0 +1,3 @@
+/* Settings cards flow down columns, so a short card never leaves a hole beside a tall one. */
+.settings-cards { columns: 340px 3; column-gap: var(--s-4); }
+.settings-cards > * { break-inside: avoid; margin-bottom: var(--s-4); }

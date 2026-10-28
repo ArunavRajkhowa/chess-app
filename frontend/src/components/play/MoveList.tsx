@@ -24,20 +24,27 @@ export const CLASS_GLYPH: Record<Classification, string> = {
 
 export function MoveList({ moves, currentPly, onSelect, opening, startFen }: Props) {
   const ref = useRef<HTMLDivElement>(null);
-  // Scroll the list only (never the page), only when the move is out of view, and after the frame is
-  // painted: layout is clean then, so reading it costs nothing.
+  // Keep the current move in view inside the list (never the page), also when the list resizes.
+  // Scrolling down stops on a row's top edge, so the top row is never cut in half.
   useEffect(() => {
-    let t = 0;
-    const id = requestAnimationFrame(() => { t = window.setTimeout(() => {
-      const list = ref.current;
-      const el = list?.querySelector<HTMLElement>(`[data-ply="${currentPly}"]`);
-      if (!list || !el) return;
-      const l = list.getBoundingClientRect();
-      const e = el.getBoundingClientRect();
-      if (e.top < l.top) list.scrollTop -= l.top - e.top;
-      else if (e.bottom > l.bottom) list.scrollTop += e.bottom - l.bottom;
-    }); });
-    return () => { cancelAnimationFrame(id); clearTimeout(t); };
+    const list = ref.current;
+    if (!list) return;
+    const reveal = () => {
+      const row = list.querySelector<HTMLElement>(`[data-ply="${currentPly}"]`)?.closest<HTMLElement>(".movelist-row");
+      if (!row) return;
+      const top = row.offsetTop;
+      const bottom = top + row.offsetHeight;
+      if (top < list.scrollTop) list.scrollTop = top;
+      else if (bottom > list.scrollTop + list.clientHeight) {
+        const need = bottom - list.clientHeight;
+        const edge = [...list.children].map((c) => (c as HTMLElement).offsetTop).find((t) => t >= need);
+        list.scrollTop = edge ?? need;
+      }
+    };
+    const id = requestAnimationFrame(reveal);
+    const ro = new ResizeObserver(reveal);
+    ro.observe(list);
+    return () => { cancelAnimationFrame(id); ro.disconnect(); };
   }, [currentPly]);
   const fields = (startFen ?? "").split(" ");
   const firstNumber = Number(fields[5]) || 1;

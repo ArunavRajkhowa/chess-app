@@ -14,3 +14,6 @@
 .plan-step-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .plan-step-title { font-weight: 600; display: inline-flex; align-items: center; gap: var(--s-2); }
 .plan-step-reason { font-size: var(--fs-sm); }
+/* The step groups flow down two columns when wide, so a short group never leaves a hole beside a long one. */
+.plan-groups { columns: 460px 2; column-gap: var(--s-4); }
+.plan-groups > * { break-inside: avoid; margin-bottom: var(--s-4); }

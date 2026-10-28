@@ -1,10 +1,27 @@
-.analysis { display: grid; grid-template-columns: minmax(320px, 600px) minmax(320px, 440px); gap: var(--s-5); align-items: start; }
-.analysis-side { display: flex; flex-direction: column; gap: var(--s-3); position: sticky; top: var(--s-4); }
+.board-page.analysis { --board-chrome: 16px; } /* the title row, less the eval bar's width beside the board */
+.analysis-head { justify-content: space-between; }
 .engine-lines { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
 .engine-lines button { display: flex; gap: var(--s-2); align-items: baseline; width: 100%; text-align: left; background: var(--bg-elev-2); border: 0; color: var(--ink); padding: 6px 8px; border-radius: var(--r-sm); cursor: pointer; font-size: var(--fs-sm); }
 .engine-lines button:hover { background: var(--bg-hover); }
 .engine-lines .eval { min-width: 52px; padding: 1px 6px; border-radius: 4px; text-align: center; }
 .engine-lines .eval.white { background: var(--side-white); color: var(--side-black); }
 .engine-lines .eval.black { background: var(--side-black); color: var(--side-white); }
-.analysis .movelist { max-height: 40vh; }
-@media (max-width: 900px) { .analysis { grid-template-columns: 1fr; } .analysis-side { position: static; } }
+.analysis-fold { margin-top: var(--s-3); border-top: 1px solid var(--line); padding-top: var(--s-2); }
+.card.analysis-moves { padding: 0; overflow: hidden; }
+.analysis-moves .movelist { min-height: 120px; max-height: 32dvh; }
+.analysis-actions { padding: var(--s-3) var(--s-4); border-top: 1px solid var(--line); flex-wrap: wrap; }
+.analysis-moves .chip { margin: 0 var(--s-4) var(--s-3); }
+.analysis-load { display: flex; gap: var(--s-2); align-items: flex-start; }
+/* Beside the board both columns are the window's height. A width-limited board leaves room under it
+   (.analysis-slot): the engine card or the paste box fills it. In the side column the move list fills what is left. */
+.analysis-slot { display: none; }
+@media (min-width: 640px) {
+  .board-page.analysis { height: calc(100dvh - 2 * var(--main-pad) - var(--tabbar-h)); align-items: stretch; }
+  .analysis-side { overflow-y: auto; }
+  .analysis-side > * { flex: none; }
+  .analysis-slot { display: flex; flex-direction: column; flex: 1 1 0; min-height: 0; overflow-y: auto; }
+  .analysis-slot > .card { flex: 1 0 auto; }
+  .analysis-slot .analysis-load textarea { align-self: stretch; resize: none; }
+  .card.analysis-moves { flex: 1 1 0; min-height: 160px; overflow: visible; display: flex; flex-direction: column; }
+  .analysis-moves .movelist { flex: 1 1 0; max-height: none; }
+}
