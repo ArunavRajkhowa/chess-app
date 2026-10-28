@@ -1,0 +1,20 @@
+# Keeps the free Render service awake: it sleeps after 15 idle minutes and then shows Render's own
+# wake-up page for a minute or two. One service awake all month uses at most 744 of the 750 free
+# instance hours. GitHub runs scheduled workflows only from the default branch, and may delay a run
+# by some minutes; it pauses them after 60 days without a commit to the repository.
+name: keep-awake
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Ping the health check
+        run: curl --fail --silent --show-error --max-time 180 --retry 2 https://chess-coach-59jv.onrender.com/api/health > /dev/null

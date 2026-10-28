@@ -1,0 +1,44 @@
+# Builds a debug APK of the Android shell (Capacitor, remote-URL mode) and attaches it to the run as
+# an artifact. Free: ubuntu-latest ships the Android SDK; Capacitor 8 needs Java 21. The shell loads the hosted app at
+# CAP_SERVER_URL, so set that repository variable to the deployed https address first.
+# Release builds for the Play Store need a signing key: docs/mobile.md.
+name: android
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ["frontend/capacitor.config.ts", ".github/workflows/android.yml"]
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    env:
+      CAP_SERVER_URL: ${{ vars.CAP_SERVER_URL }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - name: Fail early without a server address
+        run: test -n "$CAP_SERVER_URL" || { echo "set the repository variable CAP_SERVER_URL to the deployed https address"; exit 1; }
+      - run: npm ci
+        working-directory: frontend
+      - name: Make the native project (not committed; regenerated every run)
+        working-directory: frontend
+        run: |
+          mkdir -p dist && echo '<!doctype html><title>Chess Coach</title>' > dist/index.html  # the shell loads CAP_SERVER_URL, not these files
+          npx cap add android
+          npx cap sync android
+      - run: ./gradlew assembleDebug --no-daemon
+        working-directory: frontend/android
+      - uses: actions/upload-artifact@v4
+        with:
+          name: chess-coach-debug-apk
+          path: frontend/android/app/build/outputs/apk/debug/app-debug.apk
