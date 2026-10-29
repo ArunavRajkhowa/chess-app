@@ -79,18 +79,18 @@
 .board.is-dragging { cursor: grabbing; }
 .board:not(.is-dragging) .piece { cursor: grab; }
 
-.piece.wK { background-image: url("/pieces/cburnett/wK.svg"); }
-.piece.wQ { background-image: url("/pieces/cburnett/wQ.svg"); }
-.piece.wR { background-image: url("/pieces/cburnett/wR.svg"); }
-.piece.wB { background-image: url("/pieces/cburnett/wB.svg"); }
-.piece.wN { background-image: url("/pieces/cburnett/wN.svg"); }
-.piece.wP { background-image: url("/pieces/cburnett/wP.svg"); }
-.piece.bK { background-image: url("/pieces/cburnett/bK.svg"); }
-.piece.bQ { background-image: url("/pieces/cburnett/bQ.svg"); }
-.piece.bR { background-image: url("/pieces/cburnett/bR.svg"); }
-.piece.bB { background-image: url("/pieces/cburnett/bB.svg"); }
-.piece.bN { background-image: url("/pieces/cburnett/bN.svg"); }
-.piece.bP { background-image: url("/pieces/cburnett/bP.svg"); }
+.piece.wK { background-image: url("../../assets/pieces/cburnett/wK.svg"); }
+.piece.wQ { background-image: url("../../assets/pieces/cburnett/wQ.svg"); }
+.piece.wR { background-image: url("../../assets/pieces/cburnett/wR.svg"); }
+.piece.wB { background-image: url("../../assets/pieces/cburnett/wB.svg"); }
+.piece.wN { background-image: url("../../assets/pieces/cburnett/wN.svg"); }
+.piece.wP { background-image: url("../../assets/pieces/cburnett/wP.svg"); }
+.piece.bK { background-image: url("../../assets/pieces/cburnett/bK.svg"); }
+.piece.bQ { background-image: url("../../assets/pieces/cburnett/bQ.svg"); }
+.piece.bR { background-image: url("../../assets/pieces/cburnett/bR.svg"); }
+.piece.bB { background-image: url("../../assets/pieces/cburnett/bB.svg"); }
+.piece.bN { background-image: url("../../assets/pieces/cburnett/bN.svg"); }
+.piece.bP { background-image: url("../../assets/pieces/cburnett/bP.svg"); }
 
 .board-shapes { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5; overflow: visible; }
 .shape-arrow { stroke-width: 0.22; stroke-linecap: round; opacity: 0.9; }

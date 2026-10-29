@@ -1,6 +1,7 @@
 import { BarChart3, BookOpen, Brain, Code, Eye, Flag, GraduationCap, Home, Library, Microscope, MoreHorizontal, Puzzle, Settings, Swords, Target, TrendingUp, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
+import knight from "../../assets/pieces/cburnett/wN.svg";
 import { useSettings } from "../../store/settings";
 import "./Shell.css";
 
@@ -89,7 +90,7 @@ export function Shell() {
     <div className="shell" data-board={boardTheme}>
       <nav className="shell-nav" aria-label="Main">
         <NavLink to="/" className="shell-brand">
-          <img src="/pieces/cburnett/wN.svg" alt="" width={26} height={26} />
+          <img src={knight} alt="" width={26} height={26} />
           <span>Chess Coach</span>
         </NavLink>
         {NAV.map(({ group, items }) => (

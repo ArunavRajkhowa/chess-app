@@ -6,11 +6,11 @@
 .piece-mini { display: inline-block; width: 16px; height: 16px; background-size: contain; background-repeat: no-repeat; margin-right: -5px; }
 .playercard-edge { margin-left: 10px; font-size: var(--fs-xs); color: var(--ink-2); font-weight: 700; }
 .playercard-bubble { margin-left: auto; max-width: 46%; background: var(--bg-elev-2); border: 1px solid var(--line); border-radius: var(--r-md); padding: 6px 10px; font-size: var(--fs-sm); color: var(--ink-2); }
-.piece-mini.wK { background-image: url("/pieces/cburnett/wK.svg"); } .piece-mini.wQ { background-image: url("/pieces/cburnett/wQ.svg"); }
-.piece-mini.wR { background-image: url("/pieces/cburnett/wR.svg"); } .piece-mini.wB { background-image: url("/pieces/cburnett/wB.svg"); }
-.piece-mini.wN { background-image: url("/pieces/cburnett/wN.svg"); } .piece-mini.wP { background-image: url("/pieces/cburnett/wP.svg"); }
-.piece-mini.bK { background-image: url("/pieces/cburnett/bK.svg"); } .piece-mini.bQ { background-image: url("/pieces/cburnett/bQ.svg"); }
-.piece-mini.bR { background-image: url("/pieces/cburnett/bR.svg"); } .piece-mini.bB { background-image: url("/pieces/cburnett/bB.svg"); }
-.piece-mini.bN { background-image: url("/pieces/cburnett/bN.svg"); } .piece-mini.bP { background-image: url("/pieces/cburnett/bP.svg"); }
+.piece-mini.wK { background-image: url("../../assets/pieces/cburnett/wK.svg"); } .piece-mini.wQ { background-image: url("../../assets/pieces/cburnett/wQ.svg"); }
+.piece-mini.wR { background-image: url("../../assets/pieces/cburnett/wR.svg"); } .piece-mini.wB { background-image: url("../../assets/pieces/cburnett/wB.svg"); }
+.piece-mini.wN { background-image: url("../../assets/pieces/cburnett/wN.svg"); } .piece-mini.wP { background-image: url("../../assets/pieces/cburnett/wP.svg"); }
+.piece-mini.bK { background-image: url("../../assets/pieces/cburnett/bK.svg"); } .piece-mini.bQ { background-image: url("../../assets/pieces/cburnett/bQ.svg"); }
+.piece-mini.bR { background-image: url("../../assets/pieces/cburnett/bR.svg"); } .piece-mini.bB { background-image: url("../../assets/pieces/cburnett/bB.svg"); }
+.piece-mini.bN { background-image: url("../../assets/pieces/cburnett/bN.svg"); } .piece-mini.bP { background-image: url("../../assets/pieces/cburnett/bP.svg"); }
 /* On a phone the bot's line takes its own row under the name, so the name and the clock keep their width. */
 @media (max-width: 600px) { .playercard { flex-wrap: wrap; } .playercard-bubble { order: 3; flex-basis: 100%; max-width: none; margin-left: 0; } }

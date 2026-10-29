@@ -10,6 +10,11 @@ const BACKEND = process.env.BACKEND_URL ?? "http://127.0.0.1:8765";
 const guestCookie: Plugin = {
   name: "guest-cookie",
   configureServer(server) {
+    // Another project on the same port answers /api with 404s, so bots, puzzles and lessons look broken.
+    fetch(`${BACKEND}/api/health`, { signal: AbortSignal.timeout(3000) })
+      .then((r) => r.json() as Promise<{ engine?: unknown }>)
+      .then((h) => { if (!h.engine) throw new Error("the reply is not the chess backend's"); })
+      .catch((e) => server.config.logger.error(`\nNo chess backend at ${BACKEND}/api/health (${e.message}). Start it, or set BACKEND_URL to where it runs.\n`));
     server.middlewares.use((req, res, next) => {
       if (!req.headers.accept?.includes("text/html")) return next();
       // A backend that is down or slow must not break the page: serve it without the cookie.

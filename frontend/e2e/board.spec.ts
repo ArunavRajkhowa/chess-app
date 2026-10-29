@@ -123,3 +123,14 @@ test("keyboard: arrows move the focus ring, Enter selects and moves", async ({ p
   await page.keyboard.press("Escape");
   await expect(page.locator(".sq.kbd-focus")).toHaveCount(0);
 });
+
+test("every piece type draws from the page's own CSS, never a separate image request", async ({ page }) => {
+  const pieceRequests: string[] = [];
+  page.on("request", (r) => { if (r.url().includes("/pieces/")) pieceRequests.push(r.url()); });
+  await page.goto("/analysis");
+  await expect(page.locator(".piece")).toHaveCount(32);
+  const images = await page.locator(".piece").evaluateAll((els) => [...new Set(els.map((e) => getComputedStyle(e).backgroundImage))]);
+  expect(images).toHaveLength(12);
+  for (const img of images) expect(img).toMatch(/^url\("data:image\/svg\+xml/);
+  expect(pieceRequests).toEqual([]);
+});

@@ -10,7 +10,7 @@ Each licence below was read from the item's own notice, package metadata or sour
 | Maia-3 5M model (CSSLab, University of Toronto), converted to ONNX | `data/maia/` | AGPL-3.0 | [data/maia/NOTICE](data/maia/NOTICE), https://github.com/CSSLab/maia3 |
 | Stockfish (native engine) | Debian `stockfish` package in the Docker image | GPL-3.0 | https://github.com/official-stockfish/Stockfish |
 | Stockfish.js 17.1 lite single (WASM build, (c) Chess.com, LLC; npm `stockfish`) | `frontend/public/engine/` | GPL-3.0 (file header) | https://github.com/nmrugg/stockfish.js |
-| cburnett piece set by Colin M.L. Burnett | `frontend/public/pieces/cburnett/` | CC BY-SA 3.0 and GPLv2+ | [ATTRIBUTION.md](frontend/public/pieces/ATTRIBUTION.md) |
+| cburnett piece set by Colin M.L. Burnett | `frontend/src/assets/pieces/cburnett/` | CC BY-SA 3.0 and GPLv2+ | [ATTRIBUTION.md](frontend/src/assets/pieces/ATTRIBUTION.md) |
 | lichess chess-openings tables | `data/openings/*.tsv` | CC0 | https://github.com/lichess-org/chess-openings |
 | lichess puzzle database (sampled) | `data/puzzles/lichess.jsonl` | CC0 | https://database.lichess.org/ |
 | Newsreader font (`@fontsource-variable/newsreader`) | frontend bundle | SIL OFL 1.1 | https://github.com/productiontype/Newsreader |

@@ -92,7 +92,7 @@ def create_app() -> FastAPI:
 
     if _FRONTEND_DIST.is_dir():
         app.mount("/assets", StaticFiles(directory=_FRONTEND_DIST / "assets"), name="assets")
-        for sub in ("pieces", "sounds", "engine"):
+        for sub in ("sounds", "engine"):
             d = _FRONTEND_DIST / sub
             if d.is_dir():
                 app.mount(f"/{sub}", StaticFiles(directory=d), name=sub)

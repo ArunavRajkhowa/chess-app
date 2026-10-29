@@ -37,7 +37,7 @@ The board is as large as the window allows; text is never squeezed to make room.
 
 - Night (default): ink-slate surfaces `--bg #161e27`, `--bg-elev`, `--bg-elev-2`; bone ink `#ece6d9`; brass `--brand #d3a458`.
 - Day (`[data-theme="light"]`, set from Settings or the device): warm paper `#f1ece2`, ink `#1b232c`, the same brass darkened to `#8d6522` so it still passes AA as text.
-- The board: bone on ink-teal (`--sq-light #e7decb`, `--sq-dark #5a7a8c`) in both themes; three alternatives (boxwood, walnut, slate). Pieces: Colin M.L. Burnett's set (CC BY-SA 3.0, `frontend/public/pieces/ATTRIBUTION.md`).
+- The board: bone on ink-teal (`--sq-light #e7decb`, `--sq-dark #5a7a8c`) in both themes; three alternatives (boxwood, walnut, slate). Pieces: Colin M.L. Burnett's set (CC BY-SA 3.0, `frontend/src/assets/pieces/ATTRIBUTION.md`).
 - State colours are the move classification colours (`--c-brilliant` to `--c-blunder`) and nothing else is coloured. `--danger`, `--warn`, `--ok`, `--info` reuse four of them.
 - Measured (scratchpad `contrast.mjs`, 19 pairs per theme): every pair the UI uses passes WCAG AA in both themes (lowest: danger on a card 4.56 at night, warn on a card 4.56 by day).
 
