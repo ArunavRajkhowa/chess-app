@@ -115,6 +115,19 @@ CREATE TABLE IF NOT EXISTS sessions (
     player_id TEXT NOT NULL,
     created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
+CREATE TABLE IF NOT EXISTS notes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    player_id TEXT NOT NULL,
+    created TEXT NOT NULL DEFAULT (datetime('now')),
+    page TEXT NOT NULL,
+    anchor TEXT NOT NULL DEFAULT '',
+    quote TEXT NOT NULL DEFAULT '',
+    kind TEXT NOT NULL,
+    note TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'open',
+    resolution TEXT,
+    resolved TEXT
+);
 """
 
 # Created after the migration: an older file gets player_id from _ADDED_COLUMNS first.
@@ -123,6 +136,7 @@ CREATE INDEX IF NOT EXISTS games_by_player ON games(player_id, updated_at);
 CREATE INDEX IF NOT EXISTS attempts_by_player ON puzzle_attempts(player_id, id);
 CREATE INDEX IF NOT EXISTS events_by_player ON events(player_id, created_at);
 CREATE INDEX IF NOT EXISTS sessions_by_player ON sessions(player_id);
+CREATE INDEX IF NOT EXISTS notes_by_player ON notes(player_id);
 CREATE INDEX IF NOT EXISTS players_by_email ON players(email);
 """
 

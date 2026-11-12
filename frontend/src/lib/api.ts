@@ -154,6 +154,27 @@ export interface EventProps {
 }
 export type EventName = keyof EventProps;
 
+/* Notes a player leaves on the app: mirrors NOTE_KINDS and NOTE_STATUSES in backend/routers/notes.py. */
+export type NoteKind = "bug" | "wrong" | "unclear" | "idea" | "praise";
+export type NoteStatus = "open" | "done" | "declined";
+export interface NewNote {
+  page: string; // the route
+  anchor: string; // the nearest heading
+  quote: string; // the selected text
+  kind: NoteKind;
+  note: string;
+}
+export interface MyNote {
+  id: number;
+  created: string;
+  page: string;
+  kind: NoteKind;
+  note: string;
+  status: NoteStatus;
+  resolution: string | null;
+  resolved: string | null;
+}
+
 export class ApiError extends Error {
   status: number;
   constructor(status: number, message: string) {
@@ -189,6 +210,8 @@ export const api = {
   confirmReset: (token: string, password: string) => post<{ email: string }>("/api/account/reset/confirm", { token, password }),
   signOut: (everywhere = false) => post<{ ok: boolean }>("/api/account/signout", { everywhere }),
   deleteAccount: () => request<{ deleted: boolean }>("/api/account", { method: "DELETE" }),
+  leaveNote: (note: NewNote) => post<{ ok: boolean }>("/api/notes", note),
+  myNotes: () => request<{ notes: MyNote[] }>("/api/notes/mine"),
   health:() => request<{ ok: boolean; engine: { name: string; kind: string }; openings: number | null; coach: { llm: boolean; provider: string | null; model: string; problem: string | null } }>("/api/health"),
   bots: () => request<{ bots: BotPublic[] }>("/api/bots"),
   newGame: (bot_id: string, player_color: "white" | "black" | "random", coach_mode = false, time_control: string | null = null, fen: string | null = null) =>

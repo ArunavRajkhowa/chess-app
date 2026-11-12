@@ -73,6 +73,9 @@ class Settings(BaseSettings):
     # The address players open the app at, e.g. https://chess.example.com; the base of reset links.
     # Blank: links only for a request to localhost, else no mail (the Host header is the client's).
     PUBLIC_URL: str = ""
+    # Reads and resolves players' notes (GET /api/notes, POST /api/notes/{id}/resolve, header
+    # X-Owner-Key). Blank: those two routes answer 404.
+    NOTES_OWNER_KEY: str = ""
 
     @property
     def origins_list(self) -> list[str]:

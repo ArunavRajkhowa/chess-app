@@ -34,7 +34,7 @@ SIGNED_IN = "this browser is already signed in: sign out first"
 LOCAL_HOSTS = ("localhost", "127.0.0.1")
 
 # Every table with a player_id column. A guest who signs in to an existing account brings these rows along.
-PLAYER_TABLES = ("games", "puzzle_attempts", "events", "sessions", "player_plans")
+PLAYER_TABLES = ("games", "puzzle_attempts", "events", "sessions", "player_plans", "notes")
 # Per-player tables with one row per key: when the guest and the account both have a key, the account's row wins.
 PLAYER_KEYED_TABLES = ("player_lessons", "player_values", "player_reviews")
 

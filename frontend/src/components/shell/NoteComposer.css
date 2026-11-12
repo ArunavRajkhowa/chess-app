@@ -1,0 +1,36 @@
+/* The note composer: a pencil in the corner, a modal note form, one toast. Tokens only. */
+.btn.note-fab {
+  position: fixed; right: var(--s-4); bottom: calc(var(--tabbar-h) + var(--s-4)); z-index: 45;
+  width: 44px; height: 44px; padding: 0; border-radius: 50%; color: var(--ink-2); box-shadow: var(--shadow-sm);
+}
+.btn.note-fab:hover { color: var(--brand); }
+
+.note-composer {
+  width: min(480px, calc(100vw - 2 * var(--s-4))); max-height: calc(100dvh - 2 * var(--s-4));
+  padding: var(--s-4) var(--s-5); border: 1px solid var(--line-strong); border-radius: var(--r-lg);
+  background: var(--bg-elev); color: var(--ink); box-shadow: var(--shadow);
+}
+.note-composer[open] { animation: sheet-up var(--anim) var(--ease); }
+.note-composer::backdrop { background: color-mix(in srgb, var(--bg) 70%, transparent); }
+.note-composer h2 { font-size: var(--fs-lg); }
+.note-where { color: var(--ink-2); font-size: var(--fs-sm); margin-bottom: var(--s-3); overflow-wrap: anywhere; }
+.note-quote { margin: 0 0 var(--s-3); padding-left: var(--s-3); border-left: 2px solid var(--line-strong); color: var(--ink-2); font-size: var(--fs-sm); max-height: 6em; overflow: auto; }
+.note-kinds { display: flex; flex-wrap: wrap; gap: var(--s-2); border: 0; padding: 0; margin: 0 0 var(--s-3); }
+.note-kinds .chip { cursor: pointer; min-height: 32px; padding-inline: var(--s-3); }
+.note-kinds .chip:has(:checked) { background: var(--brand); color: var(--brand-ink); }
+.note-kinds .chip:has(:focus-visible) { outline: 2px solid var(--brand); outline-offset: 2px; }
+.note-composer textarea { resize: vertical; }
+.note-actions { justify-content: flex-end; margin-top: var(--s-3); }
+
+.note-toast-region { position: fixed; left: var(--s-4); right: var(--s-4); bottom: calc(var(--tabbar-h) + var(--s-4) + 52px); z-index: 46; display: flex; justify-content: center; pointer-events: none; }
+.note-toast {
+  display: flex; align-items: center; gap: var(--s-2); max-width: 480px; padding: var(--s-2) var(--s-2) var(--s-2) var(--s-4);
+  background: var(--bg-elev-2); border: 1px solid var(--line-strong); border-left: 3px solid var(--ok); border-radius: var(--r-md);
+  box-shadow: var(--shadow); pointer-events: auto; animation: sheet-up var(--anim) var(--ease); overflow-wrap: anywhere;
+}
+.note-toast-error { border-left-color: var(--danger); }
+
+/* The Play page's Start button sits fixed above the tab bar on a phone: the pencil goes above it. */
+@media (max-width: 900px) {
+  .shell:has(.botpicker-start) .btn.note-fab { bottom: calc(var(--tabbar-h) + var(--s-2) + 64px); }
+}

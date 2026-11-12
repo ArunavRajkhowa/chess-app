@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 import knight from "../../assets/pieces/cburnett/wN.svg";
 import { useSettings } from "../../store/settings";
+import { NoteComposer } from "./NoteComposer";
 import "./Shell.css";
 
 interface NavItem { to: string; label: string; icon: typeof Home; end?: boolean }
@@ -119,6 +120,7 @@ export function Shell() {
       <main className="shell-main">
         <Outlet />
       </main>
+      <NoteComposer />
     </div>
   );
 }

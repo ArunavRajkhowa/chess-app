@@ -401,6 +401,7 @@ def test_delete_my_data_leaves_no_row_of_the_player_and_spares_others(client, db
     client.post("/api/vision/score", json={"mode": "find", "score": 3})
     client.post("/api/events", json={"name": "app.opened", "props": {"display": "browser"}})
     assert client.post("/api/plans", json={"goal": "rook endgames"}).json()["plan"], "a plan row"
+    client.post("/api/notes", json={"page": "/", "kind": "idea", "note": "more endgames"})
     me = client.cookies["player"]
     sign_up(client)  # a session row and an email
     assert all(rows_of(db_file, me).values())  # something in every table
