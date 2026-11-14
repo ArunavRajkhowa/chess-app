@@ -52,6 +52,19 @@ def test_fallback_texts_are_grounded():
     assert "f3" in fallback.hint_text(facts, 2)
 
 
+def test_first_hint_does_not_send_the_player_to_a_loose_piece_the_engine_leaves():
+    # Black to move; White threatens Qxf7#. The knight on d4 is loose, but exd4 or Nxd4 allows mate.
+    facts = {
+        "side_to_move": "black", "phase": "opening",
+        "white": {"hanging_pieces": ["knight on d4"], "developed_minors": 2},
+        "black": {"hanging_pieces": [], "developed_minors": 1},
+        "candidate_moves": [{"move": "Qe7", "uci": "d8e7", "eval": "+0.43", "line": ["Qe7"], "does": []}],
+        "threats_against_side_to_move": [{"san": "Qxf7#"}],
+        "opponent_threat": {"san": "Qxf7#", "line": ["Qxf7#"]},
+    }
+    assert fallback.hint_text(facts, 1) == "First deal with your opponent's threat, then look for your own."
+
+
 @pytest.fixture()
 def client(tmp_path, monkeypatch):
     from backend import settings as s
