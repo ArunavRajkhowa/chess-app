@@ -99,10 +99,8 @@ def _store_game(player: str, game_id: str, spec, color: str, result: str, bot_id
 @pytest.fixture(scope="module")
 def client(tmp_path_factory):
     from backend import settings as s
-    from backend.routers import review as R
     mp = pytest.MonkeyPatch()
     mp.setattr(s.settings, "DB_PATH", str(tmp_path_factory.mktemp("db") / "t.sqlite3"))
-    mp.setitem(R.DEPTHS, "quick", 6)  # the mistakes below are gross; a shallow review judges them the same
     global _PORTAL
     with TestClient(create_app()) as c:
         _PORTAL = c.portal
