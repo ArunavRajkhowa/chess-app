@@ -154,7 +154,8 @@ async def review_moves(
         if b.is_game_over():
             infos.append([])
         else:
-            infos.append(await pool.analyse(b, depth=depth, multipv=multipv))
+            # fresh: the same game reviewed twice gets the same labels, whatever the engine searched before
+            infos.append(await pool.analyse(b, depth=depth, multipv=multipv, fresh=True))
         if progress:
             await progress(i + 1, n + 1)
 

@@ -278,12 +278,14 @@ def hint_text(facts: dict, hint_level: int) -> str:
     if hint_level <= 1:
         if facts.get("drawing_resource"):
             return f"You are behind in material: look for the draw ({facts['drawing_resource']['kind']})."
-        if opp.get("hanging_pieces"):
-            return f"Look for a loose piece: the {opp['hanging_pieces'][0]} is not defended well."
-        if opp.get("trapped_pieces"):
-            return f"The {opp['trapped_pieces'][0]} has no safe square: can you win it?"
+        # a loose piece is the hint only when the engine's move takes it: taking another can walk into a threat
+        loose = [p for p in opp.get("hanging_pieces") or [] if p.endswith(uci[2:4])]
+        if loose:
+            return f"Look for a loose piece: the {loose[0]} is not defended well."
         if facts.get("opponent_threat") or facts.get("threats_against_side_to_move"):
             return "First deal with your opponent's threat, then look for your own."
+        if opp.get("trapped_pieces"):
+            return f"The {opp['trapped_pieces'][0]} has no safe square: can you win it?"
         if me.get("discovered_attacks"):
             return f"Your {me['discovered_attacks'][0]['piece']} is standing in front of one of your own pieces: moving it uncovers something."
         if top.get("does"):

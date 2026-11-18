@@ -200,3 +200,26 @@ def test_a_side_with_no_moves_has_no_accuracy(client):
     assert rep["white"]["accuracy"] is not None and rep["white"]["estimated_rating"] is None  # one move is no measure of strength
     ins = client.get("/api/insights/me").json()
     assert ins["games"] == 1 and ins["accuracy"] is None and ins["phase_accuracy"] == {}
+
+
+def test_a_review_does_not_depend_on_what_the_engine_searched_before(event_loop):
+    # 4.Qe2 in the Giuoco Piano is a borderline move: at depth 6 its drop was 7.2 on a cold engine
+    # and 4.8 after another search, so the label flipped between inaccuracy and good.
+    from backend.engine.pool import EnginePool
+    from backend.review.report import review_moves
+
+    async def run():
+        pool = EnginePool()
+        await pool.start()
+        try:
+            board, moves = chess.Board(), []
+            for san in "e4 e5 Nf3 Nc6 Bc4 Bc5 Qe2 Nf6".split():
+                moves.append(board.push_san(san))
+            first = await review_moves(moves, pool, depth=6)
+            await pool.analyse(chess.Board("r1bqkbnr/pppp1ppp/2n5/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R b KQkq - 3 3"), depth=14, multipv=2)
+            second = await review_moves(moves, pool, depth=6)
+            assert [(m.win_after, m.classification) for m in first.moves] == [(m.win_after, m.classification) for m in second.moves]
+        finally:
+            await pool.stop()
+
+    event_loop.run_until_complete(run())

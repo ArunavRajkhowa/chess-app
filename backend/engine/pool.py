@@ -91,14 +91,17 @@ class EnginePool:
         nodes: int | None = None,
         multipv: int = 1,
         slot: str = "analysis",
+        fresh: bool = False,
     ) -> list[chess.engine.InfoDict]:
-        """Full-strength analysis. Returns one InfoDict per principal variation, best first."""
+        """Full-strength analysis. Returns one InfoDict per principal variation, best first.
+        `fresh` clears the engine's hash first (a new game token makes python-chess send
+        ucinewgame), so the answer does not depend on what the engine searched before."""
         _require_legal(board)
         s = self.slots[slot]
         limit = chess.engine.Limit(depth=depth, time=time_seconds, nodes=nodes)
         async with s.lock:
             await s.configure({"UCI_LimitStrength": False, "Skill Level": 20})
-            infos = await s.engine.analyse(board, limit, multipv=multipv)
+            infos = await s.engine.analyse(board, limit, multipv=multipv, game=object() if fresh else None)
         return infos if isinstance(infos, list) else [infos]
 
     async def play_move(
